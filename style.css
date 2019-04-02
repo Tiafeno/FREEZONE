@@ -1,0 +1,35 @@
+/*
+Theme Name: FreeZone
+Theme URI: http://www.falicrea.com
+Description: This is a child theme for Yozi.
+Author: Tiafeno Finel
+Author URI: http://www.falicrea.com/
+Template: yozi
+Version: 1.0.4
+*/
+
+@import url("../yozi/style.css");
+
+.navbar-nav.megamenu > li > a {
+    color: #ffffff;
+}
+
+/* cart */
+.total-minicart,
+.mini-cart, 
+.wishlist-icon,
+.login-topbar > a {
+    color: white;
+}
+
+.login-topbar > a:hover {
+    color: #e23e1d;
+}
+
+.woocommerce-Price-amount.amount,
+p.total.text-theme {
+	display: none;
+}
+
+
+
