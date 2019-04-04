@@ -5,7 +5,7 @@ Description: This is a child theme for Yozi.
 Author: Tiafeno Finel
 Author URI: http://www.falicrea.com/
 Template: yozi
-Version: 1.0.6
+Version: 1.0.7
 */
 
 @import url("../yozi/style.css");
@@ -29,11 +29,12 @@ Version: 1.0.6
 .open > .btn-theme.dropdown-toggle, 
 .open > .dropdown-toggle.viewmore-products-btn {
 	background-color: #59618e;
-    border-color: #59618e;
+    	border-color: #59618e;
 }
 
 .btn-theme, .viewmore-products-btn {
-	background: #374387;
+	background-color: #374387;
+	    border-color: #374387;
 }
 
 /* cart */
