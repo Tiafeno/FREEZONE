@@ -13,10 +13,12 @@ Version: 1.0.4
 .navbar-nav.megamenu > li > a {
     color: #ffffff;
 }
+.bg-header-freeezone {
+	background-color: #374387;
+}
 
 /* cart */
-.total-minicart,
-.mini-cart, 
+
 .wishlist-icon,
 .login-topbar > a {
     color: white;
@@ -30,6 +32,8 @@ Version: 1.0.4
 p.total.text-theme {
 	display: none;
 }
-
+.widget-banner.has-img .infor {
+    padding-top: 20px;
+}
 
 

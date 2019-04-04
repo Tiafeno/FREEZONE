@@ -10,6 +10,6 @@ add_filter( 'woocommerce_variable_sale_price_html', 'remove_prices', 10, 2 );
 add_filter( 'woocommerce_variable_price_html', 'remove_prices', 10, 2 );
 add_filter( 'woocommerce_get_price_html', 'remove_prices', 10, 2 );
 function remove_prices( $price, $product ) {
-    if ( ! is_admin() ) $price = '0';
+    if ( ! is_admin() ) $price = '';
     return $price;
 }

@@ -45,7 +45,7 @@
     <div class="wrapper-large">
         <div class="<?php echo (yozi_get_config('keep_header') ? 'main-sticky-header-wrapper' : ''); ?>">
             <div class="<?php echo (yozi_get_config('keep_header') ? 'main-sticky-header' : ''); ?>">
-                <div class="container-fluid">
+                <div class="container-fluid bg-header-freeezone">
                     <div class="header-middle">
                         <div class="row">
                             <div class="table-visiable-dk">
