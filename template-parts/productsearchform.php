@@ -22,7 +22,7 @@
 			</div>
 			<input type="hidden" name="post_type" value="product" class="post_type" />
 			
-			<button type="submit" class="btn btn-theme radius-0"><?php esc_html_e('SEARCH', 'yozi'); ?></button>
+			<button type="submit" class="btn btn-theme radius-0"><?php esc_html_e('Search', 'yozi'); ?></button>
 		</form>
 	</div>
 <?php endif; ?>
