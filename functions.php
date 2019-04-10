@@ -47,7 +47,7 @@ add_action('init', function () {
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
 add_action('woocommerce_account_stock-management_endpoint', function () {
-	echo "Finel";
+	echo "Stock management endpoint works!";
 });
 
 /*****************************************************
