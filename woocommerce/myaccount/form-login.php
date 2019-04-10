@@ -161,7 +161,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
 		<div class="create text-center">
 			<div class="line-border center">
-				<span class="center-line"><?php echo esc_html__('or','yozi') ?></span>
+				<span class="center-line">ou</span>
 			</div>
 			<a class="login-account register-login-action" href="#customer_login"><?php echo esc_html__('SIGN IN','yozi'); ?></a>
 		</div>
