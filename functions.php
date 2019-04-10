@@ -49,6 +49,12 @@ add_action('init', function () {
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
 add_action('woocommerce_account_stock-management_endpoint', function () {
+    // Access security
+    $User = wp_get_current_user();
+    if ( ! in_array('supplier', $User->roles)) {
+        wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
+        return false;
+    }
 	echo "Stock management endpoint works!";
 });
 
