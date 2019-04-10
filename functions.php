@@ -53,7 +53,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
     $User = wp_get_current_user();
     if ( ! in_array('supplier', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
-        wc_print_notices();
         return false;
     }
 	echo "Stock management endpoint works!";
