@@ -32,6 +32,8 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     if (in_array('supplier', $User->roles)) {
         unset($items['orders']);
         unset($items['edit-address']);
+    } else {
+        unset($items['stock-management']);
     }
     return $items;
 }, 999);
