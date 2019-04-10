@@ -34,10 +34,9 @@
       <file leaf-file-name="form-login.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-login.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="163" column="44" selection-start-line="163" selection-start-column="44" selection-end-line="163" selection-end-column="44" />
+            <state relative-caret-position="368">
+              <caret line="71" column="48" selection-start-line="71" selection-start-column="48" selection-end-line="71" selection-end-column="48" />
               <folding>
-                <element signature="e#1018#3147#0#HTML" />
                 <element signature="e#6374#6397#0#HTML" expanded="true" />
               </folding>
             </state>
@@ -178,12 +177,12 @@
       <workItem from="1554803796448" duration="12000" />
       <workItem from="1554813232559" duration="1145000" />
       <workItem from="1554835880916" duration="4553000" />
-      <workItem from="1554877028676" duration="3942000" />
+      <workItem from="1554877028676" duration="3996000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12136000" />
+    <option name="totallyTimeSpent" value="12190000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="886" extended-state="6" />
@@ -238,7 +237,6 @@
         <state relative-caret-position="1584">
           <caret line="114" column="102" selection-start-line="114" selection-start-column="102" selection-end-line="114" selection-end-column="102" />
           <folding>
-            <element signature="e#1018#3147#0#HTML" />
             <element signature="e#6374#6397#0#HTML" expanded="true" />
           </folding>
         </state>
@@ -351,10 +349,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-login.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="163" column="44" selection-start-line="163" selection-start-column="44" selection-end-line="163" selection-end-column="44" />
+        <state relative-caret-position="368">
+          <caret line="71" column="48" selection-start-line="71" selection-start-column="48" selection-end-line="71" selection-end-column="48" />
           <folding>
-            <element signature="e#1018#3147#0#HTML" />
             <element signature="e#6374#6397#0#HTML" expanded="true" />
           </folding>
         </state>

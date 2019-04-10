@@ -69,7 +69,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 		<?php if ( get_option( 'woocommerce_enable_myaccount_registration' ) === 'yes' ) : ?>
 			<div class="create text-center">
 				<div class="line-border center">
-					<span class="center-line"><?php echo esc_html__('or','yozi') ?></span>
+					<span class="center-line">ou</span>
 				</div>
 				<a class="creat-account register-login-action" href="#customer_register"><?php echo esc_html__('CREATE AN ACCOUNT','yozi'); ?></a>
 			</div>
