@@ -46,21 +46,32 @@ add_action('woocommerce_account_premium-support_endpoint', function () {
  * Edit: form.login.php file for woocommerce template
  *****************************************************/
 
-add_action('register_form', function () {
-	$role = ( ! empty( $_POST['role'] ) ) ? sanitize_text_field( $_POST['role'] ) : '';
-	$role = esc_attr($role);
-	$content = <<<EOF
-	<p>
-		<label for="first_name">Type de compte<br />
-			<input type="text" name="role" id="role" class="input" value="{$role}" size="25" />
-		</label>
-	</p>
-EOF;
-	return $content;
-});
-
 add_action('user_register', function ($user_id) {
-	if ( ! empty( $_POST['role']) ) {
-		update_user_meta($user_id, '__role', sanitize_text_field($_POST['role']));
+    $User = new WP_User(intval($user_id));
+	if ( isset($_POST['role']) && ! empty( $_POST['role']) ) {
+		$role = sanitize_text_field($_POST['role']);
+        $User->set_role($role);
 	}
+
+	if ( ! empty($_POST['firstname']) && ! empty($_POST['lastname'])) {
+	    $firstname = sanitize_text_field($_POST['firstname']);
+	    $lastname = sanitize_text_field($_POST['lastname']);
+	    $result = wp_update_user([
+	        'ID' => intval($user_id),
+            'first_name' => $firstname,
+            'last_name' => $lastname
+        ]);
+	    if (is_wp_error($result)) {
+	        wc_add_notice($result->get_error_message(), 'error');
+        }
+    }
+    $address = isset($_POST['address']) ? $_POST['address'] : '';
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $company_name = isset($_POST['company_name']) ? $_POST['company_name'] : '';
+    update_user_meta($user_id, 'address', sanitize_text_field($address));
+    update_user_meta($user_id, 'phone', sanitize_text_field($phone));
+
+    if (isset($role) && $role === 'supplier') {
+        update_user_meta($user_id, 'company_name', sanitize_text_field($company_name));
+    }
 });

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="D:/CREA/WORDPRESS" />
+      <path value="$PROJECT_DIR$/../../plugins/woocommerce" />
+      <path value="$PROJECT_DIR$/../../plugins/js_composer" />
+      <path value="$PROJECT_DIR$/../../plugins/advanced-custom-fields-pro" />
+    </include_path>
+  </component>
+</project>

@@ -19,6 +19,9 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+$theme = wp_get_theme('freezone');
+wp_enqueue_script('register-fz', get_stylesheet_directory_uri() . '/assets/js/register.js', ['jquery', 'underscore'], $theme->get('Version'), true);
 $args = array('#customer_login', '#customer_register');
 $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_login_register'], $args) ? $_COOKIE['yozi_login_register'] : '#customer_login';
 ?>
@@ -91,22 +94,55 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 				</p>
 
 			<?php endif; ?>
-
 			<p class="form-group form-row form-row-wide">
-				<label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
-				<input type="email" class="input-text form-control" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
+				<label for="reg_lastname"><?php esc_html_e( 'Nom', 'yozi' ); ?> <span class="required">*</span></label>
+				<input type="text" class="input-text form-control" placeholder="Votre nom" name="lastname" id="reg_lastname" required
+                       value="<?php if ( ! empty( $_POST['lastname'] ) ) echo esc_attr( $_POST['lastname'] ); ?>" />
 			</p>
+
+            <p class="form-group form-row form-row-wide">
+                <label for="reg_firstname"><?php esc_html_e( 'Prénom', 'yozi' ); ?> </label>
+                <input type="text" class="input-text form-control" placeholder="Votre prénom" name="firstname" id="reg_firstname"
+                       value="<?php if ( ! empty( $_POST['firstname'] ) ) echo esc_attr( $_POST['firstname'] ); ?>" />
+            </p>
+
+            <p class="form-group form-row form-row-wide">
+                <label for="reg_phone"><?php esc_html_e( 'Numéro de téléphone', 'yozi' ); ?> <span class="required">*</span></label>
+                <input type="text" placeholder="Votre numéro de téléphone" class="input-text form-control" name="phone" id="reg_phone" required
+                       value="<?php if ( ! empty( $_POST['phone'] ) ) echo esc_attr( $_POST['phone'] ); ?>" />
+            </p>
+
+            <p class="form-group form-row form-row-wide">
+                <label for="reg_address"><?php esc_html_e( 'Adresse', 'yozi' ); ?> <span class="required">*</span></label>
+                <input type="text" placeholder="Votre adresse" class="input-text form-control" name="address" id="reg_address" required
+                       value="<?php if ( ! empty( $_POST['address'] ) ) echo esc_attr( $_POST['address'] ); ?>" />
+            </p>
 			
 			<p class="form-group form-row form-row-wide">
 				<label for="reg_email">Type de compte <span class="required">*</span></label>
-				<input type="text" class="input-text form-control" name="role" id="reg_role" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" />
+                <select class="form-control" name="role" id="reg_role" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
+                    <option value="">Selectionner un type</option>
+                    <option value="particular">Particulier</option>
+                    <option value="supplier">Société ou Fournisseur</option>
+                </select>
 			</p>
+
+            <p class="form-group form-row form-row-wide" id="form-company-name" style="display: none;">
+                <label for="reg_phone">Nom de l'entreprise <span class="required">*</span></label>
+                <input type="text" placeholder="Le nom de votre entreprise" class="input-text form-control" name="company_name" id="reg_company_name"
+                       value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
+            </p>
+
+            <p class="form-group form-row form-row-wide">
+                <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
+                <input type="email" autocomplete="off" class="input-text form-control" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
+            </p>
 
 			<?php if ( 'no' === get_option( 'woocommerce_registration_generate_password' ) ) : ?>
 
 				<p class="form-group form-row form-row-wide">
 					<label for="reg_password"><?php esc_html_e( 'Password', 'yozi' ); ?> <span class="required">*</span></label>
-					<input type="password" class="input-text form-control" name="password" id="reg_password" />
+					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" />
 				</p>
 
 			<?php endif; ?>

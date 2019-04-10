@@ -5,7 +5,7 @@ Description: This is a child theme for Yozi.
 Author: Tiafeno Finel
 Author URI: http://www.falicrea.com/
 Template: yozi
-Version: 1.0.8
+Version: 1.0.11
 */
 
 @import url("../yozi/style.css");
@@ -38,7 +38,6 @@ Version: 1.0.8
 }
 
 /* cart */
-
 .wishlist-icon,
 .login-topbar > a {
     color: white;
@@ -58,6 +57,11 @@ p.total.text-theme {
 
 .apus-checkout-step .inner-step {
 	font-size: 14px;
+}
+
+select#reg_role {
+	padding: 0px 15px !important;
+	border-radius: 0px !important;
 }
 
 
