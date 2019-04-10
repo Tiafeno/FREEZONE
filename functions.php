@@ -1,5 +1,5 @@
 <?php
-
+require_once 'vendor/autoload.php';
 require_once 'inc/fz-functions.php';
 	
 add_action( 'wp_enqueue_scripts', function () {
@@ -20,23 +20,33 @@ function remove_prices( $price, $product ) {
 /********************************************************************
  * Ajouter une nouvelle tab dans la page "mon compte" de woocommerce
  ********************************************************************/
-add_action('init', function () {
-	add_rewrite_endpoint( 'premium-support', EP_ROOT | EP_PAGES );
-});
-
-add_filter('query_vars', function ($vars) {
-	$vars[] = 'premium-support';
-    return $vars;
-}, 0);
-
 add_filter('woocommerce_account_menu_items', function ($items) {
-	$items['premium-support'] = 'Premium Support';
-	//unset($items['orders']);
+    $logout = $items['customer-logout'];
+    unset($items['customer-logout']);
+    $items['stock-management'] = 'Gestion de stock';
+    // Insert back the logout item.
+    $items['customer-logout'] = $logout;
+
+    // Ne pas afficher l'onglet commande et addresse de livraison, commande pour les entreprises
+    $User = wp_get_current_user();
+    if (in_array('supplier', $User->roles)) {
+        unset($items['orders']);
+        unset($items['edit-address']);
+    }
     return $items;
+}, 999);
+
+
+add_action('init', function () {
+	add_rewrite_endpoint( 'stock-management', EP_ROOT | EP_PAGES );
+    add_filter('query_vars', function ($vars) {
+        $vars[] = 'stock-management';
+        return $vars;
+    }, 0);
 });
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
-add_action('woocommerce_account_premium-support_endpoint', function () {
+add_action('woocommerce_account_stock-management_endpoint', function () {
 	echo "Finel";
 });
 
@@ -48,10 +58,7 @@ add_action('woocommerce_account_premium-support_endpoint', function () {
 
 add_action('user_register', function ($user_id) {
     $User = new WP_User(intval($user_id));
-	if ( isset($_POST['role']) && ! empty( $_POST['role']) ) {
-		$role = sanitize_text_field($_POST['role']);
-        $User->set_role($role);
-	}
+    $User->set_role('particular');
 
 	if ( ! empty($_POST['firstname']) && ! empty($_POST['lastname'])) {
 	    $firstname = sanitize_text_field($_POST['firstname']);
@@ -67,11 +74,11 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
-    $company_name = isset($_POST['company_name']) ? $_POST['company_name'] : '';
+//    $company_name = isset($_POST['company_name']) ? $_POST['company_name'] : '';
     update_user_meta($user_id, 'address', sanitize_text_field($address));
     update_user_meta($user_id, 'phone', sanitize_text_field($phone));
 
-    if (isset($role) && $role === 'supplier') {
-        update_user_meta($user_id, 'company_name', sanitize_text_field($company_name));
-    }
+//    if (isset($role) && $role === 'supplier') {
+//        update_user_meta($user_id, 'company_name', sanitize_text_field($company_name));
+//    }
 });

@@ -117,10 +117,10 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                 <input type="text" placeholder="Votre adresse" class="input-text form-control" name="address" id="reg_address" required
                        value="<?php if ( ! empty( $_POST['address'] ) ) echo esc_attr( $_POST['address'] ); ?>" />
             </p>
-			
-			<p class="form-group form-row form-row-wide">
+
+			<!--<p class="form-group form-row form-row-wide">
 				<label for="reg_email">Type de compte <span class="required">*</span></label>
-                <select class="form-control" name="role" id="reg_role" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
+                <select class="form-control" name="role" id="reg_role" value="<?php /*if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); */?>" required>
                     <option value="">Selectionner un type</option>
                     <option value="particular">Particulier</option>
                     <option value="supplier">Société ou Fournisseur</option>
@@ -130,8 +130,8 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             <p class="form-group form-row form-row-wide" id="form-company-name" style="display: none;">
                 <label for="reg_phone">Nom de l'entreprise <span class="required">*</span></label>
                 <input type="text" placeholder="Le nom de votre entreprise" class="input-text form-control" name="company_name" id="reg_company_name"
-                       value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
-            </p>
+                       value="<?php /*if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); */?>" />
+            </p>-->
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>

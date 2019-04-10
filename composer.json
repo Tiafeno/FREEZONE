@@ -1,0 +1,15 @@
+{
+    "name": "vendor/freezone",
+    "description": "Une site pour commander des materiels informatique \u0000 Madagascar",
+    "type": "library",
+    "require": {
+        "twig/twig": "^2.7"
+    },
+    "license": "MTI",
+    "authors": [
+        {
+            "name": "Tiafeno",
+            "email": "tiafenofnel@gmail.com"
+        }
+    ]
+}
