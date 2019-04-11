@@ -55,6 +55,12 @@ Version: 1.0.11
 p.total.text-theme {
 	display: none;
 }
+
+.woocommerce table.shop_table tbody th,
+.woocommerce table.shop_table tfoot td,
+.woocommerce table.shop_table tfoot th {
+    font-weight: 400 !important;
+}
 .widget-banner.has-img .infor {
     padding-top: 20px;
 }
