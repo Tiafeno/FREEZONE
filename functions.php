@@ -40,6 +40,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 
 add_action('init', function () {
+    add_rewrite_endpoint( 'sav', EP_PERMALINK | EP_PAGES );
 	add_rewrite_endpoint( 'stock-management', EP_ROOT | EP_PAGES );
     add_filter('query_vars', function ($vars) {
         $vars[] = 'stock-management';
@@ -56,6 +57,15 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         return false;
     }
 	echo "Stock management endpoint works!";
+});
+
+add_action('template_redirect', function () {
+    global $wp_query;
+
+    // if this is not a request for sav or a singular object then bail
+    if ( ! isset( $wp_query->query_vars['sav'] ) )
+        return;
+
 });
 
 /*****************************************************

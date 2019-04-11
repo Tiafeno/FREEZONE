@@ -6,6 +6,10 @@
       <path value="$PROJECT_DIR$/../../plugins/woocommerce" />
       <path value="$PROJECT_DIR$/../../plugins/js_composer" />
       <path value="$PROJECT_DIR$/../../plugins/advanced-custom-fields-pro" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
     </include_path>
   </component>
 </project>

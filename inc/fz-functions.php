@@ -1,7 +1,34 @@
 <?php
+require_once 'model/fz-model.php';
+require_once 'shortcodes/after-sales-service.php';
+
+if (!defined('TWIG_TEMPLATE_PATH')) {
+    define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');
+}
+try {
+    $file_system = new Twig_Loader_Filesystem();
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
+    /** @var Object $Engine */
+    $Engine = new Twig_Environment($file_system, array(
+        'debug'       => false,
+        'cache'       => TWIG_TEMPLATE_PATH . '/cache',
+        'auto_reload' => true
+    ));
+
+} catch (Twig_Error_Loader $e) {
+    return new WP_Error('broke', $e->getRawMessage());
+}
+
+add_action('after_switch_theme', function () {
+    if (has_action('fz_activate_theme')) {
+        do_action('fz_activate_theme');
+    }
+});
+
 // Désactiver l'access à la back-office pour les utilisateurs non admin
 add_action('after_setup_theme', function () {
-    if (!current_user_can('administrator') && !is_admin()) {
+    if ( ! current_user_can('administrator') && ! is_admin() ) {
         show_admin_bar(false);
     }
 });
@@ -14,20 +41,19 @@ add_action('admin_init', function () {
     if (is_user_logged_in()) {
         $User = wp_get_current_user();
         $roles = $User->roles;
-        $isRole = in_array( 'particular', $roles ) || in_array( 'supplier', $roles );
-        $redirect = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : home_url( '/' );
-        if ( is_admin() && ! defined( 'DOING_AJAX' ) && $isRole ) {
-            exit( wp_redirect( $redirect, 301 ) );
+        $isRole = in_array('particular', $roles) || in_array('supplier', $roles);
+        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : home_url('/');
+        if (is_admin() && !defined('DOING_AJAX') && $isRole) {
+            exit(wp_redirect($redirect, 301));
         }
     }
 
 }, 100);
-add_action('init', "constructor");
-function constructor ()
-{
-    // Init action
 
-}
+add_action('init', function () {
+    // Init wordpress
+});
+
 
 function create_roles ()
 {
