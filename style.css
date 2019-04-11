@@ -47,6 +47,10 @@ Version: 1.0.11
     color: #e23e1d;
 }
 
+.apus-checkout-step li {
+    font-size: 14px !important;
+}
+
 .woocommerce-Price-amount.amount,
 p.total.text-theme {
 	display: none;
