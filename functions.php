@@ -29,7 +29,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
     // Ne pas afficher l'onglet commande et addresse de livraison, commande pour les entreprises
     $User = wp_get_current_user();
-    if (in_array('supplier', $User->roles)) {
+    if (in_array('fz-supplier', $User->roles)) {
         unset($items['orders']);
         unset($items['edit-address']);
     } else {
@@ -52,7 +52,7 @@ add_action('init', function () {
 add_action('woocommerce_account_stock-management_endpoint', function () {
     // Access security
     $User = wp_get_current_user();
-    if ( ! in_array('supplier', $User->roles)) {
+    if ( ! in_array('fz-supplier', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         return false;
     }
@@ -76,7 +76,7 @@ add_action('template_redirect', function () {
 
 add_action('user_register', function ($user_id) {
     $User = new WP_User(intval($user_id));
-    $User->set_role('particular');
+    $User->set_role('fz-particular');
 
 	if ( ! empty($_POST['firstname']) && ! empty($_POST['lastname'])) {
 	    $firstname = sanitize_text_field($_POST['firstname']);
