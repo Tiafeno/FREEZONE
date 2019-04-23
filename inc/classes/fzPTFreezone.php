@@ -36,7 +36,9 @@ class fzPTFreezone
                             foreach ($roles as $role):
                                 $user_role = get_role($role);
                                 if (is_null($user_role)) continue;
-                                $user_role->add_cap($capabilitie);
+                                if ( ! $user_role->has_cap($capabilitie) ):
+                                    $user_role->add_cap($capabilitie);
+                                endif;
 
                                 endforeach;
                         }

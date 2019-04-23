@@ -46,6 +46,7 @@ add_action('init', function () {
         $vars[] = 'stock-management';
         return $vars;
     }, 0);
+
 });
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
@@ -76,6 +77,7 @@ add_action('template_redirect', function () {
 
 add_action('user_register', function ($user_id) {
     $User = new WP_User(intval($user_id));
+    // Ajouter les utilisateurs inscrits en tant que particulier
     $User->set_role('fz-particular');
 
 	if ( ! empty($_POST['firstname']) && ! empty($_POST['lastname'])) {
