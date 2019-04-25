@@ -50,7 +50,7 @@ class fzPTFreezone
 
     protected function create_posttypes ()
     {
-        register_post_type('fz-article', [
+        register_post_type('fz_product', [
             'label' => "Les articles",
             'labels' => [
                 'name' => "Les articles",
@@ -92,6 +92,7 @@ class fzPTFreezone
             'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
             'show_in_rest' => true
         ]);
+
     }
 }
 

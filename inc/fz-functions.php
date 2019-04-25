@@ -1,12 +1,31 @@
 <?php
 require_once 'model/fz-model.php';
+require_once 'model/fzModelProduct.php';
+
 require_once 'shortcodes/after-sales-service.php';
+
 require_once 'classes/fzRoles.php';
 require_once 'classes/fzPTFreezone.php';
+require_once 'classes/fzSupplier.php';
+require_once 'classes/fzSupplierArticle.php';
+require_once 'classes/fzQuotation.php';
+require_once 'classes/fzQuotationProduct.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');
 }
+
+if (!defined('__SITENAME__')) {
+    define('__SITENAME__', 'freezone');
+}
+
+/**
+ * *****************************************************************************
+ *                              Variable global
+ * *****************************************************************************
+ */
+$fz_model = new \model\fzModel();
+
 try {
     $file_system = new Twig_Loader_Filesystem();
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
@@ -19,7 +38,7 @@ try {
     ]);
 
 } catch (Twig_Error_Loader $e) {
-    return new WP_Error('broke', $e->getRawMessage());
+    wc_add_notice($e->getRawMessage(), 'error');
 }
 
 add_action('after_switch_theme', function () {
@@ -80,4 +99,6 @@ add_action('admin_init', function () {
 
 add_action('init', function () {
     // Init wordpress
+    $Quotation = new \classes\fzQuotation(1011);
+    // $Quotation->get_items(); //https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item_Product.html
 });
