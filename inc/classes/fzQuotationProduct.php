@@ -67,7 +67,7 @@ class fzQuotationProduct extends \WC_Product
      * @param  Integer order_id
      * @return mixed
      */
-    public function __construct( Integer $product_id,  Integer $order_id)
+    public function __construct( $product_id, $order_id)
     {
         parent::__construct($product_id);
     }

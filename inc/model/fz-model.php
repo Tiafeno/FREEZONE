@@ -36,6 +36,7 @@ QTP;
 CREATE TABLE IF NOT EXISTS {$wpdb->prefix}quotation (
   `ID` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `order_id` BIGINT(20) UNSIGNED NOT NULL,
+  `user_id` BIGINT(20) UNSIGNED NOT NULL,
   `status` TINYINT(1) NULL,
   `date_add` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`));
@@ -56,6 +57,23 @@ QT;
         global $wpdb;
         $sql = "SELECT COUNT(*) FROM {$wpdb->prefix}quotation WHERE order_id = %d";
         $result = $wpdb->get_var($wpdb->prepare($sql, intval($order_id)));
+
+        return $result;
+    }
+
+    public function has_user_quotation( $user_id ) {
+        global $wpdb;
+        $sql = "SELECT COUNT(*) FROM {$wpdb->prefix}quotation WHERE user_id = %d";
+        $result = $wpdb->get_var($wpdb->prepare($sql, intval($user_id)));
+
+        return $result;
+    }
+
+    public function get_user_quotations( $user_id ) {
+        global $wpdb;
+        $sql = "SELECT * FROM {$wpdb->prefix}quotation WHERE user_id = %d";
+        $result = $wpdb->get_results($wpdb->prepare($sql, intval($user_id)));
+
         return $result;
     }
 
@@ -67,10 +85,13 @@ QT;
         return $result;
     }
 
-    public function set_quotation( $order_id ) {
+    public function set_quotation( $order_id, $user_id = 0 ) {
         global $wpdb;
+        $User = wp_get_current_user();
+        $user_id = $user_id === 0 ? $User->ID : $user_id;
         $data   = [
             'order_id' => intval($order_id),
+            'user_id'  => $user_id,
             'status'   => 0,
         ];
         $format = [ '%d', '%d' ];

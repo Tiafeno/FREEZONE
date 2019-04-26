@@ -30,6 +30,7 @@ try {
     $file_system = new Twig_Loader_Filesystem();
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/wc', 'WC');
     /** @var Object $Engine */
     $Engine = new Twig_Environment($file_system, [
         'debug' => false,

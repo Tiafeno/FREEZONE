@@ -69,12 +69,45 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 });
 
 add_action('woocommerce_account_demandes_endpoint', function () {
+    global $Engine;
+    $fzModel = new \model\fzModel();
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         return false;
     }
-    echo 'Demandes works!';
+
+    if (!$fzModel->has_user_quotation($User->ID)) {
+        echo 'Aucune demande';
+        return;
+    }
+
+    $user_quotations = $fzModel->get_user_quotations($User->ID);
+    $quotations = [];
+    foreach ( $user_quotations as $quotation ) {
+        $order = new WC_Order(intval($quotation->order_id));
+        $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+        $products = [];
+        foreach ($items as $item) {
+
+            //$item->set_quantity(3);
+            //$item->save();
+
+            $product = new stdClass();
+            $product->quantity = $item->get_quantity();
+            $product->product = wc_get_product($item['product_id']);
+            $products[] = $product;
+        }
+        $quotations[] = [
+            'items' => $items,
+            //'products' => $products,
+            'status' => $quotation->status,
+            'date_add' => $quotation->date_add
+        ];
+    }
+
+    //print_r($quotations);
+    echo $Engine->render("@WC/demande/quotations-table.html", []);
 }, 10);
 
 add_action('template_redirect', function () {
@@ -102,7 +135,7 @@ add_action('user_register', function ($user_id) {
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
-            'last_name'  => $lastname
+            'last_name' => $lastname
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
@@ -117,8 +150,9 @@ add_action('user_register', function ($user_id) {
 
 
 add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
-function fz_order_received( $order_id ) {
+function fz_order_received ($order_id)
+{
     $fzModel = new \model\fzModel();
-    if ( ! $fzModel->quotation_exist($order_id))
-        $fzModel->set_quotation($order_id);
+    if (!$fzModel->quotation_exist($order_id))
+        $fzModel->set_quotation($order_id, 0);
 }
