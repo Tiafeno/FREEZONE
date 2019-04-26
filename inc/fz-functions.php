@@ -97,7 +97,7 @@ add_action('init', function () {
         ]);
 
     } catch (Twig_Error_Loader $e) {
-        wc_add_notice($e->getRawMessage(), 'error');
+        echo $e->getRawMessage();
     }
     // Init wordpress
     // $Quotation = new \classes\fzQuotation(1011);
