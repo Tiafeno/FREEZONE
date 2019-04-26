@@ -65,7 +65,7 @@ add_action('after_setup_theme', function () {
 
 add_action('admin_init', function () {
     if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-particular'))) {
-        fzRoles::create_roles();
+        \classes\fzRoles::create_roles();
         // Delete old role
         if (get_role('particular')) remove_role('particular');
         if (get_role('supplier')) remove_role('supplier');
