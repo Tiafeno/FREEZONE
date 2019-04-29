@@ -1,6 +1,6 @@
 <?php
-require_once 'vendor/autoload.php';
-require_once 'inc/fz-functions.php';
+require_once get_stylesheet_directory() . '/vendor/autoload.php';
+require_once get_stylesheet_directory() . '/inc/fz-functions.php';
 
 add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
@@ -30,9 +30,6 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     $items['demandes'] = "Demandes";
     $items['customer-logout'] = $logout;
 
-
-    // Rennomer la commande pour une demande
-
     // Ne pas afficher l'onglet commande et addresse de livraison, commande pour les entreprises
     $User = wp_get_current_user();
     if (in_array('fz-supplier', $User->roles)) {
@@ -54,6 +51,12 @@ add_action('init', function () {
         return $vars;
     }, 0);
 
+    $my_account = get_post(wc_get_page_id('myaccount'));
+    $my_account_sanitize_title = sanitize_title($my_account->post_title);
+    add_rewrite_tag('%componnent%', '([^&]+)');
+    add_rewrite_tag('%id%', '([^&]+)');
+    add_rewrite_rule("^demandes/quotation/([^/]*)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
+
 
 });
 
@@ -69,7 +72,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 });
 
 add_action('woocommerce_account_demandes_endpoint', function () {
-    global $Engine;
+    global $Engine, $wp_query;
     $fzModel = new \model\fzModel();
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles)) {
@@ -79,42 +82,69 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
     if (!$fzModel->has_user_quotation($User->ID)) {
         echo 'Aucune demande';
-        return;
+        return false;
     }
 
     $user_quotations = $fzModel->get_user_quotations($User->ID);
-    $quotations = [];
-    foreach ( $user_quotations as $quotation ) {
-        $order = new WC_Order(intval($quotation->order_id));
-        $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-        $products = [];
-        foreach ($items as $item) {
 
-            //$item->set_quantity(3);
-            //$item->save();
+    if (isset($wp_query->query_vars['componnent'])) {
+        $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
+        $order_id = $wp_query->query_vars['id'];
+        switch ($componnent):
+            case 'edit':
+                $order = new \classes\fzQuotation(intval($order_id));
+                $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+                $products = [];
+                foreach ($items as $item) {
 
-            $product = new stdClass();
-            $product->quantity = $item->get_quantity();
-            $product->product = wc_get_product($item['product_id']);
-            $products[] = $product;
+                    $quotation_product = new \classes\fzQuotationProduct((int) $item['product_id'], (int) $order_id);
+                    $products[] = $quotation_product;
+                }
+
+                $quotation_model = $fzModel->get_quotation(intval($order_id));
+                $quotation = [
+                    'order_id' => (int) $order_id,
+                    'products' => $products,
+                    'status'   => intval($quotation_model->status),
+                    'date_add' => $quotation_model->date_add
+                ];
+
+
+                echo "Edit demande works";
+                break;
+
+            case 'update':
+
+//                $item->set_quantity(4);
+//                $item->save();
+                echo "Update demande works";
+                break;
+
+            case 'confirmation':
+
+                break;
+        endswitch;
+    } else {
+        $quotations = [];
+        foreach ( $user_quotations as $quotation ) {
+            $order = new \classes\fzQuotation(intval($quotation->order_id));
+            $quotations[] = [
+                'order_id' => $quotation->order_id,
+                'status'   => intval($quotation->status),
+                'date_add' => $quotation->date_add
+            ];
         }
-        $quotations[] = [
-            'items' => $items,
-            //'products' => $products,
-            'status' => $quotation->status,
-            'date_add' => $quotation->date_add
-        ];
-    }
 
-    //print_r($quotations);
-    echo $Engine->render("@WC/demande/quotations-table.html", []);
+        echo $Engine->render("@WC/demande/quotations-table.html", [ 'quotations' => $quotations ]);
+    }
 }, 10);
 
 add_action('template_redirect', function () {
     global $wp_query;
     // if this is not a request for sav or a singular object then bail
-    if (!isset($wp_query->query_vars['sav']))
-        return;
+    if (isset($wp_query->query_vars['sav'])) {
+
+    }
 
 });
 
@@ -153,6 +183,14 @@ add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
 function fz_order_received ($order_id)
 {
     $fzModel = new \model\fzModel();
-    if (!$fzModel->quotation_exist($order_id))
-        $fzModel->set_quotation($order_id, 0);
+    if (!$fzModel->quotation_exist($order_id)):
+        $fzModel->set_quotation($order_id, 0); // For current user
+
+        $order = new WC_Order(intval($order_id));
+        $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+        foreach ($items as $item) {
+            $fzModel->set_product_qt($order_id, (int)$item['product_id']);
+        }
+
+    endif;
 }

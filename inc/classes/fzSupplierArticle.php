@@ -28,6 +28,8 @@ class fzSupplierArticle
      * @var Integer
      */
     public $ID = 0;
+    public $name = null;
+    private $user_id = 0;
 
     /**
      * Short description of attribute status
@@ -54,12 +56,12 @@ class fzSupplierArticle
     public $date_review = null;
 
     /**
-     * Short description of attribute sku
+     * Short description of attribute product
      *
      * @access public
-     * @var String
+     * @var Object
      */
-    public $sku = null;
+    public $product = null;
 
     /**
      * Prix ajouter par le fournisseur
@@ -77,6 +79,8 @@ class fzSupplierArticle
      */
     public $total_sales = 0;
 
+    public $error = null;
+
     /**
      * Short description of method __construct
      *
@@ -85,9 +89,26 @@ class fzSupplierArticle
      * @param  Integer post_id
      * @return mixed
      */
-    public function __construct( Integer $post_id)
+    public function __construct($post_id)
     {
 
+        if ( ! is_numeric($post_id) ) {
+            $this->error = new \WP_Error('broke', "Une erreur de parametre s'est produit");
+            return false;
+        }
+
+        $post_id = intval($post_id);
+        $article = get_post($post_id);
+        $this->ID = &$post_id;
+        $this->name = $article->post_title;
+
+        $status = get_field('statut', $post_id);
+        $this->status = boolval($status);
+        $this->regular_price = get_field('price', $post_id);
+        $this->date_add = get_field('date_add', $post_id);
+        $this->date_review = get_field('date_review', $post_id);
+        $this->total_sales = (int) get_field('total_sales', $post_id);
+        $this->user_id = get_field('user_id', $post_id);
     }
 
     /**
@@ -98,9 +119,21 @@ class fzSupplierArticle
      * @param  String sku
      * @return mixed
      */
-    public function get_product( String $sku)
+    public function get_product()
     {
+        $post_product = get_field('product_id', $this->ID);
+        $this->product = is_object($post_product) ? $post_product : get_post(intval($post_product));
 
+        return $this->product;
+    }
+
+    /**
+     * @return int|mixed|\WP_User
+     */
+    public function get_author() {
+        $User = is_object($this->user_id) ? $this->user_id : new \WP_User((int) $this->user_id);
+
+        return $User;
     }
 
     /**
@@ -111,26 +144,13 @@ class fzSupplierArticle
      * @param  String price
      * @return mixed
      */
-    public function set_price( String $price)
+    public function set_price($price)
     {
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B6B begin
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B6B end
-    }
+        if ( ! is_numeric($price) ) return false;
+        $result = update_field('price', intval($price), $this->ID);
 
-    /**
-     * Short description of method setSku
-     *
-     * @access public
-     * @author firstname and lastname of author, <author@example.org>
-     * @param  String sku
-     * @return mixed
-     */
-    public function set_sku( String $sku)
-    {
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B6E begin
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B6E end
+        return $result;
     }
-
 
     /**
      * Short description of method updateDateReview
@@ -140,10 +160,12 @@ class fzSupplierArticle
      * @param  String date
      * @return mixed
      */
-    public function update_date_review( String $date)
+    public function update_date_review()
     {
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B74 begin
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B74 end
+        $date_now = date_i18n("Y-m-d H:i:s");
+        $result = update_field('date_review', $date_now, $this->ID);
+
+        return $result;
     }
 
 } /* end of class fzSupplierArticle */

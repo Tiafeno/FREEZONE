@@ -1,6 +1,6 @@
 <style type="text/css">
     .woocommerce table.shop_table td {
-        padding: 5px !important;
+        padding: 5px;
     }
 </style>
 <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
@@ -12,33 +12,27 @@
                     class="nobr">Date</span></th>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">État</span>
             </th>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-total"><span class="nobr">Total</span>
-            </th>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
             </th>
         </tr>
     </thead>
 
     <tbody>
+    {% for quotation in quotations %}
         <tr class="">
-            <td class="ml-4" data-title="Commande">
-                <a href="http://localhost/freezone/my-account-2/view-order/1024/">
-                    n°1024 </a>
-
+            <td style="padding-left: 15px" data-title="Commande">
+                n°{{quotation.order_id}}
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
-                <time datetime="2019-04-25T19:08:18+00:00">25 avril 2019</time>
-
+                <time datetime="2019-04-25T19:08:18+00:00">{{quotation.date_add}}</time>
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
-                En cours
-            </td>
-            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-total" data-title="Total">
-                En attente
+               {{quotation.status is same as(0) ? 'En attente' : (quotation.status is same as(1) ? "Terminée" : "Annuler")}}
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
-                <a href="http://localhost/freezone/my-account-2/view-order/1024/" class="btn btn-sm">Voir</a>
+                <a href="?componnent=edit&id={{quotation.order_id}}" class="btn btn-sm">Voir</a>
             </td>
         </tr>
+    {% endfor %}
     </tbody>
 </table>

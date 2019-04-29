@@ -5,6 +5,8 @@ namespace classes;
  * Contient les informations d'un devis
  */
 
+use model\fzModel;
+
 if (0 > version_compare(PHP_VERSION, '5')) {
     die('This file was generated for PHP 5');
 }
@@ -47,8 +49,8 @@ class fzQuotation extends \WC_Abstract_Order
         return $this->get_items();
     }
 
-    public function update_quotation_status( $status = 0) {
-
+    public function update_status( $status = 0) {
+        return fzModel::getInstance()->update_quotation_status($this->get_id(), $status);
     }
 
 

@@ -27,6 +27,22 @@ if (!defined('__SITENAME__')) {
 $fz_model = new \model\fzModel();
 $Engine = null;
 
+try {
+    $file_system = new Twig_Loader_Filesystem();
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/wc', 'WC');
+    /** @var Object $Engine */
+    $Engine = new Twig_Environment($file_system, [
+        'debug' => false,
+        'cache' => TWIG_TEMPLATE_PATH . '/cache',
+        'auto_reload' => true
+    ]);
+
+} catch (Twig_Error_Loader $e) {
+    echo $e->getRawMessage();
+}
+
 add_action('after_switch_theme', function () {
     if (has_action('fz_activate_theme')) {
         do_action('fz_activate_theme'); // Action Model (fz-model.php)
@@ -84,21 +100,6 @@ add_action('admin_init', function () {
 }, 100);
 
 add_action('init', function () {
-    try {
-        $file_system = new Twig_Loader_Filesystem();
-        $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
-        $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
-        $file_system->addPath(TWIG_TEMPLATE_PATH . '/wc', 'WC');
-        /** @var Object $Engine */
-        $Engine = new Twig_Environment($file_system, [
-            'debug' => false,
-            'cache' => TWIG_TEMPLATE_PATH . '/cache',
-            'auto_reload' => true
-        ]);
-
-    } catch (Twig_Error_Loader $e) {
-        echo $e->getRawMessage();
-    }
     // Init wordpress
     // $Quotation = new \classes\fzQuotation(1011);
     // $Quotation->get_items(); //https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item_Product.html

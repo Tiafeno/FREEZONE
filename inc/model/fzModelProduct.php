@@ -37,7 +37,7 @@ class fzModelProduct
      * @access public
      * @var String
      */
-    public $table = null;
+    protected $table = null;
 
     /**
      * Short description of attribute product_id
@@ -45,7 +45,7 @@ class fzModelProduct
      * @access public
      * @var Integer
      */
-    public $product_id = null;
+    private $product_id = null;
 
     /**
      * Short description of attribute status
@@ -53,7 +53,7 @@ class fzModelProduct
      * @access public
      * @var Boolean
      */
-    public $status = null;
+    private $status = null;
 
     /**
      * Short description of attribute order_id
@@ -61,17 +61,17 @@ class fzModelProduct
      * @access public
      * @var Integer
      */
-    public $order_id = null;
+    private $order_id = null;
 
     /**
      * Cette attributs contients les fournisseurs et leur nombre de produit
      * dans le devis
      *
+     * $this->suppliers = [`supplier_id`, ...];
+     *
      * @access public
      */
-    public $suppliers;
-
-    // --- OPERATIONS ---
+    private $suppliers;
 
     /**
      * Short description of method __construct
@@ -82,11 +82,53 @@ class fzModelProduct
      * @param  Integer order_id
      * @return mixed
      */
-    public function __construct( Integer $product_id,  Integer $order_id)
+    public function __construct( $product_id,  $order_id )
     {
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B28 begin
-        // section -64--88-0-102-c86f1a:16a29cc5918:-8000:0000000000000B28 end
+        global $wpdb;
+        $this->table = $wpdb->prefix . 'quotation_product';
+
+        $fzModel = new fzModel();
+        $product_qt = $fzModel->get_product_qt((int) $order_id, (int) $product_id);
+        if ( ! is_object($product_qt) ) return false;
+
+        $this->suppliers  = unserialize($product_qt->suppliers);
+        $this->product_id = intval($product_qt->product_id);
+        $this->order_id   = intval($product_qt->order_id);
+        $this->status     = boolval((int) $product_qt->status);
     }
+
+    /**
+     * @return bool
+     */
+    public function get_status() {
+        return $this->status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get_suppliers() {
+        return $this->suppliers;
+    }
+
+    /**
+     * @param $user_id
+     * @param $product_id
+     * @return array|null|object|void
+     */
+    public function get_supplier_article($user_id, $product_id) {
+        global $wpdb;
+        $sql = <<<SQL
+SELECT ID, post_title FROM {$wpdb->posts} WHERE post_type = %s AND post_status = %s 
+AND ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %d) 
+AND ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %d)";
+SQL;
+        $prepare = $wpdb->prepare($sql, 'fz_product', 'publish', 'product_id', (int) $product_id, 'user_id', (int) $user_id);
+
+        return $wpdb->get_row($prepare);
+    }
+
+
 
 } /* end of class fzModelProduct */
 
