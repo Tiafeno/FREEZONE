@@ -44,7 +44,7 @@ class fzParticular extends \WP_User
     public $firstname;
     public $lastname;
 
-    public function __construct ($id = 0, string $name = '', $site_id = '') {
+    public function __construct ($id = 0, $name = '', $site_id = '') {
         parent::__construct($id, $name, $site_id);
         $this->firstname = $this->first_name;
         $this->lastname = $this->last_name;
