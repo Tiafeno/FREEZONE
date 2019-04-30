@@ -93,6 +93,8 @@ class fzPTFreezone
             'show_in_rest' => true
         ]);
 
+        register_taxonomy_for_object_type('product_cat', 'fz_product');
+
     }
 }
 
