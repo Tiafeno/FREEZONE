@@ -22,6 +22,23 @@ class fzAPI
     public function __construct () {
         add_action('rest_api_init', [&$this, 'register_rest_supplier']);
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
+
+        // Quotation
+        add_action('rest_api_init', function () {
+            register_rest_route('api', '/quotations/', [
+                array(
+                    'methods'             => \WP_REST_Server::CREATABLE,
+                    'callback'            => [new \apiQuotation(), 'collect_quotations'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args'                => []
+                ),
+            ]);
+
+
+        });
+
     }
 
     public function register_rest_supplier() {

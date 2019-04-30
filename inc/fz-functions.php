@@ -8,11 +8,14 @@ require_once 'shortcodes/after-sales-service.php';
 
 require_once 'classes/fzRoles.php';
 require_once 'classes/fzPTFreezone.php';
+require_once 'classes/fzParticular.php';
 require_once 'classes/fzSupplier.php';
 require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuotation.php';
 require_once 'classes/fzQuotationProduct.php';
 
+require_once 'api/v1/apiQuotation.php';
+require_once 'api/v1/apiSupplier.php';
 require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {

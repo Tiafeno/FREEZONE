@@ -59,7 +59,6 @@ add_action('init', function () {
     add_rewrite_tag('%id%', '([^&]+)');
     add_rewrite_rule("^demandes/quotation/([^/]*)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
 
-
 });
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
@@ -83,12 +82,13 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         return false;
     }
 
-    if (!$fzModel->has_user_quotation($User->ID)) {
+    // https://github.com/woocommerce/woocommerce/wiki/wc_get_orders-and-WC_Order_Query
+    $user_quotations = wc_get_orders(['customer_id' => $User->ID]);
+
+    if (empty($user_quotations)) {
         echo 'Aucune demande';
         return false;
     }
-
-    $user_quotations = $fzModel->get_user_quotations($User->ID);
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
@@ -107,8 +107,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 $quotation = [
                     'order_id' => (int)$order_id,
                     'products' => $products,
-                    'status'   => intval($order->status),
-                    'date_add' => $order->date_add
+                    'status'   => intval($order->get_quotation_status()),
+                    'date_add' => $order->get_dateadd()
                 ];
 
                 wc_add_notice("Module under development. Thank you for coming back sooner @Falicrea", 'error');
@@ -129,12 +129,12 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         endswitch;
     } else {
         $quotations = [];
-        foreach ( $user_quotations as $quotation ) {
-
+        foreach ( $user_quotations as $order ) {
+            $quotation = new \classes\fzQuotation($order->get_id());
             $quotations[] = [
-                'order_id' => $quotation->order_id,
-                'status'   => intval($quotation->status),
-                'date_add' => $quotation->date_add
+                'order_id' => $quotation->get_id(),
+                'status'   => intval($quotation->get_quotation_status()),
+                'date_add' => $quotation->get_dateadd()
             ];
 
         }
@@ -190,16 +190,17 @@ add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
 function fz_order_received ($order_id)
 {
     $fzModel = new \model\fzModel();
-    if (!$fzModel->quotation_exist($order_id)):
-        $fzModel->set_quotation($order_id, 0); // For current user
+    $User = wp_get_current_user();
 
-        $order = new WC_Order(intval($order_id));
-        $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-        foreach ( $items as $item ) {
-            $fzModel->set_product_qt($order_id, (int)$item['product_id']);
-        }
+    $order = new WC_Order(intval($order_id));
+    $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+    update_field('status', 0, intval($order_id));
+    update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
+    update_field('user_id', $User->ID, intval($order_id));
 
-    endif;
+    foreach ( $items as $item ) {
+        $fzModel->set_product_qt($order_id, (int)$item['product_id']);
+    }
 }
 
 // Effacer les demandes et les articles de la demande dans la base de donnée
@@ -211,7 +212,6 @@ function fz_delete_order ($post_id)
     $type = get_post_type($post_id);
     if($type == 'shop_order'){
         $fzModel = new \model\fzModel();
-        $fzModel->remove_quotation($post_id);
         $fzModel->remove_quotation_pts($post_id);
     }
 }

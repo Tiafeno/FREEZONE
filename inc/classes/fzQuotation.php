@@ -30,34 +30,40 @@ class fzQuotation extends \WC_Abstract_Order
      * @access public
      * @var Boolean
      */
+    public $ID = 0;
     public $status = null;
     public $date_add = null;
+    public $user_id = 0;
 
 
     public function __construct ($order = 0) {
         parent::__construct($order);
 
-        $fzModel = new fzModel();
-        $quotation = $fzModel->get_quotation(intval($order));
-        if ( ! is_object($quotation) ) return false;
-        $this->status = (int)$quotation->status;
-        $this->date_add = $quotation->date_add;
+        $this->ID = $this->get_id();
+
+        $this->status = (int) get_field('status', $this->get_id());
+        $this->date_add = $this->get_date_created();
+        $this->user_id = (int) get_field('user_id', $this->get_id());
     }
 
-    /**
-     * Short description of method getProducts
-     *
-     * @access public
-     * @author firstname and lastname of author, <author@example.org>
-     * @return mixed
-     */
-    public function get_products()
-    {
-        return $this->get_items();
+    public function get_dateadd() {
+        return $this->date_add;
+    }
+
+    public function get_quotation_status() {
+        return $this->status;
+    }
+
+    public function get_userid() {
+        return $this->user_id;
+    }
+
+    public function get_author() {
+        return new fzParticular($this->user_id);
     }
 
     public function update_status( $status = 0) {
-        return fzModel::getInstance()->update_quotation_status($this->get_id(), $status);
+        $result = update_field('status', $this->get_id());
     }
 
 

@@ -28,7 +28,6 @@ class fzPTFreezone
               ['delete_private_articles' => ['administrator']],
               ['publish_articles' => ['administrator', 'fz-supplier']],
             ];
-
             foreach ($caps as $cap):
                 if (is_array($cap)) {
                     foreach ($cap as $capabilitie => $roles) {
@@ -92,7 +91,6 @@ class fzPTFreezone
             'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
             'show_in_rest' => true
         ]);
-
         register_taxonomy_for_object_type('product_cat', 'fz_product');
 
     }

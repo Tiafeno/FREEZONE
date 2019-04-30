@@ -20,9 +20,29 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 
 
 /**
- * Short description of class fzSupplier
  *
- * @access public
+ * @property string $nickname
+ * @property string $description
+ * @property string $user_description
+ * @property string $first_name
+ * @property string $user_firstname
+ * @property string $last_name
+ * @property string $user_lastname
+ * @property string $user_login
+ * @property string $user_pass
+ * @property string $user_nicename
+ * @property string $user_email
+ * @property string $user_url
+ * @property string $user_registered
+ * @property string $user_activation_key
+ * @property string $user_status
+ * @property int    $user_level
+ * @property string $display_name
+ * @property string $spam
+ * @property string $deleted
+ * @property string $locale
+ * @property string $rich_editing
+ * @property string $syntax_highlighting
  */
 class fzSupplier extends \WP_User
 {
@@ -55,10 +75,10 @@ class fzSupplier extends \WP_User
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
             $this->reference = "F{$this->ID}";
-            $this->address = get_field('address', $this->ID);
-            $this->phone = get_field('phone', $this->ID);
-            $this->company_name = get_field('company_name', $this->ID);
-            $commission = get_field('commission', $this->ID);
+            $this->address = get_field('address', 'user_'.$this->ID);
+            $this->phone = get_field('phone', 'user_'.$this->ID);
+            $this->company_name = get_field('company_name', 'user_'.$this->ID);
+            $commission = get_field('commission', 'user_'.$this->ID);
             $this->commission = intval($commission);
         } else {
             $this->error = new \WP_Error('exist', "Le fournisseur n'existe pas");
