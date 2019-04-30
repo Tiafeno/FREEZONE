@@ -2,6 +2,8 @@
 require_once 'model/fz-model.php';
 require_once 'model/fzModelProduct.php';
 
+require_once "lib/underscore.php";
+
 require_once 'shortcodes/after-sales-service.php';
 
 require_once 'classes/fzRoles.php';
@@ -10,6 +12,8 @@ require_once 'classes/fzSupplier.php';
 require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuotation.php';
 require_once 'classes/fzQuotationProduct.php';
+
+require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');

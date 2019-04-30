@@ -27,6 +27,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 class fzSupplier extends \WP_User
 {
 
+    public $error = null;
     public $address = null;
     public $phone = null;
     public $company_name = null;
@@ -49,7 +50,7 @@ class fzSupplier extends \WP_User
      * @param  Integer user_id
      * @return mixed
      */
-    public function __construct( Integer $user_id)
+    public function __construct($user_id)
     {
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
@@ -57,6 +58,10 @@ class fzSupplier extends \WP_User
             $this->address = get_field('address', $this->ID);
             $this->phone = get_field('phone', $this->ID);
             $this->company_name = get_field('company_name', $this->ID);
+            $commission = get_field('commission', $this->ID);
+            $this->commission = intval($commission);
+        } else {
+            $this->error = new \WP_Error('exist', "Le fournisseur n'existe pas");
         }
     }
 

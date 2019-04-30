@@ -23,7 +23,10 @@ function remove_prices ($price, $product)
  ********************************************************************/
 add_filter('woocommerce_account_menu_items', function ($items) {
     $logout = $items['customer-logout'];
+
     unset($items['customer-logout']);
+    unset($items['orders']);
+
     $items['stock-management'] = 'Gestion de stock';
     $items['stock-management'] = 'Gestion de stock';
     // Insert back the logout item.
@@ -33,7 +36,6 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     // Ne pas afficher l'onglet commande et addresse de livraison, commande pour les entreprises
     $User = wp_get_current_user();
     if (in_array('fz-supplier', $User->roles)) {
-        unset($items['orders']);
         unset($items['edit-address']);
     } else {
         unset($items['stock-management']);
@@ -73,6 +75,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
+
     $fzModel = new \model\fzModel();
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles)) {
@@ -95,22 +98,22 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 $order = new \classes\fzQuotation(intval($order_id));
                 $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
                 $products = [];
-                foreach ($items as $item) {
+                foreach ( $items as $item ) {
 
-                    $quotation_product = new \classes\fzQuotationProduct((int) $item['product_id'], (int) $order_id);
+                    $quotation_product = new \classes\fzQuotationProduct((int)$item['product_id'], (int)$order_id);
                     $products[] = $quotation_product;
                 }
 
-                $quotation_model = $fzModel->get_quotation(intval($order_id));
                 $quotation = [
-                    'order_id' => (int) $order_id,
+                    'order_id' => (int)$order_id,
                     'products' => $products,
-                    'status'   => intval($quotation_model->status),
-                    'date_add' => $quotation_model->date_add
+                    'status'   => intval($order->status),
+                    'date_add' => $order->date_add
                 ];
 
-
-                echo "Edit demande works";
+                wc_add_notice("Module under development. Thank you for coming back sooner @Falicrea", 'error');
+                wc_print_notices();
+                echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation]);
                 break;
 
             case 'update':
@@ -127,16 +130,20 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     } else {
         $quotations = [];
         foreach ( $user_quotations as $quotation ) {
-            $order = new \classes\fzQuotation(intval($quotation->order_id));
+
             $quotations[] = [
                 'order_id' => $quotation->order_id,
                 'status'   => intval($quotation->status),
                 'date_add' => $quotation->date_add
             ];
+
         }
 
-        echo $Engine->render("@WC/demande/quotations-table.html", [ 'quotations' => $quotations ]);
+        wc_print_notices();
+        echo $Engine->render("@WC/demande/quotations-table.html", ['quotations' => $quotations]);
     }
+
+
 }, 10);
 
 add_action('template_redirect', function () {
@@ -188,9 +195,23 @@ function fz_order_received ($order_id)
 
         $order = new WC_Order(intval($order_id));
         $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-        foreach ($items as $item) {
+        foreach ( $items as $item ) {
             $fzModel->set_product_qt($order_id, (int)$item['product_id']);
         }
 
     endif;
+}
+
+// Effacer les demandes et les articles de la demande dans la base de donnée
+add_action('woocommerce_delete_order', 'fz_delete_order', 10, 1);
+//add_action('wp_trash_post', 'fz_delete_order', 10, 1);
+add_action('before_delete_post', 'fz_delete_order', 10, 1);
+function fz_delete_order ($post_id)
+{
+    $type = get_post_type($post_id);
+    if($type == 'shop_order'){
+        $fzModel = new \model\fzModel();
+        $fzModel->remove_quotation($post_id);
+        $fzModel->remove_quotation_pts($post_id);
+    }
 }

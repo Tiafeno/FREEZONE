@@ -67,7 +67,7 @@ class fzModelProduct
      * Cette attributs contients les fournisseurs et leur nombre de produit
      * dans le devis
      *
-     * $this->suppliers = [`supplier_id`, ...];
+     * [{id: 0, get: 2}, ...]
      *
      * @access public
      */

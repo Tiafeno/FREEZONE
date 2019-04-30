@@ -31,10 +31,17 @@ class fzQuotation extends \WC_Abstract_Order
      * @var Boolean
      */
     public $status = null;
+    public $date_add = null;
 
 
     public function __construct ($order = 0) {
         parent::__construct($order);
+
+        $fzModel = new fzModel();
+        $quotation = $fzModel->get_quotation(intval($order));
+        if ( ! is_object($quotation) ) return false;
+        $this->status = (int)$quotation->status;
+        $this->date_add = $quotation->date_add;
     }
 
     /**

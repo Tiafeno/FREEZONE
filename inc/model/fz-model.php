@@ -118,6 +118,13 @@ QT;
         return $result;
     }
 
+    public function remove_quotation( $order_id ) {
+        global $wpdb;
+        $result = $wpdb->delete($wpdb->prefix.'quotation', ['order_id' => intval($order_id)], ['%d']);
+
+        return $result;
+    }
+
     public function update_quotation_status( $order_id, $status = 0 ) {
         global $wpdb;
         if (!is_numeric($order_id)) return false;
@@ -138,6 +145,13 @@ QT;
         global $wpdb;
         $sql = "SELECT * FROM {$wpdb->prefix}quotation_product WHERE order_id = %d";
         $result = $wpdb->query($wpdb->prepare($sql, $order_id));
+
+        return $result;
+    }
+
+    public function remove_quotation_pts( $order_id ) {
+        global $wpdb;
+        $result = $wpdb->delete($wpdb->prefix.'quotation_product', ['order_id' => intval($order_id)], ['%d']);
 
         return $result;
     }
