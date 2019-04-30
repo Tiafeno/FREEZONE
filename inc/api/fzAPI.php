@@ -22,6 +22,7 @@ class fzAPI
     public function __construct () {
         add_action('rest_api_init', [&$this, 'register_rest_supplier']);
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
+        add_action('rest_api_init', [&$this, 'register_rest_order']);
 
         // Quotation
         add_action('rest_api_init', function () {
@@ -46,11 +47,11 @@ class fzAPI
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
-                    return update_field($field_name, $value, (int) $object->ID);
+                    return update_field($field_name, $value, 'user_'.$object->ID);
                 },
                 'get_callback' => function ($object, $field_name) {
                     if ( ! is_user_logged_in() ) return 'Not allow';
-                    return get_field($field_name, (int)$object['id']);
+                    return get_field($field_name, 'user_'.$object['id']);
                 }
             ]);
         }
@@ -68,6 +69,25 @@ class fzAPI
                     return get_field($field_name, (int)$object['id']);
                 }
             ]);
+        }
+    }
+
+    public function register_rest_order() {
+        $post_types = wc_get_order_types();
+        $metas = ['user_id', 'status'];
+        foreach ($post_types as $type) {
+            foreach ($metas as $meta) {
+                register_rest_field($type, $meta, [
+                    'update_callback' => function ($value, $object, $field_name) {
+                        return update_field($field_name, $value, (int) $object->ID);
+                    },
+                    'get_callback' => function ($object, $field_name) {
+                        if ( ! is_user_logged_in() ) return 'Not allow';
+                        return get_field($field_name, (int)$object['id']);
+                    }
+                ]);
+            }
+
         }
     }
 

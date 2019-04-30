@@ -180,8 +180,8 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
-    update_user_meta($user_id, 'address', sanitize_text_field($address));
-    update_user_meta($user_id, 'phone', sanitize_text_field($phone));
+    update_field( 'address', sanitize_text_field($address), 'user_'.$user_id);
+    update_field('phone', sanitize_text_field($phone), 'user_'.$user_id);
 
 });
 
