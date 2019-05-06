@@ -16,6 +16,7 @@ require_once 'classes/fzQuotationProduct.php';
 
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
+require_once 'api/v1/apiProduct.php';
 require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
@@ -25,6 +26,16 @@ if (!defined('TWIG_TEMPLATE_PATH')) {
 if (!defined('__SITENAME__')) {
     define('__SITENAME__', 'freezone');
 }
+if (function_exists('acf_add_options_page')) {
+    $parent = acf_add_options_page(array(
+        'page_title' => 'Parametre Freezone',
+        'menu_title' => 'Parametre Freezone',
+        'capability' => 'delete_users',
+        'autoload' => true,
+        'redirect' => false
+    ));
+}
+
 
 /**
  * *****************************************************************************

@@ -52,6 +52,9 @@ class fzSupplier extends \WP_User
     public $phone = null;
     public $company_name = null;
     public $commission = 0;
+    public $firstname;
+    public $lastname;
+    public $date_add;
 
     /**
      * Short description of attribute reference
@@ -74,12 +77,16 @@ class fzSupplier extends \WP_User
     {
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
-            $this->reference = "F{$this->ID}";
+            $this->reference = get_field('reference', 'user_'.$this->ID);
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
             $this->company_name = get_field('company_name', 'user_'.$this->ID);
             $commission = get_field('commission', 'user_'.$this->ID);
             $this->commission = intval($commission);
+            $this->firstname = $this->first_name;
+            $this->lastname = $this->last_name;
+            $register = $this->user_registered;
+            $this->date_add = date('Y-m-d H:i:s', strtotime($register));
         } else {
             $this->error = new \WP_Error('exist', "Le fournisseur n'existe pas");
         }

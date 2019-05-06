@@ -101,9 +101,6 @@ class fzSupplierArticle
         $article = get_post($post_id);
         $this->ID = &$post_id;
         $this->name = $article->post_title;
-
-        $status = get_field('statut', $post_id);
-        $this->status = boolval($status);
         $this->regular_price = get_field('price', $post_id);
         $this->date_add = get_field('date_add', $post_id);
         $this->date_review = get_field('date_review', $post_id);

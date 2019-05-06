@@ -75,7 +75,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
-    $fzModel = new \model\fzModel();
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
@@ -162,6 +161,7 @@ add_action('template_redirect', function () {
  *****************************************************/
 
 add_action('user_register', function ($user_id) {
+    if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
     // Ajouter les utilisateurs inscrits en tant que particulier
     $User->set_role('fz-particular');
@@ -170,9 +170,9 @@ add_action('user_register', function ($user_id) {
         $firstname = sanitize_text_field($_POST['firstname']);
         $lastname = sanitize_text_field($_POST['lastname']);
         $result = wp_update_user([
-            'ID' => intval($user_id),
+            'ID'         => intval($user_id),
             'first_name' => $firstname,
-            'last_name' => $lastname
+            'last_name'  => $lastname
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
@@ -182,6 +182,7 @@ add_action('user_register', function ($user_id) {
     $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
     update_field( 'address', sanitize_text_field($address), 'user_'.$user_id);
     update_field('phone', sanitize_text_field($phone), 'user_'.$user_id);
+    update_field('client_reference', "CL{$User->ID}", 'user_'.$user_id);
 
 });
 
@@ -198,20 +199,9 @@ function fz_order_received ($order_id)
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
 
-    foreach ( $items as $item ) {
-        $fzModel->set_product_qt($order_id, (int)$item['product_id']);
-    }
-}
-
-// Effacer les demandes et les articles de la demande dans la base de donnée
-add_action('woocommerce_delete_order', 'fz_delete_order', 10, 1);
-//add_action('wp_trash_post', 'fz_delete_order', 10, 1);
-add_action('before_delete_post', 'fz_delete_order', 10, 1);
-function fz_delete_order ($post_id)
-{
-    $type = get_post_type($post_id);
-    if($type == 'shop_order'){
-        $fzModel = new \model\fzModel();
-        $fzModel->remove_quotation_pts($post_id);
+    foreach ( $items as $item_id => $item ) {
+        //$fzModel->set_product_qt($order_id, (int)$item['product_id']);
+        wc_add_order_item_meta(intval($item_id), 'status', 0);
+        wc_add_order_item_meta(intval($item_id), 'suppliers', serialize([12, 13]));
     }
 }

@@ -36,21 +36,46 @@ class fzAPI
                     'args'                => []
                 ),
             ]);
+        });
 
+        add_action('rest_api_init', function () {
+            register_rest_route('api', '/suppliers/', [
+                array(
+                    'methods'             => \WP_REST_Server::CREATABLE,
+                    'callback'            => [new \apiSupplier(), 'collect_suppliers'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args'                => []
+                ),
+            ]);
+        });
+
+        add_action('rest_api_init', function () {
+
+            register_rest_route('api', '/product/', [
+                array(
+                    'methods'             => \WP_REST_Server::CREATABLE,
+                    'callback'            => [new \apiProduct(), 'collect_products'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args'                => []
+                ),
+            ]);
 
         });
 
     }
 
     public function register_rest_supplier() {
-        $metas = ['company_name', 'commission', 'address', 'phone'];
+        $metas = ['company_name', 'commission', 'address', 'phone', 'reference'];
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
                     return update_field($field_name, $value, 'user_'.$object->ID);
                 },
                 'get_callback' => function ($object, $field_name) {
-                    if ( ! is_user_logged_in() ) return 'Not allow';
                     return get_field($field_name, 'user_'.$object['id']);
                 }
             ]);
@@ -58,14 +83,13 @@ class fzAPI
     }
 
     public function register_rest_fz_product() {
-        $metas = ['statut', 'price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
+        $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
             register_rest_field('fz_product', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
                     return update_field($field_name, $value, (int) $object->ID);
                 },
                 'get_callback' => function ($object, $field_name) {
-                    if ( ! is_user_logged_in() ) return 'Not allow';
                     return get_field($field_name, (int)$object['id']);
                 }
             ]);
@@ -82,13 +106,19 @@ class fzAPI
                         return update_field($field_name, $value, (int) $object->ID);
                     },
                     'get_callback' => function ($object, $field_name) {
-                        if ( ! is_user_logged_in() ) return 'Not allow';
                         return get_field($field_name, (int)$object['id']);
                     }
                 ]);
             }
 
+            register_rest_field($type, 'line_items', [
+                'get_callback' => function ($object, $field_name) {
+                    return $object;
+                }
+            ]);
+
         }
+
     }
 
 }
@@ -108,8 +138,10 @@ add_action('rest_api_init', function() {
         wp_set_current_user($user->ID);
         $user_data = get_userdata($user->ID);
         $data['data'] = $user_data;
+        $data['wc'] = get_field('wc', 'option');
         return $data;
     }, 10, 2);
+
 });
 
 new fzAPI();
