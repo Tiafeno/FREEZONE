@@ -89,7 +89,7 @@ class fzSupplierArticle
      * @param  Integer post_id
      * @return mixed
      */
-    public function __construct($post_id)
+    public function __construct($post_id, $context = 'view')
     {
 
         if ( ! is_numeric($post_id) ) {
@@ -106,6 +106,10 @@ class fzSupplierArticle
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
         $this->user_id = get_field('user_id', $post_id);
+
+        if ($context === "edit") {
+            $this->supplier = new fzSupplier(intval($this->user_id));
+        }
     }
 
     /**

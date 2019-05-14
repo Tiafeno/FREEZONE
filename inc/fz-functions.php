@@ -17,6 +17,9 @@ require_once 'classes/fzQuotationProduct.php';
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
 require_once 'api/v1/apiProduct.php';
+require_once 'api/v1/apiFzProduct.php';
+require_once 'api/v1/apiArticle.php';
+require_once 'api/v1/apiMail.php';
 require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
@@ -36,7 +39,6 @@ if (function_exists('acf_add_options_page')) {
     ));
 }
 
-
 /**
  * *****************************************************************************
  *                              Variable global
@@ -50,6 +52,7 @@ try {
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/wc', 'WC');
+    $file_system->addPath(TWIG_TEMPLATE_PATH . '/mail', 'MAIL');
     /** @var Object $Engine */
     $Engine = new Twig_Environment($file_system, [
         'debug' => false,
@@ -78,11 +81,9 @@ add_action('after_switch_theme', function () {
         'flex-width' => true,
     ]);
 
-
     add_image_size('sidebar-thumb', 120, 120, true);
     add_image_size('homepage-thumb', 220, 180);
     add_image_size('singlepost-thumb', 590, 9999);
-
 
     /**
      * This function will not resize your existing featured images.
@@ -119,6 +120,5 @@ add_action('admin_init', function () {
 
 add_action('init', function () {
     // Init wordpress
-    // $Quotation = new \classes\fzQuotation(1011);
-    // $Quotation->get_items(); //https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item_Product.html
+
 }, 10);

@@ -9,8 +9,18 @@ class fzPTFreezone
 {
     public function __construct () {
         add_action('init', function () {
-           $this->create_posttypes();
+           $this->register_post_type();
         });
+
+        add_action('init', function () {
+            register_taxonomy_for_object_type('product_cat', 'fz_product');
+        }, 11);
+
+        add_action('init', function () {
+            // Afficher la taxonomie dans le rest api
+            $product_cat = get_taxonomy('product_cat');
+            $product_cat->show_in_rest = true;
+        }, 30);
 
         add_action('admin_init', function () {
             $caps = [
@@ -21,7 +31,7 @@ class fzPTFreezone
               ['edit_others_articles' => ['administrator']],
               ['edit_published_articles' => ['administrator', 'fz-supplier']],
               ['edit_private_articles' => ['administrator']],
-              ['delete_article' => ['administrator', 'fz-supplier']],
+              ['delete_article'  => ['administrator', 'fz-supplier']],
               ['delete_articles' => ['administrator', 'fz-supplier']],
               ['delete_others_articles' => ['administrator']],
               ['delete_published_articles' => ['administrator', 'fz-supplier']],
@@ -47,7 +57,7 @@ class fzPTFreezone
         });
     }
 
-    protected function create_posttypes ()
+    protected function register_post_type ()
     {
         register_post_type('fz_product', [
             'label' => "Les articles",
@@ -67,7 +77,7 @@ class fzPTFreezone
             'hierarchical' => false,
             'menu_position' => null,
             'show_ui' => true,
-            'has_archive' => true,
+            'has_archive' => false,
             'rewrite' => ['slug' => 'article'],
             'capabilities' => [
                 'read_post' => 'read_article',
@@ -89,9 +99,9 @@ class fzPTFreezone
             'map_meta_cap' => true,
             'menu_icon' => 'dashicons-archive',
             'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
-            'show_in_rest' => true
+            'show_in_rest' => true,
+            'query_var' => true
         ]);
-        register_taxonomy_for_object_type('product_cat', 'fz_product');
 
     }
 }

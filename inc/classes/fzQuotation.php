@@ -31,7 +31,7 @@ class fzQuotation extends \WC_Abstract_Order
      * @var Boolean
      */
     public $ID = 0;
-    public $status = null;
+    public $position = 0;
     public $date_add = null;
     public $user_id = 0;
 
@@ -41,7 +41,7 @@ class fzQuotation extends \WC_Abstract_Order
 
         $this->ID = $this->get_id();
 
-        $this->status = (int) get_field('status', $this->get_id());
+        $this->position = (int) get_field('position', $this->get_id());
         $this->date_add = $this->get_date_created();
         $this->user_id = (int) get_field('user_id', $this->get_id());
     }
@@ -50,8 +50,8 @@ class fzQuotation extends \WC_Abstract_Order
         return $this->date_add;
     }
 
-    public function get_quotation_status() {
-        return $this->status;
+    public function get_position() {
+        return $this->position;
     }
 
     public function get_userid() {

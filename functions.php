@@ -53,8 +53,6 @@ add_action('init', function () {
         return $vars;
     }, 0);
 
-    $my_account = get_post(wc_get_page_id('myaccount'));
-    $my_account_sanitize_title = sanitize_title($my_account->post_title);
     add_rewrite_tag('%componnent%', '([^&]+)');
     add_rewrite_tag('%id%', '([^&]+)');
     add_rewrite_rule("^demandes/quotation/([^/]*)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
@@ -106,7 +104,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 $quotation = [
                     'order_id' => (int)$order_id,
                     'products' => $products,
-                    'status'   => intval($order->get_quotation_status()),
+                    'position' => intval($order->get_position()),
                     'date_add' => $order->get_dateadd()
                 ];
 
@@ -132,7 +130,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
             $quotation = new \classes\fzQuotation($order->get_id());
             $quotations[] = [
                 'order_id' => $quotation->get_id(),
-                'status'   => intval($quotation->get_quotation_status()),
+                'position'   => intval($quotation->get_position()),
                 'date_add' => $quotation->get_dateadd()
             ];
 
@@ -172,7 +170,9 @@ add_action('user_register', function ($user_id) {
         $result = wp_update_user([
             'ID'         => intval($user_id),
             'first_name' => $firstname,
-            'last_name'  => $lastname
+            'last_name'  => $lastname,
+            'nickname'   => 'CL'.$user_id,
+            'user_login'   => 'CL'.$user_id
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
@@ -190,18 +190,19 @@ add_action('user_register', function ($user_id) {
 add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
 function fz_order_received ($order_id)
 {
-    $fzModel = new \model\fzModel();
+    if ( ! is_user_logged_in() ) return false;
     $User = wp_get_current_user();
 
     $order = new WC_Order(intval($order_id));
     $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-    update_field('status', 0, intval($order_id));
+    update_field('position', 0, intval($order_id));
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
 
+    $suppliers = [];
     foreach ( $items as $item_id => $item ) {
         //$fzModel->set_product_qt($order_id, (int)$item['product_id']);
         wc_add_order_item_meta(intval($item_id), 'status', 0);
-        wc_add_order_item_meta(intval($item_id), 'suppliers', serialize([12, 13]));
+        wc_add_order_item_meta(intval($item_id), 'suppliers', null);
     }
 }

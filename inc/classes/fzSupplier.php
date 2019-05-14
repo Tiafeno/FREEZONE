@@ -20,6 +20,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 
 
 /**
+ * Inherit property
  *
  * @property string $nickname
  * @property string $description

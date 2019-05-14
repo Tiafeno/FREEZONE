@@ -25,10 +25,22 @@ class apiQuotation
             "paged" => $paged
         ];
 
+        if ( isset($_POST['position']) && $_POST['position'] != '' ) {
+            $position = (int)$_POST['position'];
+            $args['meta_query'] = [
+                [
+                    'key' => "position",
+                    'value' => $position,
+                    'compare' => "="
+                ]
+            ];
+        }
+
         $the_query = new WP_Query($args);
         if ($the_query) {
             $quotations = array_map(function ($quotation) {
                 $response = new \classes\fzQuotation($quotation->ID);
+                $response->fzItems = $response->get_items();
                 $response->author = $response->get_author();
                 return $response;
             }, $the_query->posts);
