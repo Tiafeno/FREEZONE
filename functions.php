@@ -152,7 +152,8 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 wc_print_notices();
                 wc_clear_notices();
                 echo $Engine->render('@WC/stock/article-new.html', [
-                    'products' => $fz_model->get_products()
+                    'products' => $fz_model->get_products(),
+                    'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
                 break;
 
