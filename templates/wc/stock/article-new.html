@@ -1,0 +1,44 @@
+<form method="post" action="" role="form" >
+    <div class="form-group form-row form-row-wide">
+        <h4>Ajouter une article</h4>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group form-row form-row-wide">
+                <label for="reg_product">Produit <span class="required">*</span></label>
+                <select name="product_id" id="reg_product" required>
+                    <option value="">-- Choississez un titre --</option>
+                    {% for product in products %}
+                        <option value="{{product.ID}}">{{product.post_title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group form-row form-row-wide">
+                <label for="reg_price">Prix <span class="required">*</span></label>
+                <input type="number" class="input-text form-control" placeholder="" name="price" id="reg_price" required="" value="">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group form-row form-row-wide ">
+                <label for="reg_stock">Stock disponible <span class="required">*</span></label>
+                <input type="number" class="input-text form-control" placeholder="" name="stock" id="reg_stock" required="" value="">
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox-footer">
+        <div>
+            <button type="submit" class="btn btn-success">Ajouter</button>
+            <a href="{{back_link}}" class="btn btn-default">Retour</a>
+        </div>
+    </div>
+
+</form>

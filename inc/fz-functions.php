@@ -1,6 +1,5 @@
 <?php
 require_once 'model/fz-model.php';
-require_once 'model/fzModelProduct.php';
 
 require_once "lib/underscore.php";
 

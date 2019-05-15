@@ -12,13 +12,13 @@ class apiArticle
     public function action_collect_articles(WP_REST_Request $request) {
         global $wpdb;
 
-        $length = (int)$_REQUEST['length'];
-        $start = (int)$_REQUEST['start'];
-
         $action = $request['action'];
         if (empty($action)) wp_send_json_error("Parametre 'action' manquant");
         switch ($action) {
             case 'review':
+                $length = (int)$_REQUEST['length'];
+                $start = (int)$_REQUEST['start'];
+
                 $today = date_i18n('Y-m-d H:i:s');
                 $review_limit = new DateTime("$today - 2 day");
                 $review_limit_string = $review_limit->format('Y-m-d H:i:s');
@@ -53,6 +53,24 @@ CPR;
                 ];
 
                 break;
+
+            case 'query':
+                $args = json_decode(stripslashes($_REQUEST['args']), true);
+                $query = new WP_Query($args);
+                if ($query->have_posts()) {
+                    return [
+                        "recordsTotal" => intval($query->found_posts),
+                        "recordsFiltered" => intval($query->found_posts),
+                        'data' => $query->posts
+                    ];
+                } else {
+                    return [
+                        "recordsTotal" => 0,
+                        "recordsFiltered" => 0,
+                        'data' => []
+                    ];
+                }
+                break;
             default:
                 return [
                     "recordsTotal" => 0,
@@ -60,5 +78,8 @@ CPR;
                     'data' => []
                 ];
         }
+    }
+    public function action_collect_supplier_articles() {
+
     }
 }

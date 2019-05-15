@@ -70,6 +70,9 @@ class fzAPI
                 ],
             ]);
 
+
+
+
             register_rest_route('api', '/supplier/(?P<action>\w+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
@@ -80,7 +83,7 @@ class fzAPI
                 ],
             ]);
 
-            register_rest_route('api', '/mail/(?P<order_id>\d+)', [
+            register_rest_route('api', '/mail/client/(?P<order_id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiMail(), 'send_order_client'],

@@ -107,6 +107,9 @@ class fzSupplierArticle
         $this->total_sales = (int) get_field('total_sales', $post_id);
         $this->user_id = get_field('user_id', $post_id);
 
+        $product = get_field('product_id', $this->ID);
+        $this->url = get_permalink(is_object($product) ? $product->ID : intval($product));
+
         if ($context === "edit") {
             $this->supplier = new fzSupplier(intval($this->user_id));
         }

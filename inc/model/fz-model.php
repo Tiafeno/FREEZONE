@@ -40,95 +40,14 @@ QTP;
         return new self(true);
     }
 
-    /**
-     * @param $order_id
-     * @return false|int
-     */
-    public function get_quotation_products( $order_id) {
+    public function get_products() {
         global $wpdb;
-        $sql = "SELECT * FROM {$wpdb->prefix}quotation_product WHERE order_id = %d";
-        $result = $wpdb->query($wpdb->prepare($sql, $order_id));
+        $sql = <<<SQL
+SELECT pts.ID, pts.post_title FROM $wpdb->posts as pts WHERE pts.post_type = "product" AND pts.post_status = "publish"
+SQL;
+        $results = $wpdb->get_results($sql);
 
-        return $result;
-    }
-
-    public function remove_quotation_pts( $order_id ) {
-        global $wpdb;
-        $result = $wpdb->delete($wpdb->prefix.'quotation_product', ['order_id' => intval($order_id)], ['%d']);
-
-        return $result;
-    }
-
-    /**
-     * @param int $order_id
-     * @param int $product_id
-     * @param int $status
-     * @return false|int
-     */
-    public function set_product_qt( $order_id, $product_id, $status = 0 ) {
-        global $wpdb;
-        if (!is_numeric($order_id) || !is_numeric($product_id)) return false;
-        $data   = [
-            'order_id'    => intval($order_id),
-            'product_id'  => intval($product_id),
-            'status'      => $status,
-        ];
-        $format = [ '%d', '%d', '%d' ];
-        $result = $wpdb->insert( $wpdb->prefix.'quotation_product', $data, $format );
-        $wpdb->flush();
-
-        return $result;
-    }
-
-    /**
-     * @param int $order_id
-     * @param int $product_id
-     * @return array|null|object|false|void
-     */
-    public function get_product_qt( $order_id, $product_id ) {
-        global $wpdb;
-        if (!is_numeric($order_id) || !is_numeric($product_id)) return false;
-        $sql = "SELECT * FROM {$wpdb->prefix}quotation_product WHERE order_id = %d AND product_id = %d";
-        $result = $wpdb->get_row($wpdb->prepare($sql, intval($order_id), intval($product_id)));
-
-        return $result;
-    }
-
-    /**
-     * @param int $order_id
-     * @param int $product_id
-     * @param int $status
-     * @return bool|false|int
-     */
-    public function update_product_qt_status( $order_id, $product_id, $status = 0 ) {
-        global $wpdb;
-        if (!is_numeric($order_id) || !is_numeric($product_id)) return false;
-        $result = $wpdb->update($wpdb->prefix.'quotation_product',
-            ['status' => intval($status)],
-            ['order_id' => $order_id, 'product_id' => $product_id],
-            ['%d'],
-            ['%d', '%d']);
-
-        return $result;
-    }
-
-    /**
-     * @param int $order_id
-     * @param int $product_id
-     * @param array $suppliers
-     * @return bool|false|int
-     */
-    public function update_product_qt_suppliers( $order_id, $product_id, $suppliers) {
-        global $wpdb;
-        if ( ! is_numeric($order_id) || ! is_numeric($product_id) ) return false;
-        if ( ! is_array($suppliers) ) return false;
-        $result = $wpdb->update($wpdb->prefix.'quotation_product',
-            ['suppliers' => serialize($suppliers)],
-            ['order_id' => $order_id, 'product_id' => $product_id],
-            ['%s'],
-            ['%d', '%d']);
-
-        return $result;
+        return $results;
 
     }
 
