@@ -1,0 +1,45 @@
+<style type="text/css">
+    .woocommerce table.shop_table td {
+        padding: 5px;
+    }
+</style>
+<div class="">
+    <div class="flexbox" style="margin-bottom: 20px">
+        <div class="flexbox">
+            <a class="btn btn-primary btn-air" href="{{new_article_link}}" >Ajouter une article</a>
+        </div>
+    </div>
+</div>
+<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
+    <thead>
+    <tr>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Nom</span>
+        </th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
+                class="nobr">Prix</span></th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Date de revision</span>
+        </th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for product in products %}
+    <tr class="">
+        <td style="padding-left: 15px" data-title="Commande">
+            <a href="{{product.url}}" target="_blank">{{product.name}}</a>
+        </td>
+        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
+            {{product.regular_price}} MGA
+        </td>
+        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
+            {{product.date_review}}
+        </td>
+        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
+            <a href="?componnent=edit&id={{product.ID}}" class="btn btn-sm">Modifier</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

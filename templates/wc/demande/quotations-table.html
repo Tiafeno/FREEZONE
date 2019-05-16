@@ -1,0 +1,38 @@
+<style type="text/css">
+    .woocommerce table.shop_table td {
+        padding: 5px;
+    }
+</style>
+<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
+    <thead>
+        <tr>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Demande</span>
+            </th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
+                    class="nobr">Date</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">État</span>
+            </th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for quotation in quotations %}
+        <tr class="">
+            <td style="padding-left: 15px" data-title="Commande">
+                n°{{quotation.order_id}}
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
+                <time datetime="2019-04-25T19:08:18+00:00">{{quotation.date_add}}</time>
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
+               {{quotation.position is same as(0) ? 'En attente' : (quotation.position is same as(1) ? "Confirmation en attente" : (quotation.position is same as(2) ? "Rejetés" : "Terminée") ) }}
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
+                <a href="?componnent=edit&id={{quotation.order_id}}" class="btn btn-sm">Voir</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
