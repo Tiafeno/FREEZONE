@@ -54,7 +54,7 @@ try {
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/mail', 'MAIL');
     /** @var Object $Engine */
     $Engine = new Twig_Environment($file_system, [
-        'debug' => false,
+        'debug' => true,
         'cache' => TWIG_TEMPLATE_PATH . '/cache',
         'auto_reload' => true
     ]);
@@ -119,5 +119,8 @@ add_action('admin_init', function () {
 
 add_action('init', function () {
     // Init wordpress
-
+//    $User = wp_get_current_user();
+//    $order = new WC_Order(1156);
+//    $order->set_customer_id($User->ID);
+//    $order->save();
 }, 10);

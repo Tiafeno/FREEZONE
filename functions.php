@@ -101,9 +101,9 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
                 if ($_POST) {
                     if (isset($_POST['price']) && isset($_POST['stock'])) {
-                        $reguler_price = sanitize_text_field($_POST['price']);
+                        $regular_price = sanitize_text_field($_POST['price']);
                         $stock = sanitize_text_field($_POST['stock']);
-                        update_field('price', intval($reguler_price), $article_id);
+                        update_field('price', intval($regular_price), $article_id);
                         update_field('total_sales', intval($stock), $article_id);
                         update_field('date_review', date_i18n('Y-m-d H:m:s'), $article_id);
                         wc_add_notice("Article mis à jour avec succès", 'success');
@@ -236,6 +236,43 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         $order_id = $wp_query->query_vars['id'];
         switch ($componnent):
             case 'edit':
+
+                if ($_POST) {
+                    $validate = false;
+                    $order = new WC_Order(intval($order_id));
+                    foreach ($_POST as $name => $value) {
+                        if (strpos($name, '_') !== false) {
+                            $names = explode('_', $name);
+                            if (empty($names) || $names[0] !== 'qt') continue;
+                            $current_item_id = intval($names[1]);
+                            $quantity = intval($value);
+                            $items = $order->get_items();
+
+                            foreach ($items as $id => $item) {
+                                if ($current_item_id === $id) {
+                                    $current_total = (int)$item->get_total();
+                                    $current_price = $current_total / $item->get_quantity();
+
+                                    $new_total = $current_price * $quantity;
+                                    $item->set_quantity($quantity);
+                                    $item->set_total((string) $new_total);
+
+                                    $item->save();
+                                    $validate = true;
+                                }
+                            }
+
+                        }
+                    }
+
+                    if ($validate) {
+                        update_field('position', 3, $order->get_id());
+                        $order->update_status('completed');
+                    }
+                    wc_add_notice("Validation envoyer avec succès", 'success');
+                    unset($order, $items);
+                }
+
                 $order = new \classes\fzQuotation(intval($order_id));
                 $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
                 $products = [];
@@ -245,6 +282,21 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $products[] = $quotation_product;
                 }
 
+
+                switch ($order->get_position()) {
+                    case 0:
+                        wc_add_notice("Votre demande est en cours de verification", "notice");
+                        break;
+                    case 2:
+                        wc_add_notice("Votre demande est désactivé par l'administrateur", "error");
+
+                        break;
+                    case 3:
+                        wc_add_notice("Vous ne pouvez plus modifier cette demande", "notice");
+                        break;
+                }
+
+
                 $quotation = [
                     'order_id' => (int)$order_id,
                     'products' => $products,
@@ -252,20 +304,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     'date_add' => $order->get_dateadd()
                 ];
 
-                wc_add_notice("Module under development. Thank you for coming back sooner @Falicrea", 'error');
+
                 wc_print_notices();
                 wc_clear_notices();
-                echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation]);
-                break;
-
-            case 'update':
-
-//                $item->set_quantity(4);
-//                $item->save();
-                echo "Update demande works";
-                break;
-
-            case 'confirmation':
+                if ($order->get_position() !== 0 && $order->get_position() !== 2)
+                    echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation, 'position' => $order->get_position()]);
 
                 break;
         endswitch;
@@ -278,7 +321,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 'position' => intval($quotation->get_position()),
                 'date_add' => $quotation->get_dateadd()
             ];
-
         }
 
         wc_print_notices();

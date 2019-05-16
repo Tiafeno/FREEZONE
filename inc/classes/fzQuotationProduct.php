@@ -17,6 +17,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  */
 class fzQuotationProduct extends \WC_Product
 {
+    public $item_id = 0;
     public $status;
     public $error = null;
     /**
@@ -32,8 +33,9 @@ class fzQuotationProduct extends \WC_Product
      * @var Integer
      */
     public $count_item = 0;
+    public $unit_cost = 0;
+    public $total = 0;
     public $item_limit = 0;
-    private $product_model =  null;
     /**
      * Short description of attribute order_id
      *
@@ -56,17 +58,22 @@ class fzQuotationProduct extends \WC_Product
         parent::__construct($product_id);
 
         $this->order_id = intval($order_id);
-        $this->product_model = new fzModelProduct($product_id, $order_id);
         // Récuperer les fournisseurs
-        $this->suppliers = $this->product_model->get_suppliers();
-        $this->status = $this->product_model->get_status();
 
         $order = new \WC_Order($order_id);
         $items = $order->get_items();
-        foreach ($items as $item) {
+        foreach ($items as $item_id => $item) {
             if (intval($item['product_id']) === intval($product_id)) {
                 $this->count_item = $item->get_quantity();
+                $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
+                $this->suppliers = json_decode($suppliers);
+                $status = wc_get_order_item_meta( $item_id, 'status', true );
+                $this->status = intval($status);
 
+                $this->item_id = (int) $item_id;
+                $price =  intval($item->get_total()) / intval($item->get_quantity());
+                $this->unit_cost = $price;
+                $this->total = $item->get_total();
                 break;
             } else continue;
         }
@@ -79,9 +86,7 @@ class fzQuotationProduct extends \WC_Product
         // Get item limit
         if (is_array($this->suppliers) && ! empty($this->suppliers)) {
             foreach ($this->suppliers as $supplier) {
-                $article = $this->product_model->get_supplier_article(intval($supplier->id), $product_id);
-                if ( ! is_object($article) ) continue;
-                $supplier_article = new fzSupplierArticle((int) $article->ID);
+                $supplier_article = new fzSupplierArticle((int) $supplier->article_id);
                 $this->item_limit += (int) $supplier_article->total_sales;
             }
         }
@@ -92,7 +97,7 @@ class fzQuotationProduct extends \WC_Product
     }
 
     public function update_status( $status = 0 ) {
-        return fzModel::getInstance()->update_product_qt_status($this->order_id, $this->get_id(), $status);
+
     }
 
     public function add_supplier( $supplier ) {

@@ -50,6 +50,14 @@ class fzQuotation extends \WC_Abstract_Order
         return $this->date_add;
     }
 
+    /**
+     * 0: En attente
+     * 1: Envoyer
+     * 2: Rejetés
+     * 3: Terminée
+     *
+     * @return int
+     */
     public function get_position() {
         return $this->position;
     }
@@ -62,8 +70,9 @@ class fzQuotation extends \WC_Abstract_Order
         return new fzParticular($this->user_id);
     }
 
-    public function update_status( $status = 0) {
-        $result = update_field('status', $this->get_id());
+    public function update_position( $status = 0) {
+        $result = update_field('position', $status, $this->get_id());
+        return $result;
     }
 
 

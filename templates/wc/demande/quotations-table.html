@@ -27,7 +27,7 @@
                 <time datetime="2019-04-25T19:08:18+00:00">{{quotation.date_add}}</time>
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
-               {{quotation.status is same as(0) ? 'En attente' : (quotation.status is same as(1) ? "Terminée" : "Annuler")}}
+               {{quotation.position is same as(0) ? 'En attente' : (quotation.position is same as(1) ? "Confirmation en attente" : (quotation.position is same as(2) ? "Rejetés" : "Terminée") ) }}
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
                 <a href="?componnent=edit&id={{quotation.order_id}}" class="btn btn-sm">Voir</a>

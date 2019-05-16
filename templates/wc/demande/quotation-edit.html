@@ -1,57 +1,107 @@
 <style type="text/css">
-    .woocommerce table.shop_table td,
-    .woocommerce table.shop_table th {
+    .woocommerce table.shop_table td:not(.not-center),
+    .woocommerce table.shop_table th:not(.not-center) {
         text-align: center;
     }
+
     .woocommerce table.shop_table td {
         padding: 5px;
     }
 </style>
-<table class="woocommerce-orders-table shop_table_responsive shop_table  my_account_orders account-orders-table">
-    <thead>
-    <tr>
-        <th class="woocommerce-orders-table__header ">
-            <span class="nobr">Article</span>
-        </th>
-        <th class="woocommerce-orders-table__header">
-            <span class="nobr">Quantité</span>
-        </th>
-        <th class="woocommerce-orders-table__header">
-            <span class="nobr">En stock</span>
+<script type="text/javascript">
+    (function ($) {
+        $(document).ready(function () {
+            reCalculate();
 
-        </th><th class="woocommerce-orders-table__header">
-            <span class="nobr">Prix</span>
-        </th>
-    </tr>
-    </thead>
+            let inputChangers = $('.qt-input-changer');
+            inputChangers.each((index, element) => {
+                $(element).on('change', e => {
+                    reCalculate();
+                });
+            });
 
-    <tbody>
-    {% for product in quotation.products %}
-    <tr class="">
-        <td style="padding-left: 15px" data-title="Commande">
-            {{product.get_name()}}
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
-            <form name="quotation_item">
-                <div class="row" style="display: flex;">
-                    <div class="col-sm-6" style="margin: auto">
-                        <input class="form-control" value="{{product.count_item}}"
-                               data-count="{{product.count_item}}"
-                               data-count-limit="{{product.item_limit}}"
-                               data-product="{{product.get_id()}}"
-                               date-order="{{quotation.order_id}}" type="number" name="item" >
+            function reCalculate() {
+                let total = 0;
+                $('.qt-input-changer').each((index, el) => {
+                    let data = $(el).data();
+                    let itemId = data.itemId;
+                    let qt = $(el).val();
+                    let subTotal = parseInt(data.unitCost) * parseInt(qt);
+                    total += subTotal;
+                    $(`#total_${itemId}`).text(subTotal);
+                });
+
+                $("#total").text(total);
+            }
+
+        });
+    })(jQuery);
+</script>
+<form name="quotation_item" method="post" action="">
+    <table class="woocommerce-orders-table shop_table_responsive shop_table  my_account_orders account-orders-table">
+        <thead>
+            <tr>
+                <th class="woocommerce-orders-table__header not-center">
+                    <span class="nobr text-center">Article</span>
+                </th>
+                <th class="woocommerce-orders-table__header">
+                    <span class="nobr">Quantité</span>
+                </th>
+                <th class="woocommerce-orders-table__header">
+                    <span class="nobr">Prix unitaire</span>
+                </th>
+                </th>
+                <th class="woocommerce-orders-table__header">
+                    <span class="nobr">Total</span>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for product in quotation.products %}
+            <tr class="">
+                <td style="padding-left: 15px" class="not-center">
+                    {{product.get_name()}}
+                </td>
+                <td align="center">
+
+                    <div class="row" style="display: flex;">
+                        <div class="col-sm-6" style="margin: auto">
+                            {% if position is not same as(3) %}
+                            <input class="form-control qt-input-changer" style="width: 110px;" name="qt_{{product.item_id}}"
+                                   value="{{product.count_item}}"
+                                   data-item-id="{{product.item_id}}" data-unit-cost="{{product.unit_cost}}" min="0"
+                                   max="{{product.item_limit}}" type="number">
+                            {% else %}
+                                {{product.count_item}}
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-            </form>
 
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
-            {{product.item_limit}}
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
-            {{product.item_limit}}
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+                </td>
+                <td>
+                    {{product.unit_cost}} MGA
+                </td>
+                <td>
+                    <span id="total_{{product.item_id}}">0</span> MGA
+                </td>
+            </tr>
+            {% endfor %}
+            <tr class="">
+                <td style="padding-left: 15px"></td>
+                <td></td>
+                <td>
+                    <h5 class="font-strong">Total</h5>
+                </td>
+                <td style="font-weight: bold">
+                    <span class="font-strong" id="total">0</span> MGA
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% if position is not same as(3) %}
+    <div>
+        <button class="btn btn-warning" type="submit">Valider ma demande</button>
+    </div>
+    {% endif %}
+</form>
