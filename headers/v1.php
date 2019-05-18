@@ -4,43 +4,43 @@
         $social_icons = yozi_get_config('header_social_links_icon');
     ?>
     <?php if(is_active_sidebar( 'sidebar-topbar-left' ) || is_active_sidebar( 'sidebar-topbar-right' ) || !empty($social_links) ) {?>
-        <div id="apus-topbar" class="apus-topbar clearfix">
-            <div class="wrapper-large">
-                <div class="container-fluid">
-                    <?php if ( is_active_sidebar( 'sidebar-topbar-left' ) ) { ?>
-                        <div class="pull-left">
-                            <div class="topbar-left">
-                                <?php dynamic_sidebar( 'sidebar-topbar-left' ); ?>
-                            </div>
-                        </div>
-                    <?php } ?>
-                    <div class="topbar-right pull-right">
-                        <?php
-                            if ( !empty($social_links) ) {
-                                ?>
-                                <ul class="social-top pull-right">
-                                    <?php foreach ($social_links as $key => $value) { ?>
-                                        <li class="social-item">
-                                            <a href="<?php echo esc_url($value); ?>">
-                                                <i class="<?php echo esc_attr($social_icons[$key]); ?>"></i>
-                                            </a>
-                                        </li>
-                                    <?php } ?>
-                                </ul>
-                                <?php
-                            }
-                        ?>
-                        <?php if ( is_active_sidebar( 'sidebar-topbar-right' ) ) { ?>
-                            <div class="pull-right">
-                                <div class="topbar-right-inner">
-                                    <?php dynamic_sidebar( 'sidebar-topbar-right' ); ?>
-                                </div>
-                            </div>
-                        <?php } ?>
-                    </div>
-                </div>
-            </div>  
-        </div>
+<!--        <div id="apus-topbar" class="apus-topbar clearfix">-->
+<!--            <div class="wrapper-large">-->
+<!--                <div class="container-fluid">-->
+<!--                    --><?php //if ( is_active_sidebar( 'sidebar-topbar-left' ) ) { ?>
+<!--                        <div class="pull-left">-->
+<!--                            <div class="topbar-left">-->
+<!--                                --><?php //dynamic_sidebar( 'sidebar-topbar-left' ); ?>
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    --><?php //} ?>
+<!--                    <div class="topbar-right pull-right">-->
+<!--                        --><?php
+//                            if ( !empty($social_links) ) {
+//                                ?>
+<!--                                <ul class="social-top pull-right">-->
+<!--                                    --><?php //foreach ($social_links as $key => $value) { ?>
+<!--                                        <li class="social-item">-->
+<!--                                            <a href="--><?php //echo esc_url($value); ?><!--">-->
+<!--                                                <i class="--><?php //echo esc_attr($social_icons[$key]); ?><!--"></i>-->
+<!--                                            </a>-->
+<!--                                        </li>-->
+<!--                                    --><?php //} ?>
+<!--                                </ul>-->
+<!--                                --><?php
+//                            }
+//                        ?>
+<!--                        --><?php //if ( is_active_sidebar( 'sidebar-topbar-right' ) ) { ?>
+<!--                            <div class="pull-right">-->
+<!--                                <div class="topbar-right-inner">-->
+<!--                                    --><?php //dynamic_sidebar( 'sidebar-topbar-right' ); ?>
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        --><?php //} ?>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>  -->
+<!--        </div>-->
     <?php } ?>
     <div class="wrapper-large">
         <div class="<?php echo (yozi_get_config('keep_header') ? 'main-sticky-header-wrapper' : ''); ?>">

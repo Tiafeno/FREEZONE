@@ -261,7 +261,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                     $validate = true;
                                 }
                             }
-
                         }
                     }
 
@@ -289,7 +288,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                         break;
                     case 2:
                         wc_add_notice("Votre demande est désactivé par l'administrateur", "error");
-
                         break;
                     case 3:
                         wc_add_notice("Vous ne pouvez plus modifier cette demande", "notice");

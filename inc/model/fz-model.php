@@ -22,16 +22,6 @@ class fzModel {
 SAV;
                 $wpdb->query($sav_request);
 
-                $quotation_product_sql = <<<QTP
-    CREATE TABLE IF NOT EXISTS {$wpdb->prefix}quotation_product (
-      `ID` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-      `order_id` BIGINT(20) UNSIGNED NOT NULL,
-      `product_id` BIGINT(20) UNSIGNED NOT NULL,
-      `status` TINYINT(1) NOT NULL DEFAULT 0,
-      `suppliers` LONGTEXT NULL,
-      PRIMARY KEY (`ID`));
-QTP;
-                $wpdb->query($quotation_product_sql);
 
             });
     }
