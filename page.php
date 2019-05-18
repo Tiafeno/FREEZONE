@@ -13,6 +13,7 @@
  *Template Name: Page Default
  */
 
+
 get_header();
 $sidebar_configs = yozi_get_page_layout_configs();
 

@@ -19,6 +19,7 @@ require_once 'api/v1/apiProduct.php';
 require_once 'api/v1/apiFzProduct.php';
 require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
+require_once 'api/v1/apiSav.php';
 require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
@@ -118,9 +119,23 @@ add_action('admin_init', function () {
 }, 100);
 
 add_action('init', function () {
+    add_action('wp_ajax_searchproducts', 'search_products');
+    add_action('wp_ajax_nopriv_searchproducts', 'search_products');
+
     // Init wordpress
-//    $User = wp_get_current_user();
-//    $order = new WC_Order(1156);
-//    $order->set_customer_id($User->ID);
-//    $order->save();
+
 }, 10);
+
+function search_products() {
+
+    // you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
+    $search_results = new WP_Query( array(
+        's' => esc_sql($_REQUEST['q']), // the search query
+        'post_type' => 'product',
+        'post_status' => 'publish', // if you don't want drafts to be returned
+        //'ignore_sticky_posts' => 1,
+        'posts_per_page' => 20 // how much to show at once
+    ) );
+
+    wp_send_json_success($search_results->posts);
+}
