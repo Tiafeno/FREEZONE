@@ -9,8 +9,16 @@
     }
 </style>
 <script type="text/javascript">
+    let METADATA;
     (function ($) {
+        const formatter = new Intl.NumberFormat('de-DE', {
+            style: 'currency',
+            currency: 'MGA',
+            minimumFractionDigits: 0
+        });
+
         $(document).ready(function () {
+            METADATA = _.flatten({{quotation.meta_data|raw}});
             reCalculate();
 
             let inputChangers = $('.qt-input-changer');
@@ -18,6 +26,12 @@
                 $(element).on('change', e => {
                     reCalculate();
                 });
+            });
+
+            $('.unit-cost').each((index, element) => {
+               let cost = $(element).text();
+               cost = parseFloat(cost);
+               $(element).text(formatter.format(cost));
             });
 
             function reCalculate() {
@@ -28,10 +42,10 @@
                     let qt = $(el).val();
                     let subTotal = parseInt(data.unitCost) * parseInt(qt);
                     total += subTotal;
-                    $(`#total_${itemId}`).text(subTotal);
+                    $(`#total_${itemId}`).text(formatter.format(subTotal));
                 });
 
-                $("#total").text(total);
+                $("#total").text(formatter.format(total));
             }
 
         });
@@ -67,26 +81,24 @@
 
                     <div class="row" style="display: flex;">
                         <div class="col-sm-6" style="margin: auto">
-                            {% if position is not same as(3) %}
                             <input class="form-control qt-input-changer" style="width: 110px;" name="qt_{{product.item_id}}"
-                                   value="{{product.count_item}}"
+                                   value="{{product.count_item}}" data-product-id="{{product.get_id()}}"
+                                   {% if position == 3 %}disabled="disabled"{% endif %}
                                    data-item-id="{{product.item_id}}" data-unit-cost="{{product.unit_cost}}" min="0"
                                    max="{{product.item_limit}}" type="number">
-                            {% else %}
-                                {{product.count_item}}
-                            {% endif %}
                         </div>
                     </div>
 
                 </td>
                 <td>
-                    {{product.unit_cost}} MGA
+                    <span class="unit-cost">{{product.unit_cost}}</span>
                 </td>
                 <td>
-                    <span id="total_{{product.item_id}}">0</span> MGA
+                    <span id="total_{{product.item_id}}">0</span>
                 </td>
             </tr>
             {% endfor %}
+
             <tr class="">
                 <td style="padding-left: 15px"></td>
                 <td></td>
@@ -94,7 +106,7 @@
                     <h5 class="font-strong">Total</h5>
                 </td>
                 <td style="font-weight: bold">
-                    <span class="font-strong" id="total">0</span> MGA
+                    <span class="font-strong" id="total">0</span>
                 </td>
             </tr>
         </tbody>

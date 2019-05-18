@@ -59,7 +59,7 @@ class apiSupplier
                 $review_limit = new DateTime("$today - 2 day");
                 $review_limit_string = $review_limit->format('Y-m-d H:i:s');
                 $sql = <<<SLQ
-SELECT * FROM $wpdb->users as users
+SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->users as users
 WHERE users.ID IN (
 	SELECT CAST(pm2.meta_value AS SIGNED) FROM $wpdb->posts as pts
 	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
@@ -79,19 +79,10 @@ SLQ;
                 }
 
                 $count_sql = <<<CPR
-SELECT COUNT(*) FROM $wpdb->users as users
-WHERE users.ID IN (
-	SELECT CAST(pm2.meta_value AS SIGNED) FROM $wpdb->posts as pts
-	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
-    JOIN $wpdb->postmeta as pm2 ON (pm2.post_id = pts.ID)
-		WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$review_limit_string' AS DATETIME)
-			AND pm2.meta_key = "user_id"
-			AND pts.post_type = "fz_product" 
-			AND pts.post_status = "publish"
-	GROUP BY pm.meta_value HAVING COUNT(*) > 0
-) 
+SELECT FOUND_ROWS()
 CPR;
                 $total = $wpdb->get_var($count_sql);
+                $wpdb->flush();
                 return [
                     "recordsTotal" => intval($total),
                     "recordsFiltered" => intval($total),

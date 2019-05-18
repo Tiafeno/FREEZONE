@@ -1,5 +1,6 @@
 <?php
 require_once get_stylesheet_directory() . '/vendor/autoload.php';
+require_once get_stylesheet_directory() . '/inc/fz-mail.php';
 require_once get_stylesheet_directory() . '/inc/fz-functions.php';
 
 add_action('wp_enqueue_scripts', function () {
@@ -118,6 +119,15 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 ]);
                 break;
             case 'new':
+                wp_enqueue_style('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css' );
+                wp_enqueue_script('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', array('jquery') );
+
+                wp_enqueue_script('article-new', get_stylesheet_directory_uri() . '/assets/js/article-new.js', array( 'jquery', 'select2' ), '0.0.3' );
+                wp_localize_script('article-new', 'fzOptions', [
+                    'root' => esc_url_raw(rest_url()),
+                    'admin_ajax' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('wp_rest')
+                ]);
 
                 if ($_POST) {
                     $price = isset($_POST['price']) ? sanitize_text_field($_POST['price']) : 0;
@@ -215,6 +225,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
+    wp_enqueue_script('underscore');
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
@@ -281,10 +292,25 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $products[] = $quotation_product;
                 }
 
+                $meta_data_suppliers = [];
+                foreach ($products as $qProduct) {
+                    $suppliers =  array_map(function ($supplier) {
+                        $fzSupplier = new \classes\fzSupplier(intval($supplier->supplier));
+                        $fzSupplierArticle = new \classes\fzSupplierArticle(intval($supplier->article_id));
+
+                        $supplier->commission = $fzSupplier->commission;
+                        $supplier->price = intval($fzSupplierArticle->regular_price);
+                        $supplier->get = intval($supplier->get);
+                        $supplier->total_sales = $fzSupplierArticle->total_sales;
+
+                        return $supplier;
+                    }, $qProduct->suppliers);
+                    $meta_data_suppliers[] = $suppliers;
+                }
 
                 switch ($order->get_position()) {
                     case 0:
-                        wc_add_notice("Votre demande est en cours de verification", "notice");
+                        wc_add_notice("Votre demande est en cours de validation. Veuillez réessayer plus tard", "notice");
                         break;
                     case 2:
                         wc_add_notice("Votre demande est désactivé par l'administrateur", "error");
@@ -299,7 +325,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     'order_id' => (int)$order_id,
                     'products' => $products,
                     'position' => intval($order->get_position()),
-                    'date_add' => $order->get_dateadd()
+                    'date_add' => $order->get_dateadd(),
+                    'meta_data' => json_encode($meta_data_suppliers)
                 ];
 
 

@@ -62,7 +62,7 @@ class fzAPI
 
             register_rest_route('api', '/fz_product/(?P<action>\w+)', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods' => \WP_REST_Server::READABLE,
                     'callback' => [new \apiArticle(), 'action_collect_articles'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -70,7 +70,47 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/sav', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => function () {
+                        global $wpdb;
 
+                        $length = isset($_REQUEST['length']) ? intval($_REQUEST['length']): 10;
+                        $start = isset($_REQUEST['start']) ? intval($_REQUEST['start']) : 0;
+                        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$wpdb->prefix}sav LIMIT $length OFFSET $start";
+                        $results = $wpdb->get_results($sql);
+                        $total = $wpdb->get_var("SELECT FOUND_ROWS()");
+                        foreach ($results as $sav) {
+                            $sav->user = get_userdata(intval($sav->user_id));
+                            unset($sav->user_id);
+                        }
+                        $wpdb->flush();
+                        return [
+                            "recordsTotal" => intval($total),
+                            "recordsFiltered" => intval($total),
+                            'data' => $results
+                        ];
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ]
+            ]);
+
+            register_rest_route('api', '/sav/(?P<action>\w+)/(?P<id>\d+)', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => function (\WP_REST_Request $request) {
+                        $apiSav = new \apiSav();
+                        $reflexionMethod = new \ReflectionMethod($apiSav, $request['action']);
+                        return $reflexionMethod->invokeArgs(new \apiSav(), [$request['id']]);
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('delete_posts');
+                    }
+                ]
+            ]);
 
 
             register_rest_route('api', '/supplier/(?P<action>\w+)', [
@@ -83,7 +123,7 @@ class fzAPI
                 ],
             ]);
 
-            register_rest_route('api', '/mail/client/(?P<order_id>\d+)', [
+            register_rest_route('api', '/mail/order/(?P<order_id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiMail(), 'send_order_client'],
