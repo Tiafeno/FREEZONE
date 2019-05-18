@@ -148,8 +148,8 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                             update_field('total_sales', intval($stock), $result);
                             update_field('user_id', intval($User->ID), $result);
                             update_field('product_id', $product_id, $result);
-                            update_field('date_review', date_i18n('Y-m-d H:m:s'), $result);
-                            update_field('date_add', date_i18n('Y-m-d H:m:s'), $result);
+                            update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
+                            update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
                             wc_add_notice("Article ajouter avec succès", 'success');
 
                             wp_redirect(wc_get_account_endpoint_url('stock-management'));
