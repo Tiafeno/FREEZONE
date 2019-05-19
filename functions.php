@@ -34,7 +34,12 @@ add_action('init', function () {
     //add_rewrite_rule("^demandes/([0-9]+)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
     flush_rewrite_rules();
 
+
 });
+
+add_action('init', function () {
+
+}, 10);
 
 add_action('template_redirect', function () {
     global $wp_query;
