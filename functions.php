@@ -441,6 +441,33 @@ add_action('user_register', function ($user_id) {
 
 });
 
+add_action('delete_user', function ($user_id) {
+   $user_obj = get_userdata($user_id);
+   $roles = $user_obj->roles;
+   if (in_array('fz-supplier', $roles)) {
+       // Effacer tous ces articles
+        $args = [
+            'post_type' => "fz_product",
+            'post_type' => "any",
+            "numberposts" => -1,
+            "meta_query" => [
+                [
+                    "key" => 'user_id',
+                    "value" => $user_id,
+                    "compare" => "="
+                ]
+            ]
+        ];
+
+        $post_articles = get_posts($args);
+        foreach ($post_articles as $post) {
+            wp_delete_post($post->ID, true);
+        }
+
+        // Ne pas effacer les demandes ou les commandes
+   }
+}, 10, 1);
+
 
 add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
 function fz_order_received ($order_id)
