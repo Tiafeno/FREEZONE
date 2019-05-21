@@ -238,6 +238,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
             return $where;
         }, 10, 1);
+        
         $args = [
             'post_type' => "fz_product",
             'post_status' => "publish",
