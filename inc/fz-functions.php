@@ -6,6 +6,7 @@ require_once "lib/underscore.php";
 require_once 'shortcodes/after-sales-service.php';
 
 require_once 'classes/fzRoles.php';
+require_once 'classes/fzSav.php';
 require_once 'classes/fzPTFreezone.php';
 require_once 'classes/fzParticular.php';
 require_once 'classes/fzSupplier.php';

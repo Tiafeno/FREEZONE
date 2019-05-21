@@ -8,6 +8,7 @@
 
 namespace api;
 
+use classes\fzSav;
 use classes\fzSupplier;
 
 if (!defined('ABSPATH')) {
@@ -75,21 +76,21 @@ class fzAPI
                     'methods' => \WP_REST_Server::READABLE,
                     'callback' => function () {
                         global $wpdb;
+                        $savs = [];
 
                         $length = isset($_REQUEST['length']) ? intval($_REQUEST['length']): 10;
                         $start = isset($_REQUEST['start']) ? intval($_REQUEST['start']) : 0;
                         $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$wpdb->prefix}sav LIMIT $length OFFSET $start";
                         $results = $wpdb->get_results($sql);
                         $total = $wpdb->get_var("SELECT FOUND_ROWS()");
-                        foreach ($results as $sav) {
-                            $sav->user = get_userdata(intval($sav->user_id));
-                            unset($sav->user_id);
+                        foreach ($results as $result) {
+                            $savs[] = new fzSav((int) $result->ID, true);
                         }
                         $wpdb->flush();
                         return [
                             "recordsTotal" => intval($total),
                             "recordsFiltered" => intval($total),
-                            'data' => $results
+                            'data' => $savs
                         ];
                     },
                     'permission_callback' => function ($data) {
@@ -98,6 +99,12 @@ class fzAPI
                 ]
             ]);
 
+            /**
+             * Route pour la demande de service
+             *
+             * @action: get, delete
+             * @id int - Identifiant de la demande de service dans la base de donnée
+             */
             register_rest_route('api', '/sav/(?P<action>\w+)/(?P<id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::READABLE,
@@ -112,7 +119,9 @@ class fzAPI
                 ]
             ]);
 
-
+            /**
+             * Pour récuperer les fournisseurs
+             */
             register_rest_route('api', '/supplier/(?P<action>\w+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
@@ -123,6 +132,9 @@ class fzAPI
                 ],
             ]);
 
+            /**
+             * Envoyer un mail au client pour le devis
+             */
             register_rest_route('api', '/mail/order/(?P<order_id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
