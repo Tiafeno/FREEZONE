@@ -30,6 +30,7 @@ add_action('init', function () {
 
     add_rewrite_tag('%componnent%', '([^&]+)');
     add_rewrite_tag('%id%', '([^&]+)');
+    add_rewrite_tag('%conf%', '([^&]+)');
     add_rewrite_tag('%pa_%', '([^&]+)'); // paged
     //add_rewrite_rule("^demandes/([0-9]+)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
     flush_rewrite_rules();
@@ -77,14 +78,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
     $posts_per_page = 10;
     // Access security
     $User = wp_get_current_user();
-    if (!in_array('fz-supplier', $User->roles)) {
+    // Vérification d'autorisation utilisateur
+    if ( ! in_array('fz-supplier', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
         wc_clear_notices();
         return false;
     }
-    global $Engine, $fz_model, $wpdb, $wp_query;
-
+    global $Engine, $fz_model, $wp_query;
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
@@ -171,7 +172,48 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
                 break;
+            case 'trash':
+                $error = false;
+                $stock_management_endpoint_url = wc_get_account_endpoint_url("stock-management");
+                $article_id =  isset($wp_query->query_vars['id']) ? $wp_query->query_vars['id'] : 0;
+                if ( ! $article_id ) return false;
 
+                $article_id = intval($article_id);
+                $postArticle = get_post($article_id);
+                if ( is_null($postArticle) ) $error = true;
+
+                if ($error) { wc_add_notice("Une erreur s'est produit pendant l'operation", 'error'); } else {
+                    $confirmation =  isset($wp_query->query_vars['conf']) ? $wp_query->query_vars['conf'] : null;
+                    $confirmation = is_null($confirmation) ? $confirmation : filter_var($confirmation, FILTER_VALIDATE_BOOLEAN);
+                    if ( ! is_null($confirmation) && $confirmation) {
+                        // Supprimer définitivement l'article dans la base de donnée
+                        wp_delete_post($article_id, true);
+
+                        wc_add_notice("Article supprimer avec succèss", 'success');
+                        wc_print_notices();
+                        echo "<a href='{$stock_management_endpoint_url}' class='btn btn-sm btn-default'>Retour</a>";
+                    }
+
+                    if ( ! is_null($confirmation) && !$confirmation) {
+                        wp_redirect(remove_query_arg(['componnent', 'id'], $stock_management_endpoint_url));
+                        exit();
+                    }
+
+                    if (is_null($confirmation)) {
+                        $content = "Voulez-vous vraiment supprimer cet article? <br> <b>{$postArticle->post_title}</b>";
+                        $content .= "<div>";
+                        $content .= "<a href='?componnent=trash&id={$article_id}&conf=true' class='btn btn-sm btn-primary'>OUI</a>";
+                        $content .= "<a href='?componnent=trash&id={$article_id}&conf=false' " .
+                            " style='margin-left: 10px' class='btn btn-sm btn-default'>NON</a>";
+                        $content .= "</div>";
+                        echo $content;
+                    }
+
+
+                }
+
+                wc_clear_notices();
+                break;
         endswitch;
     } else {
         $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;
@@ -299,6 +341,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                 $meta_data_suppliers = [];
                 foreach ($products as $qProduct) {
+
+                    if (is_null($qProduct->suppliers) || empty($qProduct->suppliers)) continue;
                     $suppliers =  array_map(function ($supplier) {
                         $fzSupplier = new \classes\fzSupplier(intval($supplier->supplier));
                         $fzSupplierArticle = new \classes\fzSupplierArticle(intval($supplier->article_id));

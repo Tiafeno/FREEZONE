@@ -25,7 +25,7 @@ class fzQuotationProduct extends \WC_Product
      * [{id: 0, get: 2}, ...]
      * @access public
      */
-    public $suppliers;
+    public $suppliers = [];
     /**
      * Short description of attribute count_item
      *
