@@ -406,13 +406,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
 }, 10);
 
-
-/*****************************************************
- * Mettre à jour la formulaire d'inscription
- *
- * Edit: form.login.php file for woocommerce template
- *****************************************************/
-
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
@@ -467,7 +460,6 @@ add_action('delete_user', function ($user_id) {
         // Ne pas effacer les demandes ou les commandes
    }
 }, 10, 1);
-
 
 add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
 function fz_order_received ($order_id)

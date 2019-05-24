@@ -38,6 +38,21 @@ class fzPTFreezone
               ['delete_private_articles' => ['administrator']],
               ['publish_articles' => ['administrator', 'fz-supplier']],
             ];
+            $caps = array_merge($caps, [
+                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['read_private_sav' => ['administrator']],
+                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-supplier']],
+                ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_private_savs' => ['administrator']],
+                ['delete_sav'  => ['administrator']],
+                ['delete_savs' => ['administrator']],
+                ['delete_others_savs' => ['administrator']],
+                ['delete_published_savs' => ['administrator']],
+                ['delete_private_savs' => ['administrator']],
+                ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+            ]);
             foreach ($caps as $cap):
                 if (is_array($cap)) {
                     foreach ($cap as $capabilitie => $roles) {
@@ -102,6 +117,51 @@ class fzPTFreezone
             'show_in_rest' => true,
             'query_var' => true
         ]);
+
+
+        register_post_type('fz_sav', [
+            'label' => "S.A.V",
+            'labels' => [
+                'name' => "S.A.V",
+                'singular_name' => "Service après vente",
+                'add_new' => 'Ajouter',
+                'add_new_item' => "Ajouter un S.A.V",
+                'edit_item' => 'Modifier',
+                'view_item' => 'Voir',
+                'search_items' => "Trouver des S.A.V",
+                'all_items' => "Tous les S.A.V",
+                'not_found' => "Aucun service trouver",
+                'not_found_in_trash' => "Aucun service dans la corbeille"
+            ],
+            'public' => true,
+            'hierarchical' => false,
+            'menu_position' => null,
+            'show_ui' => true,
+            'has_archive' => false,
+            'rewrite' => ['slug' => 'sav'],
+            'capabilities' => [
+                'read_post' => 'read_sav',
+                'read_private_posts' => 'read_private_sav',
+                'edit_post' => 'edit_sav',
+                'edit_posts' => 'edit_savs',
+                'edit_others_posts' => 'edit_others_savs',
+                'edit_published_posts' => 'edit_published_savs',
+                'edit_private_posts' => 'edit_private_savs',
+                'delete_post' => 'delete_sav',
+                'delete_posts' => 'delete_savs',
+                'delete_others_posts' => 'delete_others_savs',
+                'delete_published_posts' => 'delete_published_savs',
+                'delete_private_posts' => 'delete_private_savs',
+                'publish_posts' => 'publish_savs',
+                //'moderate_comments'			=> 'moderate_formation_comments',
+            ],
+            'map_meta_cap' => true,
+            'menu_icon' => 'dashicons-archive',
+            'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
+            'show_in_rest' => true,
+            'query_var' => true
+        ]);
+
 
     }
 }

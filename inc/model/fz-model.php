@@ -65,13 +65,9 @@ SQL;
 
         return $request;
     }
+
     public function get_sav($sav_id) {
-        global $wpdb;
-        $sav_id = intval($sav_id);
-        $sql = <<<SQL
-SELECT * FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-SQL;
-        return $wpdb->get_row($sql);
+
 
     }
 }

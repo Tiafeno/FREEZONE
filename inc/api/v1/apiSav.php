@@ -9,21 +9,7 @@
 class apiSav
 {
     public function __construct () { }
-    public function get($sav_id) {
-        global $wpdb;
-        $sql = <<<SQL
-SELECT * FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-SQL;
-        return $wpdb->get_row($sql);
-
-    }
-    public function delete($sav_id) {
-        global $wpdb;
-        $query = <<<QRY
-DELETE FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-QRY;
-        return $wpdb->query($query);
-
-    }
+    public function get($sav_id) {}
+    public function delete($sav_id) {}
 
 }
