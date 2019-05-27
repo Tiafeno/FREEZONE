@@ -5,19 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/fzAPI.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/fzAPI.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiArticle.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiArticle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiProduct.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiQuotation.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiQuotation.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiSav.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiSav.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/classes/fzSav.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/classes/fzSav.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/classes/fzSupplier.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/classes/fzSupplier.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/model/fz-model.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/model/fz-model.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page-sav.php" beforeDir="false" afterPath="$PROJECT_DIR$/page-sav.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page-updated.php" beforeDir="false" afterPath="$PROJECT_DIR$/page-updated.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wc/stock/article-table.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wc/stock/article-table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/fz-mail.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/fz-mail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/mail/fz-insert-sav.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/mail/fz-insert-sav.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,11 +31,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="553">
-              <caret line="486" column="42" selection-start-line="486" selection-start-column="42" selection-end-line="486" selection-end-column="42" />
+            <state relative-caret-position="644">
+              <caret line="494" column="42" lean-forward="true" selection-start-line="494" selection-start-column="42" selection-end-line="494" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fz-mail.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="91">
+              <caret line="7" column="37" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fz-insert-sav.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/mail/fz-insert-sav.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="212">
+              <caret line="240" column="143" selection-start-line="240" selection-start-column="143" selection-end-line="240" selection-end-column="143" />
             </state>
           </provider>
         </entry>
@@ -53,56 +61,17 @@
       <file leaf-file-name="fzSav.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/classes/fzSav.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="65">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+            <state relative-caret-position="195">
+              <caret line="20" column="25" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="617">
-              <caret line="98" column="44" selection-start-line="98" selection-start-column="44" selection-end-line="98" selection-end-column="44" />
-              <folding>
-                <element signature="e#110#128#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="apiSav.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/api/v1/apiSav.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="41" column="5" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="page-updated.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/page-updated.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="241">
-              <caret line="34" column="34" selection-start-line="34" selection-start-column="34" selection-end-line="34" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="page-sav.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="page-sav.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page-sav.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="442">
               <caret line="43" column="8" selection-start-line="43" selection-start-column="8" selection-end-line="45" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fz-model.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/model/fz-model.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="31" column="20" selection-start-line="31" selection-start-column="20" selection-end-line="31" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -181,10 +150,8 @@
         <option value="$PROJECT_DIR$/templates/wc/demande/quotations-table.html" />
         <option value="$PROJECT_DIR$/page.php" />
         <option value="$PROJECT_DIR$/headers/v1.php" />
-        <option value="$PROJECT_DIR$/templates/mail/fz-insert-sav.html" />
         <option value="$PROJECT_DIR$/templates/wc/demande/quotation-edit.html" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" />
-        <option value="$PROJECT_DIR$/inc/fz-mail.php" />
         <option value="$PROJECT_DIR$/assets/js/article-new.js" />
         <option value="$PROJECT_DIR$/templates/wc/stock/article-new.html" />
         <option value="$PROJECT_DIR$/templates/wc/stock/article-edit.html" />
@@ -201,10 +168,12 @@
         <option value="$PROJECT_DIR$/page-updated.php" />
         <option value="$PROJECT_DIR$/templates/wc/stock/article-table.html" />
         <option value="$PROJECT_DIR$/page-sav.php" />
-        <option value="$PROJECT_DIR$/functions.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiSav.php" />
         <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSav.php" />
+        <option value="$PROJECT_DIR$/templates/mail/fz-insert-sav.html" />
+        <option value="$PROJECT_DIR$/inc/fz-mail.php" />
+        <option value="$PROJECT_DIR$/functions.php" />
       </list>
     </option>
   </component>
@@ -230,7 +199,7 @@
       <path value="$PROJECT_DIR$/vendor/automattic/woocommerce" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="98" />
     <option name="y" value="-4" />
     <option name="width" value="1456" />
@@ -503,7 +472,7 @@
       <workItem from="1558693744950" duration="3533000" />
       <workItem from="1558709429601" duration="1202000" />
       <workItem from="1558762049906" duration="6726000" />
-      <workItem from="1558885970785" duration="12961000" />
+      <workItem from="1558885970785" duration="13721000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -523,10 +492,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="353760000" />
+    <option name="totallyTimeSpent" value="354520000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="886" extended-state="7" />
+    <frame x="-8" y="-8" width="1456" height="886" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -792,13 +761,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/mail/fz-insert-sav.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="747">
-          <caret line="264" column="37" lean-forward="true" selection-start-line="264" selection-start-column="37" selection-end-line="264" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/mail/ask-confirm-order.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -810,13 +772,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1547">
           <caret line="37" column="6" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="3" column="52" selection-start-line="3" selection-start-column="52" selection-end-line="3" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -885,13 +840,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/api/v1/apiMail.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
@@ -934,24 +882,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/page-updated.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
-          <caret line="34" column="34" selection-start-line="34" selection-start-column="34" selection-end-line="34" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="553">
-          <caret line="486" column="42" selection-start-line="486" selection-start-column="42" selection-end-line="486" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiProduct.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="16" column="17" lean-forward="true" selection-start-line="16" selection-start-column="17" selection-end-line="16" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page-updated.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="34" column="34" selection-start-line="34" selection-start-column="34" selection-end-line="34" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -972,10 +913,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzSav.php">
+    <entry file="file://$PROJECT_DIR$/inc/api/v1/apiMail.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="59">
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -983,6 +924,34 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="43" column="8" selection-start-line="43" selection-start-column="8" selection-end-line="45" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzSav.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="20" column="25" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/mail/fz-insert-sav.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="240" column="143" selection-start-line="240" selection-start-column="143" selection-end-line="240" selection-end-column="143" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="7" column="37" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="644">
+          <caret line="494" column="42" lean-forward="true" selection-start-line="494" selection-start-column="42" selection-end-line="494" selection-end-column="42" />
         </state>
       </provider>
     </entry>

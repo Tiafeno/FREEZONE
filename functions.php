@@ -491,4 +491,7 @@ add_action('acf/save_post', function ($post_id) {
     $product_mark = get_field('mark', $post_id);
 
     wp_update_post(['ID' => $post_id, 'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"]);
+
+    // Envoyer un email aux administrateur
+    do_action('fz_insert_sav', $post_id);
 });

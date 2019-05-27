@@ -192,6 +192,18 @@
                                                             <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
                                                                 <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
                                                                     <tr style="border-collapse:collapse;">
+                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">TYPE DE CLIENT</h4> </td>
+                                                                        <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">
+                                                                            {% if sav.client is not empty %} {{sav.client.label}} {% else %} N/A {% endif %}
+                                                                        </h4> </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="border-collapse:collapse;">
+                                                            <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
+                                                                <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
+                                                                    <tr style="border-collapse:collapse;">
                                                                         <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;"> MARQUE</h4> </td>
                                                                         <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">{{sav.mark}}</h4> </td>
                                                                     </tr>
@@ -202,9 +214,9 @@
                                                             <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
                                                                 <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
                                                                     <tr style="border-collapse:collapse;">
-                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">TYPE</h4> </td>
+                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">PRODUIT</h4> </td>
                                                                         <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">
-																		{% if sav.type is not empty %} {{sav.type}} {% else %} N/A {% endif %}
+																		{% if sav.product is not empty %} {{sav.product}} {% else %} N/A {% endif %}
 																		</h4> </td>
                                                                     </tr>
                                                                 </table>
@@ -214,8 +226,8 @@
                                                             <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
                                                                 <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
                                                                     <tr style="border-collapse:collapse;">
-                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">REFERENCE</h4> </td>
-                                                                        <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">{{sav.reference}}</h4> </td>
+                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">STATUT DU PRODUIT</h4> </td>
+                                                                        <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">{{sav.status.label}}</h4> </td>
                                                                     </tr>
                                                                 </table>
 															</td>
@@ -224,21 +236,9 @@
                                                             <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
                                                                 <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
                                                                     <tr style="border-collapse:collapse;">
-                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">NUMERO DU PRODUIT</h4> </td>
+                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">FOURNISSEUR DU PRODUIT</h4> </td>
                                                                         <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">
-																		{% if sav.product_number is not empty %} {{sav.product_number}} {% else %} N/A {% endif %}
-																		</h4> </td>
-                                                                    </tr>
-                                                                </table>
-															</td>
-                                                        </tr>
-														<tr style="border-collapse:collapse;">
-                                                            <td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px;">
-                                                                <table style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:500px;" class="cke_show_border" cellspacing="1" cellpadding="1" border="0" align="left">
-                                                                    <tr style="border-collapse:collapse;">
-                                                                        <td width="80%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">NUMERO DE SERIE</h4> </td>
-                                                                        <td width="20%" style="padding:0;Margin:0;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;">
-																		{% if sav.serial_number is not empty %} {{sav.serial_number}} {% else %} N/A {% endif %}
+																		{% if sav.product_provider is not empty %} {{sav.product_provider.label}} {% else %} N/A {% endif %}
 																		</h4> </td>
                                                                     </tr>
                                                                 </table>

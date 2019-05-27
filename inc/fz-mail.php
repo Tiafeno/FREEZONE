@@ -6,7 +6,7 @@
 add_action('fz_insert_sav', function ($sav_id) {
     global $Engine;
     $admins = ['contact@falicrea.com'];
-    $Sav = \model\fzModel::getInstance()->get_sav($sav_id);
+    $Sav = new \classes\fzSav($sav_id);
     $User= wp_get_current_user();
     $phone = get_field('phone', 'user_'.$User->ID);
     $content = $Engine->render('@MAIL/fz-insert-sav.html', [
