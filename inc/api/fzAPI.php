@@ -61,62 +61,25 @@ class fzAPI
                 ],
             ]);
 
-            register_rest_route('api', '/fz_product/(?P<action>\w+)', [
+            register_rest_route('api', '/sav/', [
                 [
                     'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [new \apiSav(), 'get'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args' => []
+                ]
+            ]);
+
+            register_rest_route('api', '/fz_product/(?P<action>\w+)', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiArticle(), 'action_collect_articles'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
                     }
                 ],
-            ]);
-
-            register_rest_route('api', '/sav', [
-                [
-                    'methods' => \WP_REST_Server::READABLE,
-                    'callback' => function () {
-                        global $wpdb;
-                        $savs = [];
-
-                        $length = isset($_REQUEST['length']) ? intval($_REQUEST['length']): 10;
-                        $start = isset($_REQUEST['start']) ? intval($_REQUEST['start']) : 0;
-                        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$wpdb->prefix}sav LIMIT $length OFFSET $start";
-                        $results = $wpdb->get_results($sql);
-                        $total = $wpdb->get_var("SELECT FOUND_ROWS()");
-                        foreach ($results as $result) {
-                            $savs[] = new fzSav((int) $result->ID, true);
-                        }
-                        $wpdb->flush();
-                        return [
-                            "recordsTotal" => intval($total),
-                            "recordsFiltered" => intval($total),
-                            'data' => $savs
-                        ];
-                    },
-                    'permission_callback' => function ($data) {
-                        return current_user_can('edit_posts');
-                    }
-                ]
-            ]);
-
-            /**
-             * Route pour la demande de service
-             *
-             * @action: get, delete
-             * @id int - Identifiant de la demande de service dans la base de donnée
-             */
-            register_rest_route('api', '/sav/(?P<action>\w+)/(?P<id>\d+)', [
-                [
-                    'methods' => \WP_REST_Server::READABLE,
-                    'callback' => function (\WP_REST_Request $request) {
-                        $apiSav = new \apiSav();
-                        $reflexionMethod = new \ReflectionMethod($apiSav, $request['action']);
-                        return $reflexionMethod->invokeArgs(new \apiSav(), [$request['id']]);
-                    },
-                    'permission_callback' => function ($data) {
-                        return current_user_can('delete_posts');
-                    }
-                ]
             ]);
 
             /**
@@ -158,7 +121,7 @@ class fzAPI
 
     public function register_rest_supplier ()
     {
-        $metas = ['company_name', 'commission', 'address', 'phone', 'reference'];
+        $metas = ['company_name', 'address', 'phone', 'reference'];
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
@@ -185,6 +148,21 @@ class fzAPI
                 }
             ]);
         }
+
+        register_rest_field('fz_product', 'marge', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->update_meta_data("_fz_marge", $value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_meta("_fz_marge");
+
+                return $marge;
+            }
+        ]);
 
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {

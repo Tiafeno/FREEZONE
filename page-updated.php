@@ -33,8 +33,6 @@ yozi_render_breadcrumbs();
                                 endwhile;
                                 ?>
                             </div>
-                            
-
                                 <form method="POST" name="form_">
                                     <div class="row">
                                         <div class="col-sm-4">

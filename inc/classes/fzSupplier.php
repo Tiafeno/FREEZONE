@@ -52,7 +52,6 @@ class fzSupplier extends \WP_User
     public $address = null;
     public $phone = null;
     public $company_name = null;
-    public $commission = 0;
     public $firstname;
     public $lastname;
     public $date_add;
@@ -82,8 +81,6 @@ class fzSupplier extends \WP_User
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
             $this->company_name = get_field('company_name', 'user_'.$this->ID);
-            $commission = get_field('commission', 'user_'.$this->ID);
-            $this->commission = intval($commission);
             $this->firstname = $this->first_name;
             $this->lastname = $this->last_name;
             $register = $this->user_registered;
