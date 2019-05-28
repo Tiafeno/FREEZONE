@@ -32,6 +32,41 @@ add_action('fz_insert_sav', function ($sav_id) {
 /**
  * Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
  */
-add_action('fz_submit_articles_for_validation', function ($supplier_id) {
+add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message) {
+    global $Engine;
+
+    $Supplier = new \classes\fzSupplier($supplier_id);
+
+    $from = "contact@freezone.click";
+    $to = $Supplier->user_email;
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $url = home_url('/updated');
+    $nonce = base64_encode("update-{$Supplier->ID}");
+    $url .= "?fznonce={$nonce}&email={$Supplier->user_email}";
+
+    $today = date_i18n('Y-m-d H:i:s');
+    $date_expired = new DateTime("$today + 2 day");
+    $expired_encode = base64_encode($date_expired->format('Y-m-d H:i:s'));
+    $url .= "&e={$expired_encode}";
+
+    $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
+        'message' => $message,
+        'url' => $url
+    ]);
+
+    $send = wp_mail($to, $subject, $content, $headers);
+    if ($send) {
+        wp_send_json_success("Mail envoyer avec succès");
+    } else {
+        wp_send_json_error("Une erreur s'est produite pendant l'envoie. Le lien {$url}");
+    }
+
+}, 10, 3);
+
+
+add_action('complete_order', function ($order_id) {
 
 }, 10, 1);

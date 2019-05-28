@@ -115,6 +115,25 @@ class fzAPI
                 ]
             ], false);
 
+            /**
+             * Envoyer un mail pour un fournisseur.
+             * Cette registre permet d'envoyer un mail avec un lien pour mettre à jours l'articles
+             * en attente du fournisseur.
+             */
+            register_rest_route('api', '/mail/review/(?P<supplier_id>\d+)', [
+               [
+                   'methods' => \WP_REST_Server::CREATABLE,
+                   'callback' => function (\WP_REST_Request $rq) {
+                        $supplier_id = intval($rq['supplier_id']);
+                        $subject = $_REQUEST['subject'];
+                        $content = $_REQUEST['message'];
+
+                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content);
+
+                   }
+               ]
+            ]);
+
         });
 
     }

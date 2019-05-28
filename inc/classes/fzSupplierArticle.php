@@ -126,7 +126,7 @@ class fzSupplierArticle
     public function get_product()
     {
         $post_product = get_field('product_id', $this->ID);
-        $this->product = is_object($post_product) ? $post_product : get_post(intval($post_product));
+        $this->product = is_object($post_product) ? $post_product : new \WC_Product(intval($post_product));
 
         return $this->product;
     }
@@ -156,6 +156,13 @@ class fzSupplierArticle
         return $result;
     }
 
+    public function set_total_sales($value) {
+        if ( ! is_numeric($value) ) return false;
+        $result = update_field('total_sales', intval($value), $this->ID);
+
+        return $result;
+    }
+
     /**
      * Short description of method updateDateReview
      *
@@ -170,6 +177,10 @@ class fzSupplierArticle
         $result = update_field('date_review', $date_now, $this->ID);
 
         return $result;
+    }
+
+    public function save() {
+        return $this->update_date_review();
     }
 
 } /* end of class fzSupplierArticle */

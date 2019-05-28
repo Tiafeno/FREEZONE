@@ -39,7 +39,6 @@ add_action('init', function () {
 });
 
 add_action('init', function () {
-
 }, 10);
 
 add_action('template_redirect', function () {
@@ -50,7 +49,6 @@ add_action('template_redirect', function () {
     }
 
 });
-
 
 add_filter('woocommerce_account_menu_items', function ($items) {
     $logout = $items['customer-logout'];
@@ -311,6 +309,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                             foreach ( $items as $id => $item ) {
                                 if ($current_item_id === $id) {
+
+                                    $suppliers = wc_get_order_item_meta( $id, 'suppliers', true );
+                                    $suppliers = json_decode($suppliers);
+
                                     $current_total = (int)$item->get_total();
                                     $current_price = $current_total / $item->get_quantity();
 
@@ -320,6 +322,27 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                                     $item->save();
                                     $validate = true;
+
+                                    // TODO: Mettre à jour le meta suppliers
+                                    $rest = 0;
+                                    $suppliers = array_map(function($supplier) use ($quantity, &$rest) {
+                                        $article_id = (int) $supplier->article_id;
+                                        $article = new \classes\fzSupplierArticle($article_id);
+                                        $quantity = 0 === $rest ? $quantity : $rest;
+                                        if ($article->total_sales < $quantity) {
+                                            $take = $article->total_sales;
+                                            $rest = $quantity - $article->total_sales;
+                                        } else {
+                                            $take = $quantity;
+                                        }
+
+                                        $supplier->get = $take;
+
+                                        return $supplier;
+                                    }, $suppliers);
+
+                                    // https://docs.woocommerce.com/wc-apidocs/function-wc_update_order_item_meta.html
+                                    wc_update_order_item_meta($current_item_id, 'suppliers', json_encode($suppliers));
                                 }
                             }
                         }
@@ -328,6 +351,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     if ($validate) {
                         update_field('position', 3, $order->get_id());
                         $order->update_status('completed');
+                        // Envoyer un mail au administrateur
+                        do_action('complete_order', $order->get_id());
                     }
                     wc_add_notice("Validation envoyer avec succès", 'success');
                     unset($order, $items);

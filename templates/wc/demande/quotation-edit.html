@@ -10,7 +10,9 @@
 </style>
 <script type="text/javascript">
     let METADATA;
+    const tax = 20;
     (function ($) {
+
         const formatter = new Intl.NumberFormat('de-DE', {
             style: 'currency',
             currency: 'MGA',
@@ -45,7 +47,10 @@
                     $(`#total_${itemId}`).text(formatter.format(subTotal));
                 });
 
-                $("#total").text(formatter.format(total));
+                $("#subtotal_ht").text(formatter.format(total));
+                var __tax = (total * tax) / 100;
+                $('#tax').text(formatter.format(Math.round(__tax)));
+                $('#total_ttc').text(formatter.format(__tax + total));
             }
 
         });
@@ -103,10 +108,30 @@
                 <td style="padding-left: 15px"></td>
                 <td></td>
                 <td>
-                    <h5 class="font-strong">Total</h5>
+                    <h5 class="font-strong" style="margin: 0; text-align: left">Sous-total HT</h5>
                 </td>
                 <td style="font-weight: bold">
-                    <span class="font-strong" id="total">0</span>
+                    <span class="font-strong" id="subtotal_ht">0</span>
+                </td>
+            </tr>
+            <tr class="">
+                <td style="padding-left: 15px"></td>
+                <td></td>
+                <td>
+                    <h5  style="margin: 0; text-align: left">Taxe 20%</h5>
+                </td>
+                <td >
+                    <span  id="tax">0</span>
+                </td>
+            </tr>
+            <tr class="">
+                <td style="padding-left: 15px"></td>
+                <td></td>
+                <td>
+                    <h5 class="font-strong" style="margin: 0; text-align: left">Total TTC</h5>
+                </td>
+                <td style="font-weight: bold">
+                    <span class="font-strong" id="total_ttc">0</span>
                 </td>
             </tr>
         </tbody>
