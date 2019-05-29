@@ -334,6 +334,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                             $rest = $quantity - $article->total_sales;
                                         } else {
                                             $take = $quantity;
+                                            $rest = 0;
                                         }
 
                                         $supplier->get = $take;

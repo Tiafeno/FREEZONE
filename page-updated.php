@@ -84,7 +84,7 @@ WHERE
             $wpdb->postmeta
         WHERE
             meta_key = 'date_review'
-                AND CAST(meta_value AS DATE) < CAST('$now' AS DATE))
+                AND CAST(meta_value AS DATETIME) < CAST('$now' AS DATETIME))
     AND 
     pts.ID IN (SELECT 
         post_id
@@ -97,7 +97,6 @@ WHERE
 LIMIT $length OFFSET $offset
 CODE;
 
-
             $post_products = $wpdb->get_results($sql);
             $count_sql = "SELECT FOUND_ROWS()";
             $total = $wpdb->get_var($count_sql);
@@ -105,8 +104,6 @@ CODE;
             foreach ( $post_products as $_post ) {
                 $fzProducts[] = new \classes\fzSupplierArticle($_post->ID);
             }
-
-
         }
     }
 }

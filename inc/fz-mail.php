@@ -68,5 +68,24 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
 
 
 add_action('complete_order', function ($order_id) {
+    global $Engine;
 
+    $from = "no-reply@freezone.click";
+    $admins = ['contact@falicrea.com', 'commercial@freezone.click'];
+    $to = implode($admins, ',');
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
+    $quotation = new \classes\fzQuotation($order_id);
+    $client = $quotation->get_author();
+    $content = $Engine->render('@MAIL/complete_order.html', [
+        'quotation' => $quotation,
+        'client' => $client,
+        'url' => $url
+    ]);
+    $subject = "Une commande vient d'être validé sur le site freezone.click";
+
+    wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
