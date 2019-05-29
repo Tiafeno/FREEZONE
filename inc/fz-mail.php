@@ -28,7 +28,6 @@ add_action('fz_insert_sav', function ($sav_id) {
     }
 }, 10, 1);
 
-
 /**
  * Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
  */
@@ -85,7 +84,29 @@ add_action('complete_order', function ($order_id) {
         'client' => $client,
         'url' => $url
     ]);
-    $subject = "Une commande vient d'être validé sur le site freezone.click";
+    $subject = "#{$order_id} - Une commande vient d'être validé sur le site freezone.click";
 
     wp_mail($to, $subject, $content, $headers);
+}, 10, 1);
+
+
+add_action('fz_received_order', function ($order_id) {
+    global $Engine;
+    $from = "no-reply@freezone.click";
+    $admins = ['contact@falicrea.com', 'commercial@freezone.click'];
+    $to = implode($admins, ',');
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
+    $quotation = new \classes\fzQuotation($order_id);
+    $content = $Engine->render('@MAIL/received_order.html', [
+        'quotation' => $quotation,
+        'url' => $url
+    ]);
+    $subject = "#{$order_id} - Vous avez reçu une demande de devis sur le site freezone.click";
+
+    wp_mail($to, $subject, $content, $headers);
+
 }, 10, 1);

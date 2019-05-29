@@ -502,6 +502,10 @@ function fz_order_received ($order_id)
         wc_add_order_item_meta(intval($item_id), 'status', 0);
         wc_add_order_item_meta(intval($item_id), 'suppliers', null);
     }
+
+    // Envoyer un mail aux administrateurs
+    do_action('fz_received_order', $order_id);
+
 }
 
 // Cette action permet d'ajouter des meta donnée sur un post S.A.V pendant
