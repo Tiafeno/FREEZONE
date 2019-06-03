@@ -28,9 +28,7 @@ add_action('fz_insert_sav', function ($sav_id) {
     }
 }, 10, 1);
 
-/**
- * Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
- */
+// Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message) {
     global $Engine;
 
@@ -65,7 +63,6 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
 
 }, 10, 3);
 
-
 add_action('complete_order', function ($order_id) {
     global $Engine;
 
@@ -88,7 +85,6 @@ add_action('complete_order', function ($order_id) {
 
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
-
 
 add_action('fz_received_order', function ($order_id) {
     global $Engine;

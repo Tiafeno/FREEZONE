@@ -30,7 +30,7 @@ class fzAPI
 
             register_rest_route('api', '/quotations/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiQuotation(), 'collect_quotations'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -41,7 +41,7 @@ class fzAPI
 
             register_rest_route('api', '/suppliers/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiSupplier(), 'collect_suppliers'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -52,7 +52,7 @@ class fzAPI
 
             register_rest_route('api', '/product/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiProduct(), 'collect_products'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -63,7 +63,7 @@ class fzAPI
 
             register_rest_route('api', '/sav/', [
                 [
-                    'methods' => \WP_REST_Server::READABLE,
+                    'methods'  => \WP_REST_Server::READABLE,
                     'callback' => [new \apiSav(), 'get'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -87,7 +87,7 @@ class fzAPI
              */
             register_rest_route('api', '/supplier/(?P<action>\w+)', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiSupplier(), 'action_collect_suppliers'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -100,7 +100,7 @@ class fzAPI
              */
             register_rest_route('api', '/mail/order/(?P<order_id>\d+)', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiMail(), 'send_order_client'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -122,7 +122,7 @@ class fzAPI
              */
             register_rest_route('api', '/mail/review/(?P<supplier_id>\d+)', [
                [
-                   'methods' => \WP_REST_Server::CREATABLE,
+                   'methods'  => \WP_REST_Server::CREATABLE,
                    'callback' => function (\WP_REST_Request $rq) {
                         $supplier_id = intval($rq['supplier_id']);
                         $subject = $_REQUEST['subject'];

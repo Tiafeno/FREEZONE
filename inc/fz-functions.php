@@ -128,14 +128,12 @@ add_action('init', function () {
 }, 10);
 
 function search_products() {
-
-    // you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
     $search_results = new WP_Query( array(
         's' => esc_sql($_REQUEST['q']), // the search query
         'post_type' => 'product',
-        'post_status' => 'publish', // if you don't want drafts to be returned
+        'post_status' => 'publish',
         //'ignore_sticky_posts' => 1,
-        'posts_per_page' => 20 // how much to show at once
+        'posts_per_page' => 20
     ) );
 
     wp_send_json_success($search_results->posts);

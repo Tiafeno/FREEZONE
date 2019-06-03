@@ -73,6 +73,8 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
 add_action('woocommerce_account_stock-management_endpoint', function () {
+    global $wpdb;
+
     $posts_per_page = 10;
     // Access security
     $User = wp_get_current_user();
@@ -111,6 +113,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         update_field('price', intval($regular_price), $article_id);
                         update_field('total_sales', intval($stock), $article_id);
                         update_field('date_review', date_i18n('Y-m-d H:m:s'), $article_id);
+
                         wc_add_notice("Article mis à jour avec succès", 'success');
                     }
                 }
@@ -122,6 +125,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
                 break;
+
             case 'new':
                 wp_enqueue_style('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css');
                 wp_enqueue_script('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', ['jquery']);
@@ -137,30 +141,53 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     $price = isset($_POST['price']) ? sanitize_text_field($_POST['price']) : 0;
                     $stock = isset($_POST['stock']) ? sanitize_text_field($_POST['stock']) : 0;
                     $product_id = isset($_POST['product_id']) ? sanitize_text_field($_POST['product_id']) : 0;
-                    $product = get_post($product_id);
-                    if ($price && $stock && $product_id) {
-                        $result = wp_insert_post([
-                            'post_type' => 'fz_product',
-                            'post_status' => 'publish',
-                            'post_title' => $product->post_title
-                        ], true);
 
-                        if (is_wp_error($result)) {
-                            wc_add_notice($result->get_error_message(), 'error');
+                    // Vérifier si le client vas ajouter un doublon
+                    $verify_product_exist_args  = [
+                        'post_type'   => 'fz_product',
+                        'post_status' => 'any',
+                        'meta_query'  => [
+                            [
+                                'key'   => 'user_id',
+                                'value' => intval($User->ID)
+                            ],
+                            [
+                                'key'   => 'product_id',
+                                'value' => $product_id
+                            ]
+                        ]
+                    ];
+                    $product_exists = get_posts($verify_product_exist_args);
+
+                    if ( ! $product_exists ) {
+                        $product = get_post($product_id);
+                        if ($price && $stock && $product_id) {
+                            $result = wp_insert_post([
+                                'post_type' => 'fz_product',
+                                'post_status' => 'publish',
+                                'post_title' => $product->post_title
+                            ], true);
+
+                            if (is_wp_error($result)) {
+                                wc_add_notice($result->get_error_message(), 'error');
+                            } else {
+                                update_field('price', intval($price), $result);
+                                update_field('total_sales', intval($stock), $result);
+                                update_field('user_id', intval($User->ID), $result);
+                                update_field('product_id', $product_id, $result);
+                                update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
+                                update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
+                                wc_add_notice("Article ajouter avec succès", 'success');
+
+                                wp_redirect(wc_get_account_endpoint_url('stock-management'));
+                            }
                         } else {
-                            update_field('price', intval($price), $result);
-                            update_field('total_sales', intval($stock), $result);
-                            update_field('user_id', intval($User->ID), $result);
-                            update_field('product_id', $product_id, $result);
-                            update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
-                            update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
-                            wc_add_notice("Article ajouter avec succès", 'success');
-
-                            wp_redirect(wc_get_account_endpoint_url('stock-management'));
+                            wc_add_notice("Une erreur s'est produite pendant le traitemet de donnée", 'error');
                         }
                     } else {
-                        wc_add_notice("Une erreur s'est prosuite pendant le traitemet de donnée", 'error');
+                        wc_add_notice("Cette article existe déja dans votre catalogue", 'notice');
                     }
+
                 }
 
                 wc_print_notices();
@@ -170,6 +197,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
                 break;
+
             case 'trash':
                 $error = false;
                 $stock_management_endpoint_url = wc_get_account_endpoint_url("stock-management");
@@ -240,20 +268,20 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         }, 10, 1);
 
         $args = [
-            'post_type' => "fz_product",
-            'post_status' => "publish",
+            'post_type'      => "fz_product",
+            'post_status'    => "publish",
             'posts_per_page' => $posts_per_page,
             'paged' => $paged
         ];
         $query = new WP_Query($args);
         $pagination = '<div class="apus-pagination"><ul class="page-numbers">';
         $pagination .= paginate_links([
-            'base' => @add_query_arg('pa_', '%#%'),
-            'format' => '?pa_=%#%',
+            'base'    => @add_query_arg('pa_', '%#%'),
+            'format'  => '?pa_=%#%',
             'current' => max(1, get_query_var('pa_')),
-            'type' => 'list',
+            'type'    => 'list',
             'current' => $paged,
-            'total' => $query->max_num_pages
+            'total'   => $query->max_num_pages
 
         ]);
         $pagination .= '</ul></div>';
@@ -292,7 +320,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
-        $order_id = $wp_query->query_vars['id'];
+        $order_id   = $wp_query->query_vars['id'];
         switch ($componnent):
             case 'edit':
 
@@ -327,7 +355,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                     $rest = 0;
                                     $suppliers = array_map(function($supplier) use ($quantity, &$rest) {
                                         $article_id = (int) $supplier->article_id;
-                                        $article = new \classes\fzSupplierArticle($article_id);
+                                        $article  = new \classes\fzSupplierArticle($article_id);
                                         $quantity = 0 === $rest ? $quantity : $rest;
                                         if ($article->total_sales < $quantity) {
                                             $take = $article->total_sales;
@@ -376,7 +404,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                         $fzSupplierArticle = new \classes\fzSupplierArticle(intval($supplier->article_id));
 
                         $supplier->price = intval($fzSupplierArticle->regular_price);
-                        $supplier->get = intval($supplier->get);
+                        $supplier->get   = intval($supplier->get);
                         $supplier->total_sales = $fzSupplierArticle->total_sales;
 
                         return $supplier;
@@ -397,10 +425,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 }
 
                 $quotation = [
-                    'order_id' => (int)$order_id,
-                    'products' => $products,
-                    'position' => intval($order->get_position()),
-                    'date_add' => $order->get_dateadd(),
+                    'order_id'  => (int)$order_id,
+                    'products'  => $products,
+                    'position'  => intval($order->get_position()),
+                    'date_add'  => $order->get_dateadd(),
                     'meta_data' => json_encode($meta_data_suppliers)
                 ];
 
@@ -443,8 +471,8 @@ add_action('user_register', function ($user_id) {
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
-            'last_name' => $lastname,
-            'nickname' => 'CL' . $user_id,
+            'last_name'  => $lastname,
+            'nickname'   => 'CL' . $user_id,
             'user_login' => 'CL' . $user_id
         ]);
         if (is_wp_error($result)) {
@@ -468,10 +496,10 @@ add_action('delete_user', function ($user_id) {
             'post_type' => "fz_product",
             'post_type' => "any",
             "numberposts" => -1,
-            "meta_query" => [
+            "meta_query"  => [
                 [
                     "key" => 'user_id',
-                    "value" => $user_id,
+                    "value"   => $user_id,
                     "compare" => "="
                 ]
             ]
