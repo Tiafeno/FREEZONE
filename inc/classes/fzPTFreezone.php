@@ -14,6 +14,7 @@ class fzPTFreezone
 
         add_action('init', function () {
             register_taxonomy_for_object_type('product_cat', 'fz_product');
+            register_taxonomy_for_object_type('product_cat', 'good-deal');
         }, 11);
 
         add_action('init', function () {

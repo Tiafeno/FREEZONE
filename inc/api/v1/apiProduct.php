@@ -31,7 +31,7 @@ class apiProduct
             $pdt->categories = $product->get_categories();
             $pdt->status = $product->get_status();
             $pdt->date_created = $product->get_date_created();
-            $pdt->marge = (int) get_field('marge', $product->ID);
+            $pdt->marge = (int) $product->get_meta('_fz_marge', true);
             return $pdt;
         }, $the_query->posts);
 

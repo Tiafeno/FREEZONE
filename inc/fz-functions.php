@@ -13,6 +13,7 @@ require_once 'classes/fzSupplier.php';
 require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuotation.php';
 require_once 'classes/fzQuotationProduct.php';
+require_once 'classes/fzGoodDeal.php';
 
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
@@ -99,12 +100,14 @@ add_action('after_setup_theme', function () {
     show_admin_bar(current_user_can('administrator') ? true : false);
 });
 
+add_action('wp_loaded', function () {
+
+    // Wordpress loaded
+});
+
 add_action('admin_init', function () {
     if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-particular'))) {
         \classes\fzRoles::create_roles();
-        // Delete old role
-        if (get_role('particular')) remove_role('particular');
-        if (get_role('supplier')) remove_role('supplier');
     }
 
     if (is_user_logged_in()) {
@@ -117,6 +120,22 @@ add_action('admin_init', function () {
         }
     }
 
+    // Afficher les marges
+    add_filter('manage_product_posts_columns', function ($columns) {
+        $columns['marge'] = '%';
+
+        return $columns;
+    });
+
+    add_action('manage_product_posts_custom_column', function ($column, $post_id) {
+        if ($column === 'marge'):
+            $p = wc_get_product($post_id);
+            $marge = $p->get_meta('_fz_marge', true);
+            $marge = $marge ? $marge : 0;
+            echo "{$marge} %";
+            endif;
+    }, 10, 2);
+
 }, 100);
 
 add_action('init', function () {
@@ -124,6 +143,55 @@ add_action('init', function () {
     add_action('wp_ajax_nopriv_searchproducts', 'search_products');
 
     // Init wordpress
+    /**
+     * Register the 'Custom Column' column in the importer.
+     *
+     * @param array $options
+     * @return array $options
+     */
+    function add_column_to_importer( $options ) {
+
+        // column slug => column name
+        $options['_fz_marge'] = 'Marge du produit';
+
+        return $options;
+    }
+    add_filter( 'woocommerce_csv_product_import_mapping_options', 'add_column_to_importer' );
+
+    /**
+     * Add automatic mapping support for 'Custom Column'.
+     * This will automatically select the correct mapping for columns named 'Custom Column' or 'custom column'.
+     *
+     * @param array $columns
+     * @return array $columns
+     */
+    function add_column_to_mapping_screen( $columns ) {
+
+        // potential column name => column slug
+        $columns['Marge du produit'] = '_fz_marge';
+
+        return $columns;
+    }
+    add_filter( 'woocommerce_csv_product_import_mapping_default_columns', 'add_column_to_mapping_screen' );
+
+    /**
+     * Process the data read from the CSV file.
+     * This just saves the value in meta data, but you can do anything you want here with the data.
+     *
+     * @param WC_Product $object - Product being imported or updated.
+     * @param array $data - CSV data read for the product.
+     * @return WC_Product $object
+     */
+    function process_import( $object, $data ) {
+
+        if ( ! empty( $data['_fz_marge'] ) ) {
+            $object->update_meta_data( '_fz_marge', $data['_fz_marge'] );
+        }
+
+        return $object;
+    }
+    add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
+
 
 }, 10);
 
