@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/inc/classes/fzGoodDeal.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/single-good-deal.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/woocommerce/emails/email-order-details.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiProduct.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/classes/fzPTFreezone.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/classes/fzPTFreezone.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/fz-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/fz-functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/wc/stock/article-new.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wc/stock/article-new.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="fz-functions.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="fz-functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="715">
-              <caret line="187" column="68" selection-start-line="187" selection-start-column="68" selection-end-line="187" selection-end-column="68" />
+            <state relative-caret-position="1924">
+              <caret line="148" column="28" selection-start-line="148" selection-start-column="28" selection-end-line="148" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -37,47 +34,44 @@
       <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1427">
+            <state relative-caret-position="247">
               <caret line="181" column="37" selection-start-line="181" selection-start-column="37" selection-end-line="181" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fzGoodDeal.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/classes/fzGoodDeal.php">
+      <file leaf-file-name="order-details.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/woocommerce/order/order-details.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="11" column="36" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
+            <state relative-caret-position="223">
+              <caret line="52" column="12" selection-start-line="52" selection-start-column="12" selection-end-line="64" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="single-good-deal.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/single-good-deal.php">
+      <file leaf-file-name="email-order-details.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/woocommerce/emails/email-order-details.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="38" column="18" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1118">
-              <caret line="55" column="45" selection-start-line="55" selection-start-column="45" selection-end-line="55" selection-end-column="45" />
+            <state relative-caret-position="468">
+              <caret line="57" selection-start-line="57" selection-end-line="57" />
               <folding>
-                <element signature="e#110#128#0#PHP" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#th#0;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#th#1;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#th#2;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#th#0;n#tr#1;n#tfoot#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#0;n#tr#1;n#tfoot#0;n#table#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="apiProduct.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/api/v1/apiProduct.php">
+      <file leaf-file-name="article-new.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/wc/stock/article-new.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="28" column="46" lean-forward="true" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="46" />
+            <state relative-caret-position="442">
+              <caret line="34" column="10" lean-forward="true" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -131,7 +125,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/inc/traits/fzRoles.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzRoles.php" />
         <option value="$PROJECT_DIR$/woocommerce/checkout/review-order.php" />
         <option value="$PROJECT_DIR$/woocommerce/checkout/thankyou.php" />
@@ -153,7 +146,6 @@
         <option value="$PROJECT_DIR$/headers/v1.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" />
         <option value="$PROJECT_DIR$/assets/js/article-new.js" />
-        <option value="$PROJECT_DIR$/templates/wc/stock/article-new.html" />
         <option value="$PROJECT_DIR$/templates/wc/stock/article-edit.html" />
         <option value="$PROJECT_DIR$/page-article-update.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzQuotationProduct.php" />
@@ -182,6 +174,8 @@
         <option value="$PROJECT_DIR$/single-good-deal.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiProduct.php" />
         <option value="$PROJECT_DIR$/inc/fz-functions.php" />
+        <option value="$PROJECT_DIR$/templates/wc/stock/article-new.html" />
+        <option value="$PROJECT_DIR$/woocommerce/emails/email-order-details.php" />
       </list>
     </option>
   </component>
@@ -208,18 +202,18 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
+    <option name="x" value="1432" />
     <option name="y" value="-8" />
-    <option name="width" value="1456" />
-    <option name="height" value="886" />
+    <option name="width" value="1376" />
+    <option name="height" value="754" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -347,7 +341,7 @@
               <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
               <item name="freezone" type="462c0819:PsiDirectoryNode" />
               <item name="woocommerce" type="462c0819:PsiDirectoryNode" />
-              <item name="myaccount" type="462c0819:PsiDirectoryNode" />
+              <item name="emails" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
@@ -488,7 +482,9 @@
       <workItem from="1559559672389" duration="1386000" />
       <workItem from="1559813348261" duration="829000" />
       <workItem from="1559821653784" duration="3289000" />
-      <workItem from="1559844906752" duration="4597000" />
+      <workItem from="1559844906752" duration="6028000" />
+      <workItem from="1559985129314" duration="39000" />
+      <workItem from="1560063713998" duration="1808000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -508,10 +504,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="397895000" />
+    <option name="totallyTimeSpent" value="401173000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <frame x="1432" y="-8" width="1376" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -522,7 +518,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23997134" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24696049" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Learn" order="2" weight="0.32978722" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -538,25 +534,25 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28366762" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24696049" />
       <window_info id="Learn" order="2" weight="0.32978722" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32987013" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Designer" order="4" />
-      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32987013" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.3298969" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="3" side_tool="true" />
     </layout-to-restore>
   </component>
@@ -639,20 +635,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../plugins/woocommerce/includes/abstracts/abstract-wc-order.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="91">
-          <caret line="19" column="15" selection-start-line="19" selection-start-column="15" selection-end-line="19" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/woocommerce/order/order-details.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../plugins/woocommerce/includes/class-wc-order.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="130">
@@ -714,13 +696,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1547">
           <caret line="37" column="6" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/wc/stock/article-new.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="22" column="54" selection-start-line="22" selection-start-column="54" selection-end-line="22" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -856,9 +831,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
           <caret line="68" column="4" selection-start-line="68" selection-start-column="4" selection-end-line="85" selection-end-column="47" />
-          <folding>
-            <element signature="e#159#1059#1#PHP" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -918,13 +890,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1427">
-          <caret line="181" column="37" selection-start-line="181" selection-start-column="37" selection-end-line="181" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiQuotation.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -948,7 +913,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1118">
+        <state relative-caret-position="637">
           <caret line="55" column="45" selection-start-line="55" selection-start-column="45" selection-end-line="55" selection-end-column="45" />
           <folding>
             <element signature="e#110#128#0#PHP" expanded="true" />
@@ -973,14 +938,51 @@
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiProduct.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
-          <caret line="28" column="46" lean-forward="true" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="46" />
+          <caret line="28" column="46" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="46" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="715">
-          <caret line="187" column="68" selection-start-line="187" selection-start-column="68" selection-end-line="187" selection-end-column="68" />
+        <state relative-caret-position="1924">
+          <caret line="148" column="28" selection-start-line="148" selection-start-column="28" selection-end-line="148" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/wc/stock/article-new.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="34" column="10" lean-forward="true" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="181" column="37" selection-start-line="181" selection-start-column="37" selection-end-line="181" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/order/order-details.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="52" column="12" selection-start-line="52" selection-start-column="12" selection-end-line="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/emails/email-order-details.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#th#0;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#th#1;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#th#2;n#tr#0;n#thead#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#th#0;n#tr#1;n#tfoot#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#tr#1;n#tfoot#0;n#table#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
