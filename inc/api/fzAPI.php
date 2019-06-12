@@ -155,7 +155,7 @@ class fzAPI
 
     public function register_rest_fz_product ()
     {
-        $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
+        $metas = ['price', 'price_dealer', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
             register_rest_field('fz_product', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {

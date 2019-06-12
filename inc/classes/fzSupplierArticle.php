@@ -71,6 +71,8 @@ class fzSupplierArticle
      */
     public $regular_price = 0;
 
+    public $price_dealer = 0;
+
     /**
      * Short description of attribute total_sales
      *
@@ -97,17 +99,18 @@ class fzSupplierArticle
             return false;
         }
 
-        $post_id = intval($post_id);
-        $article = get_post($post_id);
-        $this->ID = &$post_id;
+        $post_id    = intval($post_id);
+        $article    = get_post($post_id);
+        $this->ID   = &$post_id;
         $this->name = $article->post_title;
         $this->regular_price = get_field('price', $post_id);
-        $this->date_add = get_field('date_add', $post_id);
+        $this->price_dealer  = get_field('price_dealer', $post_id);
+        $this->date_add      = get_field('date_add', $post_id);
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
-        $this->user_id = get_field('user_id', $post_id);
+        $this->user_id     = get_field('user_id', $post_id);
 
-        $product = get_field('product_id', $this->ID);
+        $product   = get_field('product_id', $this->ID);
         $this->url = get_permalink(is_object($product) ? $product->ID : intval($product));
 
         if ($context === "edit") {
@@ -125,7 +128,7 @@ class fzSupplierArticle
      */
     public function get_product()
     {
-        $post_product = get_field('product_id', $this->ID);
+        $post_product  = get_field('product_id', $this->ID);
         $this->product = is_object($post_product) ? $post_product : new \WC_Product(intval($post_product));
 
         return $this->product;
