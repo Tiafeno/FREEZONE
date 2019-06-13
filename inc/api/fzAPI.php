@@ -146,15 +146,16 @@ class fzAPI
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) use ($admin) {
-                    if ($admin === 'administrator' && $field_name === 'company_name') {
-                        return update_field($field_name, $value, 'user_' . $object->ID);
-                    } else return true;
+                    if ($admin !== 'administrator' && $field_name === 'company_name') {
+                        return true;
+                    } else return update_field($field_name, $value, 'user_' . $object->ID);
 
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
-                    if ($admin === 'administrator' && $field_name === 'company_name') {
-                        return get_field($field_name, 'user_' . $object['id']);
-                    } else return get_field('reference', 'user_' . $object['id']);
+                    if ($admin !== 'administrator' && $field_name === 'company_name') {
+                        return get_field('reference', 'user_' . $object['id']);
+                    } else return get_field($field_name, 'user_' . $object['id']);
+
 
                 }
             ]);
