@@ -80,7 +80,10 @@ class fzSupplier extends \WP_User
             $this->reference = get_field('reference', 'user_'.$this->ID);
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
-            $this->company_name = get_field('company_name', 'user_'.$this->ID);
+
+            $User = wp_get_current_user();
+            $admin = $User->ID === 0 ? null : (in_array('administrator', $User->roles) ? 'administrator' : null);
+            $this->company_name = $admin === 'administrator' ? get_field('company_name', 'user_'.$this->ID) : $this->reference;
             $this->firstname = $this->first_name;
             $this->lastname = $this->last_name;
             $register = $this->user_registered;

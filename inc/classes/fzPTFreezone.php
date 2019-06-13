@@ -25,19 +25,19 @@ class fzPTFreezone
 
         add_action('admin_init', function () {
             $caps = [
-              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular']],
-              ['read_private_article' => ['administrator']],
-              ['edit_article' => ['administrator', 'fz-supplier']],
-              ['edit_articles' => ['administrator', 'fz-supplier']],
-              ['edit_others_articles' => ['administrator']],
-              ['edit_published_articles' => ['administrator', 'fz-supplier']],
-              ['edit_private_articles' => ['administrator']],
+              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'editor']],
+              ['read_private_article' => ['administrator', 'editor']],
+              ['edit_article' => ['administrator', 'fz-supplier', 'editor']],
+              ['edit_articles' => ['administrator', 'fz-supplier', 'editor']],
+              ['edit_others_articles' => ['administrator', 'editor']],
+              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor']],
+              ['edit_private_articles' => ['administrator', 'editor']],
               ['delete_article'  => ['administrator', 'fz-supplier']],
               ['delete_articles' => ['administrator', 'fz-supplier']],
               ['delete_others_articles' => ['administrator']],
               ['delete_published_articles' => ['administrator', 'fz-supplier']],
               ['delete_private_articles' => ['administrator']],
-              ['publish_articles' => ['administrator', 'fz-supplier']],
+              ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
             ];
             $caps = array_merge($caps, [
                 ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
@@ -70,6 +70,16 @@ class fzPTFreezone
                     }
                 }
                 endforeach;
+
+            $editor_role = get_role('editor');
+            $caps = ['list_users', 'edit_users'];
+            foreach ($caps as $cap) {
+                if ( ! $editor_role->has_cap($cap) ) {
+                    $editor_role->add_cap($cap);
+                }
+            }
+
+
         });
     }
 
