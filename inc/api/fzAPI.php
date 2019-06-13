@@ -183,6 +183,21 @@ class fzAPI
             }
         ]);
 
+        register_rest_field('fz_product', 'marge_dealer', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->update_meta_data("_fz_marge_dealer", $value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_meta("_fz_marge_dealer");
+
+                return $marge;
+            }
+        ]);
+
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {
             register_rest_field('fz_product', 'supplier', [

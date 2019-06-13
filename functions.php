@@ -38,7 +38,24 @@ add_action('init', function () {
 
 });
 
+// effacer tous les articles qui utilise ce produit comme reference
 add_action('init', function () {
+    add_action('delete_post', function ($post_id) {
+        global $wpdb;
+        $post_type = get_post_type($post_id);
+        if ($post_type === 'product'):
+            $get_articles_sql = <<<TAG
+SELECT ID FROM {$wpdb->posts} WHERE post_type = 'fz_product' 
+  AND ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE CONVERT(LOWER(`meta_key`) USING utf8mb4) = 'product_id' 
+    AND meta_value = $post_id)
+TAG;
+            $results = $wpdb->get_results($get_articles_sql);
+            foreach ($results as $post) {
+                wp_delete_post(intval($post->ID), true);
+            }
+
+            endif;
+    }, 10, 1);
 }, 10);
 
 add_action('template_redirect', function () {
