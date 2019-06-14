@@ -88,8 +88,8 @@ add_action('after_switch_theme', function () {
     add_image_size('singlepost-thumb', 590, 9999);
 
     /**
-     * This function will not resize your existing featured images.
-     * To regenerate existing images in the new size,
+ * This function will not resize your existing featured images.
+                * To regenerate existing images in the new size,
      * use the Regenerate Thumbnails plugin.
      */
     set_post_thumbnail_size(50, 50, ['center', 'center']); // 50 pixels wide by 50 pixels tall, crop from the center
