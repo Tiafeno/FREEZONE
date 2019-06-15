@@ -52,7 +52,8 @@ class fzSupplier extends \WP_User
     public $address = null;
     public $phone = null;
     public $company_name = null;
-    public $mail_cc = null;
+    public $mail_commercial_cc = null;
+    public $mail_logistics_cc = null;
     public $firstname;
     public $lastname;
     public $date_add;
@@ -79,8 +80,13 @@ class fzSupplier extends \WP_User
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
             $this->reference = get_field('reference', 'user_'.$this->ID);
-            $mail_cc = get_field('mail_cc', 'user_'.$this->ID);
-            $this->mail_cc = $mail_cc ? \explode(',', $mail_cc) : []; 
+
+            $mail_commercial_cc = get_field('mail_commercial_cc', 'user_'.$this->ID);
+            $this->mail_commercial_cc = $mail_commercial_cc ? \explode(',', $mail_commercial_cc) : [];
+
+            $mail_logistics_cc = get_field("mail_logistics_cc", 'user_'.$this->ID);
+            $this->mail_logistics_cc = $mail_logistics_cc ? explode(',', $mail_logistics_cc) : [];
+
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
 

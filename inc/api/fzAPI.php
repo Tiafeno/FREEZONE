@@ -140,7 +140,7 @@ class fzAPI
 
     public function register_rest_supplier ()
     {
-        $metas = ['company_name', 'address', 'mail_cc', 'phone', 'reference'];
+        $metas = ['company_name', 'address', 'mail_commercial_cc', 'mail_logistics_cc', 'phone', 'reference'];
         $User = wp_get_current_user();
         $admin = in_array('administrator', $User->roles) ? 'administrator': false;
         foreach ( $metas as $meta ) {
