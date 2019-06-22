@@ -192,6 +192,21 @@ class fzAPI
             }
         ]);
 
+        register_rest_field('fz_product', 'product_status', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->set_status($value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_status();
+
+                return $marge;
+            }
+        ]);
+
         register_rest_field('fz_product', 'marge_dealer', [
             'update_callback' => function ($value, $object, $field_name) {
                 $product_id = get_field('product_id', (int)$object->ID);
@@ -210,7 +225,12 @@ class fzAPI
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {
             register_rest_field('fz_product', 'supplier', [
-
+                'get_callback' => function ($object)  {
+                    $user_id = get_field('user_id', (int)$object['id']);
+                    return new fzSupplier((int) $user_id);
+                }
+            ]);
+            register_rest_field('fz_product', 'supplier', [
                 'get_callback' => function ($object)  {
                     $user_id = get_field('user_id', (int)$object['id']);
                     return new fzSupplier((int) $user_id);
