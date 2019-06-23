@@ -78,7 +78,7 @@ class apiImport
                 ]
             ];
 
-            if ( ! empty($mark)) {
+            if ( ! empty($mark) && !is_null($mark)) {
                 $data = array_merge($data, ['attributes' => [
                     [
                         'name'    => 'brands',
@@ -97,6 +97,10 @@ class apiImport
                 wp_set_post_terms($product_id, $terms, $taxonomy_cat_name);
             }
         }
+
+        $Prd = new WC_Product($product_id);
+        $Prd->set_sku("PRD{$product_id}");
+        $Prd->save();
 
         $article_data = [
             'post_title'   => $name,
