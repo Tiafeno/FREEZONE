@@ -22,6 +22,7 @@ require_once 'api/v1/apiFzProduct.php';
 require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
+require_once 'api/v1/apiImport.php';
 require_once 'api/fzAPI.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
@@ -123,6 +124,7 @@ add_action('admin_init', function () {
     // Afficher les marges
     add_filter('manage_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
+        $columns['marge_dealer'] = '% R.';
 
         return $columns;
     });
@@ -153,6 +155,7 @@ add_action('init', function () {
 
         // column slug => column name
         $options['_fz_marge'] = 'Marge du produit';
+        $options['_fz_marge_dealer'] = 'Marge du produit revendeur';
 
         return $options;
     }
@@ -169,6 +172,7 @@ add_action('init', function () {
 
         // potential column name => column slug
         $columns['Marge du produit'] = '_fz_marge';
+        $columns['Marge du produit revendeur'] = '_fz_marge_dealer';
 
         return $columns;
     }
@@ -187,10 +191,26 @@ add_action('init', function () {
         if ( ! empty( $data['_fz_marge'] ) ) {
             $object->update_meta_data( '_fz_marge', $data['_fz_marge'] );
         }
+        if ( ! empty( $data['_fz_marge_dealer'] ) ) {
+            $object->update_meta_data( '_fz_marge_dealer', $data['_fz_marge_dealer'] );
+        }
 
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
+
+    // TODO: Désactiver la commande pour les clients non validé par l'administrateur
+    function products_backorders_allowed( $backorder_allowed, $product_id, $product ){
+        $user       = wp_get_current_user();
+        $user_roles = (array) $user->roles;
+        $role_office = get_field('role_office', 'user_' . $user->ID);
+        if( in_array( 'fz-particular', $user_roles ) && ( empty($role_office) || is_null($role_office) ) ){
+            //$backorder_allowed = false;
+        }
+        return $backorder_allowed;
+    }
+    add_filter( 'woocommerce_product_backorders_allowed', 'products_backorders_allowed', 10, 3 );
+
 
 
 }, 10);

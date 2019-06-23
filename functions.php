@@ -502,6 +502,10 @@ add_action('user_register', function ($user_id) {
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
 
+    // Ajouter le type du role du client (Revendeur ou Acheteur)
+    // 1: Acheteur, 2: Revendeur et 0: En attente de confirmation
+    update_field('role_office', 0, 'user_' . $user_id);
+
 });
 
 add_action('delete_user', function ($user_id) {

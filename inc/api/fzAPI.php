@@ -95,6 +95,70 @@ class fzAPI
                 ],
             ]);
 
+
+            /**
+             * Pour récuperer les clients
+             */
+            register_rest_route('api', '/import/csv/articles', [
+                [
+                    'methods'  => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $Import = new \apiImport();
+                        $Import->import_article_csv();
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
+            /**
+             * Pour récuperer les clients
+             */
+            register_rest_route('api', '/clients/', [
+                [
+                    'methods'  => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $length = (int)$_REQUEST['length'];
+                        $start = (int)$_REQUEST['start'];
+                        $args = [
+                            'number' => $length,
+                            'offset' => $start,
+                            'orderby' => 'registered',
+                            'role__in' => ['fz-particular'],
+                            'order' => 'DESC'
+                        ];
+                        $user_query = new \WP_User_Query($args);
+                        if (!empty($user_query->get_results())) {
+                            $results = [];
+                            $request = new \WP_REST_Request();
+                            $request->set_param('context', 'edit');
+
+                            foreach ($user_query->get_results() as $user) {
+                                $user_controller = new \WP_REST_Users_Controller();
+                                $response = $user_controller->prepare_item_for_response(new \WP_User($user->ID), $request);
+                                $results[] = $response->data;
+                            }
+                            return [
+                                "recordsTotal" => $user_query->total_users,
+                                "recordsFiltered" => $user_query->total_users,
+                                'data' => $results
+                            ];
+                        } else {
+                            return [
+                                "recordsTotal" => 0,
+                                "recordsFiltered" => 0,
+                                'data' => []
+                            ];
+                        }
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
+
             /**
              * Envoyer un mail au client pour le devis
              */
@@ -140,7 +204,7 @@ class fzAPI
 
     public function register_rest_supplier ()
     {
-        $metas = ['company_name', 'address', 'mail_commercial_cc', 'mail_logistics_cc', 'phone', 'reference'];
+        $metas = ['company_name', 'address', 'mail_commercial_cc', 'mail_logistics_cc', 'phone', 'reference', 'role_office'];
         $User = wp_get_current_user();
         $admin = in_array('administrator', $User->roles) ? 'administrator': false;
         foreach ( $metas as $meta ) {
