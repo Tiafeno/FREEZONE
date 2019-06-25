@@ -5,7 +5,7 @@
  */
 add_action('fz_insert_sav', function ($sav_id) {
     global $Engine;
-    $admins = ['contact@falicrea.com'];
+    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
     $Sav = new \classes\fzSav($sav_id);
     $User= wp_get_current_user();
     $phone = get_field('phone', 'user_'.$User->ID);
@@ -34,7 +34,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
 
     $Supplier = new \classes\fzSupplier($supplier_id);
 
-    $from = "contact@freezone.click";
+    $from = "david@freezonemada.com";
     $to = $Supplier->user_email;
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
@@ -67,7 +67,7 @@ add_action('complete_order', function ($order_id) {
     global $Engine;
 
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'commercial@freezone.click'];
+    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
     $to = implode($admins, ',');
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
@@ -89,7 +89,7 @@ add_action('complete_order', function ($order_id) {
 add_action('fz_received_order', function ($order_id) {
     global $Engine;
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'commercial@freezone.click'];
+    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
     $to = implode($admins, ',');
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
