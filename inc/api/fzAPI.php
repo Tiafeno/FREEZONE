@@ -191,8 +191,14 @@ class fzAPI
                         $supplier_id = intval($rq['supplier_id']);
                         $subject = $_REQUEST['subject'];
                         $content = $_REQUEST['message'];
-
-                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content);
+                        $cc_field = isset($_REQUEST['cc']) ? trim($_REQUEST['cc']) : null;
+                        $cc = '';
+                        if (!is_null($cc_field)) {
+                            $cc_field = get_field($cc_field, 'user_'.$supplier_id);
+                            $cc = $cc_field ? $cc_field : '';
+                        }
+                        
+                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc);
 
                    }
                ]
@@ -204,7 +210,19 @@ class fzAPI
 
     public function register_rest_supplier ()
     {
-        $metas = ['company_name', 'address', 'mail_commercial_cc', 'mail_logistics_cc', 'phone', 'reference', 'role_office'];
+        $metas = [
+            'company_name', 
+            'address', 
+            'mail_commercial_cc', 
+            'mail_logistics_cc', 
+            'phone', 
+            'reference', 
+            'role_office',
+            'stat',
+            'nif',
+            'rc',
+            'cif'
+        ];
         $User = wp_get_current_user();
         $admin = in_array('administrator', $User->roles) ? 'administrator': false;
         foreach ( $metas as $meta ) {

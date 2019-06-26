@@ -501,6 +501,12 @@ add_action('user_register', function ($user_id) {
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
+    
+    $fields = ['stat', 'nif', 'rc', 'cif'];
+    foreach ($fields as $field) {
+        $requestValue = sanitize_text_field($_REQUEST[$field]);
+        update_field($field, $requestValue, 'user_' . $user_id);
+    }
 
     // Ajouter le type du role du client (Revendeur ou Acheteur)
     // 1: Acheteur, 2: Revendeur et 0: En attente de confirmation

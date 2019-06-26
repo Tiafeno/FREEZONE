@@ -29,7 +29,7 @@ add_action('fz_insert_sav', function ($sav_id) {
 }, 10, 1);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
-add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message) {
+add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '') {
     global $Engine;
 
     $Supplier = new \classes\fzSupplier($supplier_id);
@@ -39,6 +39,14 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
+    
+    // Ajouter les adresses email en copie s'il est definie
+    if (!empty($cc)) {
+        $emails = explode(',', $cc);
+        foreach ($emails as $mail) {
+            $headers[] = "Cc: {$mail}";
+        }
+    }
 
     $url = home_url('/updated');
     $nonce = base64_encode("update-{$Supplier->ID}");

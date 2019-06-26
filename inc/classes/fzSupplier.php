@@ -56,6 +56,10 @@ class fzSupplier extends \WP_User
     public $mail_logistics_cc = null;
     public $firstname;
     public $lastname;
+    public $stat;
+    public $nif;
+    public $rc;
+    public $cif;
     public $date_add;
 
     /**
@@ -81,12 +85,18 @@ class fzSupplier extends \WP_User
         if (in_array('fz-supplier', $this->roles)) {
             $this->reference = get_field('reference', 'user_'.$this->ID);
 
-            $mail_commercial_cc = get_field('mail_commercial_cc', 'user_'.$this->ID);
-            $this->mail_commercial_cc = $mail_commercial_cc ? \explode(',', $mail_commercial_cc) : [];
-
-            $mail_logistics_cc = get_field("mail_logistics_cc", 'user_'.$this->ID);
-            $this->mail_logistics_cc = $mail_logistics_cc ? explode(',', $mail_logistics_cc) : [];
-
+            $mail_cc_fields = ['mail_commercial_cc', 'mail_logistics_cc'];
+            foreach ($mail_cc_fields as $field) {
+                $cc = get_field($field, 'user_'.$this->ID);
+                $this->$field = $cc ? \explode(',', $cc) : [];
+            }
+            
+            $infos = ['stat', 'nif', 'rc', 'cif'];
+            foreach ($infos as $info) {
+                $value = get_field($info, 'user_'.$this->ID);
+                $this->$info = $value ? $value : null;
+            }
+            
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
 
