@@ -217,7 +217,8 @@ class fzAPI
             'mail_logistics_cc', 
             'phone', 
             'reference', 
-            'role_office',
+            'role_office', // 1: Acheteur, 2: Revendeur & 0: En attente
+            'client_status', // Particular or Company
             'stat',
             'nif',
             'rc',

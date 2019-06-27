@@ -32,15 +32,15 @@ class apiArticle
     LIMIT $length OFFSET $start
 SLQ;
                 $results = $wpdb->get_results($sql);
+                $count_sql = <<<CPR
+SELECT FOUND_ROWS()
+CPR;
+                $total = $wpdb->get_var($count_sql);
                 $Suppliers = [];
                 foreach ($results as $result) {
                     $Suppliers[] = new \classes\fzSupplierArticle((int) $result->post_id, 'edit');
                 }
 
-                $count_sql = <<<CPR
-SELECT FOUND_ROWS()
-CPR;
-                $total = $wpdb->get_var($count_sql);
                 return [
                     "recordsTotal" => intval($total),
                     "recordsFiltered" => intval($total),
