@@ -9,21 +9,36 @@
 class apiSav
 {
     public function __construct () { }
-    public function get($sav_id) {
-        global $wpdb;
-        $sql = <<<SQL
-SELECT * FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-SQL;
-        return $wpdb->get_row($sql);
+    public function get(WP_REST_Request $request) {
+        $length = (int)$_REQUEST['length'];
+        $start = (int)$_REQUEST['start'];
+        $args = [
+            'limit' => $length,
+            'offset' => $start,
+            'paginate' => true,
+            'post_type' => 'fz_sav'
+        ];
 
-    }
-    public function delete($sav_id) {
-        global $wpdb;
-        $query = <<<QRY
-DELETE FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-QRY;
-        return $wpdb->query($query);
+        $the_query = new WP_Query($args);
+        $savs = array_map(function ($sav) {
+            $fzSav = new \classes\fzSav($sav->ID);
+            return $fzSav;
+        }, $the_query->posts);
 
+        if ($the_query->have_posts()) {
+            return [
+                "recordsTotal" => (int)$the_query->found_posts,
+                "recordsFiltered" => (int)$the_query->found_posts,
+                'data' => $savs
+            ];
+        } else {
+
+            return [
+                "recordsTotal" => (int)$the_query->found_posts,
+                "recordsFiltered" => (int)$the_query->found_posts,
+                'data' => []
+            ];
+        }
     }
 
 }

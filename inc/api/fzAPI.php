@@ -8,6 +8,7 @@
 
 namespace api;
 
+use classes\fzSav;
 use classes\fzSupplier;
 
 if (!defined('ABSPATH')) {
@@ -29,7 +30,7 @@ class fzAPI
 
             register_rest_route('api', '/quotations/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiQuotation(), 'collect_quotations'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -40,7 +41,7 @@ class fzAPI
 
             register_rest_route('api', '/suppliers/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiSupplier(), 'collect_suppliers'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -51,7 +52,7 @@ class fzAPI
 
             register_rest_route('api', '/product/', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiProduct(), 'collect_products'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -60,9 +61,20 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/sav/', [
+                [
+                    'methods'  => \WP_REST_Server::READABLE,
+                    'callback' => [new \apiSav(), 'get'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args' => []
+                ]
+            ]);
+
             register_rest_route('api', '/fz_product/(?P<action>\w+)', [
                 [
-                    'methods' => \WP_REST_Server::READABLE,
+                    'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiArticle(), 'action_collect_articles'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -70,52 +82,12 @@ class fzAPI
                 ],
             ]);
 
-            register_rest_route('api', '/sav', [
-                [
-                    'methods' => \WP_REST_Server::READABLE,
-                    'callback' => function () {
-                        global $wpdb;
-
-                        $length = isset($_REQUEST['length']) ? intval($_REQUEST['length']): 10;
-                        $start = isset($_REQUEST['start']) ? intval($_REQUEST['start']) : 0;
-                        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$wpdb->prefix}sav LIMIT $length OFFSET $start";
-                        $results = $wpdb->get_results($sql);
-                        $total = $wpdb->get_var("SELECT FOUND_ROWS()");
-                        foreach ($results as $sav) {
-                            $sav->user = get_userdata(intval($sav->user_id));
-                            unset($sav->user_id);
-                        }
-                        $wpdb->flush();
-                        return [
-                            "recordsTotal" => intval($total),
-                            "recordsFiltered" => intval($total),
-                            'data' => $results
-                        ];
-                    },
-                    'permission_callback' => function ($data) {
-                        return current_user_can('edit_posts');
-                    }
-                ]
-            ]);
-
-            register_rest_route('api', '/sav/(?P<action>\w+)/(?P<id>\d+)', [
-                [
-                    'methods' => \WP_REST_Server::READABLE,
-                    'callback' => function (\WP_REST_Request $request) {
-                        $apiSav = new \apiSav();
-                        $reflexionMethod = new \ReflectionMethod($apiSav, $request['action']);
-                        return $reflexionMethod->invokeArgs(new \apiSav(), [$request['id']]);
-                    },
-                    'permission_callback' => function ($data) {
-                        return current_user_can('delete_posts');
-                    }
-                ]
-            ]);
-
-
+            /**
+             * Pour récuperer les fournisseurs
+             */
             register_rest_route('api', '/supplier/(?P<action>\w+)', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiSupplier(), 'action_collect_suppliers'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -123,9 +95,78 @@ class fzAPI
                 ],
             ]);
 
+
+            /**
+             * Pour récuperer les clients
+             */
+            register_rest_route('api', '/import/csv/articles', [
+                [
+                    'methods'  => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $Import = new \apiImport();
+                        $Import->import_article_csv();
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
+            /**
+             * Pour récuperer les clients
+             */
+            register_rest_route('api', '/clients/', [
+                [
+                    'methods'  => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $length = (int)$_REQUEST['length'];
+                        $start = (int)$_REQUEST['start'];
+                        $args = [
+                            'number' => $length,
+                            'offset' => $start,
+                            'orderby' => 'registered',
+                            'role__in' => ['fz-particular'],
+                            'order' => 'DESC'
+                        ];
+                        $user_query = new \WP_User_Query($args);
+                        if (!empty($user_query->get_results())) {
+                            $results = [];
+                            $request = new \WP_REST_Request();
+                            $request->set_param('context', 'edit');
+
+                            foreach ($user_query->get_results() as $user) {
+                                $user_controller = new \WC_REST_Customers_V2_Controller();
+                                $response = $user_controller->prepare_item_for_response(new \WC_Customer($user->ID), $request);
+
+                                // TODO: Ne pas afficher au commercial certain contenue du client
+                                $results[] = $response->data;
+                            }
+                            return [
+                                "recordsTotal" => $user_query->total_users,
+                                "recordsFiltered" => $user_query->total_users,
+                                'data' => $results
+                            ];
+                        } else {
+                            return [
+                                "recordsTotal" => 0,
+                                "recordsFiltered" => 0,
+                                'data' => []
+                            ];
+                        }
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
+
+            /**
+             * Envoyer un mail au client pour le devis
+             */
             register_rest_route('api', '/mail/order/(?P<order_id>\d+)', [
                 [
-                    'methods' => \WP_REST_Server::CREATABLE,
+                    'methods'  => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiMail(), 'send_order_client'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -140,20 +181,67 @@ class fzAPI
                 ]
             ], false);
 
+            /**
+             * Envoyer un mail pour un fournisseur.
+             * Cette registre permet d'envoyer un mail avec un lien pour mettre à jours l'articles
+             * en attente du fournisseur.
+             */
+            register_rest_route('api', '/mail/review/(?P<supplier_id>\d+)', [
+               [
+                   'methods'  => \WP_REST_Server::CREATABLE,
+                   'callback' => function (\WP_REST_Request $rq) {
+                        $supplier_id = intval($rq['supplier_id']);
+                        $subject = $_REQUEST['subject'];
+                        $content = $_REQUEST['message'];
+                        $cc_field = isset($_REQUEST['cc']) ? trim($_REQUEST['cc']) : null;
+                        $cc = '';
+                        if (!is_null($cc_field)) {
+                            $cc_field = get_field($cc_field, 'user_'.$supplier_id);
+                            $cc = $cc_field ? $cc_field : '';
+                        }
+                        
+                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc);
+
+                   }
+               ]
+            ]);
+
         });
 
     }
 
     public function register_rest_supplier ()
     {
-        $metas = ['company_name', 'commission', 'address', 'phone', 'reference'];
+        $metas = [
+            'company_name', 
+            'address', 
+            'mail_commercial_cc', 
+            'mail_logistics_cc', 
+            'phone', 
+            'reference', 
+            'role_office', // 1: Acheteur, 2: Revendeur & 0: En attente
+            'client_status', // Particular or Company
+            'stat',
+            'nif',
+            'rc',
+            'cif'
+        ];
+        $User = wp_get_current_user();
+        $admin = in_array('administrator', $User->roles) ? 'administrator': false;
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
-                'update_callback' => function ($value, $object, $field_name) {
-                    return update_field($field_name, $value, 'user_' . $object->ID);
+                'update_callback' => function ($value, $object, $field_name) use ($admin) {
+                    if ($admin !== 'administrator' && $field_name === 'company_name') {
+                        return true;
+                    } else return update_field($field_name, $value, 'user_' . $object->ID);
+
                 },
-                'get_callback' => function ($object, $field_name) {
-                    return get_field($field_name, 'user_' . $object['id']);
+                'get_callback' => function ($object, $field_name) use ($admin) {
+                    if ($admin !== 'administrator' && $field_name === 'company_name') {
+                        return get_field('reference', 'user_' . $object['id']);
+                    } else return get_field($field_name, 'user_' . $object['id']);
+
+
                 }
             ]);
         }
@@ -161,7 +249,7 @@ class fzAPI
 
     public function register_rest_fz_product ()
     {
-        $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
+        $metas = ['price', 'price_dealer', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
             register_rest_field('fz_product', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
@@ -174,10 +262,60 @@ class fzAPI
             ]);
         }
 
+        register_rest_field('fz_product', 'marge', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->update_meta_data("_fz_marge", $value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_meta("_fz_marge");
+
+                return $marge;
+            }
+        ]);
+
+        register_rest_field('fz_product', 'product_status', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->set_status($value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_status();
+
+                return $marge;
+            }
+        ]);
+
+        register_rest_field('fz_product', 'marge_dealer', [
+            'update_callback' => function ($value, $object, $field_name) {
+                $product_id = get_field('product_id', (int)$object->ID);
+                $product = new \WC_Product( (int) $product_id);
+                return $product->update_meta_data("_fz_marge_dealer", $value);
+            },
+            'get_callback' => function ($object, $field_name)  {
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product = new \WC_Product( (int) $product_id);
+                $marge = $product->get_meta("_fz_marge_dealer");
+
+                return $marge;
+            }
+        ]);
+
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {
             register_rest_field('fz_product', 'supplier', [
-
+                'get_callback' => function ($object)  {
+                    $user_id = get_field('user_id', (int)$object['id']);
+                    return new fzSupplier((int) $user_id);
+                }
+            ]);
+            register_rest_field('fz_product', 'supplier', [
                 'get_callback' => function ($object)  {
                     $user_id = get_field('user_id', (int)$object['id']);
                     return new fzSupplier((int) $user_id);

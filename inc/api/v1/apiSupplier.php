@@ -73,19 +73,19 @@ WHERE users.ID IN (
 LIMIT $length OFFSET $start
 SLQ;
                 $results = $wpdb->get_results($sql);
-                $Suppliers = [];
-                foreach ($results as $result) {
-                    $Suppliers[] = new \classes\fzSupplier((int) $result->ID);
-                }
-
                 $count_sql = <<<CPR
 SELECT FOUND_ROWS()
 CPR;
                 $total = $wpdb->get_var($count_sql);
+                $Suppliers = [];
+                foreach ($results as $result) {
+                    $Suppliers[] = new \classes\fzSupplier((int) $result->ID);
+                }
+    
                 $wpdb->flush();
                 return [
-                    "recordsTotal" => intval($total),
-                    "recordsFiltered" => intval($total),
+                    "recordsTotal" => $total,
+                    "recordsFiltered" => $total,
                     'data' => $Suppliers
                 ];
 

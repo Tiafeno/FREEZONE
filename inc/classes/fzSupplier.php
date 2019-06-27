@@ -52,9 +52,14 @@ class fzSupplier extends \WP_User
     public $address = null;
     public $phone = null;
     public $company_name = null;
-    public $commission = 0;
+    public $mail_commercial_cc = null;
+    public $mail_logistics_cc = null;
     public $firstname;
     public $lastname;
+    public $stat;
+    public $nif;
+    public $rc;
+    public $cif;
     public $date_add;
 
     /**
@@ -79,11 +84,25 @@ class fzSupplier extends \WP_User
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
             $this->reference = get_field('reference', 'user_'.$this->ID);
+
+            $mail_cc_fields = ['mail_commercial_cc', 'mail_logistics_cc'];
+            foreach ($mail_cc_fields as $field) {
+                $cc = get_field($field, 'user_'.$this->ID);
+                $this->$field = $cc ? \explode(',', $cc) : [];
+            }
+            
+            $infos = ['stat', 'nif', 'rc', 'cif', 'client_status'];
+            foreach ($infos as $info) {
+                $value = get_field($info, 'user_'.$this->ID);
+                $this->$info = $value ? $value : null;
+            }
+            
             $this->address = get_field('address', 'user_'.$this->ID);
             $this->phone = get_field('phone', 'user_'.$this->ID);
-            $this->company_name = get_field('company_name', 'user_'.$this->ID);
-            $commission = get_field('commission', 'user_'.$this->ID);
-            $this->commission = intval($commission);
+
+            $User = wp_get_current_user();
+            $admin = $User->ID === 0 ? null : (in_array('administrator', $User->roles) ? 'administrator' : null);
+            $this->company_name = $admin === 'administrator' ? get_field('company_name', 'user_'.$this->ID) : $this->reference;
             $this->firstname = $this->first_name;
             $this->lastname = $this->last_name;
             $register = $this->user_registered;

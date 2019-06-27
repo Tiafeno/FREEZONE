@@ -21,20 +21,22 @@
 <div class="">
     <div class="flexbox" style="margin-bottom: 20px">
         <div class="flexbox">
-            <a class="btn btn-primary btn-air" href="{{new_article_link}}" >Ajouter une article</a>
+            <a class="btn btn-primary btn-air" href="{{new_article_link}}" >Ajouter un article</a>
         </div>
     </div>
 </div>
 <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
     <thead>
     <tr>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Nom</span>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">DESIGNATION</span>
         </th>
         <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
-                class="nobr">Prix</span></th>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Date de revision</span>
+                class="nobr">PRIX</span></th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
+                class="nobr">QTÉ</span></th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">DATE DE REVISION</span>
         </th>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr"></span>
         </th>
     </tr>
     </thead>
@@ -48,11 +50,15 @@
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Price">
             <span class="price" style="font-weight: bolder">{{product.regular_price}}</span>
         </td>
+        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Price" style="text-align: center">
+            {{product.total_sales}}
+        </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="État">
             {{product.date_review}}
         </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
-            <a href="?componnent=edit&id={{product.ID}}" class="btn btn-sm">Modifier</a>
+            <a href="?componnent=edit&id={{product.ID}}" class="btn btn-sm"><i class="ti-pencil-alt"></i> </a>
+            <a href="?componnent=trash&id={{product.ID}}" class="btn btn-sm"><i class="ti-trash"></i></a>
         </td>
     </tr>
     {% endfor %}

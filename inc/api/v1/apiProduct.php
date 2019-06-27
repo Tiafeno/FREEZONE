@@ -12,15 +12,6 @@ class apiProduct
 
     public function collect_products (WP_REST_Request $rq)
     {
-        $options = get_field('wc', 'option');
-//        $woocommerce = new \Automattic\WooCommerce\Client(
-//            "http://{$_SERVER['SERVER_NAME']}",
-//            $options['ck'],
-//            $options['cs'],
-//            [
-//                'version' => 'wc/v3'
-//            ]
-//        );
         $length = (int)$_REQUEST['length'];
         $start = (int)$_REQUEST['start'];
         $args = [
@@ -32,7 +23,6 @@ class apiProduct
 
         $the_query = new WP_Query($args);
         $products = array_map(function ($product) {
-            // $result = $woocommerce->get("products/{$product->ID}", ['context' => 'view']);
             $product = wc_get_product($product->ID);
             $pdt = new stdClass();
             $pdt->ID = $product->get_id();
@@ -41,6 +31,7 @@ class apiProduct
             $pdt->categories = $product->get_categories();
             $pdt->status = $product->get_status();
             $pdt->date_created = $product->get_date_created();
+            $pdt->marge = (int) $product->get_meta('_fz_marge', true);
             return $pdt;
         }, $the_query->posts);
 

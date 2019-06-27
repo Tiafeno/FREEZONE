@@ -14,15 +14,13 @@ class apiQuotation
     {
         $length = (int)$_POST['length'];
         $start = (int)$_POST['start'];
-        $paged = isset($_POST['start']) ? ($start === 0 ? 1 : ($start + $length) / $length) : 1;
-        $posts_per_page = isset($_POST['length']) ? (int)$_POST['length'] : 20;
         $args = [
             'post_type' => wc_get_order_types(),
             'post_status' => array_keys( wc_get_order_statuses() ),
-            "posts_per_page" => $posts_per_page,
+            "posts_per_page" => $length,
             'order' => 'DESC',
             'orderby' => 'ID',
-            "paged" => $paged
+            "offset" => $start
         ];
 
         if ( isset($_POST['position']) && $_POST['position'] != '' ) {

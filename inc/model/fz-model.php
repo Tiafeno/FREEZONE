@@ -5,23 +5,6 @@ class fzModel {
     public function __construct ($instance = false) {
         if ( ! $instance )
             add_action('fz_activate_theme', function () {
-                global $wpdb;
-                $sav_request = <<<SAV
-    CREATE TABLE IF NOT EXISTS {$wpdb->prefix}sav (
-      `ID` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-      `user_id` BIGINT(20) UNSIGNED NOT NULL,
-      `mark` VARCHAR(100) NOT NULL,
-      `type` VARCHAR(100) NOT NULL,
-      `reference` VARCHAR(45) NULL,
-      `product_number` VARCHAR(45) NULL COMMENT 'P/N',
-      `serial_number` VARCHAR(45) NULL,
-      `description` LONGTEXT NOT NULL,
-      `date_appointment` DATETIME NOT NULL,
-      `date_add` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (`ID`));
-SAV;
-                $wpdb->query($sav_request);
-
 
             });
     }
@@ -65,13 +48,9 @@ SQL;
 
         return $request;
     }
+
     public function get_sav($sav_id) {
-        global $wpdb;
-        $sav_id = intval($sav_id);
-        $sql = <<<SQL
-SELECT * FROM {$wpdb->prefix}sav WHERE ID = $sav_id
-SQL;
-        return $wpdb->get_row($sql);
+
 
     }
 }
