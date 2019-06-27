@@ -88,6 +88,25 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     return $items;
 }, 999);
 
+// Filtre pour le formulaire de commande ou demande
+add_filter('woocommerce_checkout_fields', function ($fields) {
+    $fields['billing']['billing_country']['required'] = false;
+    $fields['billing']['billing_state']['required'] = false;
+    
+    $fields['shipping']['shipping_country']['required'] = false;
+    $fields['shipping']['shipping_state']['required'] = false;
+    return $fields;
+}, 9999);
+
+add_filter( 'woocommerce_default_address_fields' , 'disable_address_fields_validation', 999 );
+function disable_address_fields_validation( $address_fields_array ) {
+ 
+	// you can also hook first_name and last_name, company, country, city, address_1 and address_2
+ 
+	return $address_fields_array;
+ 
+}
+
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
 add_action('woocommerce_account_stock-management_endpoint', function () {
     global $wpdb;
