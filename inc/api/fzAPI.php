@@ -135,8 +135,10 @@ class fzAPI
                             $request->set_param('context', 'edit');
 
                             foreach ($user_query->get_results() as $user) {
-                                $user_controller = new \WP_REST_Users_Controller();
-                                $response = $user_controller->prepare_item_for_response(new \WP_User($user->ID), $request);
+                                $user_controller = new \WC_REST_Customers_V2_Controller();
+                                $response = $user_controller->prepare_item_for_response(new \WC_Customer($user->ID), $request);
+
+                                // TODO: Ne pas afficher au commercial certain contenue du client
                                 $results[] = $response->data;
                             }
                             return [

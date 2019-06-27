@@ -114,10 +114,10 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
 			<p class="form-group form-row form-row-wide">
 				<label for="reg_role">Type de compte <span class="required">*</span></label>
-                <select class="form-control" name="role" id="reg_role" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
+                <select class="form-control" name="client_status" id="reg_client_status" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
                     <option value="">Selectionner un type</option>
                     <option value="particular">Particulier</option>
-                    <option value="supplier">Société ou Entreprise</option>
+                    <option value="company">Société ou Entreprise</option>
                 </select>
 			</p>
             

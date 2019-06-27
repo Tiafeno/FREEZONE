@@ -502,7 +502,7 @@ add_action('user_register', function ($user_id) {
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
     
-    $fields = ['stat', 'nif', 'rc', 'cif'];
+    $fields = ['stat', 'nif', 'rc', 'cif', 'client_status'];
     foreach ($fields as $field) {
         $requestValue = sanitize_text_field($_REQUEST[$field]);
         update_field($field, $requestValue, 'user_' . $user_id);
