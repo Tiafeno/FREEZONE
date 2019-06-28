@@ -101,10 +101,6 @@ add_action('after_setup_theme', function () {
     show_admin_bar(current_user_can('administrator') ? true : false);
 });
 
-add_action('wp_loaded', function () {
-
-    // Wordpress loaded
-});
 
 add_action('admin_init', function () {
     if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-particular'))) {
@@ -130,17 +126,34 @@ add_action('admin_init', function () {
     });
 
     add_action('manage_product_posts_custom_column', function ($column, $post_id) {
+        $p = wc_get_product($post_id);
         if ($column === 'marge'):
-            $p = wc_get_product($post_id);
             $marge = $p->get_meta('_fz_marge', true);
             $marge = $marge ? $marge : 0;
             echo "{$marge} %";
-            endif;
+        endif;
+        
+        if ($column === 'marge_dealer'):
+            $marge_dealer = $p->get_meta('_fz_marge_dealer', true);
+            $marge_dealer = $marge_dealer ? $marge_dealer : 0;
+            echo "{$marge_dealer} %";
+        endif;
     }, 10, 2);
 
 }, 100);
 
 add_action('init', function () {
+    function search_products() {
+        $search_results = new WP_Query( array(
+            's' => esc_sql($_REQUEST['q']),
+            'post_type' => 'product',
+            'post_status' => 'publish',
+            //'ignore_sticky_posts' => 1,
+            'posts_per_page' => 20
+        ) );
+    
+        wp_send_json_success($search_results->posts);
+    }
     add_action('wp_ajax_searchproducts', 'search_products');
     add_action('wp_ajax_nopriv_searchproducts', 'search_products');
 
@@ -152,8 +165,6 @@ add_action('init', function () {
      * @return array $options
      */
     function add_column_to_importer( $options ) {
-
-        // column slug => column name
         $options['_fz_marge'] = 'Marge du produit';
         $options['_fz_marge_dealer'] = 'Marge du produit revendeur';
 
@@ -187,14 +198,13 @@ add_action('init', function () {
      * @return WC_Product $object
      */
     function process_import( $object, $data ) {
-
-        if ( ! empty( $data['_fz_marge'] ) ) {
-            $object->update_meta_data( '_fz_marge', $data['_fz_marge'] );
+        $fields = ['_fz_marge', '_fz_marge_dealer'];
+        foreach ($fields as $field) {
+            if ( ! empty( $data[ $field ] ) ) {
+                $object->update_meta_data( $field, $data[ $field ] );
+            }
         }
-        if ( ! empty( $data['_fz_marge_dealer'] ) ) {
-            $object->update_meta_data( '_fz_marge_dealer', $data['_fz_marge_dealer'] );
-        }
-
+        
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
@@ -214,15 +224,3 @@ add_action('init', function () {
 
 
 }, 10);
-
-function search_products() {
-    $search_results = new WP_Query( array(
-        's' => esc_sql($_REQUEST['q']), // the search query
-        'post_type' => 'product',
-        'post_status' => 'publish',
-        //'ignore_sticky_posts' => 1,
-        'posts_per_page' => 20
-    ) );
-
-    wp_send_json_success($search_results->posts);
-}

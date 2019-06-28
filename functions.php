@@ -182,6 +182,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     $verify_product_exist_args  = [
                         'post_type'   => 'fz_product',
                         'post_status' => 'any',
+                        'posts_per_page' => 1,
                         'meta_query'  => [
                             [
                                 'key'   => 'user_id',
@@ -200,7 +201,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         if ($price && $stock && $product_id) {
                             $result = wp_insert_post([
                                 'post_type' => 'fz_product',
-                                'post_status' => 'publish',
+                                'post_status' => 'pending',
                                 'post_title' => $product->post_title
                             ], true);
 
@@ -214,6 +215,9 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
                                 wc_add_notice("Article ajouter avec succès", 'success');
+
+                                // Envoyer un mail au administrateur
+                                do_action('fz_insert_new_article', $result);
 
                                 wp_redirect(wc_get_account_endpoint_url('stock-management'));
                             }

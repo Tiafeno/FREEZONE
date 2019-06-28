@@ -26,8 +26,7 @@ class apiArticle
   SELECT SQL_CALC_FOUND_ROWS pm.* FROM $wpdb->posts as pts
 	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
 		WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$review_limit_string' AS DATETIME)
-			AND pts.post_type = "fz_product" 
-			AND pts.post_status = "publish"
+			AND pts.post_type = "fz_product"
 	GROUP BY pm.meta_value HAVING COUNT(*) > 0
     LIMIT $length OFFSET $start
 SLQ;
