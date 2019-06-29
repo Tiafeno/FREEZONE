@@ -379,7 +379,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                 if ($current_item_id === $id) {
 
                                     $suppliers = wc_get_order_item_meta( $id, 'suppliers', true );
-                                    $suppliers = json_decode($suppliers);
+                                    $suppliers = json_decode(stripslashes($suppliers));
 
                                     $current_total = (int)$item->get_total();
                                     $current_price = $current_total / $item->get_quantity();

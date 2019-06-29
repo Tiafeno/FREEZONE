@@ -8,7 +8,7 @@
 
 class apiMail
 {
-    public $no_reply = "no-reply@freezone.com";
+    public $no_reply = "no-reply@freezone.click";
     public function __construct () { }
     public function send_order_client(WP_REST_Request $rq) {
         global $Engine;

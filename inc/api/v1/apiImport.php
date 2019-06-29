@@ -73,8 +73,8 @@ class apiImport
                 'short_description' => stripslashes($short_description),
                 'categories' => $categorie_terms,
                 'meta_data' => [
-                    [ 'key' => '_fz_marge', 'value' => $marge ],
-                    [ 'key' => '_fz_marge_dealer', 'value' => $marge_dealer ],
+                    [ 'key' => '_fz_marge', 'value' => trim($marge) ],
+                    [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
                 ]
             ];
 
