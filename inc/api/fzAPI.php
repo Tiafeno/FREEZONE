@@ -191,13 +191,16 @@ class fzAPI
                    'methods'  => \WP_REST_Server::CREATABLE,
                    'callback' => function (\WP_REST_Request $rq) {
                         $supplier_id = intval($rq['supplier_id']);
-                        $subject = $_REQUEST['subject'];
-                        $content = $_REQUEST['message'];
+                        $subject = stripslashes($_REQUEST['subject']);
+                        $content = stripslashes($_REQUEST['message']);
                         $cc_field = isset($_REQUEST['cc']) ? trim($_REQUEST['cc']) : null;
+                        $cc_field = is_null($cc_field) ? null : \explode(',', stripslashes($cc_field));
                         $cc = '';
-                        if (!is_null($cc_field)) {
-                            $cc_field = get_field($cc_field, 'user_'.$supplier_id);
-                            $cc = $cc_field ? $cc_field : '';
+                        if (is_array($cc_field)) {
+                            foreach ($cc_field as $field_name) {
+                                $field_value = get_field($field_name, 'user_'.$supplier_id);
+                                $cc .= $field_value ? $field_value : '';
+                            }
                         }
                         
                         do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc);
