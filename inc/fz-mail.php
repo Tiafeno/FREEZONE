@@ -50,7 +50,7 @@ add_action('fz_insert_new_article', function ($article_id) {
 }, 10, 1);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
-add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '') {
+add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
     global $Engine;
 
     $Supplier = new \classes\fzSupplier($supplier_id);
@@ -76,7 +76,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $today = date_i18n('Y-m-d H:i:s');
     $date_expired = new DateTime("$today + 2 day");
     $expired_encode = base64_encode($date_expired->format('Y-m-d H:i:s'));
-    $url .= "&e={$expired_encode}";
+    $url .= "&e={$expired_encode}&articles=$articles";
 
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
         'message' => $message,
@@ -90,7 +90,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
         wp_send_json_error("Une erreur s'est produite pendant l'envoie. Le lien {$url}");
     }
 
-}, 10, 3);
+}, 10, 5);
 
 add_action('complete_order', function ($order_id) {
     global $Engine;

@@ -24,11 +24,10 @@ if (!empty($_POST)) {
         $Article->set_total_sales( (int) $stock);
 
         $Article->save();
+        $Article->update_date_review(); // Mettre à jour l'article
 
         wc_add_notice("Article <b>{$Article->name}</b> mis à jour avec succès", 'success');
-
     }
-
 }
 
 if (!empty($_GET)) {
@@ -54,12 +53,6 @@ if (!empty($_GET)) {
                 wp_redirect(get_permalink(wc_get_page_id('myaccount')));
             }
 
-            $current_user = wp_get_current_user();
-            if ($current_user->ID !== $User->ID) {
-                wp_logout();
-                fz_reload_header();
-            }
-
             if (!is_user_logged_in()) {
                 wp_set_current_user($User->ID);
                 wp_set_auth_cookie($User->ID);
@@ -67,7 +60,35 @@ if (!empty($_GET)) {
                 fz_reload_header();
             }
 
+            $current_user = wp_get_current_user();
+            if ($current_user->ID !== $User->ID) {
+                wp_logout();
+
+                wp_set_current_user($User->ID);
+                wp_set_auth_cookie($User->ID);
+
+                fz_reload_header();
+            }
+
+            if (isset($_GET['articles'])) {
+                fz_reload_header();
+            }
+
             global $wpdb;
+            $articles = isset($_COOKIE['freezone_updated_articles']) ? $_COOKIE['freezone_updated_articles'] : '';
+            $item_articles = explode(',', $articles);
+            if (isset($_POST['article_id'])) {
+                $article_id = $_POST['article_id'];
+                $item_articles = array_filter($item_articles, function ($item) use ($article_id) { return $item != $article_id; });
+                $articles = implode(',', $item_articles);
+
+                setcookie('freezone_updated_articles', $articles, time() + 1800);
+            }
+            
+            if (empty($articles)) {
+                $articles = '0';
+            }
+
             $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;
             $length = 10;
             $offset = $length * ($paged - 1);
@@ -85,13 +106,8 @@ WHERE
         WHERE
             meta_key = 'date_review'
                 AND CAST(meta_value AS DATETIME) < CAST('$now' AS DATETIME))
-    AND 
-    pts.ID IN (SELECT 
-        post_id
-    FROM
-        $wpdb->postmeta
-    WHERE
-        meta_key = 'user_id' AND meta_value = $User->ID)
+    AND
+    pts.ID IN ($articles) 
     AND pts.post_type = 'fz_product'
     AND pts.post_status = 'publish'
 LIMIT $length OFFSET $offset
@@ -111,11 +127,15 @@ CODE;
 function fz_reload_header ()
 {
     $current_url = get_the_permalink();
+    setcookie('freezone_updated_articles', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
+
     wp_redirect(add_query_arg([
+        //'articles' => isset($_GET['articles']) ? $_GET['articles'] : '',
         'fznonce' => isset($_GET['fznonce']) ? $_GET['fznonce'] : '',
         'email' => isset($_GET['email']) ? $_GET['email'] : '',
-        'e' => isset($_GET['e']) ? $_GET['e'] : ''
+        'e' => isset($_GET['e']) ? $_GET['e'] : '',
     ], $current_url));
+    exit;
 }
 
 
@@ -149,11 +169,12 @@ yozi_render_breadcrumbs();
         }
 
         .reference::before {
-            content: 'Ref';
+            content: 'Date de revision';
+            font-size:11px;
         }
 
         .designation::before {
-            content: 'Nom du produit';
+            content: '';
         }
 
         .price::before,
@@ -209,8 +230,7 @@ yozi_render_breadcrumbs();
                                                 <div class="form-row form-row-wide reference"
                                                      style="font-weight: lighter">
                                                     <?php
-                                                    $product = $article->get_product();
-                                                    echo $product->get_sku();
+                                                    echo $article->date_review;
                                                     ?>
                                                 </div>
                                             </td>
@@ -237,6 +257,7 @@ yozi_render_breadcrumbs();
                                                     <input type="hidden" class="input-text" name="article_id"
                                                            id="article_id"
                                                            value="<?= $article->ID ?>"/>
+
                                                     <input type="submit" class="btn btn-theme radius-0"
                                                            style="margin: auto;display: table;"
                                                            value="Mettre à jour"/>

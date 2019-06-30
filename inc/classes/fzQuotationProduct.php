@@ -36,6 +36,11 @@ class fzQuotationProduct extends \WC_Product
     public $unit_cost = 0;
     public $total = 0;
     public $item_limit = 0;
+
+    /**
+     * Cette valeur contient la condition du nombre de fournisseur ajouter
+     */
+    public $multi_supplier = false;
     /**
      * Short description of attribute order_id
      *
@@ -65,8 +70,10 @@ class fzQuotationProduct extends \WC_Product
         foreach ($items as $item_id => $item) {
             if (intval($item['product_id']) === intval($product_id)) {
                 $this->count_item = $item->get_quantity();
+                
                 $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                 $this->suppliers = json_decode($suppliers);
+
                 $status = wc_get_order_item_meta( $item_id, 'status', true );
                 $this->status = intval($status);
 

@@ -193,6 +193,7 @@ class fzAPI
                         $supplier_id = intval($rq['supplier_id']);
                         $subject = stripslashes($_REQUEST['subject']);
                         $content = stripslashes($_REQUEST['message']);
+                        $articles = stripslashes($_REQUEST['articles']);
                         $cc_field = isset($_REQUEST['cc']) ? trim($_REQUEST['cc']) : null;
                         $cc_field = is_null($cc_field) ? null : \explode(',', stripslashes($cc_field));
                         $cc = '';
@@ -203,7 +204,7 @@ class fzAPI
                             }
                         }
                         
-                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc);
+                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc, $articles);
 
                    }
                ]
