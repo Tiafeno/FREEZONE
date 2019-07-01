@@ -135,3 +135,10 @@ add_action('fz_received_order', function ($order_id) {
     wp_mail($to, $subject, $content, $headers);
 
 }, 10, 1);
+
+/**
+ * Update articles succefuly
+ */
+add_action('fz_updated_articles_success', function () {
+
+}, 10);

@@ -87,6 +87,8 @@ if (!empty($_GET)) {
             
             if (empty($articles)) {
                 $articles = '0';
+                // Mise à jour reussi! Envoye un mail au adminstrateur
+                do_action('fz_updated_articles_success');
             }
 
             $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;

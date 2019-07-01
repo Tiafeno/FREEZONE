@@ -125,7 +125,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             <div id="section-company" style="display: none">
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_company">Nom de l'entreprise </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company"
+                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" required="true"
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
                 </p>
 
@@ -133,21 +133,21 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_stat">STAT </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat"
+                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" required="true"
                                    value="<?php if ( ! empty( $_POST['stat'] ) ) echo esc_attr( $_POST['stat'] ); ?>" />
                         </p>
                     </div>
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_nif">NIF </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif"
+                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" required="true"
                                    value="<?php if ( ! empty( $_POST['nif'] ) ) echo esc_attr( $_POST['nif'] ); ?>" />
                         </p>
                     </div>
                 </div>
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_rc">RC </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc"
+                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" required="true"
                            value="<?php if ( ! empty( $_POST['rc'] ) ) echo esc_attr( $_POST['rc'] ); ?>" />
                 </p>
                 <p class="form-group form-row form-row-wide">
@@ -162,14 +162,15 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
-                <input type="email" autocomplete="off" class="input-text form-control" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
+                <input type="email" autocomplete="off" class="input-text form-control" name="email" required="true"
+                id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
             </p>
 
 			<?php if ( 'no' === get_option( 'woocommerce_registration_generate_password' ) ) : ?>
 
 				<p class="form-group form-row form-row-wide">
 					<label for="reg_password"><?php esc_html_e( 'Password', 'yozi' ); ?> <span class="required">*</span></label>
-					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" />
+					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" required="true" />
 				</p>
 
 			<?php endif; ?>
