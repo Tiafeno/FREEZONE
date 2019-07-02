@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- header -->
 <div class="apus-checkout-header">
-	
 	<div class="apus-checkout-step">
 		<ul class="clearfix">
 			<li >

@@ -5,7 +5,7 @@ Description: This is a child theme for Yozi.
 Author: Tiafeno Finel
 Author URI: http://www.falicrea.com/
 Template: yozi
-Version: 1.0.12
+Version: 1.0.13
 */
 
 @import url("../yozi/style.css");
@@ -362,6 +362,9 @@ select#reg_role {
 
 .table-responsive > .table-bordered {
 	border: 0;
+}
+.apus-header .header-middle {
+	padding: 0px !important;
 }
 
 
