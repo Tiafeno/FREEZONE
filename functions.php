@@ -20,11 +20,13 @@ function remove_prices ($price, $product)
 
 add_action('init', function () {
     add_rewrite_endpoint('sav', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
     add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
     add_filter('query_vars', function ($vars) {
         $vars[] = 'stock-management';
         $vars[] = 'demandes';
+        $vars[] = 'faq';
         return $vars;
     }, 0);
 
@@ -32,7 +34,6 @@ add_action('init', function () {
     add_rewrite_tag('%id%', '([^&]+)');
     add_rewrite_tag('%conf%', '([^&]+)');
     add_rewrite_tag('%pa_%', '([^&]+)'); // paged
-    //add_rewrite_rule("^demandes/([0-9]+)/?", 'index.php?componnent=edit&id=$matches[1]', 'top');
     flush_rewrite_rules();
 
 
@@ -75,6 +76,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
     $items['stock-management'] = 'Gestion de stock';
     $items['demandes'] = "Demandes";
+    $items['faq'] = "FAQ";
 
     // Insert back the logout item.
     $items['customer-logout'] = $logout;
@@ -100,11 +102,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
 add_filter( 'woocommerce_default_address_fields' , 'disable_address_fields_validation', 999 );
 function disable_address_fields_validation( $address_fields_array ) {
- 
-	// you can also hook first_name and last_name, company, country, city, address_1 and address_2
- 
 	return $address_fields_array;
- 
 }
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
@@ -337,7 +335,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         echo $pagination;
     }
 }, 10);
-
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
@@ -497,6 +494,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     }
 
 
+}, 10);
+add_action('woocommerce_account_faq_endpoint', function() {
+    $url = home_url('/faq');
+    $content = "<a href='{$url}' class='btn btn-theme radius-0'>Foire aux questions</a>";
+    echo $content;
 }, 10);
 
 add_action('user_register', function ($user_id) {
