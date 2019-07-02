@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/fz-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/fz-functions.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,24 +25,31 @@
       <file leaf-file-name="fz-functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+            <state relative-caret-position="634">
+              <caret line="212" lean-forward="true" selection-start-line="212" selection-end-line="212" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="form-checkout.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-checkout.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="60" column="28" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="499" column="62" selection-start-line="499" selection-start-column="62" selection-end-line="499" selection-end-column="62" />
+            <state relative-caret-position="543">
+              <caret line="531" column="51" selection-start-line="531" selection-start-column="51" selection-end-line="531" selection-end-column="51" />
               <folding>
-                <element signature="e#1613#2193#1#PHP" />
-                <element signature="e#2794#2959#0#PHP" />
-                <element signature="e#2984#3283#1#PHP" />
                 <element signature="n#disable_address_fields_validation#0;n#!!top" />
-                <element signature="e#3745#14184#1#PHP" />
-                <element signature="e#14244#21472#1#PHP" />
               </folding>
             </state>
           </provider>
@@ -104,8 +113,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/vc/index.mtl.html" />
-        <option value="$PROJECT_DIR$/templates/vc/index.html" />
         <option value="$PROJECT_DIR$/inc/api/index.html" />
         <option value="$PROJECT_DIR$/inc/model/fzModelProduct.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzServices.php" />
@@ -147,7 +154,6 @@
         <option value="$PROJECT_DIR$/woocommerce/emails/email-order-details.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplierArticle.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzPTFreezone.php" />
-        <option value="$PROJECT_DIR$/inc/fz-functions.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiImport.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplier.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiArticle.php" />
@@ -155,6 +161,9 @@
         <option value="$PROJECT_DIR$/assets/js/register.js" />
         <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/functions.php" />
+        <option value="$PROJECT_DIR$/woocommerce/checkout/review-order.php" />
+        <option value="$PROJECT_DIR$/inc/fz-functions.php" />
+        <option value="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" />
       </list>
     </option>
   </component>
@@ -191,7 +200,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -313,6 +321,12 @@
               <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
               <item name="freezone" type="462c0819:PsiDirectoryNode" />
               <item name="woocommerce" type="462c0819:PsiDirectoryNode" />
+              <item name="checkout" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
+              <item name="freezone" type="462c0819:PsiDirectoryNode" />
+              <item name="woocommerce" type="462c0819:PsiDirectoryNode" />
               <item name="myaccount" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -326,6 +340,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -337,16 +352,16 @@
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone" />
-      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\templates\mail" />
-      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\woocommerce\order" />
-      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\woocommerce\checkout" />
-      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\inc\model" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\inc\api\v1" />
       <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\woocommerce\checkout" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\woocommerce\checkout" />
+      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone" />
+      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\templates\mail" />
+      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\woocommerce\order" />
+      <recent name="C:\xampp\htdocs\freezone\wp-content\themes\freezone\inc\model" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -468,7 +483,8 @@
       <workItem from="1561316728772" duration="11413000" />
       <workItem from="1561361523500" duration="726000" />
       <workItem from="1561619165173" duration="4091000" />
-      <workItem from="1562081588658" duration="1590000" />
+      <workItem from="1562081588658" duration="2091000" />
+      <workItem from="1562096016486" duration="3028000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -488,7 +504,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="443213000" />
+    <option name="totallyTimeSpent" value="446742000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
@@ -502,7 +518,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2320917" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23567335" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Learn" order="2" weight="0.32978722" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -563,7 +579,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/functions.php</url>
-          <line>591</line>
+          <line>592</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -591,27 +607,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/inc/shortcodes/after-sales-service.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="20" column="1" lean-forward="true" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/mail/ask-confirm-order.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="197" column="221" lean-forward="true" selection-end-line="327" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/CREA/WORDPRESS/wp-includes/class-wp-user.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1547">
@@ -925,24 +920,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/payment.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/review-order.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="104" column="51" selection-start-line="104" selection-start-column="51" selection-end-line="104" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+        <state relative-caret-position="634">
+          <caret line="212" lean-forward="true" selection-start-line="212" selection-end-line="212" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="499" column="62" selection-start-line="499" selection-start-column="62" selection-end-line="499" selection-end-column="62" />
+        <state relative-caret-position="543">
+          <caret line="531" column="51" selection-start-line="531" selection-start-column="51" selection-end-line="531" selection-end-column="51" />
           <folding>
-            <element signature="e#1613#2193#1#PHP" />
-            <element signature="e#2794#2959#0#PHP" />
-            <element signature="e#2984#3283#1#PHP" />
             <element signature="n#disable_address_fields_validation#0;n#!!top" />
-            <element signature="e#3745#14184#1#PHP" />
-            <element signature="e#14244#21472#1#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-checkout.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="60" column="28" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

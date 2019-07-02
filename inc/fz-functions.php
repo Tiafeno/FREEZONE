@@ -209,18 +209,4 @@ add_action('init', function () {
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
 
-    // TODO: Désactiver la commande pour les clients non validé par l'administrateur
-    function products_backorders_allowed( $backorder_allowed, $product_id, $product ){
-        $user       = wp_get_current_user();
-        $user_roles = (array) $user->roles;
-        $role_office = get_field('role_office', 'user_' . $user->ID);
-        if( in_array( 'fz-particular', $user_roles ) && ( empty($role_office) || is_null($role_office) ) ){
-            //$backorder_allowed = false;
-        }
-        return $backorder_allowed;
-    }
-    add_filter( 'woocommerce_product_backorders_allowed', 'products_backorders_allowed', 10, 3 );
-
-
-
 }, 10);
