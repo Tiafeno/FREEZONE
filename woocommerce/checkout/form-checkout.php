@@ -54,7 +54,7 @@ if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_us
 }
 
 $User = wp_get_current_user();
-$restricted_msg = "<div style='margin-bottom: 40px'>Vous ne disposez pas des autorisations nécessaires pour cette opération</div>";
+$restricted_msg = "<div style='margin-bottom: 40px'>Vous devez avoir un compte entreprise pour pouvoir continuer cette opération</div>";
 if (in_array('fz-supplier', $User->roles)) {
     $status = get_field('client_status', 'user_' . $User->ID);
     if ($status !== 'company') {
