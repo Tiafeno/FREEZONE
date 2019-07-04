@@ -296,6 +296,16 @@ class fzAPI
             }
         ]);
 
+                $product_id = get_field('product_id', (int)$object['id']);
+                $product_controller = new \WC_REST_Products_V2_Controller();
+                $request = new \WP_REST_Request();
+                $request->set_param('context', 'edit');
+                $product_response = $product_controller->prepare_object_for_response(new \WC_Product((int)$product_id), $request);
+                $images = $product_response->data['images'];
+                return is_array($images) && !empty($images) ? $images[0] : ['src' => 0, 'src' => ''];
+            }
+        ]);
+
         register_rest_field('fz_product', 'marge_dealer', [
             'update_callback' => function ($value, $object, $field_name) {
                 $product_id = get_field('product_id', (int)$object->ID);
