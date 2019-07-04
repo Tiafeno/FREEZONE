@@ -296,6 +296,8 @@ class fzAPI
             }
         ]);
 
+        register_rest_field('fz_product', 'product_thumbnail', [
+            'get_callback' => function ($object, $field_name)  {
                 $product_id = get_field('product_id', (int)$object['id']);
                 $product_controller = new \WC_REST_Products_V2_Controller();
                 $request = new \WP_REST_Request();
