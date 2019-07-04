@@ -25,13 +25,13 @@ class fzPTFreezone
 
         add_action('admin_init', function () {
             $caps = [
-              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'editor']],
-              ['read_private_article' => ['administrator', 'editor']],
-              ['edit_article' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_articles' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_others_articles' => ['administrator', 'editor']],
-              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_private_articles' => ['administrator', 'editor']],
+              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
+              ['read_private_article' => ['administrator', 'editor', 'author']],
+              ['edit_article' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_others_articles' => ['administrator', 'editor', 'author']],
+              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_private_articles' => ['administrator', 'editor', 'author']],
               ['delete_article'  => ['administrator', 'fz-supplier']],
               ['delete_articles' => ['administrator', 'fz-supplier']],
               ['delete_others_articles' => ['administrator']],
@@ -40,10 +40,10 @@ class fzPTFreezone
               ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
             ];
             $caps = array_merge($caps, [
-                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
                 ['read_private_sav' => ['administrator']],
-                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
-                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
+                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
                 ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-supplier']],
                 ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
                 ['edit_private_savs' => ['administrator']],
