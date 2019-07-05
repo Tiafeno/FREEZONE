@@ -76,9 +76,16 @@ class apiSupplier
                 foreach ($orders->posts as $order) {
                     $current_order = new WC_Order($order->ID);
                     $items = $current_order->get_items();
-                    foreach ($items as $item) {
+                    foreach ($items as $item_id => $item) {
                         $data = $item->get_data();
-                        array_push($product_ids, (int) $data['product_id']);
+                        $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
+                        $suppliers = json_decode($suppliers);
+                        if (is_array($suppliers)) {
+                            $suppliers = array_filter($suppliers, function ($supplier) { return intval($supplier->get) !== 0; });
+                            if (!empty($suppliers)) {
+                                array_push($product_ids, (int) $data['product_id']);
+                            }
+                        }
                     }
                 }
                 $product_ids = array_unique($product_ids, SORT_NUMERIC );
