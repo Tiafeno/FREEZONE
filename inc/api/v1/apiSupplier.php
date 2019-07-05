@@ -81,6 +81,7 @@ class apiSupplier
                         $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                         $suppliers = json_decode($suppliers);
                         if (is_array($suppliers)) {
+                            // Vérifier si on recupere des articles
                             $suppliers = array_filter($suppliers, function ($supplier) { return intval($supplier->get) !== 0; });
                             if (!empty($suppliers)) {
                                 array_push($product_ids, (int) $data['product_id']);

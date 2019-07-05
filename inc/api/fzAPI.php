@@ -118,15 +118,27 @@ class fzAPI
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
-                        $length = (int)$_REQUEST['length'];
-                        $start = (int)$_REQUEST['start'];
+                        $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
+                        $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
                         $args = [
-                            'number' => $length,
-                            'offset' => $start,
+                            'number'  => $length,
+                            'offset'  => $start,
                             'orderby' => 'registered',
                             'role__in' => ['fz-particular'],
-                            'order' => 'DESC'
+                            'order'    => 'DESC'
                         ];
+                        if ( ! empty($_REQUEST['responsible']) ) {
+                            $args = array_merge($args, [
+                                'meta_query' => [
+                                    [
+                                        'key'   => 'responsible',
+                                        'value' => (int)$_REQUEST['responsible']
+                                    ]
+                                ]
+                            ]);
+                        }
+
+                        
                         $user_query = new \WP_User_Query($args);
                         if (!empty($user_query->get_results())) {
                             $results = [];
@@ -141,13 +153,13 @@ class fzAPI
                                 $results[] = $response->data;
                             }
                             return [
-                                "recordsTotal" => $user_query->total_users,
+                                "recordsTotal"    => $user_query->total_users,
                                 "recordsFiltered" => $user_query->total_users,
                                 'data' => $results
                             ];
                         } else {
                             return [
-                                "recordsTotal" => 0,
+                                "recordsTotal"    => 0,
                                 "recordsFiltered" => 0,
                                 'data' => []
                             ];
