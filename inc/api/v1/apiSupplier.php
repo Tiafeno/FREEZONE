@@ -92,6 +92,15 @@ class apiSupplier
                 $product_ids = array_unique($product_ids, SORT_NUMERIC );
 
                 $join_product_ids = implode(',', $product_ids);
+
+                if (empty($join_product_ids)) {
+                    return [
+                        "recordsTotal" => 0,
+                        "recordsFiltered" => 0,
+                        'data' => []
+                    ];
+                }
+
                 $today = date_i18n('Y-m-d H:i:s');
                 $review_limit = new DateTime("$today - 2 day");
                 $review_limit_string = $review_limit->format('Y-m-d H:i:s');
