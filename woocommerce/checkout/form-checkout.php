@@ -55,7 +55,7 @@ if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_us
 
 $User = wp_get_current_user();
 $restricted_msg = "<div style='margin-bottom: 40px'>Vous devez avoir un compte entreprise pour pouvoir continuer cette opération</div>";
-if (in_array('fz-supplier', $User->roles)) {
+if (in_array('fz-particular', $User->roles)) {
     $status = get_field('client_status', 'user_' . $User->ID);
     if ($status !== 'company') {
         echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', $restricted_msg );

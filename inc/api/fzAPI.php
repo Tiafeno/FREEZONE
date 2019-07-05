@@ -137,7 +137,6 @@ class fzAPI
                                 ]
                             ]);
                         }
-
                         
                         $user_query = new \WP_User_Query($args);
                         if (!empty($user_query->get_results())) {
