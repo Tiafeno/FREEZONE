@@ -35,8 +35,6 @@ add_action('init', function () {
     add_rewrite_tag('%conf%', '([^&]+)');
     add_rewrite_tag('%pa_%', '([^&]+)'); // paged
     flush_rewrite_rules();
-
-
 });
 
 // effacer tous les articles qui utilise ce produit comme reference

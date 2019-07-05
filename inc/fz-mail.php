@@ -78,8 +78,12 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $expired_encode = base64_encode($date_expired->format('Y-m-d H:i:s'));
     $url .= "&e={$expired_encode}&articles=$articles";
 
+    $article_ids = explode(',', $articles);
+    $article_posts = array_map(function($id) { return new \classes\fzSupplierArticle((int) $id); }, $article_ids);
+
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
         'message' => $message,
+        'articles' => $article_posts,
         'url' => $url
     ]);
 
