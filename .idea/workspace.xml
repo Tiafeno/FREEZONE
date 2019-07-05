@@ -23,20 +23,8 @@
       <file leaf-file-name="fz-functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2730">
+            <state relative-caret-position="595">
               <caret line="210" selection-start-line="210" selection-end-line="210" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/functions.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-519">
-              <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-              <folding>
-                <element signature="n#disable_address_fields_validation#0;n#!!top" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -44,8 +32,8 @@
       <file leaf-file-name="apiSupplier.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/inc/api/v1/apiSupplier.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="100" column="22" selection-start-line="100" selection-start-column="22" selection-end-line="100" selection-end-column="22" />
+            <state relative-caret-position="530">
+              <caret line="87" column="29" lean-forward="true" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
               <folding>
                 <element signature="n#collect_suppliers#0;n#apiSupplier#0;n#!!top" />
               </folding>
@@ -501,7 +489,7 @@
       <workItem from="1562246606332" duration="5770000" />
       <workItem from="1562269849387" duration="6767000" />
       <workItem from="1562315821883" duration="6198000" />
-      <workItem from="1562350673682" duration="525000" />
+      <workItem from="1562350673682" duration="1618000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -521,7 +509,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="466278000" />
+    <option name="totallyTimeSpent" value="467371000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
@@ -880,13 +868,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2730">
-          <caret line="210" selection-start-line="210" selection-end-line="210" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/classes/fzQuotation.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="897">
@@ -943,16 +924,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-519">
-          <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-          <folding>
-            <element signature="n#disable_address_fields_validation#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="474">
@@ -960,10 +931,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1806">
+          <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+          <folding>
+            <element signature="n#disable_address_fields_validation#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="210" selection-start-line="210" selection-end-line="210" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiSupplier.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="100" column="22" selection-start-line="100" selection-start-column="22" selection-end-line="100" selection-end-column="22" />
+        <state relative-caret-position="530">
+          <caret line="87" column="29" lean-forward="true" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
           <folding>
             <element signature="n#collect_suppliers#0;n#apiSupplier#0;n#!!top" />
           </folding>
