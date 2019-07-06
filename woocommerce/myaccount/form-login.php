@@ -125,7 +125,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             <div id="section-company" style="display: none">
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_company">Nom de l'entreprise </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" required="true"
+                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" 
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
                 </p>
 
@@ -133,21 +133,21 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_stat">STAT </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" required="true"
+                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" 
                                    value="<?php if ( ! empty( $_POST['stat'] ) ) echo esc_attr( $_POST['stat'] ); ?>" />
                         </p>
                     </div>
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_nif">NIF </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" required="true"
+                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" 
                                    value="<?php if ( ! empty( $_POST['nif'] ) ) echo esc_attr( $_POST['nif'] ); ?>" />
                         </p>
                     </div>
                 </div>
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_rc">RC </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" required="true"
+                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" 
                            value="<?php if ( ! empty( $_POST['rc'] ) ) echo esc_attr( $_POST['rc'] ); ?>" />
                 </p>
                 <p class="form-group form-row form-row-wide">
