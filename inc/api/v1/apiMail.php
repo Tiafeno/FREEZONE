@@ -8,6 +8,7 @@
 
 class apiMail
 {
+    private $tva = 20;
     public $no_reply = "no-reply@freezone.click";
     public function __construct () { }
     public function send_order_client(WP_REST_Request $rq) {
@@ -32,8 +33,16 @@ class apiMail
         $order = $order_controller->prepare_object_for_response(new WC_Order($order_id), $request);
         $data = $order->data;
 
+        $total = (int) $data['total'];
+        $tva = ($total * $this->tva) / 100;
+        $prices = array_map(function ($i) { return (int)$i['total']; }, $data['line_items']);
+        $sum = array_sum($prices);
+
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
             'order' => $data,
+            'items' => $data['line_items'],
+            'tva' => $tva,
+            'pay' => $sum + $tva,
             'message' => $message,
             'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
