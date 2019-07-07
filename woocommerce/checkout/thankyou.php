@@ -21,6 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
+<style type="text/css">
+	.woocommerce section.woocommerce-order-details {
+		display: none;
+	}
+</style>
 <!-- header -->
 <div class="apus-checkout-header">
 
@@ -87,21 +92,20 @@ if ( $order ) : ?>
 					<strong><?php echo trim($order->get_billing_email()); ?></strong>
 				</li>
 			<?php endif; ?>
-			<?php if ( $order->get_payment_method_title() ) : ?>
-			<li class="method">
-				<?php esc_html_e( 'Payment Method:', 'yozi' ); ?>
-				<strong><?php echo trim($order->get_payment_method_title()); ?></strong>
-			</li>
-			<?php endif; ?>
 		</ul>
 		<div class="clear"></div>
 
 	<?php endif; ?>
 	<div class="woo-pay-perfect text-theme">
-		<?php do_action( 'woocommerce_thankyou_' . $order->get_payment_method(), $order->get_id() ); ?>
+		Votre demande a bien été envoyé et sera étudiée ultérieurement  
 	</div>
-	<?php do_action( 'woocommerce_thankyou', $order->get_id() ); ?>
-
+	<?= do_action( 'woocommerce_thankyou', $order->get_id() ); ?>
+	<?php
+	$shop_url = wc_get_page_permalink('shop');
+	?>
+	<p class="buttons clearfix" style="margin-bottom: 40px">
+		<a href="<?= $shop_url ?>" class="btn btn-block btn-primary wc-forward" style="width:inherit">Poursuivre la demande</a>
+	</p>
 <?php else : ?>
 
 	<p class="woocommerce-thankyou-order-received"><?php echo apply_filters( 'woocommerce_thankyou_order_received_text', esc_html__( 'Thank you. Your order has been received.', 'yozi' ), null ); ?></p>
