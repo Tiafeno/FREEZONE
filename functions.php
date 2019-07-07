@@ -603,3 +603,7 @@ add_action('acf/save_post', function ($post_id) {
     // Envoyer un email aux administrateur
     do_action('fz_insert_sav', $post_id);
 });
+
+add_action('wp_loaded', function() {
+
+});

@@ -24,24 +24,21 @@ class apiMail
         $message = sanitize_text_field($message);
         $subject = sanitize_text_field($subject);
         if ($order_id === 0 || is_null($order_id)) wp_send_json_error("Parametre 'order_id' est incorrect");
-        $options = get_field('wc', 'option');
-        $woocommerce = new \Automattic\WooCommerce\Client(
-            "http://{$_SERVER['SERVER_NAME']}", $options['ck'], $options['cs'],
-            [
-                'version' => 'wc/v3'
-            ]
-        );
-        $Order = $woocommerce->get("orders/{$order_id}", ['context' => 'view']);
-        $line_items = $Order->line_items;
-        unset($line_items->meta_data);
+
+        WC()->api->rest_api_includes();
+        $order_controller = new WC_REST_Orders_V2_Controller();
+        $request = new WP_REST_Request();
+        $request->set_param('context', 'edit');
+        $order = $order_controller->prepare_object_for_response(new WC_Order($order_id), $request);
+        $data = $order->data;
 
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
-            'order' => $line_items,
+            'order' => $data,
             'message' => $message,
-            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' . $line_items->id
+            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 
-        $to = $line_items->billing->email;
+        $to = $data['billing']['email'];
         $headers   = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <{$this->no_reply}>";
