@@ -90,11 +90,27 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
+
+    $fields['billing']['billing_country']['default'] = 'MG';
     $fields['billing']['billing_country']['required'] = false;
     $fields['billing']['billing_state']['required'] = false;
-    
+
+    $fields['shipping']['shipping_country']['default'] = 'MG';
     $fields['shipping']['shipping_country']['required'] = false;
     $fields['shipping']['shipping_state']['required'] = false;
+
+    unset($fields['shipping']['shipping_country'], $fields['shipping']['shipping_state']);
+    unset($fields['billing']['billing_country'], $fields['billing']['billing_state']);
+
+    // Remplir automatiquement les champs pour l'étape de la demande
+    $User = wp_get_current_user();
+    $Company = new \classes\fzCompany($User->ID);
+    $fields['billing']['billing_first_name']['default'] = $Company->first_name;
+    $fields['billing']['billing_last_name']['default'] = $Company->last_name;
+    $fields['billing']['billing_company']['default'] = $Company->company_name;
+    $fields['billing']['billing_address_1']['default'] = $Company->address;
+    $fields['billing']['billing_phone']['default'] = $Company->phone;
+
     return $fields;
 }, 9999);
 
@@ -524,7 +540,12 @@ add_action('user_register', function ($user_id) {
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
-    
+
+    /**
+     * client_status (acf field)
+     * Particulier ou entreprise
+     */
+
     $fields = ['stat', 'nif', 'rc', 'cif', 'client_status'];
     foreach ($fields as $field) {
         $requestValue = sanitize_text_field($_REQUEST[$field]);

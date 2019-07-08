@@ -9,6 +9,7 @@ require_once 'classes/fzRoles.php';
 require_once 'classes/fzSav.php';
 require_once 'classes/fzPTFreezone.php';
 require_once 'classes/fzParticular.php';
+require_once 'classes/fzCompany.php';
 require_once 'classes/fzSupplier.php';
 require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuotation.php';

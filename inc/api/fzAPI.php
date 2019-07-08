@@ -292,7 +292,8 @@ class fzAPI
             'update_callback' => function ($value, $object, $field_name) {
                 $product_id = get_field('product_id', (int)$object->ID);
                 $product = new \WC_Product((int)$product_id);
-                return $product->update_meta_data("_fz_marge", $value);
+                $product->update_meta_data("_fz_marge", $value);
+                return $product->save();
             },
             'get_callback' => function ($object, $field_name) {
                 $product_id = get_field('product_id', (int)$object['id']);
@@ -334,7 +335,8 @@ class fzAPI
             'update_callback' => function ($value, $object, $field_name) {
                 $product_id = get_field('product_id', (int)$object->ID);
                 $product = new \WC_Product((int)$product_id);
-                return $product->update_meta_data("_fz_marge_dealer", $value);
+                $product->update_meta_data("_fz_marge_dealer", $value);
+                return $product->save();
             },
             'get_callback' => function ($object, $field_name) {
                 $product_id = get_field('product_id', (int)$object['id']);
