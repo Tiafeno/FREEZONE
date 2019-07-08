@@ -365,7 +365,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     $user_quotations = wc_get_orders(['customer_id' => $User->ID]);
 
     if (empty($user_quotations)) {
-        echo 'Aucune demande';
+        $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
+		$content .= '<a class="woocommerce-Button button" href="https://freezone.local.mg/shop-2/">';
+		$content .=	'Voir les catalogues		</a> Aucune demande n’a encore été passée.	</div>';
+        echo $content;
+        
         return false;
     }
 
