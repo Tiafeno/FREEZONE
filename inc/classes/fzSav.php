@@ -33,8 +33,16 @@ class fzSav
         foreach ($this->fields as $key) {
             if ($key === 'auctor' || $key === 'reference') {
                 $value = get_post_meta($sav_id, 'sav_'.$key, true);
-                $this->$key = $value;
+                if ($api && $key = 'auctor') {
+                    $user_controller = new \WP_REST_Users_Controller();
+                    $request = new \WP_REST_Request();
+                    $request->set_param('context', 'edit');
 
+                    $this->$key = $user_controller->prepare_item_for_response(new \WP_User((int) $value), $request);
+                    continue;
+                }
+
+                $this->$key = $value;
                 continue;
             }
 
