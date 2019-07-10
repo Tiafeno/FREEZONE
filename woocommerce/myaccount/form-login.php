@@ -114,7 +114,8 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
 			<p class="form-group form-row form-row-wide">
 				<label for="reg_role">Type de compte <span class="required">*</span></label>
-                <select class="form-control" name="client_status" id="reg_client_status" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
+                <select class="form-control" name="client_status" id="reg_client_status" style="height: 46px;"
+                        value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
                     <option value="">Selectionner un type</option>
                     <option value="particular">Particulier</option>
                     <option value="company">Société ou Entreprise</option>
@@ -124,7 +125,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             <!-- Pour les utilisateurs de type société ou entreprise --->
             <div id="section-company" style="display: none">
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_company">Nom de l'entreprise </label>
+                    <label for="reg_company">Nom de l'entreprise  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" 
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
                 </p>
@@ -132,26 +133,26 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                 <div class="row">
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
-                            <label for="reg_stat">STAT </label>
+                            <label for="reg_stat">STAT  <span class="required">*</span></label>
                             <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" 
                                    value="<?php if ( ! empty( $_POST['stat'] ) ) echo esc_attr( $_POST['stat'] ); ?>" />
                         </p>
                     </div>
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
-                            <label for="reg_nif">NIF </label>
+                            <label for="reg_nif">NIF  <span class="required">*</span></label>
                             <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" 
                                    value="<?php if ( ! empty( $_POST['nif'] ) ) echo esc_attr( $_POST['nif'] ); ?>" />
                         </p>
                     </div>
                 </div>
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_rc">RC </label>
+                    <label for="reg_rc">RC  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" 
                            value="<?php if ( ! empty( $_POST['rc'] ) ) echo esc_attr( $_POST['rc'] ); ?>" />
                 </p>
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_cif">CIF </label>
+                    <label for="reg_cif">CIF  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control" name="cif" id="reg_cif"
                            value="<?php if ( ! empty( $_POST['cif'] ) ) echo esc_attr( $_POST['cif'] ); ?>" />
                 </p>

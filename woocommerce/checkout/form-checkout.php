@@ -74,7 +74,6 @@ if (in_array('fz-particular', $User->roles)) {
 	<div class="col-md-8 col-xs-12">
 		<div class="details-check">
 		<?php if ( $checkout->get_checkout_fields() ) : ?>
-
 			<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
 
 			<div class="col2-set" id="customer_details">
@@ -88,8 +87,6 @@ if (in_array('fz-particular', $User->roles)) {
 			</div>
 
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
-
-			
 		<?php endif; ?>
 		</div>
 	</div>
