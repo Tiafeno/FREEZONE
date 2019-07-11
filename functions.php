@@ -104,12 +104,15 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     // Remplir automatiquement les champs pour l'étape de la demande
     $User = wp_get_current_user();
-    $Company = new \classes\fzCompany($User->ID);
-    $fields['billing']['billing_first_name']['default'] = $Company->first_name;
-    $fields['billing']['billing_last_name']['default'] = $Company->last_name;
-    $fields['billing']['billing_company']['default'] = $Company->company_name;
-    $fields['billing']['billing_address_1']['default'] = $Company->address;
-    $fields['billing']['billing_phone']['default'] = $Company->phone;
+    $client_status = get_field('client_status', 'user_' . $User->ID);
+    if ($client_status === 'particular') {
+        $fields['billing']['billing_company']['default'] = '';
+        $fields['billing']['billing_company']['required'] = false;
+
+        $fields['shipping']['shipping_company']['default'] = '';
+        $fields['shipping']['shipping_company']['required'] = false;
+
+    }
 
     return $fields;
 }, 9999);
@@ -542,10 +545,12 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $company_name = isset($_POST['company_name']) ? $_POST['company_name'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
 
+    $user_customer = new WC_Customer(intval($user_id));
     /**
      * client_status (acf field)
      * Particulier ou entreprise
@@ -558,6 +563,8 @@ add_action('user_register', function ($user_id) {
             $val = sanitize_text_field($_REQUEST[$field]);
             update_field($field, $val, 'user_' . $user_id);
         }
+        update_field('company_name', $company_name, 'user_' . $user_id);
+        $user_customer->set_billing_company($company_name);
     }
 
     if ($client_status === 'particular') {
@@ -568,9 +575,22 @@ add_action('user_register', function ($user_id) {
         }
     }
 
+    // Update customer woocommerce user field
+    $zip = sanitize_text_field($_REQUEST['postal_code']);
+    $city = sanitize_text_field($_REQUEST['city']);
+    $user_customer->set_billing_location('MG', '', $zip, $city);
+    $user_customer->set_billing_email($User->user_email);
+    $user_customer->save();
+
+
     // Ajouter le type du role du client (Revendeur ou Acheteur)
     // 1: Acheteur, 2: Revendeur et 0: En attente de confirmation
     update_field('role_office', 0, 'user_' . $user_id);
+
+});
+
+add_action('wp_loaded', function() {
+
 
 });
 

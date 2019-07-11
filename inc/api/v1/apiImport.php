@@ -69,8 +69,8 @@ class apiImport
                 'name' => $name,
                 'type' => 'simple',
                 'regular_price' => $regular_price,
-                'description'   => stripslashes($description),
-                'short_description' => stripslashes($short_description),
+                'description'   => !empty($description) ? stripslashes($description) : '',
+                'short_description' => !empty($short_description) ? stripslashes($short_description) : '',
                 'categories' => $categorie_terms,
                 'meta_data' => [
                     [ 'key' => '_fz_marge', 'value' => trim($marge) ],

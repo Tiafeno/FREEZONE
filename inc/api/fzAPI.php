@@ -60,6 +60,101 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/create/article', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $request) {
+                        global $wpdb;
+                        $product = null;
+                        extract($_REQUEST, EXTR_PREFIX_SAME, 'REST');
+
+                        /** @var string $name */
+                        /** @var string $price_dealer */
+                        /** @var string $price */
+                        /** @var string $total_sales */
+                        /** @var string $user_id */
+                        /** @var string $product_cat */
+                        /** @var string $mark */
+                        /** @var string $marge */
+                        /** @var string $marge_dealer */
+
+                        $post_title = strtolower($name);
+                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE LOWER(post_title) = '{$post_title}' AND post_status = 'product'";
+                        $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
+                        if (!is_null($result)) {
+                            $product = new \WC_Product($result->ID);
+                        } else {
+                            $taxonomy = 'pa_brands';
+                            $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
+                            //$attribut = wc_get_attribute($attr_id); // name, slug, id etc...
+
+                            //$terms = get_terms(['taxonomy' => $attribut->slug, 'hide_empty' => false]);
+                            //$current_term = array_filter($terms, function ($term) use ($mark) { return $term->name === $mark ;});
+                            //$current_term = is_array($current_term) && !empty($current_term) ? $current_term[0] : '';
+
+                            $term_id = get_term_by( 'name', $mark, $taxonomy )->term_id;
+
+                            $rest_request = new \WP_REST_Request();
+                            $rest_request->set_query_params([
+                                'type' => 'simple',
+                                'name' => $name,
+                                'regular_price' => '0',
+                                'description'   => ' ',
+                                'short_description' => ' ',
+                                'attributes' => [
+                                    [
+                                        'id' => $attr_id,
+                                        'position'  => 0,
+                                        'visible'   => true,
+                                        'variation' => false, // for variative products in case you would like to use it for variations
+                                        'options'   => array($mark) // if the attribute term doesn't exist, it will be created
+                                    ]
+                                ],
+                                'meta_data' => [
+                                    ['key' => '_fz_marge',        'value' => intval($marge)],
+                                    ['key' => '_fz_marge_dealer', 'value' => intval($marge_dealer)]
+                                ],
+                                'images' => []
+                            ]);
+                            $product_controller = new \WC_REST_Products_V2_Controller();
+                            $response = $product_controller->create_item($rest_request);
+                            if ($response instanceof \WP_REST_Response) {
+                                $data = $response->get_data();
+                                $product = new \WC_Product((int) $data['id']);
+                            }
+                        }
+
+                        if (is_null($product)) {
+                            return new \WP_REST_Response(['data' => "Produit introuvable"], 200);
+                        }
+
+                        $date_now = date_i18n('Y-m-d H:i:s');
+                        $rest_request = new \WP_REST_Request();
+                        $rest_request->set_query_params([
+                            'status' => 'publish',
+                            'title' => $name,
+                            'content' => '',
+                            'price' => intval($price),
+                            'price_dealer' => intval($price_dealer),
+                            'total_sales' => $total_sales,
+                            'user_id' => $user_id,
+                            'product_id' => $product->get_id(),
+                            'product_cat' => explode(',', $product_cat),
+                            'date_add' => $date_now,
+                            'date_review' => $date_now
+
+                        ]);
+                        $post_controller = new \WP_REST_Posts_Controller('fz_product');
+                        $response = $post_controller->create_item($rest_request);
+
+                        return $response;
+                    },
+                    'permission_callback' => function () {
+                        return current_user_can('delete_posts');
+                    },
+                ]
+            ]);
+
             register_rest_route('api', '/sav/', [
                 [
                     'methods' => \WP_REST_Server::READABLE,
@@ -121,23 +216,23 @@ class fzAPI
                         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
                         $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
                         $args = [
-                            'number'  => $length,
-                            'offset'  => $start,
+                            'number' => $length,
+                            'offset' => $start,
                             'orderby' => 'registered',
                             'role__in' => ['fz-particular'],
-                            'order'    => 'DESC'
+                            'order' => 'DESC'
                         ];
-                        if ( ! empty($_REQUEST['responsible']) ) {
+                        if (!empty($_REQUEST['responsible'])) {
                             $args = array_merge($args, [
                                 'meta_query' => [
                                     [
-                                        'key'   => 'responsible',
+                                        'key' => 'responsible',
                                         'value' => (int)$_REQUEST['responsible']
                                     ]
                                 ]
                             ]);
                         }
-                        
+
                         $user_query = new \WP_User_Query($args);
                         if (!empty($user_query->get_results())) {
                             $results = [];
@@ -152,13 +247,13 @@ class fzAPI
                                 $results[] = $response->data;
                             }
                             return [
-                                "recordsTotal"    => $user_query->total_users,
+                                "recordsTotal" => $user_query->total_users,
                                 "recordsFiltered" => $user_query->total_users,
                                 'data' => $results
                             ];
                         } else {
                             return [
-                                "recordsTotal"    => 0,
+                                "recordsTotal" => 0,
                                 "recordsFiltered" => 0,
                                 'data' => []
                             ];
@@ -254,8 +349,6 @@ class fzAPI
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         return get_field('reference', 'user_' . $object['id']);
                     } else return get_field($field_name, 'user_' . $object['id']);
-
-
                 }
             ]);
         }

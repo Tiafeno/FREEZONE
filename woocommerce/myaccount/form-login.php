@@ -112,6 +112,23 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                        value="<?php if ( ! empty( $_POST['address'] ) ) echo esc_attr( $_POST['address'] ); ?>" />
             </p>
 
+            <div class="row">
+                <div class="col-sm-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_city">Ville  <span class="required">*</span></label>
+                        <input type="text" placeholder="" class="input-text form-control" name="city" id="reg_city"
+                               value="<?php if ( ! empty( $_POST['city'] ) ) echo esc_attr( $_POST['city'] ); ?>" />
+                    </p>
+                </div>
+                <div class="col-sm-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_postal_code">Code postal  <span class="required">*</span></label>
+                        <input type="text" placeholder="" class="input-text form-control" name="postal_code" id="reg_postal_code"
+                               value="<?php if ( ! empty( $_POST['postal_code'] ) ) echo esc_attr( $_POST['postal_code'] ); ?>" />
+                    </p>
+                </div>
+            </div>
+
 			<p class="form-group form-row form-row-wide">
 				<label for="reg_role">Type de compte <span class="required">*</span></label>
                 <select class="form-control" name="client_status" id="reg_client_status" style="height: 46px;"
