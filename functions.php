@@ -550,11 +550,22 @@ add_action('user_register', function ($user_id) {
      * client_status (acf field)
      * Particulier ou entreprise
      */
+    $client_status = sanitize_text_field($_REQUEST['client_status']);
+    update_field('client_status', $client_status, 'user_' . $user_id);
+    if ($client_status !== 'particular') {
+        $fields = ['stat', 'nif', 'rc', 'cif'];
+        foreach ($fields as $field) {
+            $val = sanitize_text_field($_REQUEST[$field]);
+            update_field($field, $val, 'user_' . $user_id);
+        }
+    }
 
-    $fields = ['stat', 'nif', 'rc', 'cif', 'client_status'];
-    foreach ($fields as $field) {
-        $requestValue = sanitize_text_field($_REQUEST[$field]);
-        update_field($field, $requestValue, 'user_' . $user_id);
+    if ($client_status === 'particular') {
+        $fields = ['cin', 'date_cin'];
+        foreach ($fields as $field) {
+            $val = sanitize_text_field($_REQUEST[$field]);
+            update_field($field, $val, 'user_' . $user_id);
+        }
     }
 
     // Ajouter le type du role du client (Revendeur ou Acheteur)

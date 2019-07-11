@@ -158,8 +158,26 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                 </p>
             </div>
             <!-- Fin pour les champs société ou entreprise -->
-            
-            
+
+            <!-- Pour les utilisateurs de type particulier --->
+            <div id="section-particular" style="display: none">
+                <p class="form-group form-row form-row-wide">
+                    <label for="reg_cin">CIN  <span class="required">*</span></label>
+                    <input type="text" placeholder="" class="input-text form-control" name="cin" id="reg_cin"
+                           value="<?php if ( ! empty( $_POST['cin'] ) ) echo esc_attr( $_POST['cin'] ); ?>" />
+                </p>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="form-group form-row form-row-wide">
+                            <label for="reg_date_cin">Date de délivrance  <span class="required">*</span></label>
+                            <input type="date" placeholder="" class="input-text form-control" name="date_cin" id="reg_date_cin"
+                                   value="<?php if ( ! empty( $_POST['date_cin'] ) ) echo esc_attr( $_POST['date_cin'] ); ?>" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin pour les champs particuliers -->
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
