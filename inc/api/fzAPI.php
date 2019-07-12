@@ -79,7 +79,8 @@ class fzAPI
                         /** @var string $marge_dealer */
 
                         $post_title = strtolower($name);
-                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE LOWER(post_title) = '{$post_title}' AND post_status = 'product'";
+                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE  CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}'
+ AND post_type = 'product'";
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
                         if (!is_null($result)) {
                             $product = new \WC_Product($result->ID);
@@ -127,6 +128,9 @@ class fzAPI
                         if (is_null($product)) {
                             return new \WP_REST_Response(['data' => "Produit introuvable"], 200);
                         }
+
+                        $product->set_sku('PRD' . $product->get_id());
+                        $product->save();
 
                         $date_now = date_i18n('Y-m-d H:i:s');
                         $rest_request = new \WP_REST_Request();
