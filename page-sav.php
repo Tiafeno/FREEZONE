@@ -24,6 +24,8 @@ get_header();
 acf_enqueue_uploader();
 $sidebar_configs = yozi_get_page_layout_configs();
 
+$updated = isset($_GET['updated']) ? boolval($_GET['updated']) : false;
+
 yozi_render_breadcrumbs();
 ?>
 
@@ -64,6 +66,10 @@ yozi_render_breadcrumbs();
                 <main id="main" class="site-main clearfix" role="main" style="margin-bottom: 15px">
 
                     <?php
+                    if ($updated) {
+                        wc_print_notice("Votre demande a bien été prise en compte par notre équipe, vous serez 
+                        bientôt contacte pour la suite. Merci", 'success');
+                    }
                     if (!is_user_logged_in()) {
                         wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
@@ -74,8 +80,9 @@ yozi_render_breadcrumbs();
                                 'post_status'   => 'publish'
                             ),
                             'submit_value'		=> 'Envoyer',
-                            'return' => wc_get_page_permalink('myaccount'),
-                            'html_submit_button'	=> '<input type="submit" class="btn btn-lg btn-primary" value="%s" />'
+                            //'return' => wc_get_page_permalink('myaccount'),
+                            'html_submit_button'	=> '<input type="submit" class="btn btn-lg btn-primary" value="%s" />',
+                            'updated_message' => false
                         ));
 
                         ?>

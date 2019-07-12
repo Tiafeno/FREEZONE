@@ -93,26 +93,35 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['billing']['billing_country']['default'] = 'MG';
     $fields['billing']['billing_country']['required'] = false;
+
     $fields['billing']['billing_state']['required'] = false;
+    $fields['billing']['billing_first_name']['required'] = false;
+    $fields['billing']['billing_last_name']['required'] = false;
+    $fields['billing']['billing_company']['required'] = false;
+    $fields['billing']['billing_address_1']['required'] = false;
+    $fields['billing']['billing_address_2']['required'] = false;
+    $fields['billing']['billing_city']['required'] = false;
+    $fields['billing']['billing_postcode']['required'] = false;
+    $fields['billing']['billing_phone']['required'] = false;
+    $fields['billing']['billing_email']['required'] = false;
 
     $fields['shipping']['shipping_country']['default'] = 'MG';
     $fields['shipping']['shipping_country']['required'] = false;
+    $fields['shipping']['shipping_first_name']['required'] = false;
+    $fields['shipping']['shipping_last_name']['required'] = false;
+    $fields['shipping']['shipping_company']['required'] = false;
+    $fields['shipping']['shipping_address_1']['required'] = false;
+    $fields['shipping']['shipping_address_2']['required'] = false;
+    $fields['shipping']['shipping_city']['required'] = false;
+    $fields['shipping']['shipping_postcode']['required'] = false;
+    $fields['shipping']['shipping_phone']['required'] = false;
+    $fields['shipping']['shipping_email']['required'] = false;
     $fields['shipping']['shipping_state']['required'] = false;
 
-    unset($fields['shipping']['shipping_country'], $fields['shipping']['shipping_state']);
-    unset($fields['billing']['billing_country'], $fields['billing']['billing_state']);
 
     // Remplir automatiquement les champs pour l'étape de la demande
     $User = wp_get_current_user();
     $client_status = get_field('client_status', 'user_' . $User->ID);
-    if ($client_status === 'particular') {
-        $fields['billing']['billing_company']['default'] = '';
-        $fields['billing']['billing_company']['required'] = false;
-
-        $fields['shipping']['shipping_company']['default'] = '';
-        $fields['shipping']['shipping_company']['required'] = false;
-
-    }
 
     return $fields;
 }, 9999);

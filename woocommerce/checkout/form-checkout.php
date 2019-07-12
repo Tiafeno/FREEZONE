@@ -71,7 +71,7 @@ if (in_array('fz-particular', $User->roles)) {
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
 
 <div class="row">
-    <div class="col-md-8 col-xs-12">
+    <div class="col-md-12 col-xs-12">
         <div class="details-review">
             <div class="order-review">
                 <h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'yozi' ); ?></h3>
@@ -85,7 +85,7 @@ if (in_array('fz-particular', $User->roles)) {
             </div>
         </div>
     </div>
-	<div class="col-md-4 col-xs-12">
+	<div class="col-md-12 col-xs-12">
 		<div class="details-check">
 		<?php if ( $checkout->get_checkout_fields() ) : ?>
 			<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>

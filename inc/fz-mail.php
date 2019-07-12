@@ -20,12 +20,7 @@ add_action('fz_insert_sav', function ($sav_id) {
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: $User->first_name . ' ' . $User->last_name <{$from}>";
 
-    $send = wp_mail($to, $subject, $content, $headers);
-    if ($send) {
-        wp_send_json_success("Envoyer avec succès");
-    } else {
-        wp_send_json_error("Une erreur s'est produite pendant l'envoie");
-    }
+    wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
 
 add_action('fz_insert_new_article', function ($article_id) {
