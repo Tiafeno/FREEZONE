@@ -75,15 +75,19 @@ class apiImport
                 'meta_data' => [
                     [ 'key' => '_fz_marge', 'value' => trim($marge) ],
                     [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
-                ]
+                ],
+                'images' => []
             ];
 
             if ( ! empty($mark) && !is_null($mark)) {
+                $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
                 $data = array_merge($data, ['attributes' => [
                     [
-                        'name'    => 'brands',
-                        'options' => $mark,
-                        'visible' => true
+                        'id' => $attr_id,
+                        'position'  => 0,
+                        'visible'   => true,
+                        'variation' => false, // for variative products in case you would like to use it for variations
+                        'options'   => array($mark) // if the attribute term doesn't exist, it will be created
                     ]
                 ]]);
             }
@@ -153,8 +157,8 @@ SQL;
         if (empty($title)) return false;
         $title = strtolower($title);
         $sql = <<<SQL
-SELECT COUNT(*) as cnt, ID FROM $wpdb->posts WHERE 
-  post_type = 'product'
+SELECT COUNT(*) as cnt, ID FROM $wpdb->posts 
+WHERE post_type = 'product'
   AND CONVERT(LOWER(`post_title`) USING utf8mb4) = '$title'
 SQL;
         $result = $wpdb->get_row($sql);
