@@ -16,14 +16,17 @@
 wp_enqueue_style('select2', get_stylesheet_directory_uri() . '/assets/css/select2.css');
 wp_enqueue_script('select2', get_stylesheet_directory_uri() . '/assets/js/select2.full.js', ['jquery']);
 
-acf_enqueue_uploader();
-acf_form_head();
 
+acf_form_head();
 get_header();
+
+// Ajouter dans la balise <body>
+acf_enqueue_uploader();
 $sidebar_configs = yozi_get_page_layout_configs();
 
 yozi_render_breadcrumbs();
 ?>
+
     <style type="text/css">
         .acf-field select {
             height: 40px;
@@ -58,7 +61,7 @@ yozi_render_breadcrumbs();
         <div class="row">
             <?php yozi_display_sidebar_left($sidebar_configs); ?>
             <div id="main-content" class="main-page <?php echo esc_attr($sidebar_configs['main']['class']); ?>">
-                <main id="main" class="site-main clearfix" role="main">
+                <main id="main" class="site-main clearfix" role="main" style="margin-bottom: 15px">
 
                     <?php
                     if (!is_user_logged_in()) {
@@ -70,7 +73,9 @@ yozi_render_breadcrumbs();
                                 'post_type'		=> 'fz_sav',
                                 'post_status'   => 'publish'
                             ),
-                            'submit_value'		=> 'Validé'
+                            'submit_value'		=> 'Envoyer',
+                            'return' => wc_get_page_permalink('myaccount'),
+                            'html_submit_button'	=> '<input type="submit" class="btn btn-lg btn-primary" value="%s" />'
                         ));
 
                         ?>

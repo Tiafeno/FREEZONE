@@ -591,7 +591,6 @@ add_action('user_register', function ($user_id) {
 
 add_action('wp_loaded', function() {
 
-
 });
 
 add_action('delete_user', function ($user_id) {
