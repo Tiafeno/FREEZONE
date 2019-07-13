@@ -291,6 +291,29 @@ class fzAPI
             ], false);
 
             /**
+             * Envoyer un mail au client pour la demande de servise
+             */
+            register_rest_route('api', '/mail/sav/(?P<sav_id>\d+)', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function(\WP_REST_Request $rq) {
+
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args' => [
+                        'sav_id' => [
+                            'validate_callback' => function ($param, $request, $key) {
+                                return is_numeric($param);
+                            }
+                        ]
+                    ]
+                ]
+            ], false);
+
+
+            /**
              * Envoyer un mail pour un fournisseur.
              * Cette registre permet d'envoyer un mail avec un lien pour mettre à jours l'articles
              * en attente du fournisseur.

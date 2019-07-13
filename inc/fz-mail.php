@@ -23,6 +23,8 @@ add_action('fz_insert_sav', function ($sav_id) {
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
 
+
+
 add_action('fz_insert_new_article', function ($article_id) {
     global $Engine;
 
@@ -138,6 +140,33 @@ add_action('fz_received_order', function ($order_id) {
 /**
  * Update articles succefuly
  */
-add_action('fz_updated_articles_success', function () {
+add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
+    global $Engine;
+    $article_ids = explode(',', $_articles);
+    $articles = array_map(function ($id) { return new \classes\fzSupplierArticle( intval($id) ); }, $article_ids);
 
-}, 10);
+    $from = "no-reply@freezone.click";
+    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
+    $to = implode($admins, ',');
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $supplier_reference = '';
+    if (!empty($supplier_id)) {
+        $supplier = new \classes\fzSupplier($supplier_id);
+        $supplier_reference = $supplier->reference;
+    }
+
+    $url = "https://admin.freezone.click";
+    $content = $Engine->render('@MAIL/fz_updated_articles_success.html', [
+        'reference' => $supplier_reference,
+        'articles' => $articles,
+        'url' => $url
+    ]);
+
+    $subject = "Un fournisseur {$supplier_reference} à mis à jour son catalogue d'article";
+
+    wp_mail($to, $subject, $content, $headers);
+
+}, 10, 2);

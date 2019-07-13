@@ -19,14 +19,13 @@ if (!empty($_POST)) {
         $stock = $_POST['stock'];
         $article_id = $_POST['article_id'];
 
-        $Article = new \classes\fzSupplierArticle(intval($article_id));
-        $Article->set_price((int) $price);
-        $Article->set_total_sales( (int) $stock);
+        $article = new \classes\fzSupplierArticle(intval($article_id));
+        $article->set_price((int) $price);
+        $article->set_total_sales( (int) $stock);
+        $article->save();
 
-        $Article->save();
-        $Article->update_date_review(); // Mettre à jour l'article
-
-        wc_add_notice("Article <b>{$Article->name}</b> mis à jour avec succès", 'success');
+        $article->update_date_review(); // Mettre à jour l'article
+        wc_add_notice("Article <b>{$article->name}</b> mis à jour avec succès", 'success');
     }
 }
 
@@ -35,12 +34,12 @@ if (!empty($_GET)) {
         $email = filter_var($_GET['email'], FILTER_VALIDATE_EMAIL);
         if ($email) {
             $User = get_user_by('email', $email);
-            $nonce = $_GET['fznonce'];
+            $nonce = stripslashes($_GET['fznonce']);
             $nonce = base64_decode($nonce);
 
             if (!isset($_GET['e'])) wp_redirect(home_url('/'));
 
-            $expired = $_GET['e'];
+            $expired = stripslashes($_GET['e']);
             $expired_format = base64_decode($expired);
             $expired_date = strtotime($expired_format);
 
@@ -49,10 +48,13 @@ if (!empty($_GET)) {
             $now = date_i18n('Y-m-d H:i:s');
             $now_date = strtotime($now);
 
+            // Si le jeton a expiré on ajoute une redirection
             if ($nonce !== "update-{$User->ID}" || $now_date > $expired_date) {
                 wp_redirect(get_permalink(wc_get_page_id('myaccount')));
+                exit;
             }
 
+            // Ajouter une ssession utilisateur s'il n'est pas connecter
             if (!is_user_logged_in()) {
                 wp_set_current_user($User->ID);
                 wp_set_auth_cookie($User->ID);
@@ -60,10 +62,12 @@ if (!empty($_GET)) {
                 fz_reload_header();
             }
 
+            // Déconnecter l'utilisateur actuelle s'il y a une session
             $current_user = wp_get_current_user();
             if ($current_user->ID !== $User->ID) {
                 wp_logout();
 
+                // Ajouter une nouvelle session utilisateur
                 wp_set_current_user($User->ID);
                 wp_set_auth_cookie($User->ID);
 
@@ -75,20 +79,20 @@ if (!empty($_GET)) {
             }
 
             global $wpdb;
-            $articles = isset($_COOKIE['freezone_updated_articles']) ? $_COOKIE['freezone_updated_articles'] : '';
+            $articles = isset($_COOKIE['freezone_ua']) ? $_COOKIE['freezone_ua'] : '';
             $item_articles = explode(',', $articles);
             if (isset($_POST['article_id'])) {
                 $article_id = $_POST['article_id'];
                 $item_articles = array_filter($item_articles, function ($item) use ($article_id) { return $item != $article_id; });
                 $articles = implode(',', $item_articles);
-
-                setcookie('freezone_updated_articles', $articles, time() + 1800);
+                // Ajouter les identifiants des articles en attente dans la cookie
+                setcookie('freezone_ua', $articles, time() + 1800);
             }
             
             if (empty($articles)) {
-                $articles = '0';
                 // Mise à jour reussi! Envoye un mail au adminstrateur
-                do_action('fz_updated_articles_success');
+                do_action('fz_updated_articles_success', $_COOKIE['__freezone_ua'], $User->ID);
+                $articles = '0'; // Ajouter le '0' pour corriger le bug dans la requete SQL
             }
 
             $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;
@@ -129,7 +133,9 @@ CODE;
 function fz_reload_header ()
 {
     $current_url = get_the_permalink();
-    setcookie('freezone_updated_articles', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
+    setcookie('freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
+    setcookie('__freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
+
 
     wp_redirect(add_query_arg([
         //'articles' => isset($_GET['articles']) ? $_GET['articles'] : '',

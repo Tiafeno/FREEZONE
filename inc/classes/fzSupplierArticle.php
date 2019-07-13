@@ -80,7 +80,6 @@ class fzSupplierArticle
      * @var Integer
      */
     public $total_sales = 0;
-
     public $error = null;
 
     /**
@@ -139,8 +138,22 @@ class fzSupplierArticle
      */
     public function get_author() {
         $User = is_object($this->user_id) ? $this->user_id : new \WP_User((int) $this->user_id);
-
         return $User;
+    }
+
+    public function set_price_dealer($price) {
+        if ( ! is_numeric($price) ) return false;
+        $product = $this->get_product();
+        if ($product instanceof \WC_Product) {
+            $marge_dealer = $product->get_meta('_fz_marge_dealer', true);
+            $x = intval($price) / FZ_SELLER_PRICE;
+            $y = ($x * intval($marge_dealer)) / 100;
+            $price_dealer = round($y + $x);
+
+            $result = update_field('price_dealer', $price_dealer, $this->ID);
+        }
+
+        return $result;
     }
 
     /**
@@ -156,6 +169,8 @@ class fzSupplierArticle
         if ( ! is_numeric($price) ) return false;
         $result = update_field('price', intval($price), $this->ID);
 
+        // Update price
+        $this->set_price_dealer($price);
         return $result;
     }
 

@@ -23,9 +23,7 @@ get_header();
 // Ajouter dans la balise <body>
 acf_enqueue_uploader();
 $sidebar_configs = yozi_get_page_layout_configs();
-
 $updated = isset($_GET['updated']) ? boolval($_GET['updated']) : false;
-
 yozi_render_breadcrumbs();
 ?>
 

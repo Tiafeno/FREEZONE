@@ -7,6 +7,7 @@ require_once 'shortcodes/after-sales-service.php';
 
 require_once 'classes/fzRoles.php';
 require_once 'classes/fzSav.php';
+require_once 'classes/fzMailing.php';
 require_once 'classes/fzPTFreezone.php';
 require_once 'classes/fzParticular.php';
 require_once 'classes/fzCompany.php';
@@ -26,6 +27,7 @@ require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
 require_once 'api/fzAPI.php';
 
+define('FZ_SELLER_PRICE', 0.85);
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');
 }
