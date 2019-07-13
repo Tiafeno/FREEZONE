@@ -97,8 +97,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     $fields['billing']['billing_country']['required'] = false;
 
     $fields['billing']['billing_state']['required'] = false;
-    $fields['billing']['billing_first_name']['required'] = true;
-    $fields['billing']['billing_last_name']['required'] = true;
+    $fields['billing']['billing_first_name']['required'] = false;
+    $fields['billing']['billing_last_name']['required'] = false;
     $fields['billing']['billing_company']['required'] = false;
     $fields['billing']['billing_address_1']['required'] = false;
     $fields['billing']['billing_address_2']['required'] = false;
@@ -106,14 +106,19 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     $fields['billing']['billing_postcode']['required'] = false;
     $fields['billing']['billing_phone']['required'] = false;
     $fields['billing']['billing_email']['required'] = false;
-    if ($client_status === 'particular') {
-        unset($fields['billing']['billing_company']);
-    } else {
-        $fields['billing']['billing_company']['required'] = true;
-    }
+
+    unset($fields['billing']['billing_company']);
     unset($fields['billing']['billing_state']);
     unset($fields['billing']['billing_country']);
     unset($fields['billing']['billing_email']);
+    unset($fields['billing']['billing_phone']);
+    unset($fields['billing']['billing_address_1']);
+    unset($fields['billing']['billing_address_2']);
+    unset($fields['billing']['billing_last_name']);
+    unset($fields['billing']['billing_first_name']);
+    unset($fields['billing']['billing_city']);
+    unset($fields['billing']['billing_postcode']);
+
 
     $fields['shipping']['shipping_country']['default'] = 'MG';
     $fields['shipping']['shipping_country']['required'] = false;
