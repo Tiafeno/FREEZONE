@@ -90,8 +90,6 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
-    $User = wp_get_current_user();
-    $client_status = get_field('client_status', $User->ID);
 
     $fields['billing']['billing_country']['default'] = 'MG';
     $fields['billing']['billing_country']['required'] = false;
@@ -132,6 +130,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     $fields['shipping']['shipping_phone']['required'] = false;
     $fields['shipping']['shipping_email']['required'] = false;
     $fields['shipping']['shipping_state']['required'] = false;
+
+    unset( $fields['shipping']);
 
 
     // Remplir automatiquement les champs pour l'étape de la demande

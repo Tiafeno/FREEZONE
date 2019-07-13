@@ -46,8 +46,8 @@
       <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="445">
-              <caret line="119" column="50" selection-start-line="119" selection-start-column="50" selection-end-line="119" selection-end-column="50" />
+            <state relative-caret-position="559">
+              <caret line="133" column="32" selection-start-line="133" selection-start-column="32" selection-end-line="133" selection-end-column="32" />
               <folding>
                 <element signature="e#5208#15647#1#PHP" />
                 <element signature="e#15706#23303#1#PHP" />
@@ -234,8 +234,8 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1432" />
-    <option name="y" value="-8" />
+    <option name="x" value="40" />
+    <option name="y" value="-15" />
     <option name="width" value="1376" />
     <option name="height" value="754" />
   </component>
@@ -482,7 +482,7 @@
       <workItem from="1562836711883" duration="27038000" />
       <workItem from="1562916432290" duration="10818000" />
       <workItem from="1562941194291" duration="6697000" />
-      <workItem from="1563010611494" duration="11857000" />
+      <workItem from="1563010611494" duration="12141000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -502,10 +502,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="549955000" />
+    <option name="totallyTimeSpent" value="550239000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1432" y="-8" width="1376" height="754" extended-state="6" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -516,7 +516,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23556231" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22206303" />
       <window_info anchor="right" id="Database" order="3" weight="0.3295129" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Learn" order="2" weight="0.32978722" />
@@ -1004,8 +1004,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="445">
-          <caret line="119" column="50" selection-start-line="119" selection-start-column="50" selection-end-line="119" selection-end-column="50" />
+        <state relative-caret-position="559">
+          <caret line="133" column="32" selection-start-line="133" selection-start-column="32" selection-end-line="133" selection-end-column="32" />
           <folding>
             <element signature="e#5208#15647#1#PHP" />
             <element signature="e#15706#23303#1#PHP" />
