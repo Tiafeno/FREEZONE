@@ -297,6 +297,9 @@ class fzAPI
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function(\WP_REST_Request $rq) {
+                        $params = $_REQUEST;
+                        $subject = stripslashes($params['subject']);
+                        $message = stripslashes($params['message']);
 
                     },
                     'permission_callback' => function ($data) {

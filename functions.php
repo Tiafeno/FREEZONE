@@ -90,13 +90,15 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
+    $User = wp_get_current_user();
+    $client_status = get_field('client_status', $User->ID);
 
     $fields['billing']['billing_country']['default'] = 'MG';
     $fields['billing']['billing_country']['required'] = false;
 
     $fields['billing']['billing_state']['required'] = false;
-    $fields['billing']['billing_first_name']['required'] = false;
-    $fields['billing']['billing_last_name']['required'] = false;
+    $fields['billing']['billing_first_name']['required'] = true;
+    $fields['billing']['billing_last_name']['required'] = true;
     $fields['billing']['billing_company']['required'] = false;
     $fields['billing']['billing_address_1']['required'] = false;
     $fields['billing']['billing_address_2']['required'] = false;
@@ -104,6 +106,14 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     $fields['billing']['billing_postcode']['required'] = false;
     $fields['billing']['billing_phone']['required'] = false;
     $fields['billing']['billing_email']['required'] = false;
+    if ($client_status === 'particular') {
+        unset($fields['billing']['billing_company']);
+    } else {
+        $fields['billing']['billing_company']['required'] = true;
+    }
+    unset($fields['billing']['billing_state']);
+    unset($fields['billing']['billing_country']);
+    unset($fields['billing']['billing_email']);
 
     $fields['shipping']['shipping_country']['default'] = 'MG';
     $fields['shipping']['shipping_country']['required'] = false;
@@ -380,7 +390,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         $shop_url = get_permalink(wc_get_page_id('shop'));
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
 		$content .= '<a class="woocommerce-Button button" href="'.$shop_url.'">';
-		$content .=	'Voir les catalogues		</a> Aucune demande n’a encore été passée.	</div>';
+		$content .=	'Voir les catalogue</a> Aucune demande n’a encore été passée.	</div>';
         echo $content;
         
         return false;
@@ -589,6 +599,7 @@ add_action('user_register', function ($user_id) {
     $city = sanitize_text_field($_REQUEST['city']);
     $user_customer->set_billing_location('MG', '', $zip, $city);
     $user_customer->set_billing_email($User->user_email);
+    $user_customer->set_billing_company($company_name);
     $user_customer->save();
 
 
