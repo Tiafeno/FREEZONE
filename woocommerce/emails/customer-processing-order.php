@@ -28,7 +28,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php /* translators: %s: Customer first name */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $User->first_name ) . esc_html($User->last_name) ); ?></p>
 <?php /* translators: %s: Order number */ ?>
-<p><?php printf( 'Pour information – nous avons reçu votre commande n°%s, elle est maintenant en cours de traitement :', esc_html( $order->get_order_number() ) ); ?></p>
+<p><?php printf( 'Pour information – nous avons reçu votre demande n°%s, elle est maintenant en cours de traitement :', esc_html( $order->get_order_number() ) ); ?></p>
 
 <?php
 
