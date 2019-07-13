@@ -143,8 +143,6 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
 
     // Remplir automatiquement les champs pour l'étape de la demande
-    $User = wp_get_current_user();
-    $client_status = get_field('client_status', 'user_' . $User->ID);
 
     return $fields;
 }, 9999);
