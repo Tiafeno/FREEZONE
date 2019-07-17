@@ -39,5 +39,6 @@ class fzRoles
 
         add_role('fz-supplier', 'Fournisseur', $capabilities);
         add_role('fz-particular', 'Particulier', $capabilities);
+        add_role('fz-company', 'Entreprise', $capabilities);
     }
 }

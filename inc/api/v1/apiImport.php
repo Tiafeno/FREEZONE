@@ -53,7 +53,6 @@ class apiImport
         /** @var string $name */
         /** @var string $regular_price */
         /** @var string $price */
-        /** @var string $price_dealer */
         /** @var string $description */
         /** @var string $short_description */
         /** @var string $mark */
@@ -122,10 +121,8 @@ class apiImport
         $article_id = intval($create_article);
 
         $price = preg_replace('/\s+/', '', $price);
-        $price_dealer = preg_replace('/\s+/', '', $price_dealer);
 
         update_field('price', $price, $article_id);
-        update_field('price_dealer', $price_dealer, $article_id);
         update_field('date_add', date_i18n('Y-m-d H:i:s'), $article_id);
         update_field('date_review', date_i18n('Y-m-d H:i:s'), $article_id);
         update_field('product_id', $product_id, $article_id);

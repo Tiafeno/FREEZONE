@@ -69,7 +69,6 @@ class fzAPI
                         extract($_REQUEST, EXTR_PREFIX_SAME, 'REST');
 
                         /** @var string $name */
-                        /** @var string $price_dealer */
                         /** @var string $price */
                         /** @var string $total_sales */
                         /** @var string $user_id */
@@ -77,6 +76,7 @@ class fzAPI
                         /** @var string $mark */
                         /** @var string $marge */
                         /** @var string $marge_dealer */
+                        /** @var string $marge_particular */
 
                         $post_title = strtolower($name);
                         $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE  CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}'
@@ -113,7 +113,8 @@ class fzAPI
                                 ],
                                 'meta_data' => [
                                     ['key' => '_fz_marge',        'value' => intval($marge)],
-                                    ['key' => '_fz_marge_dealer', 'value' => intval($marge_dealer)]
+                                    ['key' => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
+                                    ['key' => '_fz_marge_particular', 'value' => intval($marge_particular)]
                                 ],
                                 'images' => []
                             ]);
@@ -139,7 +140,6 @@ class fzAPI
                             'title' => $name,
                             'content' => '',
                             'price' => intval($price),
-                            'price_dealer' => intval($price_dealer),
                             'total_sales' => $total_sales,
                             'user_id' => $user_id,
                             'product_id' => $product->get_id(),
@@ -223,7 +223,7 @@ class fzAPI
                             'number' => $length,
                             'offset' => $start,
                             'orderby' => 'registered',
-                            'role__in' => ['fz-particular'],
+                            'role__in' => ['fz-particular', 'fz-company'],
                             'order' => 'DESC'
                         ];
                         if (!empty($_REQUEST['responsible'])) {
@@ -297,10 +297,14 @@ class fzAPI
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function(\WP_REST_Request $rq) {
-                        $params = $_REQUEST;
+                        $params  = $_REQUEST;
                         $subject = stripslashes($params['subject']);
                         $message = stripslashes($params['message']);
+                        $sender = (int)$params['sender'];
+                        $mailing_id = (int)$params['mailing_id'];
+                        $sav_id = (int)$rq['sav_id'];
 
+                        do_action('fz_sav_contact_mail', $sav_id, $sender, $mailing_id, $subject, $message);
                     },
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -358,8 +362,7 @@ class fzAPI
             'mail_logistics_cc',
             'phone',
             'reference',
-            'role_office', // 1: Acheteur, 2: Revendeur & 0: En attente
-            'client_status', // Particular or Company
+            'company_status', // dealer (Revendeur) or professional (Professionnel)
             'stat',
             'nif',
             'rc',
@@ -398,7 +401,7 @@ class fzAPI
 
     public function register_rest_fz_product ()
     {
-        $metas = ['price', 'price_dealer', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
+        $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
             register_rest_field('fz_product', $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
@@ -411,24 +414,32 @@ class fzAPI
             ]);
         }
 
-        register_rest_field('fz_product', 'marge', [
-            'update_callback' => function ($value, $object, $field_name) {
-                $product_id = get_field('product_id', (int)$object->ID);
-                $product = new \WC_Product((int)$product_id);
-                $product->update_meta_data("_fz_marge", $value);
-                return $product->save();
-            },
-            'get_callback' => function ($object, $field_name) {
-                $product_id = get_field('product_id', (int)$object['id']);
-                $product = new \WC_Product((int)$product_id);
-                $marge = $product->get_meta("_fz_marge");
+        $product_metas = [
+            ['name' => 'marge', 'key'        => '_fz_marge'],
+            ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'],
+            ['name' => 'marge_particular', 'key' => '_fz_marge_particular'],
+        ];
 
-                return $marge;
-            }
-        ]);
+        foreach ($product_metas as $meta) {
+            register_rest_field('fz_product', $meta['name'], [
+                'update_callback' => function ($value, $object) use ($meta) {
+                    $product_id = get_field('product_id', (int)$object->ID);
+                    $product = new \WC_Product((int)$product_id);
+                    $product->update_meta_data($meta['key'], $value);
+                    return $product->save();
+                },
+                'get_callback' => function ($object) use ($meta) {
+                    $product_id = get_field('product_id', (int)$object['id']);
+                    $product = new \WC_Product((int)$product_id);
+                    $marge = $product->get_meta($meta['key']);
+
+                    return $marge;
+                }
+            ]);
+        }
 
         register_rest_field('fz_product', 'product_status', [
-            'update_callback' => function ($value, $object, $field_name) {
+            'update_callback' => function ($value, $object) {
                 $product_id = get_field('product_id', (int)$object->ID);
                 $product = new \WC_Product((int)$product_id);
                 return $product->set_status($value);
@@ -443,7 +454,7 @@ class fzAPI
         ]);
 
         register_rest_field('fz_product', 'product_thumbnail', [
-            'get_callback' => function ($object, $field_name) {
+            'get_callback' => function ($object) {
                 $product_id = get_field('product_id', (int)$object['id']);
                 $product_controller = new \WC_REST_Products_V2_Controller();
                 $request = new \WP_REST_Request();
@@ -454,21 +465,7 @@ class fzAPI
             }
         ]);
 
-        register_rest_field('fz_product', 'marge_dealer', [
-            'update_callback' => function ($value, $object, $field_name) {
-                $product_id = get_field('product_id', (int)$object->ID);
-                $product = new \WC_Product((int)$product_id);
-                $product->update_meta_data("_fz_marge_dealer", $value);
-                return $product->save();
-            },
-            'get_callback' => function ($object, $field_name) {
-                $product_id = get_field('product_id', (int)$object['id']);
-                $product = new \WC_Product((int)$product_id);
-                $marge = $product->get_meta("_fz_marge_dealer");
 
-                return $marge;
-            }
-        ]);
 
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {

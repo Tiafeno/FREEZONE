@@ -1,6 +1,6 @@
 (function ($) {
     $(document).ready(function () {
-        $('#reg_client_status').change(function() {
+        $('#reg_role').change(function() {
             var sectionCompany = $('#section-company');
             var sectionParticular = $('#section-particular');
             var company = $('#reg_company');

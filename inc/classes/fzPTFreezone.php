@@ -25,7 +25,7 @@ class fzPTFreezone
 
         add_action('admin_init', function () {
             $caps = [
-              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
+              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
               ['read_private_article' => ['administrator', 'editor', 'author']],
               ['edit_article' => ['administrator', 'fz-supplier', 'editor', 'author']],
               ['edit_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
@@ -40,19 +40,19 @@ class fzPTFreezone
               ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
             ];
             $caps = array_merge($caps, [
-                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
+                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
                 ['read_private_sav' => ['administrator']],
-                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
-                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'editor', 'author']],
-                ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-supplier']],
-                ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+                ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-company', 'fz-supplier']],
+                ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
                 ['edit_private_savs' => ['administrator']],
                 ['delete_sav'  => ['administrator']],
                 ['delete_savs' => ['administrator']],
                 ['delete_others_savs' => ['administrator']],
                 ['delete_published_savs' => ['administrator']],
                 ['delete_private_savs' => ['administrator']],
-                ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
             ]);
             foreach ($caps as $cap):
                 if (is_array($cap)) {

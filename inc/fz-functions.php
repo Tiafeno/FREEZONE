@@ -106,7 +106,11 @@ add_action('after_setup_theme', function () {
 
 
 add_action('admin_init', function () {
-    if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-particular'))) {
+    if (is_null(get_role('fz-supplier')) ||
+        is_null(get_role('fz-company')) ||
+        is_null(get_role('fz-particular'))
+    ) {
+
         \classes\fzRoles::create_roles();
     }
 
@@ -124,6 +128,7 @@ add_action('admin_init', function () {
     add_filter('manage_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
         $columns['marge_dealer'] = '% R.';
+        $columns['marge_particular'] = '% P.';
 
         return $columns;
     });
@@ -138,6 +143,12 @@ add_action('admin_init', function () {
         
         if ($column === 'marge_dealer'):
             $marge_dealer = $p->get_meta('_fz_marge_dealer', true);
+            $marge_dealer = $marge_dealer ? $marge_dealer : 0;
+            echo "{$marge_dealer} %";
+        endif;
+
+        if ($column === 'marge_particular'):
+            $marge_dealer = $p->get_meta('_fz_marge_particular', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
@@ -168,8 +179,9 @@ add_action('init', function () {
      * @return array $options
      */
     function add_column_to_importer( $options ) {
-        $options['_fz_marge'] = 'Marge du produit';
-        $options['_fz_marge_dealer'] = 'Marge du produit revendeur';
+        $options['_fz_marge'] = 'Marge compte entreprise professionel';
+        $options['_fz_marge_dealer'] = 'Marge compte entreprise revendeur';
+        $options['_fz_marge_particular'] = 'Marge compte particulier';
 
         return $options;
     }
@@ -185,8 +197,9 @@ add_action('init', function () {
     function add_column_to_mapping_screen( $columns ) {
 
         // potential column name => column slug
-        $columns['Marge du produit'] = '_fz_marge';
-        $columns['Marge du produit revendeur'] = '_fz_marge_dealer';
+        $columns['Marge compte entreprise professionel'] = '_fz_marge';
+        $columns['Marge compte entreprise revendeur'] = '_fz_marge_dealer';
+        $columns['Marge compte particulier'] = '_fz_marge_particular';
 
         return $columns;
     }
@@ -201,7 +214,7 @@ add_action('init', function () {
      * @return WC_Product $object
      */
     function process_import( $object, $data ) {
-        $fields = ['_fz_marge', '_fz_marge_dealer'];
+        $fields = ['_fz_marge', '_fz_marge_dealer', '_fz_marge_particular'];
         foreach ($fields as $field) {
             if ( ! empty( $data[ $field ] ) ) {
                 $object->update_meta_data( $field, $data[ $field ] );

@@ -22,7 +22,7 @@ class apiMail
         $order_id = (int) $rq['order_id'];
         $message = isset($_REQUEST['message']) ? $_REQUEST['message'] : null;
         $subject = isset($_REQUEST['subject']) ? $_REQUEST['subject'] : "Demande de confirmation pour votre demande sur Freezone";
-        $message = sanitize_text_field($message);
+        $message = esc_html($message);
         $subject = sanitize_text_field($subject);
         if ($order_id === 0 || is_null($order_id)) wp_send_json_error("Parametre 'order_id' est incorrect");
 

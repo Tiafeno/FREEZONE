@@ -170,3 +170,26 @@ add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0
     wp_mail($to, $subject, $content, $headers);
 
 }, 10, 2);
+
+
+add_action('fz_sav_contact_mail', function($sav_id, $sender_user_id, $mailing_id, $subject, $message) {
+    global $Engine;
+
+    $SAV = new \classes\fzSav($sav_id, true);
+    $author_data = $SAV->auctor->get_data();
+    $from = "no-reply@freezone.click";
+    $to = $author_data['email'];
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $url = wc_get_account_endpoint_url('sav');
+    $content = $Engine->render('@MAIL/fz_sav_contact_mail.html', [
+        'message' => $message,
+        'url' => $url
+    ]);
+
+    $update_result = wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
+    wp_mail($to, $subject, $content, $headers);
+    wp_send_json($sav_id);
+}, 10, 5);

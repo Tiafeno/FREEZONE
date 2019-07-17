@@ -71,7 +71,6 @@ class fzSupplierArticle
      */
     public $regular_price = 0;
 
-    public $price_dealer = 0;
 
     /**
      * Short description of attribute total_sales
@@ -103,7 +102,6 @@ class fzSupplierArticle
         $this->ID   = &$post_id;
         $this->name = $article->post_title;
         $this->regular_price = get_field('price', $post_id);
-        $this->price_dealer  = get_field('price_dealer', $post_id);
         $this->date_add      = get_field('date_add', $post_id);
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
@@ -141,20 +139,6 @@ class fzSupplierArticle
         return $User;
     }
 
-    public function set_price_dealer($price) {
-        if ( ! is_numeric($price) ) return false;
-        $product = $this->get_product();
-        if ($product instanceof \WC_Product) {
-            $marge_dealer = $product->get_meta('_fz_marge_dealer', true);
-            $x = intval($price) / FZ_SELLER_PRICE;
-            $y = ($x * intval($marge_dealer)) / 100;
-            $price_dealer = round($y + $x);
-
-            $result = update_field('price_dealer', $price_dealer, $this->ID);
-        }
-
-        return $result;
-    }
 
     /**
      * Short description of method setPrice
@@ -168,9 +152,6 @@ class fzSupplierArticle
     {
         if ( ! is_numeric($price) ) return false;
         $result = update_field('price', intval($price), $this->ID);
-
-        // Update price
-        $this->set_price_dealer($price);
         return $result;
     }
 

@@ -24,14 +24,32 @@ class apiQuotation
         ];
 
         if ( isset($_POST['position']) && $_POST['position'] != '' ) {
-            $position = (int)$_POST['position'];
-            $args['meta_query'] = [
-                [
-                    'key' => "position",
-                    'value' => $position,
-                    'compare' => "="
-                ]
-            ];
+            if (is_array($_POST['position'])) {
+                $position = $_POST['position'];
+                $meta_query = ['relation' => 'OR'];
+                $meta = array_map(function ($key) {
+                    return [
+                        'key' => 'position',
+                        'value' => $key,
+                        'compare' => '='
+                    ];
+                }, array_values($position));
+
+                $meta_query = array_merge($meta_query, $meta);
+                $args['meta_query'] = $meta_query;
+            } else {
+                $position = intval($_POST['position']);
+                if (!is_nan($position)) {
+                    $args['meta_query'] = [
+                        [
+                            'key' => "position",
+                            'value' => $position,
+                            'compare' => "="
+                        ]
+                    ];
+                }
+            }
+
         }
 
         $the_query = new WP_Query($args);

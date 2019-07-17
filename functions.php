@@ -235,19 +235,19 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                             ],
                             [
                                 'key'   => 'product_id',
-                                'value' => $product_id
+                                'value' => intval($product_id)
                             ]
                         ]
                     ];
                     $product_exists = get_posts($verify_product_exist_args);
 
                     if ( ! $product_exists ) {
-                        $product = get_post($product_id);
+                        $product = get_post( (int) $product_id);
                         if ($price && $stock && $product_id) {
                             $result = wp_insert_post([
-                                'post_type' => 'fz_product',
+                                'post_type'   => 'fz_product',
                                 'post_status' => 'pending',
-                                'post_title' => $product->post_title
+                                'post_title'  => $product->post_title
                             ], true);
 
                             if (is_wp_error($result)) {
@@ -256,7 +256,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 update_field('price', intval($price), $result);
                                 update_field('total_sales', intval($stock), $result);
                                 update_field('user_id', intval($User->ID), $result);
-                                update_field('product_id', $product_id, $result);
+                                update_field('product_id', (int) $product_id, $result);
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
                                 wc_add_notice("Article ajouter avec succès", 'success');
@@ -267,7 +267,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 wp_redirect(wc_get_account_endpoint_url('stock-management'));
                             }
                         } else {
-                            wc_add_notice("Une erreur s'est produite pendant le traitemet de donnée", 'error');
+                            wc_add_notice("Une erreur s'est produite pendant le traitement de donnée", 'error');
                         }
                     } else {
                         wc_add_notice("Cette article existe déja dans votre catalogue", 'notice');
@@ -382,12 +382,13 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         echo $pagination;
     }
 }, 10);
+
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
     wp_enqueue_script('underscore');
     $User = wp_get_current_user();
-    if (!in_array('fz-particular', $User->roles)) {
+    if (!in_array('fz-particular', $User->roles) && !in_array('fz-company', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
         wc_clear_notices();
@@ -401,7 +402,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         $shop_url = get_permalink(wc_get_page_id('shop'));
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
 		$content .= '<a class="woocommerce-Button button" href="'.$shop_url.'">';
-		$content .=	'Voir les catalogue</a> Aucune demande n’a encore été passée.	</div>';
+		$content .=	'Voir les catalogues</a> Aucune demande n’a encore été passée.	</div>';
         echo $content;
         
         return false;
@@ -416,6 +417,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 if ($_POST) {
                     $validate = false;
                     $order = new WC_Order(intval($order_id));
+                    // @e.g: qt_1520 = 2 => qt_{item_id} = {quantity}
                     foreach ( $_POST as $name => $value ) {
                         if (strpos($name, '_') !== false) {
                             $names = explode('_', $name);
@@ -438,9 +440,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                     $item->set_total((string)$new_total);
 
                                     $item->save();
-                                    $validate = true;
 
-                                    // TODO: Mettre à jour le meta suppliers
                                     $rest = 0;
                                     $suppliers = array_map(function($supplier) use ($quantity, &$rest) {
                                         $article_id = (int) $supplier->article_id;
@@ -463,6 +463,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                                     wc_update_order_item_meta($current_item_id, 'suppliers', json_encode($suppliers));
                                 }
                             }
+                            $validate = true;
                         }
                     }
 
@@ -556,8 +557,7 @@ add_action('woocommerce_account_faq_endpoint', function() {
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
-    // Ajouter les utilisateurs inscrits en tant que particulier
-    $User->set_role('fz-particular');
+    $firstname = $lastname = "";
 
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = sanitize_text_field($_POST['firstname']);
@@ -582,28 +582,36 @@ add_action('user_register', function ($user_id) {
 
     $user_customer = new WC_Customer(intval($user_id));
     /**
-     * client_status (acf field)
+     * Role de l'utiisateur
      * Particulier ou entreprise
      */
-    $client_status = sanitize_text_field($_REQUEST['client_status']);
-    update_field('client_status', $client_status, 'user_' . $user_id);
-    if ($client_status !== 'particular') {
+    $role = sanitize_text_field($_REQUEST['role']);
+
+    // Si le compte est une entreprise
+    if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
         foreach ($fields as $field) {
             $val = sanitize_text_field($_REQUEST[$field]);
             update_field($field, $val, 'user_' . $user_id);
         }
         update_field('company_name', $company_name, 'user_' . $user_id);
-        $user_customer->set_billing_company($company_name);
+        // Ajouter un statut Professionnel ou revendeur
+        // par default: En attente
+        update_field('company_status', 'pending', 'user_' . $user_id);
     }
 
-    if ($client_status === 'particular') {
+    // Si le compte est particulier
+    if ($role === 'particular') {
         $fields = ['cin', 'date_cin'];
         foreach ($fields as $field) {
             $val = sanitize_text_field($_REQUEST[$field]);
             update_field($field, $val, 'user_' . $user_id);
         }
+        update_field('company_status', false, 'user_' . $user_id);
     }
+
+    // Ajouter le role du client
+    $User->set_role("fz-{$role}");
 
     // Update customer woocommerce user field
     $zip = sanitize_text_field($_REQUEST['postal_code']);
@@ -611,12 +619,15 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_billing_location('MG', '', $zip, $city);
     $user_customer->set_billing_email($User->user_email);
     $user_customer->set_billing_company($company_name);
+    $user_customer->set_billing_address_1($address);
+
+    $user_customer->set_billing_location('MG', '', $zip, $city);
+    $user_customer->set_shipping_address_1($address);
+    $user_customer->set_shipping_first_name($firstname);
+    $user_customer->set_shipping_last_name($lastname);
+    $user_customer->set_billing_company($company_name);
+
     $user_customer->save();
-
-
-    // Ajouter le type du role du client (Revendeur ou Acheteur)
-    // 1: Acheteur, 2: Revendeur et 0: En attente de confirmation
-    update_field('role_office', 0, 'user_' . $user_id);
 
 });
 
