@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p><?php
 	/* translators: 1: user display name 2: logout url */
 	printf(
-		__( 'Hello %1$s (not %1$s? <a href="%2$s" class="btn btn-theme btn-md">Log out</a>)', 'woocommerce' ),
+		'Bonjour %1$s (si vous n\'êtes pas %1$s? <a href="%2$s" class="btn btn-theme btn-md">Déconnexion</a>)',
 		'<strong>' . esc_html( $current_user->first_name ) .' '. esc_html( $current_user->last_name ) . '</strong>',
 		esc_url( wc_logout_url( wc_get_page_permalink( 'myaccount' ) ) )
 	);
