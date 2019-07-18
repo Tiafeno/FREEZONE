@@ -18,6 +18,7 @@ class apiArticle
         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
         $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 1;
         switch ($action) {
+            // Affiche tous les articles en attente de mise à jours
             case 'review':
 
                 $today = date_i18n('Y-m-d H:i:s');
@@ -49,6 +50,7 @@ CPR;
 
                 break;
 
+                // Affiche les articles d'un fournisseur en attente de mise à jours
             case 'review_articles':
                 $supplier_id = $request['supplierid'];
                 $supplier_id = intval($supplier_id);
@@ -60,34 +62,60 @@ CPR;
                     'meta_query' => [
                         [
                             'key' => 'position',
-                            'value' => 0,
+                            'value' => 0, // Tous les demandes en attente
                             'compare' => '='
                         ]
                     ]
                 ]);
 
-                $articles = [];
+                $product_ids = [];
                 foreach ($orders->posts as $order) {
                     $current_order = new WC_Order($order->ID);
                     $items = $current_order->get_items();
                     foreach ($items as $item_id => $item) {
-                        $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
-                        $suppliers = json_decode($suppliers);
-                        if (is_array($suppliers)) {
-                            $suppliers = array_filter($suppliers, function ($supplier) { return intval($supplier->get) !== 0; });
-                            foreach ($suppliers as $supplier) {
-                                if ($supplier->supplier !== $supplier_id) continue;
-                                array_push($articles, new \classes\fzSupplierArticle( (int) $supplier->article_id));
-                            }
-                        }
+                        $data = $item->get_data();
+                        array_push($product_ids, (int) $data['product_id']);
                     }
                 }
+                $product_ids = array_unique($product_ids, SORT_NUMERIC );
+                $join_product_ids = implode(',', $product_ids);
+                if (empty($join_product_ids)) {
+                    return [
+                        "recordsTotal" => 0,
+                        "recordsFiltered" => 0,
+                        'data' => []
+                    ];
+                }
 
+                global $wpdb;
+                $your_articles_request = <<<SQL
+SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts as pts
+WHERE pts.post_type = "fz_product" AND pts.post_status = "publish"
+AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'user_id' AND meta_value = $supplier_id)
+AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND meta_value IN ($join_product_ids)) 
+SQL;
+                $results = $wpdb->get_results($your_articles_request);
+                $count_sql = <<<CPR
+SELECT FOUND_ROWS()
+CPR;
+                $total = $wpdb->get_var($count_sql);
+                $articles = [];
+
+                foreach ($results as $result) {
+                    $article_controller = new WP_REST_Posts_Controller('fz_product');
+
+                    $post = get_post((int) $result->ID);
+                    $response = $article_controller->prepare_item_for_response($post, new WP_REST_Request());
+                    $articles[] = $response->get_data();
+                }
+
+                $wpdb->flush();
                 return [
-                    "recordsTotal" => count($articles),
-                    "recordsFiltered" => count($articles),
+                    "recordsTotal" => $total,
+                    "recordsFiltered" => $total,
                     'data' => $articles
                 ];
+
 
                 break;
 

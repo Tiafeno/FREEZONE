@@ -66,7 +66,7 @@ class apiSupplier
                     'meta_query' => [
                         [
                             'key' => 'position',
-                            'value' => 0,
+                            'value' => 0, // Demande en attente
                             'compare' => '='
                         ]
                     ]
@@ -78,21 +78,11 @@ class apiSupplier
                     $items = $current_order->get_items();
                     foreach ($items as $item_id => $item) {
                         $data = $item->get_data();
-                        $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
-                        $suppliers = json_decode($suppliers);
-                        if (is_array($suppliers)) {
-                            // Vérifier si on a récupérer des articles
-                            $suppliers = array_filter($suppliers, function ($supplier) { return intval($supplier->get) !== 0; });
-                            if (!empty($suppliers)) {
-                                array_push($product_ids, (int) $data['product_id']);
-                            }
-                        }
+                        array_push($product_ids, (int) $data['product_id']);
                     }
                 }
                 $product_ids = array_unique($product_ids, SORT_NUMERIC );
-
                 $join_product_ids = implode(',', $product_ids);
-
                 if (empty($join_product_ids)) {
                     return [
                         "recordsTotal" => 0,
@@ -102,8 +92,6 @@ class apiSupplier
                 }
 
                 $today = date_i18n('Y-m-d H:i:s');
-                $review_limit = new DateTime("$today - 2 day");
-                $review_limit_string = $review_limit->format('Y-m-d H:i:s');
                 $sql = <<<SLQ
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->users as users
 WHERE users.ID IN (
@@ -111,7 +99,7 @@ WHERE users.ID IN (
 	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
     JOIN $wpdb->postmeta as pm2 ON (pm2.post_id = pts.ID)
     JOIN $wpdb->postmeta as pm3 ON (pm3.post_id = pts.ID)
-		WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$review_limit_string' AS DATETIME)
+		WHERE pm.meta_key = "date_review" AND TIMESTAMPADD(HOUR, 24, pm.meta_value) < CAST('$today' AS DATETIME)
 			AND pm2.meta_key = "user_id"
 			AND (pm3.meta_key = "product_id" AND CAST(pm3.meta_value AS SIGNED) IN ($join_product_ids))
 			AND pts.post_type = "fz_product" 

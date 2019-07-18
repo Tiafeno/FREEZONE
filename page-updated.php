@@ -41,7 +41,7 @@ if (!empty($_GET)) {
 
             $expired = stripslashes($_GET['e']);
             $expired_format = base64_decode($expired);
-            $expired_date = strtotime($expired_format);
+            $expired_date   = strtotime($expired_format);
 
             if (!$expired_date) wp_redirect(home_url('/'));
 
@@ -55,7 +55,7 @@ if (!empty($_GET)) {
             }
 
             // Ajouter une ssession utilisateur s'il n'est pas connecter
-            if (!is_user_logged_in()) {
+            if ( ! is_user_logged_in() ) {
                 wp_set_current_user($User->ID);
                 wp_set_auth_cookie($User->ID);
 
@@ -79,6 +79,7 @@ if (!empty($_GET)) {
             }
 
             global $wpdb;
+
             $articles = isset($_COOKIE['freezone_ua']) ? $_COOKIE['freezone_ua'] : '';
             $item_articles = explode(',', $articles);
             if (isset($_POST['article_id'])) {
@@ -86,18 +87,22 @@ if (!empty($_GET)) {
                 $item_articles = array_filter($item_articles, function ($item) use ($article_id) { return $item != $article_id; });
                 $articles = implode(',', $item_articles);
                 // Ajouter les identifiants des articles en attente dans la cookie
-                setcookie('freezone_ua', $articles, time() + 1800);
+                setcookie('freezone_ua', $articles, time() + (60 * 30));
             }
             
             if (empty($articles)) {
                 // Mise à jour reussi! Envoye un mail au adminstrateur
-                do_action('fz_updated_articles_success', $_COOKIE['__freezone_ua'], $User->ID);
+                if (isset($_COOKIE['__freezone_ua'])) {
+                    do_action('fz_updated_articles_success', $_COOKIE['__freezone_ua'], $User->ID);
+                }
                 $articles = '0'; // Ajouter le '0' pour corriger le bug dans la requete SQL
+
             }
 
             $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;
             $length = 10;
             $offset = $length * ($paged - 1);
+
             $sql = <<<CODE
 SELECT 
     SQL_CALC_FOUND_ROWS
@@ -105,17 +110,17 @@ SELECT
 FROM
     $wpdb->posts AS pts
 WHERE
-    pts.ID IN (SELECT 
+    pts.ID IN ($articles) 
+    AND pts.post_type = 'fz_product'
+    AND pts.post_status = 'publish'
+    AND pts.ID IN (SELECT 
             post_id
         FROM
             $wpdb->postmeta
         WHERE
             meta_key = 'date_review'
-                AND CAST(meta_value AS DATETIME) < CAST('$now' AS DATETIME))
-    AND
-    pts.ID IN ($articles) 
-    AND pts.post_type = 'fz_product'
-    AND pts.post_status = 'publish'
+                AND TIMESTAMPADD(HOUR, 24, meta_value) < CAST('$now' AS DATETIME)
+    )
 LIMIT $length OFFSET $offset
 CODE;
 
@@ -124,7 +129,35 @@ CODE;
             $total = $wpdb->get_var($count_sql);
 
             foreach ( $post_products as $_post ) {
-                $fzProducts[] = new \classes\fzSupplierArticle($_post->ID);
+                $article = new \classes\fzSupplierArticle($_post->ID);
+                $product_id = $article->get_product_id();
+                $quantity = [];
+
+                $orders = new WP_Query([
+                    'post_type' => wc_get_order_types(),
+                    'post_status' => array_keys( wc_get_order_statuses() ),
+                    "posts_per_page" => -1,
+                    'meta_query' => [
+                        [
+                            'key' => 'position',
+                            'value' => 0, // Tous les demandes en attente
+                            'compare' => '='
+                        ]
+                    ]
+                ]);
+                foreach ($orders->posts as $order) {
+                    $current_order = new WC_Order($order->ID);
+                    $items = $current_order->get_items();
+                    foreach ($items as $item_id => $item) {
+                        $data = $item->get_data();
+                        if ($data['product_id'] === $product_id) {
+                            $quantity[] = (int) $data['quantity'];
+                        }
+                    }
+                }
+
+                $article->quantity = array_sum($quantity);
+                $fzProducts[] = $article;
             }
         }
     }
@@ -133,8 +166,8 @@ CODE;
 function fz_reload_header ()
 {
     $current_url = get_the_permalink();
-    setcookie('freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
-    setcookie('__freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + 1800);
+    setcookie('freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
+    setcookie('__freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
 
 
     wp_redirect(add_query_arg([
@@ -164,22 +197,22 @@ yozi_render_breadcrumbs();
             padding-bottom: 0;
         }
 
-        .price, .stock, .designation, .reference {
+        .price, .stock, .designation, .reference, .qty_request {
             position: relative;
         }
 
         .price::before {
-            content: 'MGA';
+            content: 'Ariary';
+        }
+
+        .qty_request::before {
+            content: 'Qté demandée';
         }
 
         .stock::before {
-            content: 'Qté';
+            content: 'Qté disponible';
         }
 
-        .reference::before {
-            content: 'Date de revision';
-            font-size:11px;
-        }
 
         .designation::before {
             content: '';
@@ -187,7 +220,7 @@ yozi_render_breadcrumbs();
 
         .price::before,
         .stock::before,
-        .reference::before,
+        .qty_request::before,
         .designation::before {
             display: block;
             position: absolute;
@@ -199,6 +232,10 @@ yozi_render_breadcrumbs();
             padding-left: 10px;
             padding-right: 10px;
             font-weight: bold;
+        }
+
+        .qty_request::before {
+            background-color: #a92363;
         }
     </style>
     <section id="main-container" class="<?php echo apply_filters('yozi_page_content_class', 'container'); ?> inner">
@@ -235,18 +272,17 @@ yozi_render_breadcrumbs();
                                                 </div>
                                             </th>
                                             <td width="15%">
-                                                <div class="form-row form-row-wide reference"
-                                                     style="font-weight: lighter">
-                                                    <?php
-                                                    echo $article->date_review;
-                                                    ?>
-                                                </div>
-                                            </td>
-                                            <td width="15%">
                                                 <div class="stock">
                                                     <input type="number" name="stock" style="width: 100%;"
                                                            id="reg_stock"
-                                                           value="<?= $article->total_sales ?>"/>
+                                                           value="0"/>
+                                                </div>
+                                            </td>
+                                            <td width="15%">
+                                                <div class="qty_request">
+                                                    <input type="number" disabled="disabled" name="qty_request" style="width: 100%;"
+                                                           id="reg_qty_request"
+                                                           value="<?= $article->quantity ?>"/>
                                                 </div>
                                             </td>
                                             <td width="15%">

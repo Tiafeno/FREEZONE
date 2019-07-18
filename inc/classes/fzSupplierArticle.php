@@ -115,6 +115,15 @@ class fzSupplierArticle
         }
     }
 
+    public function get_id() {
+        return $this->ID;
+    }
+
+    public function get_product_id() {
+        $product_id = (int) get_field('product_id', $this->ID);
+        return is_int($product_id) ? $product_id : 0;
+    }
+
     /**
      * Short description of method getProduct
      *
