@@ -397,6 +397,21 @@ class fzAPI
             }
         ]);
 
+        // ce champ permet de désactiver ou activer un utilisateur
+        // ja_disable_user (Plugin: JA_DisableUsers, url: http://jaredatchison.com)
+        // valeur disponible: 0: Active, 1: Désactiver
+        $disable_field_name = "ja_disable_user";
+        register_rest_field('user', 'disable', [
+            'update_callback' => function ($value, $object) use ($disable_field_name) {
+                return update_user_meta($object->ID, $disable_field_name, $value);
+            },
+            'get_callback' => function ($object) use ($disable_field_name) {
+                $responsible = get_user_meta($object['id'], $disable_field_name, true);
+                return (int) $responsible;
+            }
+        ]);
+
+
     }
 
     public function register_rest_fz_product ()

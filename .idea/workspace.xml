@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/api/fzAPI.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/fzAPI.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,7 +34,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="501">
@@ -46,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2379">
-              <caret line="188" column="45" selection-start-line="188" selection-start-column="45" selection-end-line="188" selection-end-column="45" />
+            <state relative-caret-position="286">
+              <caret line="402" column="46" selection-start-line="402" selection-start-column="31" selection-end-line="402" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -168,7 +168,6 @@
         <option value="$PROJECT_DIR$/inc/fz-functions.php" />
         <option value="$PROJECT_DIR$/assets/js/register.js" />
         <option value="$PROJECT_DIR$/style.css" />
-        <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplier.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiArticle.php" />
@@ -176,6 +175,7 @@
         <option value="$PROJECT_DIR$/page-updated.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" />
         <option value="$PROJECT_DIR$/functions.php" />
+        <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
       </list>
     </option>
   </component>
@@ -477,7 +477,7 @@
       <workItem from="1563350669018" duration="13051000" />
       <workItem from="1563398016951" duration="10452000" />
       <workItem from="1563550016383" duration="2321000" />
-      <workItem from="1563607817018" duration="1136000" />
+      <workItem from="1563607817018" duration="3224000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -497,7 +497,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="597253000" />
+    <option name="totallyTimeSpent" value="599341000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1432" y="-8" width="1376" height="754" extended-state="6" />
@@ -968,13 +968,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2379">
-          <caret line="188" column="45" selection-start-line="188" selection-start-column="45" selection-end-line="188" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiArticle.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
@@ -1013,6 +1006,13 @@
           <folding>
             <element signature="e#6860#8582#0#PHP" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="402" column="46" selection-start-line="402" selection-start-column="31" selection-end-line="402" selection-end-column="46" />
         </state>
       </provider>
     </entry>
