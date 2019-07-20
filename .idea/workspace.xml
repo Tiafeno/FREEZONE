@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,8 +37,8 @@
       <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="632" column="27" lean-forward="true" selection-start-line="632" selection-start-column="27" selection-end-line="632" selection-end-column="27" />
+            <state relative-caret-position="501">
+              <caret line="632" lean-forward="true" selection-start-line="632" selection-end-line="632" />
               <folding>
                 <element signature="e#6860#8582#0#PHP" />
               </folding>
@@ -478,7 +477,7 @@
       <workItem from="1563350669018" duration="13051000" />
       <workItem from="1563398016951" duration="10452000" />
       <workItem from="1563550016383" duration="2321000" />
-      <workItem from="1563607817018" duration="936000" />
+      <workItem from="1563607817018" duration="1136000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -498,7 +497,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="597053000" />
+    <option name="totallyTimeSpent" value="597253000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1432" y="-8" width="1376" height="754" extended-state="6" />
@@ -591,7 +590,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/functions.php</url>
-          <line>691</line>
+          <line>692</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -1009,8 +1008,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="632" column="27" lean-forward="true" selection-start-line="632" selection-start-column="27" selection-end-line="632" selection-end-column="27" />
+        <state relative-caret-position="501">
+          <caret line="632" lean-forward="true" selection-start-line="632" selection-end-line="632" />
           <folding>
             <element signature="e#6860#8582#0#PHP" />
           </folding>

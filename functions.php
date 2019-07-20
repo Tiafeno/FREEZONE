@@ -623,6 +623,7 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_billing_first_name($firstname);
     $user_customer->set_billing_last_name($lastname);
     $user_customer->set_billing_address($address);
+    $user_customer->set_billing_phone($phone);
 
     $user_customer->set_shipping_location('MG', '', $zip, $city);
     $user_customer->set_shipping_address_1($address);
