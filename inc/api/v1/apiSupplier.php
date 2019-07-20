@@ -114,8 +114,12 @@ SELECT FOUND_ROWS()
 CPR;
                 $total = $wpdb->get_var($count_sql);
                 $Suppliers = [];
+                $rest_request = new WP_REST_Request();
+                $rest_request->set_param('context', 'edit');
                 foreach ($results as $result) {
-                    $Suppliers[] = new \classes\fzSupplier((int) $result->ID);
+                    $user_controller = new WP_REST_Users_Controller();
+                    $data = $user_controller->prepare_item_for_response(new WP_User($result->ID), $rest_request);
+                    $Suppliers[] = $data->get_data();
                 }
     
                 $wpdb->flush();
