@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,11 +35,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8710">
-              <caret line="704" column="36" selection-start-line="704" selection-start-column="36" selection-end-line="704" selection-end-column="36" />
+            <state relative-caret-position="470">
+              <caret line="632" column="27" lean-forward="true" selection-start-line="632" selection-start-column="27" selection-end-line="632" selection-end-column="27" />
               <folding>
                 <element signature="e#6860#8582#0#PHP" />
               </folding>
@@ -49,17 +50,17 @@
       <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
+            <state relative-caret-position="2379">
               <caret line="188" column="45" selection-start-line="188" selection-start-column="45" selection-end-line="188" selection-end-column="45" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="apiSupplier.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="apiSupplier.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/api/v1/apiSupplier.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="120" column="111" selection-start-line="120" selection-start-column="111" selection-end-line="120" selection-end-column="111" />
+            <state relative-caret-position="28">
+              <caret line="85" column="47" lean-forward="true" selection-start-line="85" selection-start-column="47" selection-end-line="85" selection-end-column="47" />
               <folding>
                 <element signature="n#collect_suppliers#0;n#apiSupplier#0;n#!!top" />
               </folding>
@@ -171,11 +172,11 @@
         <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplier.php" />
-        <option value="$PROJECT_DIR$/functions.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiArticle.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplierArticle.php" />
         <option value="$PROJECT_DIR$/page-updated.php" />
         <option value="$PROJECT_DIR$/inc/api/v1/apiSupplier.php" />
+        <option value="$PROJECT_DIR$/functions.php" />
       </list>
     </option>
   </component>
@@ -213,7 +214,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -313,6 +313,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -477,6 +478,7 @@
       <workItem from="1563350669018" duration="13051000" />
       <workItem from="1563398016951" duration="10452000" />
       <workItem from="1563550016383" duration="2321000" />
+      <workItem from="1563607817018" duration="936000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -496,7 +498,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="596117000" />
+    <option name="totallyTimeSpent" value="597053000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1432" y="-8" width="1376" height="754" extended-state="6" />
@@ -510,7 +512,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2462006" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="right" id="Database" order="3" weight="0.3295129" />
       <window_info id="Learn" order="2" weight="0.32978722" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -527,12 +529,12 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21489972" />
       <window_info id="Learn" order="2" weight="0.32978722" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.3291536" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info id="Designer" order="4" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -541,7 +543,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.3291536" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.3298969" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
@@ -589,7 +591,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/functions.php</url>
-          <line>688</line>
+          <line>691</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -967,19 +969,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8710">
-          <caret line="704" column="36" selection-start-line="704" selection-start-column="36" selection-end-line="704" selection-end-column="36" />
-          <folding>
-            <element signature="e#6860#8582#0#PHP" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
+        <state relative-caret-position="2379">
           <caret line="188" column="45" selection-start-line="188" selection-start-column="45" selection-end-line="188" selection-end-column="45" />
         </state>
       </provider>
@@ -1007,10 +999,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/inc/api/v1/apiSupplier.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="120" column="111" selection-start-line="120" selection-start-column="111" selection-end-line="120" selection-end-column="111" />
+        <state relative-caret-position="28">
+          <caret line="85" column="47" lean-forward="true" selection-start-line="85" selection-start-column="47" selection-end-line="85" selection-end-column="47" />
           <folding>
             <element signature="n#collect_suppliers#0;n#apiSupplier#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="470">
+          <caret line="632" column="27" lean-forward="true" selection-start-line="632" selection-start-column="27" selection-end-line="632" selection-end-column="27" />
+          <folding>
+            <element signature="e#6860#8582#0#PHP" />
           </folding>
         </state>
       </provider>
