@@ -414,7 +414,11 @@
                                 <!--[if (!mso)&(!IE)]><!-->
                                 <div style="border-top:0px solid transparent; border-left:0px solid transparent; border-bottom:0px solid transparent; border-right:0px solid transparent; padding-top:15px; padding-bottom:5px; padding-right: 0px; padding-left: 0px;">
                                     <!--<![endif]-->
-                                    <div style="font-size: 12px; line-height: 14px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #555555;">{{message}}</div>
+                                    <div style="font-size: 12px; line-height: 14px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #555555;">
+									{% autoescape false %}
+										{{message | raw}}
+									{% endautoescape %}
+									</div>
                                     <!--[if (!mso)&(!IE)]><!-->
                                 </div>
                                 <!--<![endif]-->
