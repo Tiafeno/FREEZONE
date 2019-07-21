@@ -707,12 +707,5 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 add_action('wp_loaded', function() {
-//    $mail = new apiMail();
-//    $request = new WP_REST_Request();
-//    $request->set_param('order_id', 1431);
-//    $_REQUEST = [
-//      'message' => 'test', 'subject' => 'test'
-//    ];
-//    $mail->send_order_client($request);
 
 });

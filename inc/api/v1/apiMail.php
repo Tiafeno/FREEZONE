@@ -40,12 +40,12 @@ class apiMail
             $items[] = $_item;
         }
         $data = $order->get_data();
-        $content = $Engine->render('@MAIL/ask-confirm-order.html', [
+        $content = $Engine->render('@MAIL/ask-confirm-order.twig', [
             'data' => $data,
             'items' => $items,
             'tva' => $tva,
             'pay' => $total + $tva,
-            'message' => $message,
+            'message' => html_entity_decode($message),
             'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 
@@ -54,9 +54,13 @@ class apiMail
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <{$this->no_reply}>";
 
+        echo $content;
+        exit;
+
         $send = wp_mail($to, $subject, $content, $headers);
         if ($send) {
             wp_send_json_success("Envoyer avec succès");
+
         } else {
             wp_send_json_error("Une erreur s'est produite pendant l'envoie");
         }

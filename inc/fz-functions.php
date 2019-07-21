@@ -54,6 +54,7 @@ $fz_model = new \model\fzModel();
 $Engine = null;
 
 try {
+
     $file_system = new Twig_Loader_Filesystem();
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
@@ -63,7 +64,7 @@ try {
     $Engine = new Twig_Environment($file_system, [
         'debug' => true,
         'cache' => TWIG_TEMPLATE_PATH . '/cache',
-        'auto_reload' => true
+        'auto_reload' => true,
     ]);
 
 } catch (Twig_Error_Loader $e) {
