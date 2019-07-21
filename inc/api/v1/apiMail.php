@@ -54,9 +54,6 @@ class apiMail
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <{$this->no_reply}>";
 
-        echo $content;
-        exit;
-
         $send = wp_mail($to, $subject, $content, $headers);
         if ($send) {
             wp_send_json_success("Envoyer avec succès");
