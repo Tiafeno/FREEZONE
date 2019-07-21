@@ -53,18 +53,6 @@ if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_us
 	return;
 }
 
-$User = wp_get_current_user();
-$restricted_msg = "<div style='margin-bottom: 40px'>Vous devez avoir un compte entreprise pour pouvoir continuer cette opération</div>";
-if (in_array('fz-particular', $User->roles) || in_array('fz-company', $User->roles)) {
-} else {
-    echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', $restricted_msg );
-	
-    if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_user_logged_in() ) {
-		echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', esc_html__( 'You must be logged in to checkout.', 'yozi' ) );
-	return;
-}
-}
-
 ?>
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
