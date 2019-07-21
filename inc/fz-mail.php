@@ -79,7 +79,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $article_posts = array_map(function($id) { return new \classes\fzSupplierArticle((int) $id); }, $article_ids);
 
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
-        'message' => $message,
+        'message' => html_entity_decode($message),
         'articles' => $article_posts,
         'url' => $url
     ]);
@@ -185,7 +185,7 @@ add_action('fz_sav_contact_mail', function($sav_id, $sender_user_id, $mailing_id
 
     $url = wc_get_account_endpoint_url('sav');
     $content = $Engine->render('@MAIL/fz_sav_contact_mail.html', [
-        'message' => $message,
+        'message' => html_entity_decode($message),
         'url' => $url
     ]);
 
