@@ -124,6 +124,7 @@ class fzPTFreezone
             //'capability_type' => 'post',
             'map_meta_cap' => true,
             'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
             'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
             'show_in_rest' => true,
             'query_var' => true

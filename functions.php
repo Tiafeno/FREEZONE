@@ -631,7 +631,7 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_shipping_last_name($lastname);
     $user_customer->set_shipping_company($company_name);
 
-    $user_customer->save();
+    $user_customer->save_data();
 
 });
 
@@ -707,4 +707,12 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 add_action('wp_loaded', function() {
+    $mail = new apiMail();
+    $request = new WP_REST_Request();
+    $request->set_param('order_id', 1431);
+    $_REQUEST = [
+      'message' => 'test', 'subject' => 'test'
+    ];
+    $mail->send_order_client($request);
+
 });

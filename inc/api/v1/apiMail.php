@@ -40,7 +40,6 @@ class apiMail
             $items[] = $_item;
         }
         $data = $order->get_data();
-
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
             'data' => $data,
             'items' => $items,
