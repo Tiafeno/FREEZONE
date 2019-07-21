@@ -111,7 +111,7 @@ add_action('complete_order', function ($order_id) {
         'client' => $client,
         'url' => $url
     ]);
-    $subject = "#{$order_id} - Une commande vient d'être validé sur le site freezone.click";
+    $subject = "#{$order_id} - Une demande vient d'être validé sur le site freezone.click";
 
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
