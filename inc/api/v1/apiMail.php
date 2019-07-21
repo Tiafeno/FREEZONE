@@ -40,12 +40,13 @@ class apiMail
             $items[] = $_item;
         }
         $data = $order->get_data();
-        $content = $Engine->render('@MAIL/ask-confirm-order.twig', [
+        $message = html_entity_decode($message);
+        $content = $Engine->render('@MAIL/ask-confirm-order.html', [
             'data' => $data,
             'items' => $items,
             'tva' => $tva,
             'pay' => $total + $tva,
-            'message' => html_entity_decode($message),
+            'message' => stripslashes($message),
             'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 

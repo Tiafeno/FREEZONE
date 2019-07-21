@@ -184,8 +184,9 @@ add_action('fz_sav_contact_mail', function($sav_id, $sender_user_id, $mailing_id
     $headers[] = "From: FreeZone <{$from}>";
 
     $url = wc_get_account_endpoint_url('sav');
+    $message = html_entity_decode($message);
     $content = $Engine->render('@MAIL/fz_sav_contact_mail.html', [
-        'message' => html_entity_decode($message),
+        'message' => stripslashes($message),
         'url' => $url
     ]);
 
