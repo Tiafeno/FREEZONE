@@ -367,8 +367,7 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
                                         <div style="font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-                                            <p style="font-size: 14px; line-height: 16px; margin: 0;">Facture de</p>
-                                            <p style="font-size: 14px; line-height: 16px; margin: 0;"><strong>Freezone</strong></p>
+                                            <p style="font-size: 14px; line-height: 16px; margin: 0;"></p>
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
@@ -387,8 +386,11 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
                                         <div style="font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-                                            <p style="font-size: 14px; line-height: 16px; margin: 0;">Facture à</p>
-                                            <p style="font-size: 14px; line-height: 16px; margin: 0;">{{data['billing']['first_name']}} {{data['billing']['last_name']}}</p>
+										    {% data['billing']['company'] is not empty %}
+                                            <p style="font-size: 14px; line-height: 16px; margin: 0;">{{data['billing']['company']}}</p>
+											{% else %}
+											<p style="font-size: 14px; line-height: 16px; margin: 0;">{{data['billing']['first_name']}} {{data['billing']['last_name']}}</p>
+											{% endif %}
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
@@ -542,7 +544,7 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 15px; padding-left: 0px; padding-top: 0px; padding-bottom: 0px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:0px;padding-right:15px;padding-bottom:0px;padding-left:0px;">
                                         <div style="line-height: 14px; font-size: 12px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #555555;">
-                                            <p style="line-height: 18px; text-align: center; font-size: 12px; margin: 0;"><span style="font-size: 15px;"><span style="line-height: 18px; font-size: 15px;"><strong>{{item.price}}</strong></span></span></p>
+                                            <p style="line-height: 18px; text-align: center; font-size: 12px; margin: 0;"><span style="font-size: 15px;"><span style="line-height: 18px; font-size: 15px;"><strong>{{item.price}} Ar</strong></span></span></p>
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
@@ -656,7 +658,7 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 20px; padding-top: 0px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:0px;padding-right:10px;padding-bottom:10px;padding-left:20px;">
                                         <div style="font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{data['total']}}</p>
+                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{data['total']}} Ar</p>
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
@@ -675,7 +677,7 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 20px; padding-top: 0px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:0px;padding-right:10px;padding-bottom:10px;padding-left:20px;">
                                         <div style="font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{tva}}</p>
+                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{tva}} Ar</p>
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
@@ -707,7 +709,7 @@
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 20px; padding-top: 0px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                                     <div style="color:#555555;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:0px;padding-right:10px;padding-bottom:10px;padding-left:20px;">
                                         <div style="font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{pay}}</p>
+                                            <p style="font-size: 12px; line-height: 14px; text-align: center; margin: 0;">{{pay}} Ar</p>
                                         </div>
                                     </div>
                                     <!--[if mso]></td></tr></table><![endif]-->
