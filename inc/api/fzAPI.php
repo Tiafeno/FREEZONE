@@ -366,7 +366,9 @@ class fzAPI
             'stat',
             'nif',
             'rc',
-            'cif'
+            'cif',
+            'cin',
+            'date_cin'
         ];
         $User = wp_get_current_user();
         $admin = in_array('administrator', $User->roles) ? 'administrator' : false;
