@@ -127,7 +127,7 @@ add_action('init', function() {
             $headers   = [];
             $headers[] = 'Content-Type: text/html; charset=UTF-8';
             $headers[] = "From: Freezone <$no_reply>";
-            $content   = $Engine->render('@MAIL/fz_sav_contact_mail.html', [ 'message' => $message, 'Year' => 2019]);
+            $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019]);
 
             // Envoyer un mail
             $result = wp_mail( $to, $subject, $content, $headers );
@@ -230,7 +230,7 @@ add_action('sav_status_finish', function ($post_id) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/fz_sav_contact_mail.html', [ 'message' => $message, 'Year' => 2019]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
@@ -259,7 +259,7 @@ add_action('sav_status_do_not_repair', function ($post_id) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/fz_sav_contact_mail.html', [ 'message' => $message, 'Year' => 2019]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
@@ -287,7 +287,7 @@ add_action('sav_change_approximate_time', function ($post_id, $date) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/fz_sav_contact_mail.html', [ 'message' => $message, 'Year' => 2019]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
