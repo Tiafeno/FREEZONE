@@ -55,6 +55,8 @@ TAG;
 
             endif;
     }, 10, 1);
+
+
 }, 10);
 
 add_action('template_redirect', function () {

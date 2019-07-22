@@ -24,7 +24,7 @@ class fzAPI
 
         // Quotation
         add_action('rest_api_init', function () {
-            // TODO: Ceci autorise tous les sites web d'accéder au contenue via l'API
+            // Ceci autorise tous les sites web d'accéder au contenue via l'API
             header("Access-Control-Allow-Origin: *");
 
             register_rest_route('api', '/quotations/', [

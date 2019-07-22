@@ -35,6 +35,7 @@ if (!defined('TWIG_TEMPLATE_PATH')) {
 if (!defined('__SITENAME__')) {
     define('__SITENAME__', 'freezone');
 }
+
 if (function_exists('acf_add_options_page')) {
     $parent = acf_add_options_page(array(
         'page_title' => 'Parametre Freezone',

@@ -13,9 +13,18 @@
  *Template Name: Page SAV
  */
 
-wp_enqueue_style('select2', get_stylesheet_directory_uri() . '/assets/css/select2.css');
-wp_enqueue_script('select2', get_stylesheet_directory_uri() . '/assets/js/select2.full.js', ['jquery']);
+$User = wp_get_current_user();
+wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
 
+// https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
+wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
+wp_localize_script('vue', 'rest_api', [
+    'rest_url' => esc_url_raw(rest_url()),
+    'nonce' => wp_create_nonce('wp_rest'),
+    'user_id' => $User->ID,
+    'admin_url' =>  admin_url('admin-ajax.php'),
+    'redirect_url' => wc_get_page_permalink('myaccount')
+]);
 
 acf_form_head();
 get_header();
@@ -28,34 +37,192 @@ yozi_render_breadcrumbs();
 ?>
 
     <style type="text/css">
-        .acf-field select {
+        #status_product, #product_provider {
             height: 40px;
             padding-left: 15px;
+            width: 100%;
         }
 
-        .acf-field input[type="text"],
-        .acf-field input[type="password"],
-        .acf-field input[type="number"],
-        .acf-field input[type="search"],
-        .acf-field input[type="email"],
-        .acf-field input[type="url"],
-        .acf-field textarea,
-        .acf-field select {
-            height: 40px;
+        #app-form-sav input,
+        #app-form-sav textarea {
+            border-radius: 0px !important;
+            border-color: #aaaaaa;
         }
 
-        #wp-acf-editor-47-media-buttons {
-            display: none;
+        .error {
+            color: red;
         }
+
+        .swal2-content {
+            font-size: 18px;
+        }
+
     </style>
     <script type="text/javascript">
         (function ($) {
-            $(document).ready(function () {
+            $(document).ready(() => {
+                /**
+                 * Les champs date_purchase, bill & serial_number
+                 * s'affichent si seulement la valeur du status est égale à "Sous garantie" et fournisseur "Freezone"
+                 */
+                new Vue({
+                    el: '#app-form-sav',
+                    data: {
+                        message: null,
+                        loading: false,
+                        errors: [],
+                        client: '', // Type de client (e.g: 1: Particulier, 2: Entreprise)
+                        product: '', // Produit
+                        mark: '', // Marque
+                        status_product: 1, // Statut du produit (e.g: 1: Sous garantie, 2: Hors garantie)
+                        product_provider: 1, // Fournisseur du produit (e.g: 1: freezone, 2: Autre fournisseur)
+                        date_purchase: '', // Date d'achat
+                        bill: '', // Numéro de la facture
+                        serial_number: '', // Numéro de serie,
+                        description: '', // Identification de la demande
 
+                        // Cette variable controle la visibilité des champs dnas le formulaire
+                        ck_bill: true,
+                        ck_date_purchase: true,
+                        ck_serial_number: true
+                    },
+                    methods: {
+                        statusHandler: function (evt) {
+                            let element = evt.currentTarget;
+                            if (this.status_product == 1 && this.product_provider == 1) {
+                                this.ck_date_purchase = true;
+                                this.ck_bill = true;
+                                this.ck_serial_number = true;
+                            } else {
+                                this.ck_date_purchase = false;
+                                this.ck_bill = false;
+                                this.ck_serial_number = false;
+                            }
+
+                            // hors garantie
+                            if (this.status_product == 2) {
+                                this.message = "Votre demande sera étudiée sous 24 heures jours ouvrables, " +
+                                    "nous vous demanderons de nous déposer le matériel à réparer dans notre atelier car " +
+                                    "nous ne réparons pas chez le client. Une fois le matériel en notre possession le " +
+                                    "technicien donnera son diagnostic qui vous sera envoyé par email. <br>Soit vous acceptez " +
+                                    "que votre matériel soit réparé au cout indiqué et à ce moment-là vous ne paierez pas " +
+                                    "le diagnostic soit vous refusez de réparer le matériel vous aurez à vous acquitter " +
+                                    "du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
+                            }
+
+                            // Sous garantie & freezone
+                            if (this.status_product == 1 && this.product_provider == 1) {
+                                this.message = "Votre demande sera étudiée sous 24 heures jours ouvrables, " +
+                                    "nous vous demanderons de nous déposer le matériel à réparer dans notre atelier " +
+                                    "car nous ne réparons pas chez le client.";
+                            }
+
+                            // Sous garantie & autre fournisseur
+                            if (this.status_product == 1 && this.product_provider == 2) {
+                                this.message = "Votre demande sera traitée sous 24 heures jours ouvrables, " +
+                                    "Pour votre information sachez qu’en nous confiant un produit qui est sous garantie " +
+                                    "chez un autre revendeur vous risquez de perdre votre garantie chez ce revendeur. <br>" +
+                                    "Nous vous demanderons de nous déposer le matériel à réparer dans notre atelier " +
+                                    "car nous ne réparons pas chez le client. <br> Une fois le matériel en notre possession " +
+                                    "le technicien donnera son diagnostic qui vous sera envoyé par email. <br> Soit vous acceptez" +
+                                    " que votre matériel soit réparé au cout indiqué et à ce moment-là vous ne paierez pas " +
+                                    "le diagnostic soit vous refusez de réparer le matériel vous aurez à vous acquitter" +
+                                    " du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
+                            }
+
+                        },
+                        checkForm: function (e) {
+                            e.preventDefault();
+                            this.errors = [];
+
+                            if (_.isEmpty(this.client)) {
+                                this.errors.push('Le type de client est obligatoire');
+                            }
+                            if (_.isEmpty(this.product)) {
+                                this.errors.push('Le champ produit est obligatoire');
+                            }
+                            if (_.isEmpty(this.mark)) {
+                                this.errors.push('Le champ marque est obligatoire');
+                            }
+                            if (_.isEmpty(this.description)) {
+                                this.errors.push('Veuillez decrire le probléme de votre matériel pour mieux diagnostique votre appareil');
+                            }
+                            if (this.status_product == 1 && this.product_provider == 1) {
+                                if (_.isEmpty(this.date_purchase)) {
+                                    this.errors.push('La date est obligatoire');
+                                }
+
+                                if (_.isEmpty(this.bill)) {
+                                    this.errors.push('Le numéro de facture est obligatoire');
+                                }
+
+                                if (_.isEmpty(this.serial_number)) {
+                                    this.errors.push('Le numéro de série est obligatoire');
+                                }
+                            }
+                            if (this.errors.length) {
+                                window.scrollTo(0, 0);
+                                return true;
+                            }
+
+                            this.loading = true;
+                            $('button[type="submit"]').text('Chargement ...');
+                            $.ajax({
+                                method: "POST",
+                                url: rest_api.rest_url + 'wp/v2/fz_sav',
+                                data: {
+                                    title: this.product,
+                                    content: this.description,
+                                    status: 'publish',
+                                    bill: this.bill,
+                                    client: this.client,
+                                    date_purchase: this.date_purchase,
+                                    description: this.description,
+                                    mark: this.mark,
+                                    product: this.product,
+                                    product_provider: this.product_provider,
+                                    status_product: this.status_product,
+                                    serial_number: this.serial_number,
+                                    auctor: rest_api.user_id
+                                },
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
+                                },
+                                success: newSav => {
+                                    var savId = newSav.id;
+                                    $.ajax({
+                                        method: "POST",
+                                        url: rest_api.admin_url ,
+                                        data: {
+                                            action: 'new_sav',
+                                            post_id: savId
+                                        },
+                                        success: resp => {
+                                            $('button[type="submit"]').text('Validé');
+                                            this.loading = false;
+                                            Swal.fire({
+                                                title: 'Cher client',
+                                                html: this.message,
+                                                type: 'info',
+                                                showCancelButton: false,
+                                                width: "60rem"
+                                            }).then(result => {
+                                                if (result.value) {
+                                                    window.location.href = rest_api.redirect_url;
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
             });
         })(jQuery);
     </script>
     <section id="main-container" class="<?php echo apply_filters('yozi_page_content_class', 'container'); ?> inner">
+
         <?php wc_print_notices(); ?>
         <?php yozi_before_content($sidebar_configs); ?>
         <div class="row">
@@ -71,19 +238,132 @@ yozi_render_breadcrumbs();
                     if (!is_user_logged_in()) {
                         wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
-                        acf_form(array(
-                            'post_id'		=> 'new_post',
-                            'new_post'		=> array(
-                                'post_type'		=> 'fz_sav',
-                                'post_status'   => 'publish'
-                            ),
-                            'submit_value'		=> 'Envoyer',
-                            //'return' => wc_get_page_permalink('myaccount'),
-                            'html_submit_button'	=> '<input type="submit" class="btn btn-lg btn-primary" value="%s" />',
-                            'updated_message' => false
-                        ));
-
                         ?>
+                        <form
+                                id="app-form-sav"
+                                @submit="checkForm"
+                                action=""
+                                method="post"
+                        >
+
+                            <p v-if="errors.length">
+                                <b>Veuillez corriger les erreurs suivantes:</b>
+                            <ul style="margin-bottom: 20px;font-size: 14px">
+                                <li class="error" v-for="error in errors">{{ error }}</li>
+                            </ul>
+                            </p>
+                            <label class="font-bold">Type de client</label>
+                            <div class="row" style="margin-bottom: 10px">
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" v-model="client" value="1"
+                                               name="type_client">
+                                        <span>
+                                            Particulier
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" v-model="client" value="2"
+                                               name="type_client">
+                                        <span>
+                                            Entreprise
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="product">Produit</label>
+                                        <input type="text" v-model="product"
+                                               class=" form-control tt-input"
+                                               id="product"
+                                               placeholder="Produit">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="mark">Marque</label>
+                                        <input type="text" v-model="mark" class="form-control" id="mark"
+                                               placeholder="Marque">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="status_product">Statut du produit</label>
+                                        <select name="status_product" v-model="status_product" id="status_product"
+                                                v-on:change="statusHandler">
+                                            <option value="">Aucun</option>
+                                            <option value="1">Sous garantie</option>
+                                            <option value="2">Hors garantie</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="mark">Fournisseur du produit</label>
+                                        <select name="product_provider" v-model="product_provider" id="product_provider"
+                                                v-on:change="statusHandler">
+                                            <option value="1">Freezone</option>
+                                            <option value="2">Autre fournisseur</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4" v-if="ck_date_purchase">
+                                    <div class="form-group">
+                                        <label for="date_purchase">Date d'achat</label>
+                                        <input type="date" v-model="date_purchase" class="form-control"
+                                               id="date_purchase" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" v-if="ck_bill">
+                                    <div class="form-group">
+                                        <label for="bill">Numéro de la facture</label>
+                                        <input type="text" v-model="bill" class="form-control" id="bill"
+                                               placeholder="Veuillez saisir le numéro de la facture">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" v-if="ck_serial_number">
+                                    <div class="form-group">
+                                        <label for="serial_number">Numéro de série</label>
+                                        <input type="text" v-model="serial_number" class="form-control"
+                                               id="serial_number"
+                                               placeholder="Veuillez saisir le numéro de série">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="description">Identification de la demande</label>
+                                        <textarea v-model="description" class="form-control"
+                                                  id="description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p v-if="message" v-html="message"></p>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-primary" :disabled="loading">
+                                        Validé
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </form>
                     <?php } ?>
                 </main><!-- .site-main -->
             </div><!-- .content-area -->
