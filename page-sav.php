@@ -252,7 +252,7 @@ yozi_render_breadcrumbs();
                                 <li class="error" v-for="error in errors">{{ error }}</li>
                             </ul>
                             </p>
-                            <label class="font-bold">Type de client</label>
+                            <label class="font-bold">Vous êtes?</label>
                             <div class="row" style="margin-bottom: 10px">
                                 <div class="col-sm-2">
                                     <div class="form-check">
