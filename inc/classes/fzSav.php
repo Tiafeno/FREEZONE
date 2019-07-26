@@ -157,6 +157,14 @@ add_action('rest_api_init', function() {
                     case 'status_sav':
 
                         /**
+                         * 1 : Diagnostic réalisé
+                         * 2 : Diagnostic non réalisé
+                         * 3 : A réparer
+                         * 4 : Ne pas réparer
+                         * 5 : Terminer
+                         */
+
+                        /**
                          * Le status du SAV est sur <Terminer>
                          *
                          * Veuillez envoyer une facture au client VVB pour la réparation de la machine XYZ
