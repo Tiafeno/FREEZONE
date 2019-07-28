@@ -124,13 +124,17 @@ class fzSupplierArticle
         return is_int($product_id) ? $product_id : 0;
     }
 
+    public function get_user_id() {
+        return $this->user_id;
+    }
+
     /**
      * Short description of method getProduct
      *
      * @access public
      * @author firstname and lastname of author, <author@example.org>
      * @param  String sku
-     * @return mixed
+     * @return WP_User
      */
     public function get_product()
     {
@@ -147,6 +151,7 @@ class fzSupplierArticle
         $User = is_object($this->user_id) ? $this->user_id : new \WP_User((int) $this->user_id);
         return $User;
     }
+
 
 
     /**

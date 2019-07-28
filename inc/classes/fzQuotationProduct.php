@@ -22,7 +22,6 @@ class fzQuotationProduct extends \WC_Product
     public $error = null;
     /**
      * Contient la listes des fournisseurs sélectionner pour cette produits
-     * [{id: 0, get: 2}, ...]
      * @access public
      */
     public $suppliers = [];
@@ -48,6 +47,12 @@ class fzQuotationProduct extends \WC_Product
      * @var Integer
      */
     private $order_id = 0;
+
+    /**
+     * Cette valeur est utiliser si le quantité peut être modifier par le client
+     * @var bool
+     */
+    private $editable = true;
 
     /**
      * Short description of method __construct
@@ -86,7 +91,7 @@ class fzQuotationProduct extends \WC_Product
         }
 
         if (empty($this->count_item)) {
-            $this->error = new \WP_Error('broke', 'Quantité du produit introuvable');
+            $this->error = new \WP_Error('broke', 'Produit introuvable');
             return false;
         }
 
@@ -97,10 +102,22 @@ class fzQuotationProduct extends \WC_Product
                 $this->item_limit += (int) $supplier_article->total_sales;
             }
         }
+
+        /**
+         * Vérifier s'il y a plusieur fournisseur utiliser
+         */
+        $suppliers = array_filter($this->suppliers, function ($supplier) { return 0 !== intval($supplier->get); });
+        if (is_array($suppliers) && count($suppliers) > 1) {
+            $this->editable = false;
+        }
     }
 
     public function get_order_id() {
         return $this->order_id;
+    }
+
+    public function is_editable() {
+        return $this->editable;
     }
 
     public function update_status( $status = 0 ) {

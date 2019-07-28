@@ -27,7 +27,6 @@ require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
 require_once 'api/fzAPI.php';
 
-define('FZ_SELLER_PRICE', 0.85);
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');
 }
@@ -117,11 +116,8 @@ add_action('admin_init', function () {
     }
 
     if (is_user_logged_in()) {
-        $User = wp_get_current_user();
-        $roles = $User->roles;
-        $isRole = in_array('fz-particular', $roles) || in_array('fz-supplier', $roles);
         $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : home_url('/');
-        if (is_admin() && !defined('DOING_AJAX') && $isRole) {
+        if (is_admin() && !defined('DOING_AJAX') && !current_user_can('administrator')) {
             exit(wp_redirect($redirect, 301));
         }
     }
