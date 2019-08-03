@@ -19,7 +19,7 @@ function remove_prices ($price, $product)
 }
 
 add_action('init', function () {
-    add_rewrite_endpoint('sav', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('savs', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
     add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
@@ -27,6 +27,7 @@ add_action('init', function () {
         $vars[] = 'stock-management';
         $vars[] = 'demandes';
         $vars[] = 'faq';
+        $vars[] = 'savs';
         return $vars;
     }, 0);
 
@@ -74,19 +75,19 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     unset($items['customer-logout']);
     unset($items['orders']);
 
-    $items['stock-management'] = 'Gestion de stock';
-    $items['demandes'] = "Demandes";
-    $items['faq'] = "FAQ";
+    $User = wp_get_current_user();
+    if (in_array('fz-supplier', $User->roles)) {
+        unset($items['edit-address']);
+        $items['stock-management'] = 'Gestion de stock';
+    } else {
+        unset($items['stock-management']);
+        $items['savs'] = "S.A.V";
+        $items['demandes'] = "Demandes";
+        $items['faq'] = "FAQ";
+    }
 
     // Insert back the logout item.
     $items['customer-logout'] = $logout;
-
-    $User = wp_get_current_user();
-    if (in_array('fz-supplier', $User->roles)) {
-        unset($items['edit-address'], $items['demandes']);
-    } else {
-        unset($items['stock-management']);
-    }
     return $items;
 }, 999);
 
@@ -386,6 +387,30 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
     }
 }, 10);
 
+add_action('woocommerce_account_savs_endpoint', function () {
+    global $Engine;
+    $savs = [];
+    $user = wp_get_current_user();
+    $args = [
+        'post_type' => 'fz_sav',
+        'posts_per_page' => -1,
+        'meta_query' => [
+            [
+                'key' => 'sav_auctor',
+                'value' => $user->ID
+            ]
+        ]
+    ];
+
+    $the_query = new WP_Query($args);
+    $savs = array_map(function ($sav) {
+        $fzSav = new \classes\fzSav($sav->ID, true);
+        return $fzSav;
+    }, $the_query->posts);
+
+    echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs]);
+}, 10);
+
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
@@ -484,7 +509,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
                 $products = [];
                 foreach ( $items as $item ) {
-
+                    // is_editable()
                     $quotation_product = new \classes\fzQuotationProduct((int)$item['product_id'], (int)$order_id);
                     $products[] = $quotation_product;
                 }
@@ -591,7 +616,7 @@ add_action('user_register', function ($user_id) {
 
     $user_customer = new WC_Customer(intval($user_id));
     /**
-     * Role de l'utiisateur
+     * Role de l'utilisateur
      * Particulier ou entreprise
      */
     $role = sanitize_text_field($_REQUEST['role']);
@@ -694,6 +719,18 @@ function fz_order_received ($order_id)
 
     // Envoyer un mail aux administrateurs
     do_action('fz_received_order', $order_id);
+
+    // Mettre les fournisseurs qui posséde ces produits en attente d'envoie (mail)
+    $apiSupplier = new apiSupplier();
+    $request = new WP_REST_Request();
+    $request->set_param('action', 'review');
+    $results = $apiSupplier->action_collect_suppliers($request);
+    $data = $results['data'];
+    if (!empty($data) && is_array($data)) {
+        foreach ($data as $item) {
+            update_user_meta((int) $item['id'], 'send_mail_review_date', null);
+        }
+    }
 
 }
 

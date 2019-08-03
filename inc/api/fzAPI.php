@@ -343,8 +343,10 @@ class fzAPI
                             }
                         }
 
-                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc, $articles);
+                        // Marquer le fournisseur avec son date
+                        update_user_meta($supplier_id, 'send_mail_review_date', date_i18n("Y-m-d H:i:s"));
 
+                        do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc, $articles);
                     }
                 ]
             ]);
@@ -387,6 +389,21 @@ class fzAPI
                 }
             ]);
         }
+
+        /**
+         * Cette meta est utiliser pour la dernnier date d'envoie au fournisseur la mise à jour
+         * de son article
+         */
+        register_rest_field('user', 'send_mail_review_date', [
+            'update_callback' => function ($value, $object, $field_name) use ($admin) {
+            return update_user_meta($object->ID, $field_name, $value);
+
+            },
+            'get_callback' => function ($object, $field_name) use ($admin) {
+                return get_user_meta($object['id'], $field_name, true);
+            }
+        ]);
+
 
         // Ce champ est pour les clients qui contient les commercials responsable
         register_rest_field('user', 'responsible', [
