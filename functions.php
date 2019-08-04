@@ -728,6 +728,7 @@ function fz_order_received ($order_id)
     $data = $results['data'];
     if (!empty($data) && is_array($data)) {
         foreach ($data as $item) {
+            // TODO: Verifier si le produit de cette fournisseurs est déja à jour
             update_user_meta((int) $item['id'], 'send_mail_review_date', null);
         }
     }

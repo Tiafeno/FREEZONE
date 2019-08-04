@@ -44,10 +44,7 @@ $col = 1;
 	<div class="col-md-6 col-sm-6 <?php //echo ( ( $col = $col * -1 ) < 0 ) ? 1 : 2; ?> address">
 		<header class="title">
 			<h3><?php echo trim( $title ); ?></h3>
-			<a href="<?php echo esc_url( wc_get_endpoint_url( 'edit-address', $name ) ); ?>" class="edit">
-				<i class="fa fa-pencil-square-o"></i>
-				<?php esc_html_e( 'Edit', 'yozi' ); ?>
-			</a>
+
 		</header>
 		<address>
 			<?php
@@ -71,6 +68,10 @@ $col = 1;
 					echo trim($formatted_address);
 			?>
 		</address>
+        <a href="<?php echo esc_url( wc_get_endpoint_url( 'edit-address', $name ) ); ?>" class="btn btn-theme btn-md edit">
+            <i class="fa fa-pencil-square-o"></i>
+            <?php esc_html_e( 'Edit', 'yozi' ); ?>
+        </a>
 	</div>
 
 <?php endforeach; ?>

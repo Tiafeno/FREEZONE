@@ -21,11 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 ?>
+<style type="text/css">
+    .woocommerce .btn {
+        padding: 1px 12px !important;
+
+    }
+</style>
 
 <p><?php
 	/* translators: 1: user display name 2: logout url */
 	printf(
-		'Bonjour %1$s (si vous n\'êtes pas %1$s? <a href="%2$s" class="btn btn-theme btn-md">Déconnexion</a>)',
+		'Bonjour %1$s, <br>Si vous n\'êtes pas %1$s? <a href="%2$s" class="btn btn-theme btn-md">Déconnexion</a>',
 		'<strong>' . esc_html( $current_user->first_name ) .' '. esc_html( $current_user->last_name ) . '</strong>',
 		esc_url( wc_logout_url( wc_get_page_permalink( 'myaccount' ) ) )
 	);
@@ -33,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <p><?php
 	printf(
-		 'À partir du tableau de bord de votre compte, vous pouvez gérer vos <a href="%1$s" class="btn btn-theme btn-md">adresses de livraison et de facturation</a> ainsi que <a href="%2$s" class="btn btn-theme btn-md">changer votre mot de passe et les détails de votre compte</a>.',
+		 'À partir du tableau de bord de votre compte, vous pouvez gérer:<br> vos adresses de livraison et de facturation <a href="%1$s" class="btn btn-theme btn-md">Changer</a> <br>ainsi que votre mot de passe et les détails de votre compte <a href="%2$s" class="btn btn-theme btn-md">changer</a>.',
 		esc_url( wc_get_endpoint_url( 'edit-address' ) ),
 		esc_url( wc_get_endpoint_url( 'edit-account' ) )
 	);
