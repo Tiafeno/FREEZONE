@@ -12,6 +12,8 @@
                 class="nobr">Date</span></th>
         <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Reference</span>
         </th>
+        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span>
+        </th>
         <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
         </th>
     </tr>
@@ -28,6 +30,9 @@
         </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
             {{sav.reference}}
+        </td>
+        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
+            {{sav.get_status_string()}}
         </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" >
 

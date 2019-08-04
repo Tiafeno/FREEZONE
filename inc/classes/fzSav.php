@@ -68,6 +68,25 @@ class fzSav
         return self::$fields;
     }
 
+    public function get_status_string() {
+        /**
+         * 1 : Diagnostic réalisé
+         * 2 : Diagnostic non réalisé
+         * 3 : A réparer
+         * 4 : Ne pas réparer
+         * 5 : Terminer
+         */
+        $status = intval($this->status_sav);
+        if (is_nan($status)) return 'Non definie';
+        switch ($status) {
+            case 1: return 'Diagnostic réalisé'; break;
+            case 2: return 'Diagnostic non réalisé'; break;
+            case 3: return 'A réparer'; break;
+            case 4: return 'Ne pas réparer'; break;
+            case 5: return 'Terminer'; break;
+        }
+    }
+
 }
 
 add_action('init', function() {
