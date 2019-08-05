@@ -174,6 +174,27 @@ class fzPTFreezone
             'query_var' => true
         ]);
 
+        register_post_type('_fz_mail_template', [
+            'label' => "Mail predefinie",
+            'labels' => [
+                'name' => "Mail predefinie",
+                'singular_name' => "Mail predefinie",
+            ],
+            'public' => false,
+            'hierarchical' => false,
+            'menu_position' => null,
+            'show_ui' => true,
+            'has_archive' => false,
+            'rewrite' => ['slug' => 'mail_template'],
+            'capability_type' => 'post',
+            'map_meta_cap' => true,
+            'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
+            'supports' => ['title', 'editor'],
+            'show_in_rest' => true,
+            'query_var' => true
+        ]);
+
 
     }
 }
