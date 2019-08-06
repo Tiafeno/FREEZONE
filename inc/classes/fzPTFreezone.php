@@ -130,7 +130,6 @@ class fzPTFreezone
             'query_var' => true
         ]);
 
-
         register_post_type('fz_sav', [
             'label' => "S.A.V",
             'labels' => [
@@ -194,7 +193,6 @@ class fzPTFreezone
             'show_in_rest' => true,
             'query_var' => true
         ]);
-
 
     }
 }
