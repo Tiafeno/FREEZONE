@@ -20,8 +20,8 @@ if (!empty($_POST)) {
         $article_id = $_POST['article_id'];
 
         $article = new \classes\fzSupplierArticle(intval($article_id));
-        $article->set_price((int) $price);
-        $article->set_total_sales( (int) $stock);
+        $article->set_price((int)$price);
+        $article->set_total_sales((int)$stock);
         $article->save();
 
         $article->update_date_review(); // Mettre à jour l'article
@@ -41,7 +41,7 @@ if (!empty($_GET)) {
 
             $expired = stripslashes($_GET['e']);
             $expired_format = base64_decode($expired);
-            $expired_date   = strtotime($expired_format);
+            $expired_date = strtotime($expired_format);
 
             if (!$expired_date) wp_redirect(home_url('/'));
 
@@ -55,7 +55,7 @@ if (!empty($_GET)) {
             }
 
             // Ajouter une ssession utilisateur s'il n'est pas connecter
-            if ( ! is_user_logged_in() ) {
+            if (!is_user_logged_in()) {
                 wp_set_current_user($User->ID);
                 wp_set_auth_cookie($User->ID);
 
@@ -74,6 +74,7 @@ if (!empty($_GET)) {
                 fz_reload_header();
             }
 
+            // Si l'identifiant des articles sont present dans le lien GET
             if (isset($_GET['articles'])) {
                 fz_reload_header();
             }
@@ -89,7 +90,7 @@ if (!empty($_GET)) {
                 // Ajouter les identifiants des articles en attente dans la cookie
                 setcookie('freezone_ua', $articles, time() + (60 * 30));
             }
-            
+
             if (empty($articles)) {
                 // Mise à jour reussi! Envoye un mail au adminstrateur
                 if (isset($_COOKIE['__freezone_ua'])) {
@@ -135,7 +136,7 @@ CODE;
 
                 $orders = new WP_Query([
                     'post_type' => wc_get_order_types(),
-                    'post_status' => array_keys( wc_get_order_statuses() ),
+                    'post_status' => array_keys(wc_get_order_statuses()),
                     "posts_per_page" => -1,
                     'meta_query' => [
                         [
@@ -145,13 +146,13 @@ CODE;
                         ]
                     ]
                 ]);
-                foreach ($orders->posts as $order) {
+                foreach ( $orders->posts as $order ) {
                     $current_order = new WC_Order($order->ID);
                     $items = $current_order->get_items();
-                    foreach ($items as $item_id => $item) {
+                    foreach ( $items as $item_id => $item ) {
                         $data = $item->get_data();
                         if ($data['product_id'] === $product_id) {
-                            $quantity[] = (int) $data['quantity'];
+                            $quantity[] = (int)$data['quantity'];
                         }
                     }
                 }
@@ -200,43 +201,6 @@ yozi_render_breadcrumbs();
         .price, .stock, .designation, .reference, .qty_request {
             position: relative;
         }
-
-        .price::before {
-            content: 'Ariary';
-        }
-
-        .qty_request::before {
-            content: 'Qté demandée';
-        }
-
-        .stock::before {
-            content: 'Qté disponible';
-        }
-
-
-        .designation::before {
-            content: '';
-        }
-
-        .price::before,
-        .stock::before,
-        .qty_request::before,
-        .designation::before {
-            display: block;
-            position: absolute;
-            bottom: -14px;
-            left: 0;
-            font-size: 12px;
-            background-color: #5aa90c;
-            color: white;
-            padding-left: 10px;
-            padding-right: 10px;
-            font-weight: bold;
-        }
-
-        .qty_request::before {
-            background-color: #a92363;
-        }
     </style>
     <section id="main-container" class="<?php echo apply_filters('yozi_page_content_class', 'container'); ?> inner">
         <?php wc_print_notices(); ?>
@@ -260,9 +224,21 @@ yozi_render_breadcrumbs();
 
                         <?php
                         if (!empty($fzProducts)) :
-                            foreach ( $fzProducts as $article ): ?>
+                            foreach ( $fzProducts as $index => $article ): ?>
+
                                 <form method="POST" name="form_<?= $article->ID ?>" class="updated-form">
-                                    <table class="table table-striped">
+                                    <table class="table table-striped" style="margin-bottom: 0px !important">
+                                        <?php if ($index === 0): ?>
+                                        <thead style="background: #2584cf;color: white;">
+                                            <tr>
+                                                <th scope="col">Designation</th>
+                                                <th scope="col">Qté disponible</th>
+                                                <th scope="col">Qté demandée</th>
+                                                <th scope="col">Prix en ariary</th>
+                                                <th scope="col">#</th>
+                                            </tr>
+                                        </thead>
+                                        <?php endif; ?>
                                         <tbody>
                                         <tr>
                                             <th scope="row">
@@ -274,21 +250,21 @@ yozi_render_breadcrumbs();
                                             <td width="15%">
                                                 <div class="stock">
                                                     <input type="number" name="stock" style="width: 100%;"
-                                                           id="reg_stock"
+                                                           id="reg_stock" min="0"
                                                            value="0"/>
                                                 </div>
                                             </td>
                                             <td width="15%">
                                                 <div class="qty_request">
                                                     <input type="number" disabled="disabled" name="qty_request" style="width: 100%;"
-                                                           id="reg_qty_request"
+                                                           id="reg_qty_request" min="0"
                                                            value="<?= $article->quantity ?>"/>
                                                 </div>
                                             </td>
                                             <td width="15%">
                                                 <div class="price">
                                                     <input type="number" name="price" style="width: 100%;"
-                                                           id="reg_price"
+                                                           id="reg_price" min="0"
                                                            value="<?= $article->regular_price ?>"/>
                                                 </div>
                                             </td>
@@ -333,6 +309,10 @@ yozi_render_breadcrumbs();
                         endif;
                         ?>
                     <?php } ?>
+
+                    <!--                    Test -->
+                    <!--                    End test -->
+
                 </main><!-- .site-main -->
             </div><!-- .content-area -->
         </div>
