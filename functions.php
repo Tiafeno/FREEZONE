@@ -754,5 +754,6 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 add_action('wp_loaded', function () {
-
+    //update_post_meta(1380, 'test', 12);
+    //wp_update_attachment_metadata(1380, ['key' => 12498469]);
 });

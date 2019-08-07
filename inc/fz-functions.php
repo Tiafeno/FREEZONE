@@ -16,6 +16,7 @@ require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuotation.php';
 require_once 'classes/fzQuotationProduct.php';
 require_once 'classes/fzGoodDeal.php';
+require_once 'classes/fzCarousel.php';
 
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';

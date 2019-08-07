@@ -228,6 +228,7 @@ yozi_render_breadcrumbs();
 
                                 <form method="POST" name="form_<?= $article->ID ?>" class="updated-form">
                                     <table class="table table-striped" style="margin-bottom: 0px !important">
+
                                         <?php if ($index === 0): ?>
                                         <thead style="background: #2584cf;color: white;">
                                             <tr>
@@ -239,6 +240,7 @@ yozi_render_breadcrumbs();
                                             </tr>
                                         </thead>
                                         <?php endif; ?>
+
                                         <tbody>
                                         <tr>
                                             <th scope="row">

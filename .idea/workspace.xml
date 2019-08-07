@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/inc/classes/fzCarousel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/fz-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/fz-functions.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/page-updated.php" beforeDir="false" afterPath="$PROJECT_DIR$/page-updated.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,22 +38,53 @@
       <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13">
-              <caret line="467" column="58" selection-start-line="467" selection-start-column="58" selection-end-line="467" selection-end-column="58" />
+            <state relative-caret-position="208">
+              <caret line="327" column="73" lean-forward="true" selection-start-line="327" selection-start-column="53" selection-end-line="327" selection-end-column="73" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="page-updated.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/page-updated.php">
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
-              <caret line="229" column="107" selection-start-line="229" selection-start-column="107" selection-end-line="229" selection-end-column="107" />
-              <folding>
-                <element signature="e#213#817#0#PHP" />
-                <element signature="e#8093#8130#0#HTML" expanded="true" />
-                <element signature="e#8209#8250#0#HTML" expanded="true" />
-              </folding>
+            <state relative-caret-position="9841">
+              <caret line="757" column="6" selection-start-line="757" selection-start-column="6" selection-end-line="757" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fz-functions.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fzCarousel.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/inc/classes/fzCarousel.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="22" column="45" lean-forward="true" selection-start-line="22" selection-start-column="45" selection-end-line="22" selection-end-column="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fzMailing.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/inc/classes/fzMailing.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="371">
+              <caret line="71" column="61" lean-forward="true" selection-start-line="71" selection-start-column="48" selection-end-line="71" selection-end-column="61" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fzParticular.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/inc/classes/fzParticular.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="364">
+              <caret line="33" column="25" lean-forward="true" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -58,7 +92,7 @@
       <file leaf-file-name="apiMail.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/api/v1/apiMail.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="338">
+            <state relative-caret-position="189">
               <caret line="31" column="43" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
             </state>
           </provider>
@@ -135,7 +169,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/wc/stock/article-edit.html" />
         <option value="$PROJECT_DIR$/page-article-update.php" />
         <option value="$PROJECT_DIR$/inc/model/fz-model-sav.php" />
         <option value="$PROJECT_DIR$/inc/model/fz-model.php" />
@@ -177,15 +210,16 @@
         <option value="$PROJECT_DIR$/inc/fz-mail.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzQuotationProduct.php" />
         <option value="$PROJECT_DIR$/templates/wc/demande/quotation-edit.html" />
-        <option value="$PROJECT_DIR$/inc/fz-functions.php" />
         <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzSav.php" />
-        <option value="$PROJECT_DIR$/functions.php" />
         <option value="$PROJECT_DIR$/templates/wc/savs/sav-lists.html" />
         <option value="$PROJECT_DIR$/woocommerce/myaccount/dashboard.php" />
         <option value="$PROJECT_DIR$/woocommerce/myaccount/my-address.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzPTFreezone.php" />
         <option value="$PROJECT_DIR$/page-updated.php" />
+        <option value="$PROJECT_DIR$/functions.php" />
+        <option value="$PROJECT_DIR$/inc/fz-functions.php" />
+        <option value="$PROJECT_DIR$/inc/classes/fzCarousel.php" />
       </list>
     </option>
   </component>
@@ -486,7 +520,7 @@
       <workItem from="1565081594432" duration="49000" />
       <workItem from="1565088659703" duration="953000" />
       <workItem from="1565118333334" duration="600000" />
-      <workItem from="1565158721636" duration="2927000" />
+      <workItem from="1565158721636" duration="9847000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -506,7 +540,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="678636000" />
+    <option name="totallyTimeSpent" value="685556000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="886" extended-state="6" />
@@ -667,13 +701,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../plugins/woocommerce/includes/abstracts/abstract-wc-rest-crud-controller.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="184" column="20" selection-start-line="184" selection-start-column="20" selection-end-line="184" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/CREA/WORDPRESS/wp-includes/rest-api/class-wp-rest-response.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="130">
@@ -692,13 +719,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="890" column="17" selection-start-line="890" selection-start-column="3" selection-end-line="890" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzGoodDeal.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="18" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -807,13 +827,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzParticular.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="364">
-          <caret line="33" column="25" lean-forward="true" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../plugins/woocommerce/includes/abstracts/abstract-wc-data.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
@@ -838,13 +851,6 @@
     <entry file="file://$PROJECT_DIR$/templates/mail/fz_sav_contact_mail.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-397" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzMailing.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="32" column="18" selection-start-line="32" selection-start-column="18" selection-end-line="32" selection-end-column="18" />
-        </state>
       </provider>
     </entry>
     <entry file="file://D:/CREA/WORDPRESS/wp-includes/pluggable.php">
@@ -893,13 +899,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="624">
           <caret line="48" column="35" selection-start-line="48" selection-start-column="35" selection-end-line="48" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="23" column="37" selection-start-line="23" selection-start-column="37" selection-end-line="23" selection-end-column="37" />
         </state>
       </provider>
     </entry>
@@ -955,13 +954,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="733" column="5" lean-forward="true" selection-start-line="733" selection-start-column="5" selection-end-line="733" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/dashboard.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -990,13 +982,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/api/v1/apiMail.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="31" column="43" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inc/classes/fzPTFreezone.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="351">
@@ -1015,22 +1000,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="467" column="58" selection-start-line="467" selection-start-column="58" selection-end-line="467" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/page-updated.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="229" column="107" selection-start-line="229" selection-start-column="107" selection-end-line="229" selection-end-column="107" />
+        <state relative-caret-position="117">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
           <folding>
             <element signature="e#213#817#0#PHP" />
             <element signature="e#8093#8130#0#HTML" expanded="true" />
             <element signature="e#8209#8250#0#HTML" expanded="true" />
+            <element signature="e#8202#8801#0#HTML" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/api/v1/apiMail.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="31" column="43" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzParticular.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="33" column="25" lean-forward="true" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzGoodDeal.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="111">
+          <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="18" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzMailing.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="71" column="61" lean-forward="true" selection-start-line="71" selection-start-column="48" selection-end-line="71" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="327" column="73" lean-forward="true" selection-start-line="327" selection-start-column="53" selection-end-line="327" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9841">
+          <caret line="757" column="6" selection-start-line="757" selection-start-column="6" selection-end-line="757" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/fz-functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzCarousel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="22" column="45" lean-forward="true" selection-start-line="22" selection-start-column="45" selection-end-line="22" selection-end-column="45" />
         </state>
       </provider>
     </entry>
