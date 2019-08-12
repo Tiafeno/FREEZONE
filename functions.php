@@ -582,6 +582,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
 
 }, 10);
+
 add_action('woocommerce_account_faq_endpoint', function () {
     $url = home_url('/faq');
     $content = "<a href='{$url}' class='btn btn-theme radius-0'>Foire aux questions</a>";
