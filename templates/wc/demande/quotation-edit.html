@@ -88,7 +88,7 @@
                         <div class="col-sm-6" style="margin: auto">
                             <input class="form-control qt-input-changer" style="width: 110px;" name="qt_{{product.item_id}}"
                                    value="{{product.count_item}}" data-product-id="{{product.get_id()}}"
-                                   {% if quotation.position == 3 || !product.is_editable() %}disabled="disabled"{% endif %}
+                                   {% if quotation.position == 3 || product.is_editable() is false %}disabled="disabled"{% endif %}
                                    data-item-id="{{product.item_id}}" data-unit-cost="{{product.unit_cost}}" min="0"
                                    max="{{product.item_limit}}" type="number">
                         </div>
