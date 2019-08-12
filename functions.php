@@ -641,7 +641,12 @@ add_action('user_register', function ($user_id) {
             $val = sanitize_text_field($_REQUEST[ $field ]);
             update_field($field, $val, 'user_' . $user_id);
         }
+        // Compte ni Professionnel, ni Revendeur
         update_field('company_status', false, 'user_' . $user_id);
+
+        // Mettre le compte particulier en attente par default
+        // 0: not pending, 1: Pending
+        update_user_meta($user_id, "fz_pending_user", 1);
     }
 
     // Ajouter le role du client

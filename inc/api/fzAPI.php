@@ -434,6 +434,23 @@ class fzAPI
             }
         ]);
 
+        // Ce champ permet de mettre un utilisateur en attente ou publier
+        // fz_pending_user. 0: Active, 1: Pending
+        $pending_field_name = 'fz_pending_user';
+        register_rest_field('user', 'pending', [
+            'update_callback' => function ($value, $object) use ($pending_field_name) {
+                return update_user_meta($object->ID, $pending_field_name, $value);
+            },
+            'get_callback' => function ($object) use ($pending_field_name) {
+                /**
+                 * Return
+                 * (mixed) Will be an array if $single is false. Will be value of meta data field if $single is true.
+                 */
+                $result = get_user_meta($object['id'], $pending_field_name, true);
+                return empty($result) ? 0 : intval($result);
+            }
+        ]);
+
 
     }
 
