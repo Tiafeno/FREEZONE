@@ -58,6 +58,7 @@ class apiImport
         /** @var string $mark */
         /** @var string $marge */
         /** @var string $marge_dealer */
+        /** @var string $marge_particular */
         /** @var string $reference */
         /** @var int $quantity */
 
@@ -74,6 +75,7 @@ class apiImport
                 'meta_data' => [
                     [ 'key' => '_fz_marge', 'value' => trim($marge) ],
                     [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
+                    [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
                 ],
                 'images' => []
             ];

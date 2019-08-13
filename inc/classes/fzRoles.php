@@ -11,7 +11,7 @@ class fzRoles
     {
         $capabilities = [
             'read' => true,  // true allows this capability
-            'upload_files' => false,
+            'upload_files' => true,
             'edit_others_pages' => true,
             'edit_others_posts' => true,
             'edit_pages' => true,

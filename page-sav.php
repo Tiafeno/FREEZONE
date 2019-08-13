@@ -81,7 +81,7 @@ yozi_render_breadcrumbs();
                         serial_number: '', // Numéro de serie,
                         description: '', // Identification de la demande
 
-                        // Cette variable controle la visibilité des champs dnas le formulaire
+                        // Cette variable controle la visibilité des champs dans le formulaire
                         ck_bill: true,
                         ck_date_purchase: true,
                         ck_serial_number: true

@@ -38,6 +38,8 @@ class fzPTFreezone
               ['delete_published_articles' => ['administrator', 'fz-supplier']],
               ['delete_private_articles' => ['administrator']],
               ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
+              ['upload_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
+              ['edit_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
             ];
             $caps = array_merge($caps, [
                 ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
