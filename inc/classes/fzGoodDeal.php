@@ -17,6 +17,18 @@ class fzGoodDeal
         foreach (get_object_vars($post) as $key => $value)
             $this->$key = $value;
 
+        $this->price  = get_post_meta($post_id, 'gd_price', true);
+        $this->gallery = get_post_meta($post_id, 'gd_gallery', true);
+        $this->post_author_annonce = (int) get_post_meta($post_id, 'gd_author', true);
+
+    }
+
+    public function get_author() {
+        return new \WP_User($this->post_author_annonce);
+    }
+
+    public function get_gallery_thumbnail() {
+        // TODO: Array of attachment post
     }
 
 }
@@ -52,7 +64,7 @@ add_action('init', function () {
 }, 10);
 
 add_action('rest_api_init', function () {
-    $metas = ['price', 'gallery', 'post_author_annonce'];
+    $metas = ['gd_price', 'gd_gallery', 'gd_author'];
     foreach ( $metas as $meta ) {
         register_rest_field('good-deal', $meta, [
             'update_callback' => function ($value, $object, $field_name) {
@@ -69,7 +81,7 @@ add_action('rest_api_init', function () {
         'update_callback' => function ($value, $object, $field_name) {
             return wp_set_object_terms( (int)$object->ID, intval($value), 'product_cat', false );
         },
-        'get_callback' => function ($object, $field_name) {
+        'get_callback' => function ($object) {
             return wp_get_post_terms( (int)$object['id'], 'product_cat', [] );
         }
     ]);

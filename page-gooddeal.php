@@ -156,9 +156,9 @@ yozi_render_breadcrumbs();
                                             status: 'publish',
                                             featured_media: _.isEmpty(ids) ? null : ids[0].toString(),
                                             categorie: self.categorie,
-                                            gallery: ids,
-                                            price: self.price,
-                                            post_author_annonce: rest_api.user_id
+                                            gd_gallery: ids,
+                                            gd_price: self.price,
+                                            gd_author: rest_api.user_id
                                         },
                                         beforeSend: function (xhr) {
                                             xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);

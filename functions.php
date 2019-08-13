@@ -20,6 +20,7 @@ function remove_prices ($price, $product)
 
 add_action('init', function () {
     add_rewrite_endpoint('savs', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('gd', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
     add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
@@ -28,6 +29,7 @@ add_action('init', function () {
         $vars[] = 'demandes';
         $vars[] = 'faq';
         $vars[] = 'savs';
+        $vars[] = 'gd';
         return $vars;
     }, 0);
 
@@ -60,14 +62,6 @@ TAG;
 
 }, 10);
 
-add_action('template_redirect', function () {
-    global $wp_query;
-    // if this is not a request for sav or a singular object then bail
-    if (isset($wp_query->query_vars['sav'])) {
-
-    }
-
-});
 
 add_filter('woocommerce_account_menu_items', function ($items) {
     $logout = $items['customer-logout'];
@@ -82,6 +76,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     } else {
         unset($items['stock-management']);
         $items['savs'] = "S.A.V";
+        $items['gd'] = "Bonne affaires";
         $items['demandes'] = "Demandes";
         $items['faq'] = "FAQ";
     }
@@ -389,7 +384,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
 add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine;
-    $savs = [];
     $user = wp_get_current_user();
     $args = [
         'post_type' => 'fz_sav',
@@ -587,6 +581,37 @@ add_action('woocommerce_account_faq_endpoint', function () {
     $url = home_url('/faq');
     $content = "<a href='{$url}' class='btn btn-theme radius-0'>Foire aux questions</a>";
     echo $content;
+}, 10);
+
+add_action('woocommerce_account_gd_endpoint', function() {
+    global $Engine;
+
+    if ($_GET) {
+        if (isset($_GET['edited'])) {
+            echo $Engine->render('@WC/gd/gd-edit.html');
+            return true;
+        }
+    }
+
+    $user = wp_get_current_user();
+    $args = [
+        'post_type' => 'good-deal',
+        'posts_per_page' => -1,
+        'meta_query' => [
+            [
+                'key' => 'gd_author',
+                'value' => $user->ID
+            ]
+        ]
+    ];
+
+    $the_query = new WP_Query($args);
+    $good_deals = array_map(function ($good_deal) {
+        $gd = new \classes\fzGoodDeal($good_deal->ID);
+        return $gd;
+    }, $the_query->posts);
+
+    echo $Engine->render('@WC/gd/gd-lists.html', ['gooddeals' => $good_deals]);
 }, 10);
 
 add_action('user_register', function ($user_id) {

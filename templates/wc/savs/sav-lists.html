@@ -1,43 +1,47 @@
 <style type="text/css">
     .woocommerce table.shop_table td {
-        padding: 5px;
+        padding: 5px 13px;
     }
 </style>
-<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
-    <thead>
-    <tr>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Produit</span>
-        </th>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
-                class="nobr">Date</span></th>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Reference</span>
-        </th>
-        <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span>
-        </th>
-    </tr>
-    </thead>
 
-    <tbody>
-    {% for sav in savs %}
-    <tr class="">
-        <td style="padding-left: 15px" data-title="Commande">
-            {{sav.product}}
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date">
-            <time datetime="{{sav.date_add}}">{{sav.date_add}}</time>
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
-            {{sav.reference}}
-        </td>
-        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
-            {{sav.get_status_string()}}
-        </td>
-    </tr>
-    {% endfor %}
 
-    </tbody>
-</table>
+{% if savs|length <= 0 %}
+    <p>Aucun</p>
+ {% else %}
+    <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
+        <thead>
+        <tr>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Produit</span>
+            </th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
+                    class="nobr">Date</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Reference</span>
+            </th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span>
+            </th>
+        </tr>
+        </thead>
 
-{% if savs.length <= 0 %}
-<p>Aucun</p>
+        <tbody>
+        {% for sav in savs %}
+        <tr class="">
+            <td style="padding-left: 15px" data-title="Commande">
+                {{sav.product}}
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date">
+                <time datetime="{{sav.date_add}}">{{sav.date_add}}</time>
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
+                {{sav.reference}}
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
+                {{sav.get_status_string()}}
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
 {% endif %}
+
+
