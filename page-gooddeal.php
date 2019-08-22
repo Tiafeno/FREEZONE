@@ -314,7 +314,7 @@ yozi_render_breadcrumbs();
                                     </div>
                                     <div class="col-sm-6">
                                         <p style="text-align: center; font-weight: bold; padding: 5px 10px; background-color: #59618e; color: white">
-                                            4 règles pour publier votre annonce
+                                            3 règles pour publier votre annonce
                                         </p>
                                         <ul>
                                             <li>N'écrivez pas le prix dans le titre</li>

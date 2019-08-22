@@ -320,8 +320,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         $content .= "</div>";
                         echo $content;
                     }
-
-
                 }
 
                 wc_clear_notices();

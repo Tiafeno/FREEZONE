@@ -13,7 +13,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 
 /**
  * include fzQuotationProduct
- *
+ */
 
 /**
  * Contient les informations d'un devis

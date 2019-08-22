@@ -55,6 +55,11 @@ class fzQuotationProduct extends \WC_Product
     private $editable = true;
 
     /**
+     * La remise pour les entreprises
+     */
+    public $discount = 0;
+
+    /**
      * Short description of method __construct
      *
      * @access public
@@ -81,6 +86,9 @@ class fzQuotationProduct extends \WC_Product
 
                 $status = wc_get_order_item_meta( $item_id, 'status', true );
                 $this->status = intval($status);
+
+                $discount = wc_get_order_item_meta( $item_id, 'discount', true );
+                $this->discount = $discount ? $discount : 0;
 
                 $this->item_id = (int) $item_id;
                 $price =  intval($item->get_total()) / intval($item->get_quantity());
