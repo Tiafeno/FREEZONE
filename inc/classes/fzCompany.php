@@ -48,7 +48,8 @@ class fzCompany extends \WP_User
     /**
      * @var integer
      * 0: En attente
-     * 1: Acheteur
+     * 
+     * 1: Professionel
      * 2: Revendeur
      */
     public $type;

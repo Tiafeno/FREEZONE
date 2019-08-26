@@ -740,10 +740,14 @@ function fz_order_received ($order_id)
     update_field('position', 0, intval($order_id));
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
+    /**
+     * Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
+     */
+    update_post_meta( intval($order_id), 'client_role', $User->roles[0] );
 
     foreach ( $items as $item_id => $item ) {
         wc_add_order_item_meta(intval($item_id), 'status', 0);
-        wc_add_order_item_meta(intval($item_id), 'suppliers', null);
+        wc_add_order_item_meta(intval($item_id), 'suppliers', json_encode([]));
     }
 
     // Envoyer un mail aux administrateurs

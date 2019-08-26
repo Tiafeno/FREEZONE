@@ -556,11 +556,21 @@ class fzAPI
                 ]);
             }
 
-            register_rest_field($type, 'line_items', [
+            register_rest_field($type, 'client_role', [
+                'update_callback' => function ($value, $object, $field_name) {
+                    return update_post_meta( (int)$object->ID, $field_name, $value );
+                },
                 'get_callback' => function ($object, $field_name) {
-                    return $object;
+                    $role = get_post_meta( (int) $object['id'], $field_name, true );
+                    return $role ? $role : null;
                 }
             ]);
+
+            // register_rest_field($type, 'line_items', [
+            //     'get_callback' => function ($object, $field_name) {
+            //         return $object;
+            //     }
+            // ]);
 
         }
 
