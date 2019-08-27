@@ -407,6 +407,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
     wp_enqueue_script('underscore');
+    $shop_url = get_permalink(wc_get_page_id('shop'));
     $User = wp_get_current_user();
     if (!in_array('fz-particular', $User->roles) && !in_array('fz-company', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
@@ -419,7 +420,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     $user_quotations = wc_get_orders(['customer_id' => $User->ID]);
 
     if (empty($user_quotations)) {
-        $shop_url = get_permalink(wc_get_page_id('shop'));
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
         $content .= 'Voir les catalogues</a> Aucune demande n’a encore été passée.	</div>';
@@ -569,16 +569,53 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
         wc_print_notices();
         wc_clear_notices();
+
+        $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
+        $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
+        $content .= 'Poursuivre ma demande</a> Vous pouvez toujours effectuer une demande </div>';
+        echo $content;
+
         echo $Engine->render("@WC/demande/quotations-table.html", ['quotations' => $quotations]);
     }
 
 
 }, 10);
 
+/**
+ * Afficher les foire aux question pour les client dans leur espace client
+ * Utiliser visual composer (accordion)
+ */
 add_action('woocommerce_account_faq_endpoint', function () {
-    $url = home_url('/faq');
-    $content = "<a href='{$url}' class='btn btn-theme radius-0'>Foire aux questions</a>";
-    echo $content;
+    global $wpdb;
+    if ( ! is_user_logged_in() ) {
+        echo "Vous n'avez pas l'autorisation necessaire pour voir les contenues de cette page";
+        return true;
+    }
+    $User = wp_get_current_user();
+    /**
+     * 1: Company
+     * 2: Particulier
+     */
+    $category = in_array('fz-company', $User->roles) ? 1 : 2;
+    $sql = <<<TAG
+SELECT * FROM $wpdb->posts WHERE post_status = "publish" 
+    AND post_type = "fz_faq_client" 
+    AND ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = "faq_category" AND meta_value = $category)
+TAG;
+
+    $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
+    $results = $wpdb->get_results($sql);
+    foreach ($results as $result) {
+        $shortcode .= "[vc_tta_section title='{$result->post_title}' tab_id='faq-{$result->ID}']
+                          [vc_column_text]
+                            {$result->post_content}
+                          [/vc_column_text]
+                       [/vc_tta_section]";
+    }
+
+    $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
+
+    echo do_shortcode( $shortcode );
 }, 10);
 
 add_action('woocommerce_account_gd_endpoint', function() {

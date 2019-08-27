@@ -21,6 +21,7 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_user']);
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
         add_action('rest_api_init', [&$this, 'register_rest_order']);
+        add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
 
         // Quotation
         add_action('rest_api_init', function () {
@@ -60,6 +61,9 @@ class fzAPI
                 ],
             ]);
 
+            /**
+             * Permet de crée une article depuis la B.O
+             */
             register_rest_route('api', '/create/article', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
@@ -79,8 +83,7 @@ class fzAPI
                         /** @var string $marge_particular */
 
                         $post_title = strtolower($name);
-                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE  CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}'
- AND post_type = 'product'";
+                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE  CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}' AND post_type = 'product'";
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
                         if (!is_null($result)) {
                             $product = new \WC_Product($result->ID);
@@ -271,6 +274,49 @@ class fzAPI
                         return current_user_can('edit_posts');
                     }
                 ],
+            ]);
+
+
+            register_rest_route('api', '/faq-client/', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        global $wpdb;
+
+                        $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
+                        $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 1;
+
+                $your_articles_request = <<<SQL
+SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts as pts
+WHERE pts.post_type = "fz_faq_client" AND pts.post_status = "publish" 
+LIMIT $length OFFSET $start
+SQL;
+                        $results = $wpdb->get_results($your_articles_request);
+                        $count_sql = "SELECT FOUND_ROWS()";
+                        $total = $wpdb->get_var($count_sql);
+                        $articles = [];
+
+                        foreach ($results as $result) {
+                            $article_controller = new \WP_REST_Posts_Controller('fz_faq_client');
+
+                            $post = get_post((int) $result->ID);
+                            $response = $article_controller->prepare_item_for_response($post, new \WP_REST_Request());
+                            $articles[] = $response->get_data();
+                        }
+
+                        $wpdb->flush();
+                        return [
+                            "recordsTotal" => $total,
+                            "recordsFiltered" => $total,
+                            'data' => $articles
+                        ];
+
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    },
+                    'args' => []
+                ]
             ]);
 
 
@@ -538,6 +584,23 @@ class fzAPI
             ]);
         }
 
+    }
+
+    public function register_rest_faq_client() {
+        $post_type = 'fz_faq_client';
+        $metas = ['faq_category']; // 1: Profesional, 2: Particular
+        foreach ($metas as $meta) {
+            register_rest_field($post_type, $meta, [
+                'update_callback' => function ($value, $object, $field_name) {
+                    return update_post_meta($object->ID, $field_name, $value);
+        
+                },
+                'get_callback' => function ($object, $field_name) {
+                    $ctg = get_post_meta( (int) $object['id'], $field_name, true);
+                    return $ctg ? $ctg : null;
+                }
+            ]);
+        }
     }
 
     public function register_rest_order ()

@@ -56,7 +56,6 @@ class apiQuotation
                     ];
                 }
             }
-
         }
 
         if (isset($_REQUEST['role']) && $_REQUEST['role'] !== '') {

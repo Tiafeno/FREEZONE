@@ -196,6 +196,27 @@ class fzPTFreezone
             'query_var' => true
         ]);
 
+        register_post_type('fz_faq_client', [
+            'label' => "FAQ Client",
+            'labels' => [
+                'name' => "FAQ Client",
+                'singular_name' => "FAQ Client",
+            ],
+            'public' => true,
+            'hierarchical' => false,
+            'menu_position' => null,
+            'show_ui' => true,
+            'has_archive' => false,
+            'rewrite' => ['slug' => 'faq-client'],
+            'capability_type' => 'post',
+            'map_meta_cap' => true,
+            'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
+            'supports' => ['title', 'editor'],
+            'show_in_rest' => true,
+            'query_var' => true
+        ]);
+
     }
 }
 
