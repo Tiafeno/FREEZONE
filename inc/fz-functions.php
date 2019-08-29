@@ -4,6 +4,7 @@ require_once 'model/fz-model.php';
 require_once "lib/underscore.php";
 
 require_once 'shortcodes/after-sales-service.php';
+require_once 'shortcodes/slider.php';
 
 require_once 'classes/fzRoles.php';
 require_once 'classes/fzSav.php';
@@ -223,6 +224,14 @@ add_action('init', function () {
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
+
+
+
+    add_action('wp_enqueue_scripts', function () {
+        wp_register_style( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0' );
+        wp_register_style( 'owlCarousel-green', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.theme.green.min.css', '', '2.0.0' );
+        wp_register_script( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/owl.carousel.min.js', ['jquery'], '2.0.0', true );
+    });
 
 
 }, 10);

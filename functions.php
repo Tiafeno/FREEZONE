@@ -409,6 +409,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     wp_enqueue_script('underscore');
     $shop_url = get_permalink(wc_get_page_id('shop'));
     $User = wp_get_current_user();
+
     if (!in_array('fz-particular', $User->roles) && !in_array('fz-company', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
@@ -623,6 +624,7 @@ add_action('woocommerce_account_gd_endpoint', function() {
 
     if ($_GET) {
         if (isset($_GET['edited'])) {
+            // TODO: Modifier une annonce d'un client
             echo $Engine->render('@WC/gd/gd-edit.html');
             return true;
         }

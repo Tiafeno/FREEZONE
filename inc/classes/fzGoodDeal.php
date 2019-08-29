@@ -18,8 +18,12 @@ class fzGoodDeal
             $this->$key = $value;
 
         $this->price  = get_post_meta($post_id, 'gd_price', true);
-        $this->gallery = get_post_meta($post_id, 'gd_gallery', true);
+        $this->gallery = get_post_meta($post_id, 'gd_gallery', true); // return array of ids
+        if (!is_array($this->gallery)) {
+            $this->gallery = explode(',', $this->gallery);
+        }
         $this->post_author_annonce = (int) get_post_meta($post_id, 'gd_author', true);
+        $this->categorie = wp_get_post_terms( $this->ID, 'product_cat', [] );
 
     }
 
@@ -28,7 +32,14 @@ class fzGoodDeal
     }
 
     public function get_gallery_thumbnail() {
-        // TODO: Array of attachment post
+        $attachment = [];
+        if (!is_array($this->gallery)) {
+            $this->gallery = explode(',', $this->gallery);
+        }
+
+        foreach ($this->gallery as $gallery)
+            $attachment[] = wp_get_attachment_url( intval($gallery) );
+        return $attachment;
     }
 
 }
