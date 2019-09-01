@@ -8,7 +8,8 @@
 
 class apiMail
 {
-    public $no_reply = "no-reply@freezone.com";
+    private $tva = 20;
+    public $no_reply = "no-reply@freezone.click";
     public function __construct () { }
     public function send_order_client(WP_REST_Request $rq) {
         global $Engine;
@@ -18,30 +19,38 @@ class apiMail
          * Ajouter un texte pour le mail
          * L'Objet du mail est définie automatiquement
          */
-        $order_id = $rq['order_id'];
+        $order_id = (int) $rq['order_id'];
         $message = isset($_REQUEST['message']) ? $_REQUEST['message'] : null;
         $subject = isset($_REQUEST['subject']) ? $_REQUEST['subject'] : "Demande de confirmation pour votre demande sur Freezone";
-        $message = sanitize_text_field($message);
+        $message = esc_html($message);
         $subject = sanitize_text_field($subject);
         if ($order_id === 0 || is_null($order_id)) wp_send_json_error("Parametre 'order_id' est incorrect");
-        $options = get_field('wc', 'option');
-        $woocommerce = new \Automattic\WooCommerce\Client(
-            "http://{$_SERVER['SERVER_NAME']}", $options['ck'], $options['cs'],
-            [
-                'version' => 'wc/v3'
-            ]
-        );
-        $Order = $woocommerce->get("orders/{$order_id}", ['context' => 'view']);
-        $line_items = $Order->line_items;
-        unset($line_items->meta_data);
 
+        $order = new WC_Order($order_id);
+
+        $total = (int) $order->get_total();
+        $tva = ($total * $this->tva) / 100;
+        $items = [];
+        foreach ($order->get_items() as $item_id => $item) {
+            $_item = new stdClass();
+            $_item->name = $item->get_name();
+            $_item->quantity = $item->get_quantity();
+            $_item->price = round((int) $item['total'] / $item->get_quantity());
+
+            $items[] = $_item;
+        }
+        $data = $order->get_data();
+        $message = html_entity_decode($message);
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
-            'order' => $line_items,
-            'message' => $message,
-            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' . $line_items->id
+            'data' => $data,
+            'items' => $items,
+            'tva' => $tva,
+            'pay' => $total + $tva,
+            'message' => stripslashes($message),
+            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 
-        $to = $line_items->billing->email;
+        $to = $data['billing']['email'];
         $headers   = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <{$this->no_reply}>";
@@ -49,6 +58,7 @@ class apiMail
         $send = wp_mail($to, $subject, $content, $headers);
         if ($send) {
             wp_send_json_success("Envoyer avec succès");
+
         } else {
             wp_send_json_error("Une erreur s'est produite pendant l'envoie");
         }

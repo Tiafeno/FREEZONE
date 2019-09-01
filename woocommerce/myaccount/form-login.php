@@ -112,10 +112,28 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                        value="<?php if ( ! empty( $_POST['address'] ) ) echo esc_attr( $_POST['address'] ); ?>" />
             </p>
 
+            <div class="row">
+                <div class="col-sm-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_city">Ville  <span class="required">*</span></label>
+                        <input type="text" placeholder="" class="input-text form-control" name="city" id="reg_city"
+                               value="<?php if ( ! empty( $_POST['city'] ) ) echo esc_attr( $_POST['city'] ); ?>" />
+                    </p>
+                </div>
+                <div class="col-sm-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_postal_code">Code postal  <span class="required">*</span></label>
+                        <input type="text" placeholder="" class="input-text form-control" name="postal_code" id="reg_postal_code"
+                               value="<?php if ( ! empty( $_POST['postal_code'] ) ) echo esc_attr( $_POST['postal_code'] ); ?>" />
+                    </p>
+                </div>
+            </div>
+
 			<p class="form-group form-row form-row-wide">
-				<label for="reg_role">Type de compte <span class="required">*</span></label>
-                <select class="form-control" name="client_status" id="reg_client_status" value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
-                    <option value="">Selectionner un type</option>
+				<label for="reg_role">Choisissez votre statut <span class="required">*</span></label>
+                <select class="form-control" name="role" id="reg_role" style="height: 46px;"
+                        value="<?php if ( ! empty( $_POST['role'] ) ) echo esc_attr( $_POST['role'] ); ?>" required>
+                    <option value="">Selectionner un statut</option>
                     <option value="particular">Particulier</option>
                     <option value="company">Société ou Entreprise</option>
                 </select>
@@ -124,52 +142,71 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             <!-- Pour les utilisateurs de type société ou entreprise --->
             <div id="section-company" style="display: none">
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_company">Nom de l'entreprise </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company"
+                    <label for="reg_company">Nom de l'entreprise  <span class="required">*</span></label>
+                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" 
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
                 </p>
 
                 <div class="row">
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
-                            <label for="reg_stat">STAT </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat"
+                            <label for="reg_stat">STAT  <span class="required">*</span></label>
+                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" 
                                    value="<?php if ( ! empty( $_POST['stat'] ) ) echo esc_attr( $_POST['stat'] ); ?>" />
                         </p>
                     </div>
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
-                            <label for="reg_nif">NIF </label>
-                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif"
+                            <label for="reg_nif">NIF  <span class="required">*</span></label>
+                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" 
                                    value="<?php if ( ! empty( $_POST['nif'] ) ) echo esc_attr( $_POST['nif'] ); ?>" />
                         </p>
                     </div>
                 </div>
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_rc">RC </label>
-                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc"
+                    <label for="reg_rc">RC  <span class="required">*</span></label>
+                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" 
                            value="<?php if ( ! empty( $_POST['rc'] ) ) echo esc_attr( $_POST['rc'] ); ?>" />
                 </p>
                 <p class="form-group form-row form-row-wide">
-                    <label for="reg_cif">CIF </label>
+                    <label for="reg_cif">CIF  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control" name="cif" id="reg_cif"
                            value="<?php if ( ! empty( $_POST['cif'] ) ) echo esc_attr( $_POST['cif'] ); ?>" />
                 </p>
             </div>
             <!-- Fin pour les champs société ou entreprise -->
-            
-            
+
+            <!-- Pour les utilisateurs de type particulier --->
+            <div id="section-particular" style="display: none">
+                <p class="form-group form-row form-row-wide">
+                    <label for="reg_cin">CIN  <span class="required">*</span></label>
+                    <input type="text" placeholder="" class="input-text form-control" name="cin" id="reg_cin"
+                           value="<?php if ( ! empty( $_POST['cin'] ) ) echo esc_attr( $_POST['cin'] ); ?>" />
+                </p>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="form-group form-row form-row-wide">
+                            <label for="reg_date_cin">Date de délivrance  <span class="required">*</span></label>
+                            <input type="date" placeholder="" class="input-text form-control" name="date_cin" id="reg_date_cin"
+                                   value="<?php if ( ! empty( $_POST['date_cin'] ) ) echo esc_attr( $_POST['date_cin'] ); ?>" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin pour les champs particuliers -->
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
-                <input type="email" autocomplete="off" class="input-text form-control" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
+                <input type="email" autocomplete="off" class="input-text form-control" name="email" required="true"
+                id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
             </p>
 
 			<?php if ( 'no' === get_option( 'woocommerce_registration_generate_password' ) ) : ?>
 
 				<p class="form-group form-row form-row-wide">
 					<label for="reg_password"><?php esc_html_e( 'Password', 'yozi' ); ?> <span class="required">*</span></label>
-					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" />
+					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" required="true" />
 				</p>
 
 			<?php endif; ?>

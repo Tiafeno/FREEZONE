@@ -1,0 +1,70 @@
+<style type="text/css">
+    .woocommerce table.shop_table td {
+        padding: 5px 13px;
+    }
+</style>
+<script type="text/javascript">
+    (function ($) {
+
+        const formatter = new Intl.NumberFormat('de-DE', {
+            style: 'currency',
+            currency: 'MGA',
+            minimumFractionDigits: 0
+        });
+
+        $(document).ready(function () {
+            $('.unit-cost').each((index, element) => {
+                let cost = $(element).text();
+                cost = parseFloat(cost);
+                $(element).text(formatter.format(cost));
+            });
+        });
+    })(jQuery);
+</script>
+<div class="row" style="margin-bottom: 40px">
+    <div class="col-sm-6">
+        <a class="btn btn-theme radius-0" href="/bonne-affaire">Publier une annonce</a>
+    </div>
+</div>
+
+{% if gooddeals|length <= 0 %}
+        <p>Aucun</p>
+    {% else %}
+        <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
+            <thead>
+            <tr>
+                <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Titre</span>
+                </th>
+                <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-price"><span class="nobr">Prix</span>
+                </th>
+                <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span>
+                </th>
+                <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-action"><span
+                        class="nobr"></span>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for gd in gooddeals %}
+            <tr class="">
+                <td style="padding-left: 15px" data-title="Commande">
+                    <a href="?edited={{gd.ID}}">{{gd.post_title}}</a>
+                </td>
+                <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date">
+                    <span class="unit-cost">{{gd.price}}</span>
+                </td>
+                <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status">
+                    {{gd.post_status is same as('publish') ? 'Publier' : 'En attente'}}
+                </td>
+                <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status">
+                    <a href="?edited={{gd.ID}}" class="btn-outline-success btn btn-sm">Modifier</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+{% endif %}
+
+

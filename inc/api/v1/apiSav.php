@@ -21,7 +21,7 @@ class apiSav
 
         $the_query = new WP_Query($args);
         $savs = array_map(function ($sav) {
-            $fzSav = new \classes\fzSav($sav->ID);
+            $fzSav = new \classes\fzSav($sav->ID, true);
             return $fzSav;
         }, $the_query->posts);
 

@@ -71,7 +71,6 @@ class fzSupplierArticle
      */
     public $regular_price = 0;
 
-    public $price_dealer = 0;
 
     /**
      * Short description of attribute total_sales
@@ -80,7 +79,6 @@ class fzSupplierArticle
      * @var Integer
      */
     public $total_sales = 0;
-
     public $error = null;
 
     /**
@@ -104,7 +102,6 @@ class fzSupplierArticle
         $this->ID   = &$post_id;
         $this->name = $article->post_title;
         $this->regular_price = get_field('price', $post_id);
-        $this->price_dealer  = get_field('price_dealer', $post_id);
         $this->date_add      = get_field('date_add', $post_id);
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
@@ -118,13 +115,26 @@ class fzSupplierArticle
         }
     }
 
+    public function get_id() {
+        return $this->ID;
+    }
+
+    public function get_product_id() {
+        $product_id = (int) get_field('product_id', $this->ID);
+        return is_int($product_id) ? $product_id : 0;
+    }
+
+    public function get_user_id() {
+        return $this->user_id;
+    }
+
     /**
      * Short description of method getProduct
      *
      * @access public
      * @author firstname and lastname of author, <author@example.org>
      * @param  String sku
-     * @return mixed
+     * @return WP_User
      */
     public function get_product()
     {
@@ -139,9 +149,10 @@ class fzSupplierArticle
      */
     public function get_author() {
         $User = is_object($this->user_id) ? $this->user_id : new \WP_User((int) $this->user_id);
-
         return $User;
     }
+
+
 
     /**
      * Short description of method setPrice
@@ -155,7 +166,6 @@ class fzSupplierArticle
     {
         if ( ! is_numeric($price) ) return false;
         $result = update_field('price', intval($price), $this->ID);
-
         return $result;
     }
 

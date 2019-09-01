@@ -22,7 +22,6 @@ class fzQuotationProduct extends \WC_Product
     public $error = null;
     /**
      * Contient la listes des fournisseurs sélectionner pour cette produits
-     * [{id: 0, get: 2}, ...]
      * @access public
      */
     public $suppliers = [];
@@ -36,6 +35,11 @@ class fzQuotationProduct extends \WC_Product
     public $unit_cost = 0;
     public $total = 0;
     public $item_limit = 0;
+
+    /**
+     * Cette valeur contient la condition du nombre de fournisseur ajouter
+     */
+    public $multi_supplier = false;
     /**
      * Short description of attribute order_id
      *
@@ -43,6 +47,17 @@ class fzQuotationProduct extends \WC_Product
      * @var Integer
      */
     private $order_id = 0;
+
+    /**
+     * Cette valeur est utiliser si le quantité peut être modifier par le client
+     * @var bool
+     */
+    private $editable = true;
+
+    /**
+     * La remise pour les entreprises
+     */
+    public $discount = 0;
 
     /**
      * Short description of method __construct
@@ -65,10 +80,15 @@ class fzQuotationProduct extends \WC_Product
         foreach ($items as $item_id => $item) {
             if (intval($item['product_id']) === intval($product_id)) {
                 $this->count_item = $item->get_quantity();
+                
                 $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                 $this->suppliers = json_decode($suppliers);
+
                 $status = wc_get_order_item_meta( $item_id, 'status', true );
                 $this->status = intval($status);
+
+                $discount = wc_get_order_item_meta( $item_id, 'discount', true );
+                $this->discount = $discount ? $discount : 0;
 
                 $this->item_id = (int) $item_id;
                 $price =  intval($item->get_total()) / intval($item->get_quantity());
@@ -79,7 +99,7 @@ class fzQuotationProduct extends \WC_Product
         }
 
         if (empty($this->count_item)) {
-            $this->error = new \WP_Error('broke', 'Quantité du produit introuvable');
+            $this->error = new \WP_Error('broke', 'Produit introuvable');
             return false;
         }
 
@@ -90,10 +110,22 @@ class fzQuotationProduct extends \WC_Product
                 $this->item_limit += (int) $supplier_article->total_sales;
             }
         }
+
+        /**
+         * Vérifier s'il y a plusieur fournisseur utiliser
+         */
+        $suppliers = array_filter($this->suppliers, function ($supplier) { return 0 !== intval($supplier->get); });
+        if (is_array($suppliers) && count($suppliers) > 1) {
+            $this->editable = false;
+        }
     }
 
     public function get_order_id() {
         return $this->order_id;
+    }
+
+    public function is_editable() {
+        return $this->editable;
     }
 
     public function update_status( $status = 0 ) {

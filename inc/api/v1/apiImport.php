@@ -53,12 +53,12 @@ class apiImport
         /** @var string $name */
         /** @var string $regular_price */
         /** @var string $price */
-        /** @var string $price_dealer */
         /** @var string $description */
         /** @var string $short_description */
         /** @var string $mark */
         /** @var string $marge */
         /** @var string $marge_dealer */
+        /** @var string $marge_particular */
         /** @var string $reference */
         /** @var int $quantity */
 
@@ -69,21 +69,26 @@ class apiImport
                 'name' => $name,
                 'type' => 'simple',
                 'regular_price' => $regular_price,
-                'description'   => stripslashes($description),
-                'short_description' => stripslashes($short_description),
+                'description'   => !empty($description) ? stripslashes($description) : '',
+                'short_description' => !empty($short_description) ? stripslashes($short_description) : '',
                 'categories' => $categorie_terms,
                 'meta_data' => [
-                    [ 'key' => '_fz_marge', 'value' => $marge ],
-                    [ 'key' => '_fz_marge_dealer', 'value' => $marge_dealer ],
-                ]
+                    [ 'key' => '_fz_marge', 'value' => trim($marge) ],
+                    [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
+                    [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
+                ],
+                'images' => []
             ];
 
             if ( ! empty($mark) && !is_null($mark)) {
+                $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
                 $data = array_merge($data, ['attributes' => [
                     [
-                        'name'    => 'brands',
-                        'options' => $mark,
-                        'visible' => true
+                        'id' => $attr_id,
+                        'position'  => 0,
+                        'visible'   => true,
+                        'variation' => false, // for variative products in case you would like to use it for variations
+                        'options'   => array($mark) // if the attribute term doesn't exist, it will be created
                     ]
                 ]]);
             }
@@ -118,10 +123,8 @@ class apiImport
         $article_id = intval($create_article);
 
         $price = preg_replace('/\s+/', '', $price);
-        $price_dealer = preg_replace('/\s+/', '', $price_dealer);
 
         update_field('price', $price, $article_id);
-        update_field('price_dealer', $price_dealer, $article_id);
         update_field('date_add', date_i18n('Y-m-d H:i:s'), $article_id);
         update_field('date_review', date_i18n('Y-m-d H:i:s'), $article_id);
         update_field('product_id', $product_id, $article_id);
@@ -153,8 +156,8 @@ SQL;
         if (empty($title)) return false;
         $title = strtolower($title);
         $sql = <<<SQL
-SELECT COUNT(*) as cnt, ID FROM $wpdb->posts WHERE 
-  post_type = 'product'
+SELECT COUNT(*) as cnt, ID FROM $wpdb->posts 
+WHERE post_type = 'product'
   AND CONVERT(LOWER(`post_title`) USING utf8mb4) = '$title'
 SQL;
         $result = $wpdb->get_row($sql);

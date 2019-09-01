@@ -91,10 +91,10 @@ class fzSupplier extends \WP_User
                 $this->$field = $cc ? \explode(',', $cc) : [];
             }
             
-            $infos = ['stat', 'nif', 'rc', 'cif', 'client_status'];
+            $infos = ['stat', 'nif', 'rc', 'cif'];
             foreach ($infos as $info) {
                 $value = get_field($info, 'user_'.$this->ID);
-                $this->$info = $value ? $value : null;
+                $this->$info = $value ;
             }
             
             $this->address = get_field('address', 'user_'.$this->ID);

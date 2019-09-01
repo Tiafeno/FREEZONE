@@ -25,34 +25,36 @@ class fzPTFreezone
 
         add_action('admin_init', function () {
             $caps = [
-              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'editor']],
-              ['read_private_article' => ['administrator', 'editor']],
-              ['edit_article' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_articles' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_others_articles' => ['administrator', 'editor']],
-              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor']],
-              ['edit_private_articles' => ['administrator', 'editor']],
+              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+              ['read_private_article' => ['administrator', 'editor', 'author']],
+              ['edit_article' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_others_articles' => ['administrator', 'editor', 'author']],
+              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+              ['edit_private_articles' => ['administrator', 'editor', 'author']],
               ['delete_article'  => ['administrator', 'fz-supplier']],
               ['delete_articles' => ['administrator', 'fz-supplier']],
               ['delete_others_articles' => ['administrator']],
               ['delete_published_articles' => ['administrator', 'fz-supplier']],
               ['delete_private_articles' => ['administrator']],
               ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
+              ['upload_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
+              ['edit_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
             ];
             $caps = array_merge($caps, [
-                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
                 ['read_private_sav' => ['administrator']],
-                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular']],
-                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
-                ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-supplier']],
-                ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['edit_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+                ['edit_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+                ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-company', 'fz-supplier']],
+                ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
                 ['edit_private_savs' => ['administrator']],
                 ['delete_sav'  => ['administrator']],
                 ['delete_savs' => ['administrator']],
                 ['delete_others_savs' => ['administrator']],
                 ['delete_published_savs' => ['administrator']],
                 ['delete_private_savs' => ['administrator']],
-                ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular']],
+                ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
             ]);
             foreach ($caps as $cap):
                 if (is_array($cap)) {
@@ -124,11 +126,11 @@ class fzPTFreezone
             //'capability_type' => 'post',
             'map_meta_cap' => true,
             'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
             'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
             'show_in_rest' => true,
             'query_var' => true
         ]);
-
 
         register_post_type('fz_sav', [
             'label' => "S.A.V",
@@ -173,6 +175,47 @@ class fzPTFreezone
             'query_var' => true
         ]);
 
+        register_post_type('_fz_mail_template', [
+            'label' => "Mail predefinie",
+            'labels' => [
+                'name' => "Mail predefinie",
+                'singular_name' => "Mail predefinie",
+            ],
+            'public' => false,
+            'hierarchical' => false,
+            'menu_position' => null,
+            'show_ui' => true,
+            'has_archive' => false,
+            'rewrite' => ['slug' => 'mail_template'],
+            'capability_type' => 'post',
+            'map_meta_cap' => true,
+            'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
+            'supports' => ['title', 'editor'],
+            'show_in_rest' => true,
+            'query_var' => true
+        ]);
+
+        register_post_type('fz_faq_client', [
+            'label' => "FAQ Client",
+            'labels' => [
+                'name' => "FAQ Client",
+                'singular_name' => "FAQ Client",
+            ],
+            'public' => true,
+            'hierarchical' => false,
+            'menu_position' => null,
+            'show_ui' => true,
+            'has_archive' => false,
+            'rewrite' => ['slug' => 'faq-client'],
+            'capability_type' => 'post',
+            'map_meta_cap' => true,
+            'menu_icon' => 'dashicons-archive',
+            'menu_position' => 100,
+            'supports' => ['title', 'editor'],
+            'show_in_rest' => true,
+            'query_var' => true
+        ]);
 
     }
 }

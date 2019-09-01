@@ -41,7 +41,7 @@
     </script> 
     
     <!-- Event snippet for Inscription sur le site conversion page --> 
-    <script> gtag('event', 'conversion', {'send_to': 'AW-862756431/1PH2CJqjm6MBEM-8spsD'}); </script> 
+    <script> gtag('event', 'conversion', {'send_to': 'AW-862756431/1PH2CJqjm6MBEM-8spsD'}); </script>
     
 </head>
 <body <?php body_class(); ?>>
