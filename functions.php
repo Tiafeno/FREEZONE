@@ -651,6 +651,9 @@ add_action('woocommerce_account_gd_endpoint', function() {
     echo $Engine->render('@WC/gd/gd-lists.html', ['gooddeals' => $good_deals]);
 }, 10);
 
+/**
+ * Ajouter un client
+ */
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
@@ -713,7 +716,14 @@ add_action('user_register', function ($user_id) {
     }
 
     // Ajouter le role du client
-    $User->set_role("fz-{$role}");
+    $user_role = "fz-{$role}";
+    $User->set_role($user_role);
+
+    add_user_meta( $user_id, "fz_pending_user", 1, true ); // Mettre en attente
+    add_user_meta( $user_id, "ja_disable_user", 0, true ); // Ne pas désactiver l'utilisateur
+
+    // Envoyer un email de notification pour l'administrateur
+    do_action('fz_new_user', $user_id, $user_role);
 
     // Update customer woocommerce user field
     $zip = sanitize_text_field($_REQUEST['postal_code']);
@@ -768,9 +778,7 @@ add_action('delete_user', function ($user_id) {
     }
 }, 10, 1);
 
-add_action('woocommerce_thankyou', 'fz_order_received', 10, 1);
-function fz_order_received ($order_id)
-{
+add_action('woocommerce_thankyou', function ($order_id) {
     if (!is_user_logged_in()) return false;
     $User = wp_get_current_user();
 
@@ -804,8 +812,7 @@ function fz_order_received ($order_id)
             update_user_meta((int) $item['id'], 'send_mail_review_date', null);
         }
     }
-
-}
+}, 10, 1);
 
 // Cette action permet d'ajouter des meta donnée sur un post S.A.V pendant
 // l'enregistrement dans la base de donnée

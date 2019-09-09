@@ -42,6 +42,10 @@ if ( ! is_ajax() ) {
 			<br/><input type="submit" class="button alt" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'yozi' ); ?>" />
 		</noscript>
 
+		<p style="color: red; font-size: 14px">
+			Nous tenons à vous rappeler l’importance de mettre les bonnes quantités dans votre devis car toute modification de quantité 
+			fera l’objet d’une nouvelle demande, ce qui peut occasionner un changement de prix. <br>Nous vous en remercions par avance 
+		</p>
 		<?php wc_get_template( 'checkout/terms.php' ); ?>
 
 		<?php do_action( 'woocommerce_review_order_before_submit' ); ?>

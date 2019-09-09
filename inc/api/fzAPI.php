@@ -104,6 +104,7 @@ class fzAPI
                             $p_cat = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request->set_query_params([
                                 'type' => 'simple',
+                                'status' => 'pending',
                                 'name' => $name,
                                 'regular_price' => '0',
                                 'description'   => ' ',
@@ -143,9 +144,9 @@ class fzAPI
                         $date_now = date_i18n('Y-m-d H:i:s');
                         $rest_request = new \WP_REST_Request();
                         $rest_request->set_query_params([
-                            'status' => 'publish',
                             'title' => $name,
                             'content' => '',
+                            'status' => 'pending',
                             'price' => intval($price),
                             'total_sales' => $total_sales,
                             'user_id' => $user_id,

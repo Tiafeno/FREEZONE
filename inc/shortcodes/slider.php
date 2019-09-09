@@ -29,9 +29,10 @@ add_action('init', function () {
 });
 
 function fn_carousel($attrs, $content = '') {
-    extract(shortcode_atts( array('ids' => []), $attrs), EXTR_OVERWRITE);
+    extract(shortcode_atts( array('ids' => [], 'title' => 'Home slider'), $attrs), EXTR_OVERWRITE);
 
-    /** @var string $ids */
+    /** @var array $ids */
+    /** @var string $title */
     $attach_ids = empty($ids) ? get_option('medias_carousel') : $ids;
     if (false === $attach_ids || empty($attach_ids) || is_null($attach_ids)) {
         $attach_ids = [];

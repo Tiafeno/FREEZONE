@@ -97,7 +97,7 @@ if ( $order ) : ?>
 
 	<?php endif; ?>
 	<div class="woo-pay-perfect text-theme">
-		Votre demande a bien été envoyé et sera étudiée ultérieurement  
+		Votre demande a bien été envoyée et sera étudiée ultérieurement  
 	</div>
 	<?= do_action( 'woocommerce_thankyou', $order->get_id() ); ?>
 	<?php

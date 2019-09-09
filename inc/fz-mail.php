@@ -1,11 +1,12 @@
 <?php
+    $to_admins = ['contact@falicrea.com', 'david@freezonemada.com'];
+
 /**
  * Cette action permet d'envoyer au administrateur un mail pour
  * les informer d'une demande de service après vente
  */
-add_action('fz_insert_sav', function ($sav_id) {
+add_action('fz_insert_sav', function ($sav_id) use ($to_admins) {
     global $Engine;
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
     $Sav = new \classes\fzSav($sav_id);
     $User = wp_get_current_user();
     $phone = get_field('phone', 'user_' . $User->ID);
@@ -14,7 +15,7 @@ add_action('fz_insert_sav', function ($sav_id) {
         'User' => ['name' => $User->first_name . ' ' . $User->last_name, 'phone' => $phone]
     ]);
     $from = $User->user_email;
-    $to = implode($admins, ',');
+    $to = implode($to_admins, ',');
     $subject = "Service apres vente sur le site freezone.click";
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
@@ -24,10 +25,9 @@ add_action('fz_insert_sav', function ($sav_id) {
 }, 10, 1);
 
 
-add_action('fz_insert_new_article', function ($article_id) {
+add_action('fz_insert_new_article', function ($article_id) use ($to_admins) {
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = implode($to_admins, ',');
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -41,6 +41,26 @@ add_action('fz_insert_new_article', function ($article_id) {
     $subject = "#{$article_id} - Un nouveau article vient d'être ajouter sur le site freezone.click";
 
     wp_mail($to, $subject, $content, $headers);
+}, 10, 1);
+
+add_action('fz_new_user', function ($user_id, $role) use ($to_admins)  {
+    $from = "no-reply@freezone.click";
+    $to = implode($to_admins, ',');
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $user = new WP_User(intval($user_id));
+    $url = "https://admin.freezone.click/";
+    $content = "Bonjour<br><br>";
+    $content .= "Un nouveau client vient de s'inscrire:<br>";
+    $content .= "Nom: <b>{$user->first_name}</b> <br>";
+    $content .= "Prénom: <b>{$user->last_name}</b> <br>";
+    $content .= "Adresse Email: <b>{$user->user_email}</b>";
+    $subject = "#{$user_id} - Un nouveau client vient de s'inscrire sur le site freezone.click";
+
+    wp_mail($to, $subject, $content, $headers);
+
 }, 10, 1);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles

@@ -76,8 +76,13 @@ class apiQuotation
                     $data = $item->get_data();
                     $response->fzItems[] = $data;
                 }
+
+                $rest_request = new WP_REST_Request();
+                $rest_request->set_param('context', 'edit');
                 
-                $response->author = $response->get_author();
+                $user_controller = new WP_REST_Users_Controller();
+                $data = $user_controller->prepare_item_for_response(new WP_User((int)$response->user_id), $rest_request);
+                $response->author = $data->get_data();
                 return $response;
             }, $the_query->posts);
 
