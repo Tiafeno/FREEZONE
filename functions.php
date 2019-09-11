@@ -127,14 +127,14 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     $fields['shipping']['shipping_email']['required'] = false;
     $fields['shipping']['shipping_state']['required'] = false;
 
-    unset($fields['shipping']['shipping_country']);
-    unset($fields['shipping']['shipping_first_name']);
-    unset($fields['shipping']['shipping_last_name']);
+    //unset($fields['shipping']['shipping_country']);
+    //unset($fields['shipping']['shipping_first_name']);
+    //unset($fields['shipping']['shipping_last_name']);
     unset($fields['shipping']['shipping_company']);
-    unset($fields['shipping']['shipping_address_1']);
+    //unset($fields['shipping']['shipping_address_1']);
     unset($fields['shipping']['shipping_address_2']);
-    unset($fields['shipping']['shipping_city']);
-    unset($fields['shipping']['shipping_postcode']);
+    //unset($fields['shipping']['shipping_city']);
+    //unset($fields['shipping']['shipping_postcode']);
     unset($fields['shipping']['shipping_phone']);
     unset($fields['shipping']['shipping_email']);
     unset($fields['shipping']['shipping_state']);
@@ -432,6 +432,19 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
         $order_id = $wp_query->query_vars['id'];
+
+        $quotation = new \classes\fzQuotation(intval($order_id));
+        $items = $quotation->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+
+        switch ($quotation->get_position()) {
+            case 0:
+                wc_add_notice("Votre demande est en cours de validation. Veuillez réessayer plus tard", "notice");
+                break;
+            case 3:
+                wc_add_notice("Vous ne pouvez plus modifier cette demande", "notice");
+                break;
+        }
+
         switch ($componnent):
             case 'edit':
 
@@ -445,9 +458,9 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                             if (empty($names) || $names[0] !== 'qt') continue;
                             $current_item_id = intval($names[1]);
                             $quantity = intval($value);
-                            $items = $order->get_items();
+                            $order_items = $order->get_items();
 
-                            foreach ( $items as $id => $item ) {
+                            foreach ( $order_items as $id => $item ) {
                                 if ($current_item_id === $id) {
 
                                     $suppliers = wc_get_order_item_meta($id, 'suppliers', true);
@@ -492,14 +505,12 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                         update_field('position', 3, $order->get_id());
                         $order->update_status('completed');
                         // Envoyer un mail au administrateur
-                        do_action('complete_order', $order->get_id());
+                        do_action('complete_order', $order->get_id(), 'completed');
                     }
                     wc_add_notice("Validation envoyer avec succès", 'success');
-                    unset($order, $items);
+                    unset($order);
                 } // POST
 
-                $order = new \classes\fzQuotation(intval($order_id));
-                $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
                 $products = [];
                 foreach ( $items as $item ) {
                     // is_editable()
@@ -523,40 +534,92 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $meta_data_suppliers[] = $suppliers;
                 }
 
-                switch ($order->get_position()) {
-                    case 0:
-                        wc_add_notice("Votre demande est en cours de validation. Veuillez réessayer plus tard", "notice");
-                        break;
-                    case 2:
-                        wc_add_notice("Votre demande est désactivé par l'administrateur", "error");
-                        break;
-                    case 3:
-                        wc_add_notice("Vous ne pouvez plus modifier cette demande", "notice");
-                        break;
-                }
-
-                $quotation = [
+                $quotation_params = [
                     'order_id' => (int)$order_id,
                     'products' => $products,
-                    'position' => intval($order->get_position()),
-                    'date_add' => $order->get_dateadd(),
+                    'position' => intval($quotation->get_position()),
+                    'date_add' => $quotation->get_dateadd(),
                     'meta_data' => json_encode($meta_data_suppliers)
                 ];
 
-
                 wc_print_notices();
-                wc_clear_notices();
+
                 /**
                  * 0: En attente
                  * 1: Envoyer
                  * 2: Rejetés
                  * 3: Terminée
                  */
-                if ($order->get_position() !== 0 && $order->get_position() !== 2)
-                    echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation]);
+                if ($quotation->get_position() !== 0 && $quotation->get_position() !== 2)
+                    echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation_params]);
 
                 break;
+
+            case 'update':
+            case 'confirmaction':
+                $products = [];
+
+                // Formulaire dans quotation-update.html
+                $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
+                if (wp_verify_nonce( $nonce, 'confirmaction' )) {
+                    $value =  stripslashes($_REQUEST['value']);
+                    $value = intval($value);
+                    $order = new WC_Order(intval($order_id));
+                    $status = null;
+                    switch($value):
+                        case 1: 
+                            // Demande du client accepter
+                            update_field('position', 3, $order->get_id());
+                            $order->update_status('completed');
+                            $status = 'completed';
+                            wc_add_notice("Demande accepter avec succès", 'notice');
+                            break;
+
+                        case 0:
+                            // Rejeter la demande du client
+                            update_field('position', 2, $order->get_id());
+                            $status = 'rejected';
+                            wc_add_notice("Demande rejetée avec succès", 'error');
+                            break;
+                    endswitch;
+
+                    // Envoyer un mail au administrateur
+                    if (!is_null($status))
+                        do_action('complete_order', $order->get_id(), $status);
+
+                }
+
+                wc_print_notices();
+
+                //Redefinir l'objet de la demande pour:
+                //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
+                $quotation = new \classes\fzQuotation(intval($order_id));
+                $items = $quotation->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
+
+                /** ************************* */
+                foreach ( $items as $item ) {
+                    $quotation_product = new \classes\fzQuotationProduct((int)$item['product_id'], (int)$order_id);
+                    $products[] = $quotation_product;
+                }
+
+                $quotation_params = [
+                    'order_id' => (int)$order_id,
+                    'products' => $products,
+                    'position' => intval($quotation->get_position()),
+                    'date_add' => $quotation->get_dateadd()
+                ];
+                /** ************************ */
+
+                echo $Engine->render('@WC/demande/quotation-update.html', [
+                    'quotation' => $quotation_params,
+                    'nonce' => wp_create_nonce( 'confirmaction' )
+                ]);
+                
+                break;
         endswitch;
+
+        // Effacer les notices
+        wc_clear_notices();
     } else {
         $quotations = [];
         foreach ( $user_quotations as $order ) {
@@ -748,7 +811,7 @@ add_action('user_register', function ($user_id) {
 });
 
 add_action('wp_loaded', function () {
-
+    //update_field('position', 1, 1431);
 });
 
 add_action('delete_user', function ($user_id) {

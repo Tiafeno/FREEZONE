@@ -51,7 +51,9 @@ class fzQuotation extends \WC_Order
         if (empty($client_role) || is_null($client_role)) {
             $customer_id = $this->get_customer_id();
             $customer_user = new \WP_User( (int) $customer_id);
-            update_post_meta( $this->ID, 'client_role', is_array($customer_user->roles) ? $customer_user->roles[0] : null);
+
+            $role = is_array($customer_user->roles) && !empty($customer_user->roles) ? $customer_user->roles[0] : null;
+            update_post_meta( $this->ID, 'client_role', $role);
         }
         /**
          * Les roles des clients

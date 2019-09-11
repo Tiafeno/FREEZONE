@@ -1,5 +1,5 @@
 <?php
-    $to_admins = ['contact@falicrea.com', 'david@freezonemada.com'];
+$to_admins = ['contact@falicrea.com', 'david@freezonemada.com'];
 
 /**
  * Cette action permet d'envoyer au administrateur un mail pour
@@ -110,12 +110,15 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
 
 }, 10, 5);
 
-add_action('complete_order', function ($order_id) {
+/**
+ * Envoyer un mail au administrateur la confirmation d'une demande par le client
+ * Rejeter ou Accepter
+ */
+add_action('complete_order', function ($order_id, $status = 'completed') use ($to_admins) {
     global $Engine;
 
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = $to_admins;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -128,16 +131,16 @@ add_action('complete_order', function ($order_id) {
         'client' => $client,
         'url' => $url
     ]);
-    $subject = "#{$order_id} - Une demande vient d'être validé sur le site freezone.click";
+    $st = $status === 'completed' ? 'validée' : 'rejetée';
+    $subject = "#{$order_id} - Une demande vient d'être {$st} sur le site freezone.click";
 
     wp_mail($to, $subject, $content, $headers);
-}, 10, 1);
+}, 10, 2);
 
-add_action('fz_received_order', function ($order_id) {
+add_action('fz_received_order', function ($order_id) use ($to_admins) {
     global $Engine;
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = $to_admins;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";

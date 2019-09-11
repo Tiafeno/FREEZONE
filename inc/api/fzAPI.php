@@ -81,9 +81,10 @@ class fzAPI
                         /** @var string $marge */
                         /** @var string $marge_dealer */
                         /** @var string $marge_particular */
-
+                        /** @var string $garentee */
+                        $garentee = isset($garentee) ? $garentee : null;
                         $post_title = strtolower($name);
-                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE  CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}' AND post_type = 'product'";
+                        $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}' AND post_type = 'product'";
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
                         if (!is_null($result)) {
                             $product = new \WC_Product($result->ID);
@@ -103,9 +104,9 @@ class fzAPI
                             $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
                             $p_cat = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request->set_query_params([
-                                'type' => 'simple',
+                                'type'   => 'simple',
                                 'status' => 'pending',
-                                'name' => $name,
+                                'name'   => $name,
                                 'regular_price' => '0',
                                 'description'   => ' ',
                                 'short_description' => ' ',
@@ -119,12 +120,13 @@ class fzAPI
                                     ]
                                 ],
                                 'meta_data' => [
-                                    ['key' => '_fz_marge',        'value' => intval($marge)],
-                                    ['key' => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
-                                    ['key' => '_fz_marge_particular', 'value' => intval($marge_particular)]
+                                    ['key'  => '_fz_marge',        'value' => intval($marge)],
+                                    ['key'  => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
+                                    ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)],
+                                    ['key'  => '_fz_garentee', 'value' => $garentee]
                                 ],
                                 'categories' => $p_cat,
-                                'images' => []
+                                'images'     => []
                             ]);
                             $product_controller = new \WC_REST_Products_V2_Controller();
                             $response = $product_controller->create_item($rest_request);
@@ -144,15 +146,15 @@ class fzAPI
                         $date_now = date_i18n('Y-m-d H:i:s');
                         $rest_request = new \WP_REST_Request();
                         $rest_request->set_query_params([
-                            'title' => $name,
+                            'title'   => $name,
                             'content' => '',
                             'status' => 'pending',
-                            'price' => intval($price),
+                            'price'  => intval($price),
                             'total_sales' => $total_sales,
-                            'user_id' => $user_id,
-                            'product_id' => $product->get_id(),
+                            'user_id'     => $user_id,
+                            'product_id'  => $product->get_id(),
                             'product_cat' => explode(',', $product_cat),
-                            'date_add' => $date_now,
+                            'date_add'    => $date_now,
                             'date_review' => $date_now
 
                         ]);
@@ -517,9 +519,10 @@ SQL;
         }
 
         $product_metas = [
-            ['name' => 'marge', 'key'        => '_fz_marge'],
-            ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'],
-            ['name' => 'marge_particular', 'key' => '_fz_marge_particular'],
+            ['name' => 'marge', 'key'        => '_fz_marge'], // (int)
+            ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'], // (int)
+            ['name' => 'marge_particular', 'key' => '_fz_marge_particular'], // (int)
+            ['name' => 'garentee', 'key' => '_fz_garentee'], // Garentie (string)
         ];
 
         foreach ($product_metas as $meta) {
