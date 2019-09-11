@@ -23,19 +23,17 @@ if ( ! is_ajax() ) {
 }
 ?>
 <div id="payment" class="woocommerce-checkout-payment">
-	<?php if ( WC()->cart->needs_payment() ) : ?>
-		<ul class="wc_payment_methods payment_methods methods">
-			<?php
-				if ( ! empty( $available_gateways ) ) {
-					foreach ( $available_gateways as $gateway ) {
-						wc_get_template( 'checkout/payment-method.php', array( 'gateway' => $gateway ) );
-					}
-				} else {
-					echo '<li>' . apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'yozi' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'yozi' ) ) . '</li>';
+	<ul class="wc_payment_methods payment_methods methods">
+		<?php
+			if ( ! empty( $available_gateways ) ) {
+				foreach ( $available_gateways as $gateway ) {
+					wc_get_template( 'checkout/payment-method.php', array( 'gateway' => $gateway ) );
 				}
-			?>
-		</ul>
-	<?php endif; ?>
+			} else {
+				echo '<li>' . apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'yozi' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'yozi' ) ) . '</li>';
+			}
+		?>
+	</ul>
 	<div class="form-row place-order">
 		<noscript>
 			<?php esc_html_e( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the <em>Update Totals</em> button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'yozi' ); ?>
