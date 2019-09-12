@@ -217,12 +217,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     'nonce' => wp_create_nonce('wp_rest')
                 ]);
 
+                // Vérifier si une formulaire est définie
                 if ($_POST) {
                     $price = isset($_POST['price']) ? sanitize_text_field($_POST['price']) : 0;
                     $stock = isset($_POST['stock']) ? sanitize_text_field($_POST['stock']) : 0;
                     $product_id = isset($_POST['product_id']) ? sanitize_text_field($_POST['product_id']) : 0;
+                    $garentee = isset($_POST['garentee']) ? sanitize_text_field($_POST['garentee']) : 0;
 
-                    // Vérifier si le client vas ajouter un doublon
+                    // Vérifier si le produit existe déja
                     $verify_product_exist_args = [
                         'post_type' => 'fz_product',
                         'post_status' => 'any',
@@ -242,13 +244,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
                     if (!$product_exists) {
                         $product = get_post((int)$product_id);
+                        $product_cat = wp_get_post_terms( (int) $product_id, 'product_cat', ['fields' => 'ids'] );
                         if ($price && $stock && $product_id) {
                             $result = wp_insert_post([
                                 'post_type' => 'fz_product',
-                                'post_status' => 'pending',
+                                'post_status' => 'publish',
                                 'post_title' => $product->post_title
                             ], true);
-
+                            
                             if (is_wp_error($result)) {
                                 wc_add_notice($result->get_error_message(), 'error');
                             } else {
@@ -258,12 +261,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 update_field('product_id', (int)$product_id, $result);
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
-                                wc_add_notice("Article ajouter avec succès", 'success');
 
+                                update_post_meta( $result, '_fz_garentee', $garentee );
+                                wp_set_post_terms( $result, $product_cat, 'product_cat' );
                                 // Envoyer un mail au administrateur
                                 do_action('fz_insert_new_article', $result);
 
-                                wp_redirect(wc_get_account_endpoint_url('stock-management'));
+                                //wp_redirect(wc_get_account_endpoint_url('stock-management'));
+                                wc_add_notice("Article <b>« {$product->post_title} »</b> ajouter avec succès", 'success');
                             }
                         } else {
                             wc_add_notice("Une erreur s'est produite pendant le traitement de donnée", 'error');
@@ -272,14 +277,16 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         wc_add_notice("Cette article existe déja dans votre catalogue", 'notice');
                     }
 
-                }
+                } // .end POST
 
                 wc_print_notices();
-                wc_clear_notices();
+                
                 echo $Engine->render('@WC/stock/article-new.html', [
                     'products' => $fz_model->get_products(),
                     'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
+
+                wc_clear_notices();
                 break;
 
             case 'trash':
@@ -326,6 +333,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 break;
         endswitch;
     } else {
+        // Afficher tous les articles du fournisseur
         $paged = get_query_var('pa_') ? get_query_var('pa_') : 1;
 
         add_filter('posts_join', function ($join) {
@@ -351,11 +359,12 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
         $args = [
             'post_type' => "fz_product",
-            'post_status' => "publish",
+            'post_status' => ['pending', 'publish'],
             'posts_per_page' => $posts_per_page,
             'paged' => $paged
         ];
         $query = new WP_Query($args);
+
         $pagination = '<div class="apus-pagination"><ul class="page-numbers">';
         $pagination .= paginate_links([
             'base' => @add_query_arg('pa_', '%#%'),
@@ -372,11 +381,13 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
             $articles[] = new \classes\fzSupplierArticle($post->ID);
         }
 
+        wc_print_notices();
         echo $Engine->render('@WC/stock/article-table.html', [
             'products' => $articles,
             'new_article_link' => wc_get_account_endpoint_url('stock-management') . '?componnent=new'
         ]);
         echo $pagination;
+        wc_clear_notices();
     }
 }, 10);
 
@@ -657,23 +668,20 @@ add_action('woocommerce_account_faq_endpoint', function () {
     }
     $User = wp_get_current_user();
     /**
-     * 1: Company
-     * 2: Particulier
+     * 1: Company (fz-company)
+     * 2: Particulier (fz-particular)
      */
     $category = in_array('fz-company', $User->roles) ? 1 : 2;
-    $sql = <<<TAG
+    $sql = <<<SQL
 SELECT * FROM $wpdb->posts WHERE post_status = "publish" 
     AND post_type = "fz_faq_client" 
     AND ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = "faq_category" AND meta_value = $category)
-TAG;
+SQL;
 
     $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
     $results = $wpdb->get_results($sql);
     foreach ($results as $result) {
-        $shortcode .= "[vc_tta_section title='{$result->post_title}' tab_id='faq-{$result->ID}']
-                          [vc_column_text]
-                            {$result->post_content}
-                          [/vc_column_text]
+        $shortcode .= "[vc_tta_section title='{$result->post_title}' tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
                        [/vc_tta_section]";
     }
 

@@ -80,6 +80,7 @@ class fzSupplierArticle
      */
     public $total_sales = 0;
     public $error = null;
+    public $garentee = null;
 
     /**
      * Short description of method __construct
@@ -106,6 +107,7 @@ class fzSupplierArticle
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
         $this->user_id     = get_field('user_id', $post_id);
+        $this->garentee    = get_post_meta( $post_id, '_fz_garentee', true );
 
         $product   = get_field('product_id', $this->ID);
         $this->url = get_permalink(is_object($product) ? $product->ID : intval($product));

@@ -21,10 +21,11 @@
 <div class="">
     <div class="flexbox" style="margin-bottom: 20px">
         <div class="flexbox">
-            <a class="btn btn-primary btn-air" href="{{new_article_link}}" >Ajouter un article</a>
+            <a class="btn btn-primary btn-air" href="{{new_article_link}}" >Ajouter une article</a>
         </div>
     </div>
 </div>
+{% if products|length > 0 %}
 <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
     <thead>
     <tr>
@@ -64,3 +65,4 @@
     {% endfor %}
     </tbody>
 </table>
+{% endif %}

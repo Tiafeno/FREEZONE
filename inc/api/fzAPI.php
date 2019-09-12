@@ -122,8 +122,7 @@ class fzAPI
                                 'meta_data' => [
                                     ['key'  => '_fz_marge',        'value' => intval($marge)],
                                     ['key'  => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
-                                    ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)],
-                                    ['key'  => '_fz_garentee', 'value' => $garentee]
+                                    ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)]
                                 ],
                                 'categories' => $p_cat,
                                 'images'     => []
@@ -154,6 +153,7 @@ class fzAPI
                             'user_id'     => $user_id,
                             'product_id'  => $product->get_id(),
                             'product_cat' => explode(',', $product_cat),
+                            'garentee'    => $garentee,
                             'date_add'    => $date_now,
                             'date_review' => $date_now
 
@@ -522,7 +522,6 @@ SQL;
             ['name' => 'marge', 'key'        => '_fz_marge'], // (int)
             ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'], // (int)
             ['name' => 'marge_particular', 'key' => '_fz_marge_particular'], // (int)
-            ['name' => 'garentee', 'key' => '_fz_garentee'], // Garentie (string)
         ];
 
         foreach ($product_metas as $meta) {
@@ -542,6 +541,17 @@ SQL;
                 }
             ]);
         }
+
+        // @type string Out/In
+        register_rest_field('fz_product', 'garentee', [
+            'update_callback' => function ($value, $object) {
+                return update_post_meta( (int)$object->ID, '_fz_garentee', $value );
+            },
+            'get_callback' => function ($object, $field_name) {
+                $garentee = get_post_meta( (int) $object['id'], '_fz_garentee', true );
+                return $garentee;
+            }
+        ]);
 
         register_rest_field('fz_product', 'product_status', [
             'update_callback' => function ($value, $object) {
