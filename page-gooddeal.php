@@ -249,7 +249,7 @@ yozi_render_breadcrumbs();
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
                                                         <label for="mark">Categorie</label>
-                                                        <select name="categorie" v-model="categorie" class="form-control" >
+                                                        <select name="categorie" v-model="categorie" class="form-control radius-0" >
                                                             <option value="">Selectionner une categorie</option>
                                                             <option :value="ctg.id" v-for="(ctg, index) in categories">{{ctg.name}}</option>
                                                         </select>
