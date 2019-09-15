@@ -37,7 +37,7 @@ yozi_render_breadcrumbs();
 ?>
 
     <style type="text/css">
-        #status_product, #product_provider {
+        #status_product, #product_provider, #delais_garentee {
             height: 40px;
             padding-left: 15px;
             width: 100%;
@@ -70,6 +70,7 @@ yozi_render_breadcrumbs();
                     data: {
                         message: null,
                         loading: false,
+                        delais_range: _.range(1, 13, 1),
                         errors: [],
                         client: '', // Type de client (e.g: 1: Particulier, 2: Entreprise)
                         product: '', // Produit
@@ -80,24 +81,24 @@ yozi_render_breadcrumbs();
                         bill: '', // Numéro de la facture
                         serial_number: '', // Numéro de serie,
                         description: '', // Identification de la demande
+                        delais_garentee: '', // Delais de la garantie
 
                         // Cette variable controle la visibilité des champs dans le formulaire
                         ck_bill: true,
                         ck_date_purchase: true,
-                        ck_serial_number: true
+                        ck_serial_number: true,
+                        ck_garentee_freezone: true,
                     },
                     methods: {
                         statusHandler: function (evt) {
                             let element = evt.currentTarget;
                             if (this.status_product == 1 && this.product_provider == 1) {
-                                this.ck_date_purchase = true;
-                                this.ck_bill = true;
-                                this.ck_serial_number = true;
+                                this.ck_date_purchase = this.ck_bill = this.ck_serial_number = true;
                             } else {
-                                this.ck_date_purchase = false;
-                                this.ck_bill = false;
-                                this.ck_serial_number = false;
+                                this.ck_date_purchase = this.ck_bill = this.ck_serial_number = false;
                             }
+
+                            this.ck_garentee_freezone = this.status_product == 1 ? true : false;
 
                             // hors garantie
                             if (this.status_product == 2) {
@@ -147,6 +148,8 @@ yozi_render_breadcrumbs();
                             if (_.isEmpty(this.description)) {
                                 this.errors.push('Veuillez decrire le probléme de votre matériel pour mieux diagnostique votre appareil');
                             }
+
+                            // Sous garentie et freezone
                             if (this.status_product == 1 && this.product_provider == 1) {
                                 if (_.isEmpty(this.date_purchase)) {
                                     this.errors.push('La date est obligatoire');
@@ -160,6 +163,14 @@ yozi_render_breadcrumbs();
                                     this.errors.push('Le numéro de série est obligatoire');
                                 }
                             }
+
+                            // Sous garentie et autre fournisseurs
+                            if (this.status_product == 1 && this.product_provider == 1) {
+                                if (_.isEmpty(this.delais_garentee)) {
+                                    this.errors.push('Veuillez vérifier le délais de garentie');
+                                }
+                            }
+
                             if (this.errors.length) {
                                 window.scrollTo(0, 0);
                                 return true;
@@ -183,6 +194,7 @@ yozi_render_breadcrumbs();
                                     product_provider: this.product_provider,
                                     status_product: this.status_product,
                                     serial_number: this.serial_number,
+                                    garentee: this.delais_garentee,
                                     auctor: rest_api.user_id
                                 },
                                 beforeSend: function (xhr) {
@@ -295,7 +307,7 @@ yozi_render_breadcrumbs();
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="status_product">Statut du produit</label>
                                         <select name="status_product" v-model="status_product" id="status_product"
@@ -306,13 +318,22 @@ yozi_render_breadcrumbs();
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="mark">Fournisseur du produit</label>
                                         <select name="product_provider" v-model="product_provider" id="product_provider"
                                                 v-on:change="statusHandler">
                                             <option value="1">Freezone</option>
                                             <option value="2">Autre fournisseur</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" v-if="ck_garentee_freezone">
+                                    <div class="form-group">
+                                        <label for="delais_garentee">Délais de garantie</label>
+                                        <select name="delais_garentee" v-model="delais_garentee" id="delais_garentee">
+                                            <option value="">Aucun</option>
+                                            <option :value="value" v-for="(value, index) in delais_range"> {{ value }} mois</option>
                                         </select>
                                     </div>
                                 </div>
@@ -346,7 +367,7 @@ yozi_render_breadcrumbs();
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label for="description">Identification de la demande</label>
+                                        <label for="description">Probème rencontré</label>
                                         <textarea v-model="description" class="form-control"
                                                   id="description"></textarea>
                                     </div>
