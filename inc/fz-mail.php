@@ -61,7 +61,7 @@ add_action('fz_new_user', function ($user_id, $role) use ($to_admins)  {
 
     wp_mail($to, $subject, $content, $headers);
 
-}, 10, 1);
+}, 10, 2);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
