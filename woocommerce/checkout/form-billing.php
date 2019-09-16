@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** @global WC_Checkout $checkout */
-
+$User = wp_get_current_user();
 ?>
 <div class="woocommerce-billing-fields">
 	<?php if ( wc_ship_to_billing_address_only() && WC()->cart->needs_shipping() ) : ?>
@@ -39,6 +39,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="woocommerce-billing-fields__field-wrapper">
 		<?php
 			$fields = $checkout->get_checkout_fields( 'billing' );
+			//print_r($fields);
+			$current_address = get_field('address', 'user_' . $User->ID);
+			$fields['billing_address_1']['label'] = "Adresse";
+			$fields['billing_address_1']['placeholder'] = "Adresse";
+			$fields['billing_address_1']['return'] = true;
+			//$fields['billing_postcode']['required'] = 0;
 
 			foreach ( $fields as $key => $field ) {
 				if ( isset( $field['country_field'], $fields[ $field['country_field'] ] ) ) {

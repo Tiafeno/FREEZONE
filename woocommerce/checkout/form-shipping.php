@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+$User = wp_get_current_user( );
+
 ?>
 <div class="woocommerce-shipping-fields">
 	<?php if ( WC()->cart->needs_shipping_address() === true ) : ?>
@@ -36,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( isset( $field['country_field'], $fields[ $field['country_field'] ] ) ) {
 						$field['country'] = $checkout->get_value( $field['country_field'] );
 					}
+					
 					woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 				}
 			?>

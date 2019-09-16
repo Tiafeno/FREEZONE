@@ -76,7 +76,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     } else {
         unset($items['stock-management']);
         $items['savs'] = "S.A.V";
-        $items['gd'] = "Bonne affaires";
+        $items['gd'] = "Petites annonces";
         $items['demandes'] = "Demandes";
         $items['faq'] = "FAQ";
     }
@@ -89,7 +89,10 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
 
+    $fields['billing']['billing_address_1']['label'] = 'Adresse';
+
     $fields['billing']['billing_country']['default'] = 'MG';
+
     $fields['billing']['billing_country']['required'] = false;
     $fields['billing']['billing_state']['required'] = false;
     $fields['billing']['billing_first_name']['required'] = false;
@@ -104,17 +107,20 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     unset($fields['billing']['billing_company']);
     unset($fields['billing']['billing_state']);
-    unset($fields['billing']['billing_country']);
+    //unset($fields['billing']['billing_country']);
     unset($fields['billing']['billing_email']);
     unset($fields['billing']['billing_phone']);
-    unset($fields['billing']['billing_address_1']);
+    //unset($fields['billing']['billing_address_1']);
     unset($fields['billing']['billing_address_2']);
     unset($fields['billing']['billing_last_name']);
     unset($fields['billing']['billing_first_name']);
-    unset($fields['billing']['billing_city']);
+    //unset($fields['billing']['billing_city']);
     unset($fields['billing']['billing_postcode']);
 
+    $fields['shipping']['shipping_address_1']['label'] = 'Adresse';
+
     $fields['shipping']['shipping_country']['default'] = 'MG';
+
     $fields['shipping']['shipping_country']['required'] = false;
     $fields['shipping']['shipping_first_name']['required'] = false;
     $fields['shipping']['shipping_last_name']['required'] = false;
@@ -131,7 +137,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     //unset($fields['shipping']['shipping_first_name']);
     //unset($fields['shipping']['shipping_last_name']);
     unset($fields['shipping']['shipping_company']);
-    //unset($fields['shipping']['shipping_address_1']);
+    unset($fields['shipping']['shipping_address_1']);
     unset($fields['shipping']['shipping_address_2']);
     //unset($fields['shipping']['shipping_city']);
     //unset($fields['shipping']['shipping_postcode']);
@@ -410,8 +416,8 @@ add_action('woocommerce_account_savs_endpoint', function () {
         $fzSav = new \classes\fzSav($sav->ID, true);
         return $fzSav;
     }, $the_query->posts);
-
-    echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs]);
+    $sav_url = '/sav'; // Cette url est réservé pour la pubication des services àpres vente
+    echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
 }, 10);
 
 add_action('woocommerce_account_demandes_endpoint', function () {
@@ -434,7 +440,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     if (empty($user_quotations)) {
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
-        $content .= 'Voir les catalogues</a> Aucune demande n’a encore été passée.	</div>';
+        $content .= 'Voir les catalogues</a> Aucune demande n\'a été passée.	</div>';
         echo $content;
 
         return false;
