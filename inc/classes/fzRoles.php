@@ -3,9 +3,7 @@ namespace classes;
 
 class fzRoles
 {
-    public function __construct ()
-    {
-    }
+    public function __construct () {}
 
     public static function create_roles ()
     {
@@ -37,8 +35,8 @@ class fzRoles
             'install_themes' => false,
         ];
 
-        add_role('fz-supplier', 'Fournisseur', $capabilities);
-        add_role('fz-particular', 'Particulier', $capabilities);
-        add_role('fz-company', 'Entreprise', $capabilities);
+        add_role('fz-supplier', 'Fournisseur', $capabilities); // Utilisateur fournisseur
+        add_role('fz-particular', 'Particulier', $capabilities); // Utilisateur particulier
+        add_role('fz-company', 'Entreprise', $capabilities); // Utilisateur entreprise ou société
     }
 }

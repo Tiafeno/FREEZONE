@@ -14,6 +14,7 @@
  */
 
 $User = wp_get_current_user();
+$client_type = null;
 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
 
 // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
@@ -28,6 +29,11 @@ wp_localize_script('vue', 'rest_api', [
 
 acf_form_head();
 get_header();
+
+// récuperer le type du client
+if (is_user_logged_in(  )) {
+    $client_type = in_array('fz-company', $User->roles) ? 2 : 1;
+}
 
 // Ajouter dans la balise <body>
 acf_enqueue_uploader();
@@ -60,6 +66,9 @@ yozi_render_breadcrumbs();
     </style>
     <script type="text/javascript">
         (function ($) {
+            // Type de client (e.g: 1: Particulier, 2: Entreprise)
+            var __CLIENT__ = <?= $client_type ?>;
+
             $(document).ready(() => {
                 /**
                  * Les champs date_purchase, bill & serial_number
@@ -72,7 +81,6 @@ yozi_render_breadcrumbs();
                         loading: false,
                         delais_range: _.range(1, 13, 1),
                         errors: [],
-                        client: '', // Type de client (e.g: 1: Particulier, 2: Entreprise)
                         product: '', // Produit
                         mark: '', // Marque
                         status_product: 1, // Statut du produit (e.g: 1: Sous garantie, 2: Hors garantie)
@@ -90,7 +98,7 @@ yozi_render_breadcrumbs();
                         ck_garentee_freezone: true,
                     },
                     methods: {
-                        statusHandler: function (evt) {
+                        statusHandler: evt => {
                             let element = evt.currentTarget;
                             if (this.status_product == 1 && this.product_provider == 1) {
                                 this.ck_date_purchase = this.ck_bill = this.ck_serial_number = true;
@@ -132,13 +140,10 @@ yozi_render_breadcrumbs();
                             }
 
                         },
-                        checkForm: function (e) {
+                        checkForm: e => {
                             e.preventDefault();
                             this.errors = [];
 
-                            if (_.isEmpty(this.client)) {
-                                this.errors.push('Le type de client est obligatoire');
-                            }
                             if (_.isEmpty(this.product)) {
                                 this.errors.push('Le champ produit est obligatoire');
                             }
@@ -186,7 +191,7 @@ yozi_render_breadcrumbs();
                                     content: this.description,
                                     status: 'publish',
                                     bill: this.bill,
-                                    client: this.client,
+                                    client: __CLIENT__,
                                     date_purchase: this.date_purchase,
                                     description: this.description,
                                     mark: this.mark,
@@ -264,29 +269,6 @@ yozi_render_breadcrumbs();
                                 <li class="error" v-for="error in errors">{{ error }}</li>
                             </ul>
                             </p>
-                            <label class="font-bold">Vous êtes?</label>
-                            <div class="row" style="margin-bottom: 10px">
-                                <div class="col-sm-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" v-model="client" value="1"
-                                               name="type_client">
-                                        <span>
-                                            Particulier
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" v-model="client" value="2"
-                                               name="type_client">
-                                        <span>
-                                            Entreprise
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
