@@ -75,7 +75,7 @@ class fzSupplier extends \WP_User
      * Short description of method __construct
      *
      * @access public
-     * @author firstname and lastname of author, <author@example.org>
+     * @author Tiafeno and Finel of author, <tifenofnel@gmail.com>
      * @param  Integer user_id
      * @return mixed
      */
@@ -90,7 +90,9 @@ class fzSupplier extends \WP_User
                 $cc = get_field($field, 'user_'.$this->ID);
                 $this->$field = $cc ? \explode(',', $cc) : [];
             }
-            
+            /**
+             * Récuperer la valeur des champs pour les informations du fournisseur
+             */
             $infos = ['stat', 'nif', 'rc', 'cif'];
             foreach ($infos as $info) {
                 $value = get_field($info, 'user_'.$this->ID);
@@ -101,7 +103,9 @@ class fzSupplier extends \WP_User
             $this->phone = get_field('phone', 'user_'.$this->ID);
 
             $User = wp_get_current_user();
+            // Vérifier si l'utilisateur est un administrateur
             $admin = $User->ID === 0 ? null : (in_array('administrator', $User->roles) ? 'administrator' : null);
+            // Afficher le nom de l'entreprise ou la société au administrateur seulement
             $this->company_name = $admin === 'administrator' ? get_field('company_name', 'user_'.$this->ID) : $this->reference;
             $this->firstname = $this->first_name;
             $this->lastname = $this->last_name;
