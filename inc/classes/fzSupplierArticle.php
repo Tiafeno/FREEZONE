@@ -160,7 +160,7 @@ class fzSupplierArticle
      * Short description of method setPrice
      *
      * @access public
-     * @author firstname and lastname of author, <author@example.org>
+     * @author Tiafeno Finel of author, <tiafenofnel@gmail.com>
      * @param  String price
      * @return mixed
      */
@@ -178,11 +178,17 @@ class fzSupplierArticle
         return $result;
     }
 
+    public function set_garentee($garentee) {
+        if (empty($garentee)) return false;
+        $result = update_post_meta( $this->ID, "_fz_garentee", $garentee );
+
+        return $result;
+    }
+
     /**
      * Short description of method updateDateReview
      *
      * @access public
-     * @author firstname and lastname of author, <author@example.org>
      * @param  String date
      * @return mixed
      */

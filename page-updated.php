@@ -15,13 +15,15 @@ $paged = 1;
 if (!empty($_POST)) {
     // Code for update article here...
     if (wp_verify_nonce($_POST['updated-nonce'], 'freezone-updated')) {
-        $price = $_POST['price'];
-        $stock = $_POST['stock'];
+        $price = stripslashes($_POST['price']);
+        $stock = stripslashes($_POST['stock']);
+        $garentee = stripslashes($_POST['garentee']);
         $article_id = $_POST['article_id'];
 
         $article = new \classes\fzSupplierArticle(intval($article_id));
         $article->set_price((int)$price);
         $article->set_total_sales((int)$stock);
+        $article->set_garentee((int)$stock);
         $article->save();
 
         $article->update_date_review(); // Mettre à jour l'article
@@ -236,6 +238,7 @@ yozi_render_breadcrumbs();
                                                 <th scope="col">Qté disponible</th>
                                                 <th scope="col">Qté demandée</th>
                                                 <th scope="col">Prix en ariary</th>
+                                                <th scope="col">Garantie</th>
                                                 <th scope="col">#</th>
                                             </tr>
                                         </thead>
@@ -268,6 +271,18 @@ yozi_render_breadcrumbs();
                                                     <input type="number" name="price" style="width: 100%;"
                                                            id="reg_price" min="0"
                                                            value="<?= $article->regular_price ?>"/>
+                                                </div>
+                                            </td>
+                                            <td width="15%">
+                                                <div class="garentee">
+                                                    <select name="garentee" style="width: 100%;">
+                                                        <option value="">Aucun</option>
+                                                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                                                            <option value="<?= $i ?>" <?php echo $i==$article->garentee ? 'selected="selected"' : '' ?>>
+                                                                <?= $i ?> mois
+                                                            </option>
+                                                        <?php endfor; ?>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td width="25">

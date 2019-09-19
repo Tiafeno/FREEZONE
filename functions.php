@@ -397,6 +397,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
     }
 }, 10);
 
+// Service après vente
 add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine;
     $user = wp_get_current_user();
@@ -416,10 +417,11 @@ add_action('woocommerce_account_savs_endpoint', function () {
         $fzSav = new \classes\fzSav($sav->ID, true);
         return $fzSav;
     }, $the_query->posts);
-    $sav_url = '/sav'; // Cette url est réservé pour la pubication des services àpres vente
+    $sav_url = '/sav'; // Cette url est réservé pour la publication des services àpres vente
     echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
 }, 10);
 
+// Demande ou devis
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
 
@@ -729,7 +731,7 @@ add_action('woocommerce_account_gd_endpoint', function() {
 }, 10);
 
 /**
- * Ajouter un client
+ * Ajouter un client via le formulaire (form-login.php)
  */
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
@@ -738,12 +740,12 @@ add_action('user_register', function ($user_id) {
 
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = sanitize_text_field($_POST['firstname']);
-        $lastname = sanitize_text_field($_POST['lastname']);
+        $lastname  = sanitize_text_field($_POST['lastname']);
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
-            'last_name' => $lastname,
-            'nickname' => 'CL' . $user_id,
+            'last_name'  => $lastname,
+            'nickname'   => 'CL' . $user_id,
             'user_login' => 'CL' . $user_id
         ]);
         if (is_wp_error($result)) {
@@ -751,8 +753,9 @@ add_action('user_register', function ($user_id) {
         }
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
-    $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
-    $company_name = isset($_POST['company_name']) ? $_POST['company_name'] : '';
+    $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $company_name    = isset($_POST['company_name']) ? $_POST['company_name'] : '';
+    $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
@@ -775,6 +778,9 @@ add_action('user_register', function ($user_id) {
         // Ajouter un statut Professionnel ou revendeur
         // par default: En attente
         update_field('company_status', 'pending', 'user_' . $user_id);
+
+        // Ajouter le secteur d'activité pour l'entreprise
+        update_user_meta($user_id, 'sector_activity', $sector_activity);
     }
 
     // Si le compte est particulier
