@@ -98,14 +98,13 @@ yozi_render_breadcrumbs();
                         ck_garentee_freezone: true,
                     },
                     methods: {
-                        statusHandler: evt => {
+                        statusHandler: function (evt) {
                             let element = evt.currentTarget;
                             if (this.status_product == 1 && this.product_provider == 1) {
                                 this.ck_date_purchase = this.ck_bill = this.ck_serial_number = true;
                             } else {
                                 this.ck_date_purchase = this.ck_bill = this.ck_serial_number = false;
                             }
-
                             this.ck_garentee_freezone = this.status_product == 1 ? true : false;
 
                             // hors garantie
@@ -140,7 +139,7 @@ yozi_render_breadcrumbs();
                             }
 
                         },
-                        checkForm: e => {
+                        checkForm: function(e) {
                             e.preventDefault();
                             this.errors = [];
 
@@ -313,7 +312,7 @@ yozi_render_breadcrumbs();
                                 <div class="col-sm-4" v-if="ck_garentee_freezone">
                                     <div class="form-group">
                                         <label for="delais_garentee">Délais de garantie</label>
-                                        <select name="delais_garentee" v-model="delais_garentee" id="delais_garentee">
+                                        <select name="delais_garentee"  v-model="delais_garentee" id="delais_garentee">
                                             <option value="">Aucun</option>
                                             <option :value="value" v-for="(value, index) in delais_range"> {{ value }} mois</option>
                                         </select>
