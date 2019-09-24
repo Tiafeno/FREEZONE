@@ -163,14 +163,13 @@ add_action('fz_received_order', function ($order_id) use ($to_admins) {
 /**
  * Update articles succefuly
  */
-add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
+add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) use ($to_admins)  {
     global $Engine;
     $article_ids = explode(',', $_articles);
     $articles = array_map(function ($id) { return new \classes\fzSupplierArticle(intval($id)); }, $article_ids);
 
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = implode(',', $to_admins);
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
