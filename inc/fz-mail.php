@@ -15,7 +15,7 @@ add_action('fz_insert_sav', function ($sav_id) use ($to_admins) {
         'User' => ['name' => $User->first_name . ' ' . $User->last_name, 'phone' => $phone]
     ]);
     $from = $User->user_email;
-    $to = implode($to_admins, ',');
+    $to = implode(',', $to_admins);
     $subject = "Service apres vente sur le site freezone.click";
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
@@ -27,7 +27,7 @@ add_action('fz_insert_sav', function ($sav_id) use ($to_admins) {
 
 add_action('fz_insert_new_article', function ($article_id) use ($to_admins) {
     $from = "no-reply@freezone.click";
-    $to = implode($to_admins, ',');
+    $to = implode(',', $to_admins);
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -45,7 +45,7 @@ add_action('fz_insert_new_article', function ($article_id) use ($to_admins) {
 
 add_action('fz_new_user', function ($user_id, $role) use ($to_admins)  {
     $from = "no-reply@freezone.click";
-    $to = implode($to_admins, ',');
+    $to = implode(',', $to_admins);
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -137,6 +137,9 @@ add_action('complete_order', function ($order_id, $status = 'completed') use ($t
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
 
+/**
+ * Demande de devis envoyer au administrateur
+ */
 add_action('fz_received_order', function ($order_id) use ($to_admins) {
     global $Engine;
     $from = "no-reply@freezone.click";
