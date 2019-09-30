@@ -736,7 +736,6 @@ SQL;
         $shortcode .= "[vc_tta_section title='{$result->post_title}' tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
                        [/vc_tta_section]";
     }
-
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
 
     echo do_shortcode( $shortcode );

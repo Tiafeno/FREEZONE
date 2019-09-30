@@ -111,7 +111,9 @@
                 <td></td>
                 <td>{{item.quantity}}</td>
                 <td>{{item.total / item.quantity}} MGA</td>
-                <td></td>
+                <td>
+                    {{item | fakediscount}}
+                </td>
                 <td>{{item.total}} MGA</td>
             </tr>
             {% endfor %}

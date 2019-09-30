@@ -58,6 +58,8 @@ class fzQuotationProduct extends \WC_Product
      * La remise pour les entreprises
      */
     public $discount = 0;
+    public $has_discount = false;
+    public $fake_discount = null;
 
     /**
      * Short description of method __construct
@@ -89,6 +91,12 @@ class fzQuotationProduct extends \WC_Product
 
                 $discount = wc_get_order_item_meta( $item_id, 'discount', true );
                 $this->discount = $discount ? $discount : 0;
+
+                $has_discount = wc_get_order_item_meta( $item_id, 'has_discount', true );
+                $this->has_discount = $has_discount ? boolval(intval($has_discount)) : false;
+
+                $fake_discount = wc_get_order_item_meta($item_id, 'fake_discount', true);
+                $this->fake_discount = $fake_discount ? $fake_discount : null;
 
                 $this->item_id = (int) $item_id;
                 $price =  intval($item->get_total()) / intval($item->get_quantity());

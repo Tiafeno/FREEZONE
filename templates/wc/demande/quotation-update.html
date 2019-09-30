@@ -68,13 +68,16 @@
             <thead>
                 <tr>
                     <th class="woocommerce-orders-table__header not-center">
-                        <span class="nobr text-center text-bold">Article</span>
+                        <span class="nobr text-center text-bold">Designation</span>
                     </th>
                     <th class="woocommerce-orders-table__header">
                         <span class="nobr text-bold">Qté</span>
                     </th>
                     <th class="woocommerce-orders-table__header">
-                        <span class="nobr text-bold">Prix unitaire</span>
+                        <span class="nobr text-bold">P.U.HT</span>
+                    </th>
+                    <th class="woocommerce-orders-table__header">
+                        <span class="nobr text-bold">Rem</span>
                     </th>
                     </th>
                     <th class="woocommerce-orders-table__header">
@@ -105,15 +108,15 @@
                         <span class="unit-cost">{{product.unit_cost}}</span>
                     </td>
                     <td>
+                        {{product.has_discount ? product.fake_discount : null}}
+                    </td>
+                    <td>
                         <span id="total_{{product.item_id}}">0</span>
                     </td>
                 </tr>
                 {% endfor %}
-
                 <tr class="">
-                    <td style="padding-left: 15px"></td>
-                    <td></td>
-                    <td>
+                    <td colspan="4">
                         <h5 class="font-strong" style="margin: 0; text-align: left">Sous-total HT</h5>
                     </td>
                     <td style="font-weight: bold">
@@ -121,9 +124,7 @@
                     </td>
                 </tr>
                 <tr class="">
-                    <td style="padding-left: 15px"></td>
-                    <td></td>
-                    <td>
+                    <td colspan="4">
                         <h5 style="margin: 0; text-align: left">Taxe 20%</h5>
                     </td>
                     <td>
@@ -131,9 +132,7 @@
                     </td>
                 </tr>
                 <tr class="" style="background-color: #374387; color: white">
-                    <td style="padding-left: 15px"></td>
-                    <td></td>
-                    <td>
+                    <td colspan="4">
                         <h5 class="font-strong" style="margin: 0; text-align: left; color: white">Total TTC</h5>
                     </td>
                     <td>
