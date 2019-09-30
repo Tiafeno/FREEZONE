@@ -141,14 +141,16 @@
                 </tr>
             </tbody>
         </table>
-        {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
         <div>
-            <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1" class="btn btn-theme radius-0"
-                type="submit" {% if quotation.position is same as (0) %} disabled="disabled" {% endif %} >Accepter</a>
-            <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0" class="btn btn-danger radius-0"
-                type="submit" {% if quotation.position is same as (0) %} disabled="disabled" {% endif %} >Rejeter</a>
+            {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
+        
+                <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1" class="btn btn-theme radius-0"
+                    type="submit" {% if quotation.position is same as (0) %} disabled="disabled" {% endif %} >Accepter</a>
+                <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0" class="btn btn-danger radius-0"
+                    type="submit" {% if quotation.position is same as (0) %} disabled="disabled" {% endif %} >Rejeter</a>
+            {% endif %}
             <a href="{{download_url}}?order_id={{quotation.order_id}}" class="btn btn-success radius-0" >Telecharger</a>
         </div>
-        {% endif %}
+        
     </form>
 {% endif %}
