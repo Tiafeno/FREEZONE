@@ -228,7 +228,7 @@ class fzAPI
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
                         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
-                        $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
+                        $start  = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
                         $args = [
                             'number' => $length,
                             'offset' => $start,
@@ -444,6 +444,7 @@ SQL;
         }
 
         /**
+         * Variable utiliser seulement pour les comptes fournisseurs.
          * Cette meta est utiliser pour la dernnier date d'envoie au fournisseur la mise à jour
          * de son article
          */
@@ -458,7 +459,10 @@ SQL;
         ]);
 
 
-        // Ce champ est pour les clients qui contient les commercials responsable
+        /**
+         * Variable utiliser pour les clients seulement
+         * Ce champ est pour les clients qui contient le commercial responsable
+         */
         register_rest_field('user', 'responsible', [
             'update_callback' => function ($value, $object, $field_name) {
                 return update_user_meta($object->ID, $field_name, $value);

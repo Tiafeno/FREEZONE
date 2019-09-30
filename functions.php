@@ -22,6 +22,7 @@ add_action('init', function () {
     add_rewrite_endpoint('savs', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('gd', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('pdf', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
     add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
     add_filter('query_vars', function ($vars) {
@@ -79,6 +80,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['gd'] = "Petites annonces";
         $items['demandes'] = "Demandes";
         $items['faq'] = "FAQ";
+        //$items['pdf'] = "PDF";
     }
 
     // Insert back the logout item.
@@ -631,6 +633,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                 echo $Engine->render('@WC/demande/quotation-update.html', [
                     'quotation' => $quotation_params,
+                    'download_url' => wc_get_account_endpoint_url('pdf'),
                     'nonce' => wp_create_nonce( 'confirmaction' )
                 ]);
                 
@@ -662,6 +665,47 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     }
 
 
+}, 10);
+
+/**
+ * Cette action est utiliser pour télécharger le PDF
+ */
+add_action('woocommerce_account_pdf_endpoint', function() {
+    global $Engine;
+    $order = null;
+    $error = false;
+
+    if ($_GET && isset($_GET['order_id'])) {
+        $order_id = intval($_GET['order_id']);
+        $order = new WC_Order($order_id);
+
+    } else {
+        $error = true;
+        wc_add_notice('Parametre manquant (order_id)', 'error');
+    }
+
+    wp_enqueue_style( 'poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800" );
+    wp_enqueue_script( 'html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1" );
+
+    wc_print_notices();
+    if ($error) return false;
+    $customer =  new WC_Customer($order->get_customer_id());
+
+    // Get responsible if exist
+    $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
+    $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
+    $items = $order->get_items();
+
+    echo $Engine->render('@WC/pdf/download-template.html', [
+        'order' => $order,
+        'responsible' => $responsible,
+        'items' => $items,
+        'customer' => $customer,
+        'hlp' => [
+            'theme_url' => get_stylesheet_directory_uri()
+        ]
+    ]);
+    wc_clear_notices();
 }, 10);
 
 /**
