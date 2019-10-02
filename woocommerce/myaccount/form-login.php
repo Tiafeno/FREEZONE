@@ -180,6 +180,7 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
                         </p>
                     </div>
                 </div>
+                
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_rc">RC  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control radius-0" name="rc" id="reg_rc" 
@@ -199,7 +200,7 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_cin">CIN  <span class="required">*</span></label>
-                            <input type="number" placeholder="" class="input-text form-control radius-0" name="cin" id="reg_cin" min="12" max="12"
+                            <input type="number" placeholder="" class="input-text form-control radius-0" name="cin" id="reg_cin" minlength="12" maxlength="12"
                                 value="<?php if ( ! empty( $_POST['cin'] ) ) echo esc_attr( $_POST['cin'] ); ?>" />
                         </p>
                     </div>
