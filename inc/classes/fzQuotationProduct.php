@@ -93,7 +93,7 @@ class fzQuotationProduct extends \WC_Product
                 $this->discount = $discount ? $discount : 0;
 
                 $has_discount = wc_get_order_item_meta( $item_id, 'has_discount', true );
-                $this->has_discount = $has_discount ? boolval(intval($has_discount)) : false;
+                $this->has_discount = $has_discount ? boolval(intval($has_discount)) : true;
 
                 $fake_discount = wc_get_order_item_meta($item_id, 'fake_discount', true);
                 $this->fake_discount = $fake_discount ? $fake_discount : null;
