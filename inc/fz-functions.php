@@ -74,7 +74,7 @@ try {
     $Engine->addFilter(new Twig_SimpleFilter('fakediscount', function ($item) {
         $has_discount = wc_get_order_item_meta($item->get_id(), 'has_discount', true);
         $fake_discount = wc_get_order_item_meta( $item->get_id(), 'fake_discount', true );
-        $has_discount= $has_discount ? boolval(intval($has_discount)) : false;
+        $has_discount= $has_discount ? boolval(intval($has_discount)) : true;
 
         return $has_discount ? $fake_discount : '';
     }));
