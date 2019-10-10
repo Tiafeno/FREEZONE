@@ -696,6 +696,8 @@ add_action('woocommerce_account_pdf_endpoint', function() {
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
     $items = $order->get_items();
 
+    // Afficher le template
+    print_r($customer);
     echo $Engine->render('@WC/pdf/download-template.html', [
         'order' => $order,
         'responsible' => $responsible,
