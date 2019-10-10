@@ -44,8 +44,8 @@
             </tr>
             <tr>
                 <td valign=top>
-                    <p>Lorem name entreprise</p>
-                    <p>Lorem Adresse client </p>
+                    <p style="text-transform: capitalize">{{ customer.get_meta('company_name', true) }}</p>
+                    <p>{{ customer.get_meta('address', true) }} </p>
                     <ul>
                         {% if customer.meta_exists('stat') %}
                         <li>STAT : {{ customer.get_meta('stat', true) }}</li>
