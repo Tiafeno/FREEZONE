@@ -586,6 +586,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $value =  stripslashes($_REQUEST['value']);
                     $value = intval($value);
                     $order = new WC_Order(intval($order_id));
+                    $position = get_field('position', $order->get_id());
+
                     $status = null;
                     switch($value):
                         case 1: 
@@ -605,7 +607,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     endswitch;
 
                     // Envoyer un mail au administrateur
-                    if (!is_null($status))
+                    if (!is_null($status) && !is_numeric($position))
                         do_action('complete_order', $order->get_id(), $status);
 
                 }
@@ -641,7 +643,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         endswitch;
 
         // Effacer les notices
-        wc_clear_notices();
     } else {
         $quotations = [];
         foreach ( $user_quotations as $order ) {
@@ -654,15 +655,14 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         }
 
         wc_print_notices();
-        wc_clear_notices();
-
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
         $content .= 'Poursuivre ma demande</a> Vous pouvez toujours effectuer une demande </div>';
         echo $content;
-
         echo $Engine->render("@WC/demande/quotations-table.html", ['quotations' => $quotations]);
     }
+
+    wc_clear_notices();
 
 
 }, 10);
@@ -683,12 +683,18 @@ add_action('woocommerce_account_pdf_endpoint', function() {
         $error = true;
         wc_add_notice('Parametre manquant (order_id)', 'error');
     }
+    
+    if ($error) {
+        wc_print_notices();
+        return false;
+    }
 
     wp_enqueue_style( 'poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800" );
     wp_enqueue_script( 'html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1" );
-
-    wc_print_notices();
-    if ($error) return false;
+    wp_enqueue_script( 'download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
+    wp_localize_script( 'download-pdf', 'Generator', [
+        'order_id' => $order_id
+    ] );
     $customer =  new WC_Customer($order->get_customer_id());
 
     // Get responsible if exist
