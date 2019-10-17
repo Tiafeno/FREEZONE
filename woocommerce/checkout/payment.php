@@ -38,7 +38,7 @@ if ( ! is_ajax() ) {
 	<?php endif; ?>
 		<ul style="margin-top: 15px; font-weight: bold">
 				<li>Pour tout achat de moins de 100.000 HT prévoir des frais de transport de l’ordre de 12.600 HT </li>
-				<li>Pour les clients basés en province le transport et à leur charge, nous pouvons vous livrer les marchandises auprès de votre transporteur et cela gratuitement</li>
+				<li>Pour les clients basés en province le transport est à leur charge, cependant la livraison chez leur transporteur est gratuit</li>
 		</ul>
 
 	<div class="form-row place-order">
