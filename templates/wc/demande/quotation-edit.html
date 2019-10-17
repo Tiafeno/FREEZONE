@@ -8,54 +8,7 @@
         padding: 5px;
     }
 </style>
-<script type="text/javascript">
-    let METADATA;
-    const tax = 20;
-    (function ($) {
 
-        const formatter = new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'MGA',
-            minimumFractionDigits: 0
-        });
-
-        $(document).ready(function () {
-            METADATA = _.flatten({{quotation.meta_data|raw}});
-            reCalculate();
-
-            let inputChangers = $('.qt-input-changer');
-            inputChangers.each((index, element) => {
-                $(element).on('change', e => {
-                    reCalculate();
-                });
-            });
-
-            $('.unit-cost').each((index, element) => {
-               let cost = $(element).text();
-               cost = parseFloat(cost);
-               $(element).text(formatter.format(cost));
-            });
-
-            function reCalculate() {
-                let total = 0;
-                $('.qt-input-changer').each((index, el) => {
-                    let data = $(el).data();
-                    let itemId = data.itemId;
-                    let qt = $(el).val();
-                    let subTotal = parseInt(data.unitCost) * parseInt(qt);
-                    total += subTotal;
-                    $(`#total_${itemId}`).text(formatter.format(subTotal));
-                });
-
-                $("#subtotal_ht").text(formatter.format(total));
-                var __tax = (total * tax) / 100;
-                $('#tax').text(formatter.format(Math.round(__tax)));
-                $('#total_ttc').text(formatter.format(__tax + total));
-            }
-
-        });
-    })(jQuery);
-</script>
 <form name="quotation_item" method="post" action="">
     <table class="woocommerce-orders-table shop_table_responsive shop_table  my_account_orders account-orders-table">
         <thead>

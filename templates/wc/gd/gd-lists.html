@@ -3,24 +3,7 @@
         padding: 5px 13px;
     }
 </style>
-<script type="text/javascript">
-    (function ($) {
 
-        const formatter = new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'MGA',
-            minimumFractionDigits: 0
-        });
-
-        $(document).ready(function () {
-            $('.unit-cost').each((index, element) => {
-                let cost = $(element).text();
-                cost = parseFloat(cost);
-                $(element).text(formatter.format(cost));
-            });
-        });
-    })(jQuery);
-</script>
 <div class="row" style="margin-bottom: 40px">
     <div class="col-sm-6">
         <a class="btn btn-theme radius-0" href="/bonne-affaire">Publier une annonce</a>
@@ -52,7 +35,7 @@
                     <a href="?edited={{gd.ID}}">{{gd.post_title}}</a>
                 </td>
                 <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date">
-                    <span class="unit-cost">{{gd.price}}</span>
+                    <span class="currency">{{gd.price}}</span>
                 </td>
                 <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status">
                     {{gd.post_status is same as('publish') ? 'Publier' : 'En attente'}}

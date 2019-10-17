@@ -101,14 +101,14 @@
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{item.name}}</td>
+                <td>{{item.get_name()}}</td>
                 <td></td>
-                <td>{{item.quantity}}</td>
-                <td>{{item.total / item.quantity}} MGA</td>
+                <td>{{item.count_item}}</td>
+                <td class="currency">{{item.get_freezone_price()}}</td>
                 <td>
-                    {{item | fakediscount}}
+                    {% if item.discount is same as(0) %} - {% else %} {{item.discount}}% {% endif %}
                 </td>
-                <td>{{item.total}} MGA</td>
+                <td class="currency">{{item.get_freezone_subtotal()}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -126,12 +126,12 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{order.get_total()}} MGA</td>
-                <td>{{order.get_total()}} MGA</td>
+                <td class="currency">{{order.get_total_ht()}}</td>
+                <td class="currency">{{order.get_total_net()}}</td>
                 <td>20%</td>
-                <td>{{ (20 * order.get_total()) / 100 }} MGA</td>
+                <td class="currency">{{ (20 * order.get_total_net()) / 100 }}</td>
                 <td>
-                    <span style="font-size: 14px">{{ (20 * order.get_total()) / 100 + order.get_total() }} MGA</span>
+                    <span style="font-size: 14px" class="currency">{{ (20 * order.get_total_net()) / 100 + order.get_total_net() }}</span>
                 </td>
             </tr>
         </tbody>

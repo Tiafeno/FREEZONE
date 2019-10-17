@@ -3,21 +3,7 @@
         padding: 5px 13px;
     }
 </style>
-<script type="text/javascript">
-    jQuery(function($) {
-        const formatter = new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'MGA',
-            minimumFractionDigits: 0
-        });
 
-        $('.price').each((index, element) => {
-            let cost = $(element).text();
-            cost = parseFloat(cost);
-            $(element).text(formatter.format(cost));
-        });
-    });
-</script>
 <div class="">
     <div class="flexbox" style="margin-bottom: 20px">
         <div class="flexbox">
@@ -49,7 +35,7 @@
             <a href="{{product.url}}" target="_blank">{{product.name}}</a>
         </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Price">
-            <span class="price" style="font-weight: bolder">{{product.regular_price}}</span>
+            <span class="currency" style="font-weight: bolder">{{product.regular_price}}</span>
         </td>
         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Price" style="text-align: center">
             {{product.total_sales}}

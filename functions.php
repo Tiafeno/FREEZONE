@@ -1,4 +1,7 @@
 <?php
+
+use classes\fzQuotation;
+
 require_once get_stylesheet_directory() . '/vendor/autoload.php';
 require_once get_stylesheet_directory() . '/inc/fz-mail.php';
 require_once get_stylesheet_directory() . '/inc/fz-functions.php';
@@ -617,17 +620,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 //Redefinir l'objet de la demande pour:
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
                 $quotation = new \classes\fzQuotation(intval($order_id));
-                $items = $quotation->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-
-                /** ************************* */
-                foreach ( $items as $item ) {
-                    $quotation_product = new \classes\fzQuotationProduct((int)$item['product_id'], (int)$order_id);
-                    $products[] = $quotation_product;
-                }
-
+                
                 $quotation_params = [
                     'order_id' => (int)$order_id,
-                    'products' => $products,
+                    'products' => $quotation->get_fz_items(),
                     'position' => intval($quotation->get_position()),
                     'date_add' => $quotation->get_dateadd()
                 ];
@@ -635,6 +631,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                 echo $Engine->render('@WC/demande/quotation-update.html', [
                     'quotation' => $quotation_params,
+                    'order' => $quotation,
                     'download_url' => wc_get_account_endpoint_url('pdf'),
                     'nonce' => wp_create_nonce( 'confirmaction' )
                 ]);
@@ -675,9 +672,9 @@ add_action('woocommerce_account_pdf_endpoint', function() {
     $order = null;
     $error = false;
 
-    if ($_GET && isset($_GET['order_id'])) {
+    if ($_GET && isset($_GET['order_id']) && !empty($_GET['order_id'])) {
         $order_id = intval($_GET['order_id']);
-        $order = new WC_Order($order_id);
+        $order = new fzQuotation($order_id);
 
     } else {
         $error = true;
@@ -700,7 +697,7 @@ add_action('woocommerce_account_pdf_endpoint', function() {
     // Get responsible if exist
     $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
-    $items = $order->get_items();
+    $items = $order->get_fz_items();
 
     // Afficher le template
     echo $Engine->render('@WC/pdf/download-template.html', [
