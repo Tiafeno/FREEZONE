@@ -80,7 +80,7 @@ class fzQuotationProduct extends \WC_Product
             if (intval($item['product_id']) === intval($product_id)) {
                 $this->count_item = intval($item->get_quantity());
                 $this->total = intval($item->get_total());
-                $this->_price =  $this->total / $this->count_item;
+                $this->_price = $this->total / $this->count_item;
 
                 $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                 $this->suppliers = json_decode($suppliers);
