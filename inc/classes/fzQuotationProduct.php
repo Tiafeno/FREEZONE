@@ -143,7 +143,7 @@ class fzQuotationProduct extends \WC_Product
         $price = $this->_price;
         switch ($this->discount_type) {
             case 2:
-                return $this->count_item * ($price - $this->discount_percent);
+                return $this->count_item * ($price - $this->discount_percent());
                 break;
             case 1:
             case 0:
