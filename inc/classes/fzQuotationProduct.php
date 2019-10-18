@@ -130,9 +130,11 @@ class fzQuotationProduct extends \WC_Product
         $price = $this->_price;
         switch ($this->discount_type) {
             case 1:
+            // Remise
                 return $price + $this->discount_percent();
                 break;
             case 2:
+            // Rajout & Aucun
             default:
                 return $price;
                 break;
@@ -143,9 +145,11 @@ class fzQuotationProduct extends \WC_Product
         $price = $this->_price;
         switch ($this->discount_type) {
             case 2:
+            // Rajout
                 return $this->count_item * ($price - $this->discount_percent());
                 break;
             case 1:
+            // Remise & Aucun
             case 0:
             default:
                 return $this->count_item * $price;
