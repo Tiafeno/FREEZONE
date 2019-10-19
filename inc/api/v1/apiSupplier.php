@@ -92,19 +92,22 @@ class apiSupplier
                 }
 
                 $today = date_i18n('Y-m-d H:i:s');
+                $today_date_time = new DateTime($today);
+                $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
+
                 $sql = <<<SLQ
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->users as users
 WHERE users.ID IN (
-	SELECT CAST(pm2.meta_value AS SIGNED) FROM $wpdb->posts as pts
-	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
+    SELECT CAST(pm2.meta_value AS SIGNED) FROM $wpdb->posts as pts
+    JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
     JOIN $wpdb->postmeta as pm2 ON (pm2.post_id = pts.ID)
     JOIN $wpdb->postmeta as pm3 ON (pm3.post_id = pts.ID)
-		WHERE pm.meta_key = "date_review" AND TIMESTAMPADD(HOUR, 24, pm.meta_value) < CAST('$today' AS DATETIME)
-			AND pm2.meta_key = "user_id"
-			AND (pm3.meta_key = "product_id" AND CAST(pm3.meta_value AS SIGNED) IN ($join_product_ids))
-			AND pts.post_type = "fz_product" 
-			AND pts.post_status = "publish"
-	GROUP BY pm.meta_value HAVING COUNT(*) > 0
+        WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
+            AND pm2.meta_key = "user_id"
+            AND (pm3.meta_key = "product_id" AND CAST(pm3.meta_value AS SIGNED) IN ($join_product_ids))
+            AND pts.post_type = "fz_product" 
+            AND pts.post_status = "publish"
+    GROUP BY pm.meta_value HAVING COUNT(*) > 0
 ) 
 LIMIT $length OFFSET $start
 SLQ;

@@ -734,12 +734,11 @@ SELECT * FROM $wpdb->posts WHERE post_status = "publish"
     AND ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = "faq_category" AND meta_value = $category)
 SQL;
 
-    $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
     $results = $wpdb->get_results($sql);
-    foreach ($results as $result) {
+    $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
+    foreach ($results as $result)
         $shortcode .= "[vc_tta_section title='{$result->post_title}' tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
                        [/vc_tta_section]";
-    }
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
 
     echo do_shortcode( $shortcode );

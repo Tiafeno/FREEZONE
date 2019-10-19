@@ -22,14 +22,15 @@ class apiArticle
             case 'review':
 
                 $today = date_i18n('Y-m-d H:i:s');
-                $review_limit = new DateTime("$today - 2 day");
-                $review_limit_string = $review_limit->format('Y-m-d H:i:s');
+                $review_limit = new DateTime($today);
+                $review_limit->setTime(6, 0, 0); // Ajouter 06 du matin
+
                 $sql = <<<SLQ
   SELECT SQL_CALC_FOUND_ROWS pm.* FROM $wpdb->posts as pts
-	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
-		WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$review_limit_string' AS DATETIME)
-			AND pts.post_type = "fz_product"
-	GROUP BY pm.meta_value HAVING COUNT(*) > 0
+    JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
+        WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('{$review_limit->format("Y-m-d H:i:s")}' AS DATETIME)
+        AND pts.post_type = "fz_product"
+    GROUP BY pm.meta_value HAVING COUNT(*) > 0
     LIMIT $length OFFSET $start
 SLQ;
                 $results = $wpdb->get_results($sql);
