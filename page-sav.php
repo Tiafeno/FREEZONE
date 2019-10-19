@@ -163,15 +163,15 @@ yozi_render_breadcrumbs();
                                     this.errors.push('Le numéro de facture est obligatoire');
                                 }
 
-                                if (_.isEmpty(this.serial_number)) {
+                                if (_.isEqual(this.serial_number, '')) {
                                     this.errors.push('Le numéro de série est obligatoire');
                                 }
                             }
 
                             // Sous garentie et autre fournisseurs
                             if (this.status_product == 1 && this.product_provider == 1) {
-                                if (_.isEmpty(this.delais_garentee)) {
-                                    this.errors.push('Veuillez vérifier le délais de garentie');
+                                if (_.isEqual(this.delais_garentee, '')) {
+                                    this.errors.push('Veuillez vérifier le délais de garantie');
                                 }
                             }
 
