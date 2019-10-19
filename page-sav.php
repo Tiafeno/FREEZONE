@@ -99,7 +99,6 @@ yozi_render_breadcrumbs();
                     },
                     methods: {
                         statusHandler: function (evt) {
-                            let element = evt.currentTarget;
                             if (this.status_product == 1 && this.product_provider == 1) {
                                 this.ck_date_purchase = this.ck_bill = this.ck_serial_number = true;
                             } else {
