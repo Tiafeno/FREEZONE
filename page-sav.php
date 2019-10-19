@@ -141,6 +141,7 @@ yozi_render_breadcrumbs();
                         },
                         checkForm: function(e) {
                             e.preventDefault();
+                            var self = this;
                             this.errors = [];
 
                             if (_.isEmpty(this.product)) {
@@ -218,7 +219,7 @@ yozi_render_breadcrumbs();
                                             this.loading = false;
                                             Swal.fire({
                                                 title: 'Cher client',
-                                                html: this.message,
+                                                html: self.message,
                                                 type: 'info',
                                                 showCancelButton: false,
                                                 width: "60rem"
