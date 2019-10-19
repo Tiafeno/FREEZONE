@@ -212,7 +212,7 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
         'url' => $url
     ]);
 
-    $update_result = wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
+    wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
     wp_mail($to, $subject, $content, $headers);
     wp_send_json($sav_id);
 }, 10, 5);

@@ -27,12 +27,12 @@ class fzSav
         'date_purchase',
         'bill',
         'serial_number',
-        'reference', // Reference
-        'auctor',
         'description',
         'status_sav',
         'approximate_time',
         'quotation_ref', // Reference du devis (SAGE)
+        'auctor',
+        'reference', // Reference
         'garentee'
     ];
     public $status_product;
@@ -61,7 +61,8 @@ class fzSav
             $this->$key = $field_value;
         }
         $post_sav = get_post($sav_id);
-        $this->date_add = $post_sav->post_date;
+        if (is_object($post_sav))
+            $this->date_add = $post_sav->post_date;
     }
 
     public static function get_fields ()

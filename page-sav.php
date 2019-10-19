@@ -228,6 +228,9 @@ yozi_render_breadcrumbs();
                                                     window.location.href = rest_api.redirect_url;
                                                 }
                                             });
+                                        },
+                                        error : (jqXHR, status, errorThrown) => {
+                                            $('button[type="submit"]').text('Validé');
                                         }
                                     });
                                 }
