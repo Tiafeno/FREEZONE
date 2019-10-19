@@ -182,6 +182,7 @@ yozi_render_breadcrumbs();
                             }
 
                             this.loading = true;
+                            this.statusHandler();
                             $('button[type="submit"]').text('Chargement ...');
                             $.ajax({
                                 method: "POST",
