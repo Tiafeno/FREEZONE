@@ -69,7 +69,7 @@
             <tr>
                 <th scope="col">N°</th>
                 <th scope="col">DATE</th>
-                <th scope="col">REFERENCE</th>
+                {# <th scope="col">REFERENCE</th> #}
                 <th scope="col">Suivi par</th>
             </tr>
         </thead>
@@ -77,10 +77,10 @@
             <tr>
                 <th scope="row">DW{{order.get_id()}}</th>
                 <td>{{order.get_date_created}}</td>
-                <td>REF{{order.get_id()}}</td>
+                {# <td>REF{{order.get_id()}}</td> #}
                 <td>
                     {% if responsible is not same as(null) %}
-                        {{responsible.first_name}} {{responsible.last_name}}
+                       {{responsible.last_name}}
                     {% endif %}
                 </td>
             </tr>
