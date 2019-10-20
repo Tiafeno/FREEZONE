@@ -6,6 +6,9 @@ require_once get_stylesheet_directory() . '/vendor/autoload.php';
 require_once get_stylesheet_directory() . '/inc/fz-mail.php';
 require_once get_stylesheet_directory() . '/inc/fz-functions.php';
 
+define('freezone_phone_number', ' +261 34 86 319 90 / +261 32 53 408 03 / +261 33 82 589 08');
+define('freezone_phone_fix_number', ' +261 20 24 292 31');
+
 add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
     wp_enqueue_style('yozi-child-theme', get_stylesheet_directory_uri() . '/style.css', [], $theme->get('Version'));
