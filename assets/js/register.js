@@ -9,12 +9,14 @@
             var rc = $('#reg_rc');
             var cif = $('#reg_cif');
             var cin = $('#reg_cin');
+            var sectorActivity = $('#reg_sector_activity');
             var dateCin = $('#reg_date_cin');
             var roleValue = $(this).val().trim();
             if (roleValue === 'company') {
                 sectionCompany.show();
                 sectionParticular.hide();
                 company.attr('required', true);
+                sectorActivity.attr('required', true);
                 stat.attr('required', true);
                 nif.attr('required', true);
                 rc.attr('required', true);
@@ -25,6 +27,7 @@
                 sectionCompany.hide();
                 sectionParticular.show();
                 company.attr('required', false);
+                sectorActivity.attr('required', false);
                 stat.attr('required', false);
                 nif.attr('required', false);
                 rc.attr('required', false);

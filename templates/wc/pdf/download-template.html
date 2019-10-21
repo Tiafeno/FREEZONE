@@ -1,0 +1,140 @@
+
+<button class="btn btn-theme radius-0" id="download-btn">Telecharger</button>
+<div style="margin-top: 40px"></div>
+<div class="pdf-document" id="pdf-document">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td rowspan="2" align="top">
+                    <img width="250" src="{{hlp.theme_url}}/assets/img/logo.png"/>
+                    <p>Adresse: Androhibe BP 7595,<br>
+                    Telma Fixe: +261 20 24 292 31<br>
+                    Mobile Telma : +261 34 86 319 90<br>
+                    Mobile Orange : +261 32 53 408 03<br>
+                    Mobile Airtel : +261 33 82 589 08<br>
+                    E-mail: commercial@freezonemada.com</p>
+                    <ul>
+                        <li>STAT :47411 11 2013 0 06693</li>
+                        <li>NIF : 4001418261</li>
+                        <li>RC 2003A531</li>
+                        <li>BMOI 00004 00003 006193 201 01 91</li>
+                        <li>CIF : 0129033/DGI-F du 17/04/2018</li>
+                    </ul>
+
+                </td>
+                <td height=100></td>
+            </tr>
+            <tr>
+                <td valign=top>
+                    <h4 style="text-transform: capitalize">{{ customer.get_meta('company_name', true) }}</h4>
+
+                    {% if not customer.meta_exists('company_name') or customer.get_meta('company_name', true) is empty %}
+                    <h6 style="margin-bottom: 0px; padding-bottom: 0px">
+                        {{ customer.get_billing_first_name() }}  {{customer.get_billing_last_name() }}
+                    </h6>
+
+                    {% endif %}
+                    <p>{{ customer.get_meta('address', true) }} </p>
+                    
+                    <ul>
+                        {% if customer.meta_exists('stat') %}
+                        <li>STAT : {{ customer.get_meta('stat', true) }}</li>
+                        {% endif %}
+
+                        {% if customer.meta_exists('nif') %}
+                        <li>NIF : {{ customer.get_meta('nif', true) }}</li>
+                        {% endif %}
+
+                        {% if customer.meta_exists('rc') %}
+                        <li>RC : {{ customer.get_meta('rc', true) }}</li>
+                        {% endif %}
+
+                        {% if customer.meta_exists('cif') %}
+                        <li>CIF : {{ customer.get_meta('cif', true) }}</li>
+                        {% endif %}
+
+                        <!-- Pour les particulier -->
+                        {% if customer.meta_exists('cin') %}
+                        <li>CIN : {{ customer.get_meta('cin', true) }}</li>
+                        {% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2 class="mb-4">DEVIS</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">N°</th>
+                <th scope="col">DATE</th>
+                {# <th scope="col">REFERENCE</th> #}
+                <th scope="col">Suivi par</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">DW{{order.get_id()}}</th>
+                <td>{{order.get_date_created}}</td>
+                {# <td>REF{{order.get_id()}}</td> #}
+                <td>
+                    {% if responsible is not same as(null) %}
+                       {{responsible.last_name}}
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 40px"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" width=315>Designation</th>
+                <th scope="col">Unité</th>
+                <th scope="col">Qté</th>
+                <th scope="col">P.U.HT</th>
+                <th scope="col">Rem</th>
+                <th scope="col">Montant HT</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{item.get_name()}}</td>
+                <td></td>
+                <td>{{item.count_item}}</td>
+                <td class="currency">{{item.get_freezone_price()}}</td>
+                <td>
+                    {% if item.discount is same as(0) %} - {% else %} {{item.discount}}% {% endif %}
+                </td>
+                <td class="currency">{{item.get_freezone_subtotal()}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="margin-top: 40px"></div>
+    <table class="table table-bordered ">
+        <thead>
+            <tr>
+                <th scope="col">Total HT Brut</th>
+                <th scope="col">Total Net</th>
+                <th scope="col">TVA 20%</th>
+                <th scope="col">Montant Taxe</th>
+                <th scope="col">NET A PAYER</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="currency">{{order.get_total_ht()}}</td>
+                <td class="currency">{{order.get_total_net()}}</td>
+                <td>20%</td>
+                <td class="currency">{{ (20 * order.get_total_net()) / 100 }}</td>
+                <td>
+                    <span style="font-size: 14px" class="currency">{{ (20 * order.get_total_net()) / 100 + order.get_total_net() }}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

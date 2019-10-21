@@ -32,7 +32,6 @@ class fzQuotationProduct extends \WC_Product
      * @var Integer
      */
     public $count_item = 0;
-    public $unit_cost = 0;
     public $total = 0;
     public $item_limit = 0;
 
@@ -58,6 +57,7 @@ class fzQuotationProduct extends \WC_Product
      * La remise pour les entreprises
      */
     public $discount = 0;
+    public $discount_type = 0;
 
     /**
      * Short description of method __construct
@@ -71,7 +71,6 @@ class fzQuotationProduct extends \WC_Product
     public function __construct( $product_id, $order_id)
     {
         parent::__construct($product_id);
-
         $this->order_id = intval($order_id);
         // Récuperer les fournisseurs
 
@@ -79,8 +78,10 @@ class fzQuotationProduct extends \WC_Product
         $items = $order->get_items();
         foreach ($items as $item_id => $item) {
             if (intval($item['product_id']) === intval($product_id)) {
-                $this->count_item = $item->get_quantity();
-                
+                $this->count_item = intval($item->get_quantity());
+                $this->total = intval($item->get_total());
+                $this->_price = $this->total / $this->count_item;
+
                 $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                 $this->suppliers = json_decode($suppliers);
 
@@ -88,12 +89,13 @@ class fzQuotationProduct extends \WC_Product
                 $this->status = intval($status);
 
                 $discount = wc_get_order_item_meta( $item_id, 'discount', true );
-                $this->discount = $discount ? $discount : 0;
+                $this->discount = $discount ? intval($discount) : 0;
+
+                $discount_type = wc_get_order_item_meta( $item_id, 'discount_type', true );
+                $this->discount_type = $discount_type ? intval($discount_type) : 0;
 
                 $this->item_id = (int) $item_id;
-                $price =  intval($item->get_total()) / intval($item->get_quantity());
-                $this->unit_cost = $price;
-                $this->total = $item->get_total();
+                
                 break;
             } else continue;
         }
@@ -120,6 +122,42 @@ class fzQuotationProduct extends \WC_Product
         }
     }
 
+    public function discount_percent() {
+        return (intval($this->_price) * $this->discount) / 100;
+    }
+
+    public function get_freezone_price() {
+        $price = $this->_price;
+        switch ($this->discount_type) {
+            case 1:
+            // Remise
+                return $price + $this->discount_percent();
+                break;
+            case 2:
+            // Rajout & Aucun
+            default:
+                return $price;
+                break;
+        }
+    }
+
+    public function get_freezone_subtotal() {
+        $price = $this->_price;
+        switch ($this->discount_type) {
+            case 2:
+            // Rajout
+                return $this->count_item * ($price - $this->discount_percent());
+                break;
+            case 1:
+            // Remise & Aucun
+            case 0:
+            default:
+                return $this->count_item * $price;
+                break;
+
+        }
+    }
+
     public function get_order_id() {
         return $this->order_id;
     }
@@ -128,17 +166,6 @@ class fzQuotationProduct extends \WC_Product
         return $this->editable;
     }
 
-    public function update_status( $status = 0 ) {
-
-    }
-
-    public function add_supplier( $supplier ) {
-
-    }
-
-    public function remove_supplier( $supplier ) {
-
-    }
 
 } /* end of class fzQuotationProduct */
 

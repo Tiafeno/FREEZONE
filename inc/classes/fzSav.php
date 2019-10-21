@@ -27,12 +27,13 @@ class fzSav
         'date_purchase',
         'bill',
         'serial_number',
-        'reference', // Reference
-        'auctor',
         'description',
         'status_sav',
         'approximate_time',
-        'quotation_ref' // Reference du devis (SAGE)
+        'quotation_ref', // Reference du devis (SAGE)
+        'auctor',
+        'reference', // Reference
+        'garentee'
     ];
     public $status_product;
     public $product_provider;
@@ -41,7 +42,7 @@ class fzSav
     {
         $this->ID = $sav_id;
         foreach ( self::$fields as $key ) {
-            if ($key === 'auctor' || $key === 'reference') {
+            if ($key === 'auctor' || $key === 'reference' || $key === 'garentee') {
                 $value = get_post_meta($sav_id, 'sav_' . $key, true);
                 if ($api && $key === 'auctor') {
                     $user_controller = new \WP_REST_Users_Controller();
@@ -60,7 +61,8 @@ class fzSav
             $this->$key = $field_value;
         }
         $post_sav = get_post($sav_id);
-        $this->date_add = $post_sav->post_date;
+        if (is_object($post_sav))
+            $this->date_add = $post_sav->post_date;
     }
 
     public static function get_fields ()
@@ -171,6 +173,7 @@ add_action('rest_api_init', function() {
                         break;
                     case 'auctor':
                     case 'reference':
+                    case 'garentee':
                         return update_post_meta($object->ID, 'sav_' . $field_name, $value);
                         break;
                     case 'status_sav':
@@ -216,7 +219,7 @@ add_action('rest_api_init', function() {
 
             },
             'get_callback' => function ($object, $field_name) {
-                if ($field_name === 'auctor' || $field_name === 'reference') {
+                if ($field_name === 'auctor' || $field_name === 'reference' || $field_name === 'garentee') {
                     $value = get_post_meta($object['id'], 'sav_' . $field_name, true);
                     if ($field_name === 'auctor') {
                         $user_controller = new \WP_REST_Users_Controller();

@@ -51,7 +51,9 @@ class fzQuotation extends \WC_Order
         if (empty($client_role) || is_null($client_role)) {
             $customer_id = $this->get_customer_id();
             $customer_user = new \WP_User( (int) $customer_id);
-            update_post_meta( $this->ID, 'client_role', is_array($customer_user->roles) ? $customer_user->roles[0] : null);
+
+            $role = is_array($customer_user->roles) && !empty($customer_user->roles) ? $customer_user->roles[0] : null;
+            update_post_meta( $this->ID, 'client_role', $role);
         }
         /**
          * Les roles des clients
@@ -61,6 +63,30 @@ class fzQuotation extends \WC_Order
          */
         
         $this->clientRole = $client_role ? $client_role : null;
+
+        $this->fzItems = array_map(function($item) {
+            return new fzQuotationProduct($item['product_id'], $this->ID);
+        }, $this->get_items());
+    }
+
+    public function get_fz_items() {
+        return $this->fzItems;
+    }
+
+    public function get_total_ht() {
+        $all_total_ht = array_map(function($item) { 
+            return $item->get_freezone_price() * $item->count_item; 
+        }, $this->fzItems);
+
+        return array_sum($all_total_ht);
+    }
+
+    public function get_total_net() {
+        $all_total_net = array_map(function($item) { 
+            return $item->get_freezone_subtotal(); 
+        }, $this->fzItems);
+
+        return array_sum($all_total_net);
     }
 
     public function get_dateadd() {

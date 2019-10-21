@@ -3,7 +3,7 @@
         padding: 5px 13px;
     }
 </style>
-<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
+<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  account-orders-table">
     <thead>
         <tr>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Demande</span>
@@ -12,7 +12,7 @@
                     class="nobr">Date</span></th>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">État</span>
             </th>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr"></span>
             </th>
         </tr>
     </thead>
@@ -30,7 +30,8 @@
                {{quotation.position is same as(0) ? 'En attente' : (quotation.position is same as(1) ? "Confirmation en attente" : (quotation.position is same as(2) ? "Rejetés" : "Terminée") ) }}
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
-                <a href="?componnent=edit&id={{quotation.order_id}}" class="btn btn-sm">Voir</a>
+                <!-- <a href="?componnent=edit&id={{quotation.order_id}}" class="btn btn-sm">Voir</a> -->
+                <a href="?componnent=update&id={{quotation.order_id}}" class="btn btn-sm ml-4 btn btn-theme radius-0">Edition</a>
             </td>
         </tr>
     {% endfor %}

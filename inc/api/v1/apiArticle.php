@@ -22,14 +22,15 @@ class apiArticle
             case 'review':
 
                 $today = date_i18n('Y-m-d H:i:s');
-                $review_limit = new DateTime("$today - 2 day");
-                $review_limit_string = $review_limit->format('Y-m-d H:i:s');
+                $review_limit = new DateTime($today);
+                $review_limit->setTime(6, 0, 0); // Ajouter 06 du matin
+
                 $sql = <<<SLQ
   SELECT SQL_CALC_FOUND_ROWS pm.* FROM $wpdb->posts as pts
-	JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
-		WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$review_limit_string' AS DATETIME)
-			AND pts.post_type = "fz_product"
-	GROUP BY pm.meta_value HAVING COUNT(*) > 0
+    JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
+        WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('{$review_limit->format("Y-m-d H:i:s")}' AS DATETIME)
+        AND pts.post_type = "fz_product"
+    GROUP BY pm.meta_value HAVING COUNT(*) > 0
     LIMIT $length OFFSET $start
 SLQ;
                 $results = $wpdb->get_results($sql);
@@ -95,9 +96,7 @@ AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'user_id' AN
 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND meta_value IN ($join_product_ids)) 
 SQL;
                 $results = $wpdb->get_results($your_articles_request);
-                $count_sql = <<<CPR
-SELECT FOUND_ROWS()
-CPR;
+                $count_sql = "SELECT FOUND_ROWS()";
                 $total = $wpdb->get_var($count_sql);
                 $articles = [];
 
@@ -106,7 +105,42 @@ CPR;
 
                     $post = get_post((int) $result->ID);
                     $response = $article_controller->prepare_item_for_response($post, new WP_REST_Request());
-                    $articles[] = $response->get_data();
+                    // Récuperer les données
+                    $data =  $response->get_data();
+
+                    $product_id = (int) $data['product_id'];
+                    $quantity = [];
+                    /**
+                     * Récuperer tous les commandes en attente
+                     * pusis détecter et récuperer les produits de même identification pour récuperer tous la quantité demandée
+                     */
+                    $orders = new WP_Query([
+                        'post_type' => wc_get_order_types(),
+                        'post_status' => array_keys(wc_get_order_statuses()),
+                        "posts_per_page" => -1,
+                        'meta_query' => [
+                            [
+                                'key' => 'position',
+                                'value' => 0, // Tous les demandes en attente
+                                'compare' => '='
+                            ]
+                        ]
+                    ]);
+                    foreach ( $orders->posts as $order ) {
+                        $current_order = new WC_Order($order->ID);
+                        $items = $current_order->get_items();
+                        foreach ( $items as $item_id => $item ) {
+                            $i = $item->get_data();
+                            if ($i['product_id'] === $product_id) {
+                                $quantity[] = (int)$i['quantity'];
+                            }
+                        }
+                    }
+
+                    $qt_request = array_sum($quantity);
+                    // Ajouter la quantité demandée
+                    $data['quantity_request'] = $qt_request;
+                    $articles[] = $data;
                 }
 
                 $wpdb->flush();

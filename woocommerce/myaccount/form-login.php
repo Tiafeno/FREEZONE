@@ -16,6 +16,7 @@
  * @version 3.4.0
  */
 
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -24,6 +25,10 @@ $theme = wp_get_theme('freezone');
 wp_enqueue_script('register-fz', get_stylesheet_directory_uri() . '/assets/js/register.js', ['jquery', 'underscore'], $theme->get('Version'), true);
 $args = array('#customer_login', '#customer_register');
 $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_login_register'], $args) ? $_COOKIE['yozi_login_register'] : '#customer_login';
+
+$services = new fzServices();
+$sector_activity = $services->get_sector_activity(); // Array of sector activity
+
 ?>
 
 <?php wc_print_notices(); ?>
@@ -90,25 +95,26 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 			<?php endif; ?>
 			<p class="form-group form-row form-row-wide">
 				<label for="reg_lastname"><?php esc_html_e( 'Nom', 'yozi' ); ?> <span class="required">*</span></label>
-				<input type="text" class="input-text form-control" placeholder="Votre nom" name="lastname" id="reg_lastname" required
+				<input type="text" class="input-text form-control radius-0" placeholder="" name="lastname" id="reg_lastname" required
                        value="<?php if ( ! empty( $_POST['lastname'] ) ) echo esc_attr( $_POST['lastname'] ); ?>" />
 			</p>
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_firstname"><?php esc_html_e( 'Prénom', 'yozi' ); ?> </label>
-                <input type="text" class="input-text form-control" placeholder="Votre prénom" name="firstname" id="reg_firstname"
+                <input type="text" class="input-text form-control radius-0" placeholder="" name="firstname" id="reg_firstname"
                        value="<?php if ( ! empty( $_POST['firstname'] ) ) echo esc_attr( $_POST['firstname'] ); ?>" />
             </p>
 
-            <p class="form-group form-row form-row-wide">
+            <div class="form-group form-row form-row-wide">
                 <label for="reg_phone"><?php esc_html_e( 'Numéro de téléphone', 'yozi' ); ?> <span class="required">*</span></label>
-                <input type="text" placeholder="Votre numéro de téléphone" class="input-text form-control" name="phone" id="reg_phone" required
+                <input type="text" placeholder="Exemple: 03x xx xxx xx" class="input-text form-control radius-0" name="phone" id="reg_phone" required
                        value="<?php if ( ! empty( $_POST['phone'] ) ) echo esc_attr( $_POST['phone'] ); ?>" />
-            </p>
+                       <div style="font-size: 12px; color: #989498;">Veuillez ajouter un numero joigniable</div>
+            </div>
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_address"><?php esc_html_e( 'Adresse', 'yozi' ); ?> <span class="required">*</span></label>
-                <input type="text" placeholder="Votre adresse" class="input-text form-control" name="address" id="reg_address" required
+                <input type="text" placeholder="" class="input-text form-control radius-0" name="address" id="reg_address" required
                        value="<?php if ( ! empty( $_POST['address'] ) ) echo esc_attr( $_POST['address'] ); ?>" />
             </p>
 
@@ -116,14 +122,14 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
                 <div class="col-sm-6">
                     <p class="form-group form-row form-row-wide">
                         <label for="reg_city">Ville  <span class="required">*</span></label>
-                        <input type="text" placeholder="" class="input-text form-control" name="city" id="reg_city"
+                        <input type="text" placeholder="" class="input-text form-control radius-0" name="city" id="reg_city"
                                value="<?php if ( ! empty( $_POST['city'] ) ) echo esc_attr( $_POST['city'] ); ?>" />
                     </p>
                 </div>
                 <div class="col-sm-6">
                     <p class="form-group form-row form-row-wide">
                         <label for="reg_postal_code">Code postal  <span class="required">*</span></label>
-                        <input type="text" placeholder="" class="input-text form-control" name="postal_code" id="reg_postal_code"
+                        <input type="text" placeholder="" class="input-text form-control radius-0" name="postal_code" id="reg_postal_code"
                                value="<?php if ( ! empty( $_POST['postal_code'] ) ) echo esc_attr( $_POST['postal_code'] ); ?>" />
                     </p>
                 </div>
@@ -141,36 +147,48 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
             
             <!-- Pour les utilisateurs de type société ou entreprise --->
             <div id="section-company" style="display: none">
-                <p class="form-group form-row form-row-wide">
+                <div class="form-group form-row form-row-wide">
                     <label for="reg_company">Nom de l'entreprise  <span class="required">*</span></label>
-                    <input type="text" placeholder="" class="input-text form-control" name="company_name" id="reg_company" 
+                    <input type="text" placeholder="" class="input-text form-control radius-0" name="company_name" id="reg_company" 
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
-                </p>
+                </div>
+
+                <div class="form-group form-row form-row-wide">
+                    <label for="reg_sector_activity">Secteur d'activité <span class="required">*</span></label>
+                    <select class="form-control radius-0" name="sector_activity" id="reg_sector_activity" style="height: 46px;"
+                            value="<?php if ( ! empty( $_POST['sector_activity'] ) ) echo esc_attr( $_POST['sector_activity'] ); ?>" required>
+                        <option value="">Aucun</option>
+                        <?php foreach ($sector_activity as $activity): ?>
+                            <option value="<?= $activity['id'] ?>"><?= $activity['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
                 <div class="row">
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_stat">STAT  <span class="required">*</span></label>
-                            <input type="text" placeholder="" class="input-text form-control" name="stat" id="reg_stat" 
+                            <input type="text" placeholder="" class="input-text form-control radius-0" name="stat" id="reg_stat" 
                                    value="<?php if ( ! empty( $_POST['stat'] ) ) echo esc_attr( $_POST['stat'] ); ?>" />
                         </p>
                     </div>
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_nif">NIF  <span class="required">*</span></label>
-                            <input type="text" placeholder="" class="input-text form-control" name="nif" id="reg_nif" 
+                            <input type="text" placeholder="" class="input-text form-control radius-0" name="nif" id="reg_nif" 
                                    value="<?php if ( ! empty( $_POST['nif'] ) ) echo esc_attr( $_POST['nif'] ); ?>" />
                         </p>
                     </div>
                 </div>
+                
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_rc">RC  <span class="required">*</span></label>
-                    <input type="text" placeholder="" class="input-text form-control" name="rc" id="reg_rc" 
+                    <input type="text" placeholder="" class="input-text form-control radius-0" name="rc" id="reg_rc" 
                            value="<?php if ( ! empty( $_POST['rc'] ) ) echo esc_attr( $_POST['rc'] ); ?>" />
                 </p>
                 <p class="form-group form-row form-row-wide">
                     <label for="reg_cif">CIF  <span class="required">*</span></label>
-                    <input type="text" placeholder="" class="input-text form-control" name="cif" id="reg_cif"
+                    <input type="text" placeholder="" class="input-text form-control radius-0" name="cif" id="reg_cif"
                            value="<?php if ( ! empty( $_POST['cif'] ) ) echo esc_attr( $_POST['cif'] ); ?>" />
                 </p>
             </div>
@@ -178,17 +196,18 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
             <!-- Pour les utilisateurs de type particulier --->
             <div id="section-particular" style="display: none">
-                <p class="form-group form-row form-row-wide">
-                    <label for="reg_cin">CIN  <span class="required">*</span></label>
-                    <input type="text" placeholder="" class="input-text form-control" name="cin" id="reg_cin"
-                           value="<?php if ( ! empty( $_POST['cin'] ) ) echo esc_attr( $_POST['cin'] ); ?>" />
-                </p>
-
                 <div class="row">
                     <div class="col-sm-6">
                         <p class="form-group form-row form-row-wide">
+                            <label for="reg_cin">CIN  <span class="required">*</span></label>
+                            <input type="number" placeholder="" class="input-text form-control radius-0" name="cin" id="reg_cin" minlength="12" maxlength="12"
+                                value="<?php if ( ! empty( $_POST['cin'] ) ) echo esc_attr( $_POST['cin'] ); ?>" />
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-group form-row form-row-wide">
                             <label for="reg_date_cin">Date de délivrance  <span class="required">*</span></label>
-                            <input type="date" placeholder="" class="input-text form-control" name="date_cin" id="reg_date_cin"
+                            <input type="date" placeholder="jj/mm/aaaa" class="input-text form-control radius-0" name="date_cin" id="reg_date_cin"
                                    value="<?php if ( ! empty( $_POST['date_cin'] ) ) echo esc_attr( $_POST['date_cin'] ); ?>" />
                         </p>
                     </div>
@@ -198,7 +217,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
             <p class="form-group form-row form-row-wide">
                 <label for="reg_email"><?php esc_html_e( 'Email address', 'yozi' ); ?> <span class="required">*</span></label>
-                <input type="email" autocomplete="off" class="input-text form-control" name="email" required="true"
+                <input type="email" autocomplete="off" class="input-text form-control radius-0" name="email" required="true"
                 id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) echo esc_attr( $_POST['email'] ); ?>" />
             </p>
 
@@ -206,7 +225,7 @@ $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_logi
 
 				<p class="form-group form-row form-row-wide">
 					<label for="reg_password"><?php esc_html_e( 'Password', 'yozi' ); ?> <span class="required">*</span></label>
-					<input type="password" autocomplete="off" class="input-text form-control" name="password" id="reg_password" required="true" />
+					<input type="password" autocomplete="off" class="input-text form-control radius-0" name="password" id="reg_password" required="true" />
 				</p>
 
 			<?php endif; ?>

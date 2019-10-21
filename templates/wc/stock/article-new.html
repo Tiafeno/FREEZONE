@@ -18,14 +18,20 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <div class="form-group form-row form-row-wide">
-                <label for="reg_price">Prix <span class="required">*</span></label>
-                <input type="number" autocomplete="off" class="input-text" placeholder="" name="price" id="reg_price" required="" value="">
+            <div class="form-group form-row form-row-wide ">
+                <label for="reg_garentee">Garentie <span class="required">*</span></label>
+                <input type="text" class="input-text" placeholder="" name="garentee" id="reg_garentee" required="" value="">
             </div>
         </div>
     </div>
 
     <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group form-row form-row-wide">
+                <label for="reg_price">Prix <span class="required">*</span></label>
+                <input type="number" autocomplete="off" class="input-text" placeholder="" name="price" id="reg_price" required="" value="">
+            </div>
+        </div>
         <div class="col-sm-6">
             <div class="form-group form-row form-row-wide ">
                 <label for="reg_stock">Quantité disponible <span class="required">*</span></label>
@@ -36,8 +42,8 @@
 
     <div class="ibox-footer">
         <div>
-            <button type="submit" class="btn btn-success">Ajouter</button>
-            <a href="{{back_link}}" class="btn btn-default">Retour</a>
+            <button type="submit" class="btn btn-theme radius-0">Ajouter</button>
+            <a href="{{back_link}}" class="btn btn-default radius-0">Retour</a>
         </div>
     </div>
 

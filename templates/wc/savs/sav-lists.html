@@ -6,19 +6,26 @@
 
 
 {% if savs|length <= 0 %}
-    <p>Aucun</p>
+    <div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
+        <a class="woocommerce-Button button" href="{{sav_url}}">S.A.V</a> 
+            Envoyer une demande de Service Après Vente
+    </div>
  {% else %}
+
+    <div class="row" style="margin-bottom: 40px">
+        <div class="col-sm-6">
+            <a class="btn btn-theme radius-0" href="{{sav_url}}">S.A.V</a>
+        </div>
+    </div>
+
+
     <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table  my_account_orders account-orders-table">
         <thead>
         <tr>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Produit</span>
-            </th>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span
-                    class="nobr">Date</span></th>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Reference</span>
-            </th>
-            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span>
-            </th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Produit</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span class="nobr">Date</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-ref"><span class="nobr">Reference</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span></th>
         </tr>
         </thead>
 

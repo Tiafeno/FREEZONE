@@ -1,11 +1,12 @@
 <?php
+$to_admins = ['contact@falicrea.com', 'david@freezonemada.com'];
+
 /**
  * Cette action permet d'envoyer au administrateur un mail pour
  * les informer d'une demande de service après vente
  */
-add_action('fz_insert_sav', function ($sav_id) {
+add_action('fz_insert_sav', function ($sav_id) use ($to_admins) {
     global $Engine;
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
     $Sav = new \classes\fzSav($sav_id);
     $User = wp_get_current_user();
     $phone = get_field('phone', 'user_' . $User->ID);
@@ -14,7 +15,7 @@ add_action('fz_insert_sav', function ($sav_id) {
         'User' => ['name' => $User->first_name . ' ' . $User->last_name, 'phone' => $phone]
     ]);
     $from = $User->user_email;
-    $to = implode($admins, ',');
+    $to = implode(',', $to_admins);
     $subject = "Service apres vente sur le site freezone.click";
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
@@ -24,10 +25,9 @@ add_action('fz_insert_sav', function ($sav_id) {
 }, 10, 1);
 
 
-add_action('fz_insert_new_article', function ($article_id) {
+add_action('fz_insert_new_article', function ($article_id) use ($to_admins) {
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = implode(',', $to_admins);
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -42,6 +42,26 @@ add_action('fz_insert_new_article', function ($article_id) {
 
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
+
+add_action('fz_new_user', function ($user_id, $role) use ($to_admins)  {
+    $from = "no-reply@freezone.click";
+    $to = implode(',', $to_admins);
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $user = new WP_User(intval($user_id));
+    $url = "https://admin.freezone.click/";
+    $content = "Bonjour<br><br>";
+    $content .= "Un nouveau client vient de s'inscrire:<br>";
+    $content .= "Nom: <b>{$user->first_name}</b> <br>";
+    $content .= "Prénom: <b>{$user->last_name}</b> <br>";
+    $content .= "Adresse Email: <b>{$user->user_email}</b>";
+    $subject = "#{$user_id} - Un nouveau client vient de s'inscrire sur le site freezone.click";
+
+    wp_mail($to, $subject, $content, $headers);
+
+}, 10, 2);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
@@ -90,12 +110,15 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
 
 }, 10, 5);
 
-add_action('complete_order', function ($order_id) {
+/**
+ * Envoyer un mail au administrateur la confirmation d'une demande par le client
+ * Rejeter ou Accepter
+ */
+add_action('complete_order', function ($order_id, $status = 'completed') use ($to_admins) {
     global $Engine;
 
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = $to_admins;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -108,16 +131,19 @@ add_action('complete_order', function ($order_id) {
         'client' => $client,
         'url' => $url
     ]);
-    $subject = "#{$order_id} - Une demande vient d'être validé sur le site freezone.click";
+    $st = $status === 'completed' ? 'validée' : 'rejetée';
+    $subject = "#{$order_id} - Une demande vient d'être {$st} sur le site freezone.click";
 
     wp_mail($to, $subject, $content, $headers);
-}, 10, 1);
+}, 10, 2);
 
-add_action('fz_received_order', function ($order_id) {
+/**
+ * Demande de devis envoyer au administrateur
+ */
+add_action('fz_received_order', function ($order_id) use ($to_admins) {
     global $Engine;
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = $to_admins;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -137,14 +163,13 @@ add_action('fz_received_order', function ($order_id) {
 /**
  * Update articles succefuly
  */
-add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
+add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) use ($to_admins)  {
     global $Engine;
     $article_ids = explode(',', $_articles);
     $articles = array_map(function ($id) { return new \classes\fzSupplierArticle(intval($id)); }, $article_ids);
 
     $from = "no-reply@freezone.click";
-    $admins = ['contact@falicrea.com', 'david@freezonemada.com'];
-    $to = implode($admins, ',');
+    $to = implode(',', $to_admins);
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -187,7 +212,7 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
         'url' => $url
     ]);
 
-    $update_result = wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
+    wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
     wp_mail($to, $subject, $content, $headers);
     wp_send_json($sav_id);
 }, 10, 5);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by IntelliJ IDEA.
  * User: you-f
@@ -11,21 +12,24 @@ namespace classes;
 
 class fzMailing
 {
-    public $ID;
-    public $attach_post; // bigint
-    public $response_post; // bigint
-    public $sender; // bigint
+    private $fields = [
+        'ID',
+        'attach_post',
+        'response_post',
+        'sender',
+        'sav_status',
+    ];
 
-    public function __construct ($post_id, $api = false) {
+    public function __construct($post_id, $api = false)
+    {
         $post = \WP_Post::get_instance($post_id);
         foreach (get_object_vars($post) as $key => $value)
             $this->$key = $value;
 
-        $this->attach_post = get_field('attach_post', $this->ID); // Post fz_sav type (id)
-        $this->response_post = get_field('response_post', $this->ID); // Post fz_mailing type (id)
-        $this->sender = get_field('sender', $this->ID); // User id
+        foreach ($this->fields as $field) {
+            $this->$field = get_field($field, $this->ID);
+        }
     }
-
 }
 
 
@@ -60,12 +64,11 @@ add_action('init', function () {
 }, 10);
 
 
-add_action('rest_api_init', function() {
-    foreach ( ['attach_post', 'response_post', 'sender'] as $field ) {
+add_action('rest_api_init', function () {
+    foreach (['attach_post', 'response_post', 'sender', 'sav_status'] as $field) {
         register_rest_field('fz_mailing', $field, [
             'update_callback' => function ($value, $object, $field_name) {
                 return update_field($field_name, $value, $object->ID);
-
             },
             'get_callback' => function ($object, $field_name) {
                 $params = $_REQUEST;
@@ -87,7 +90,6 @@ add_action('rest_api_init', function() {
                             return $response->get_data();
                             break;
                     endswitch;
-
                 }
                 return $value;
             }

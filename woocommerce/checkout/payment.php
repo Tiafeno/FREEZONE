@@ -31,17 +31,26 @@ if ( ! is_ajax() ) {
 						wc_get_template( 'checkout/payment-method.php', array( 'gateway' => $gateway ) );
 					}
 				} else {
-					echo '<li>' . apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'yozi' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'yozi' ) ) . '</li>';
+					echo '<li>' . apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_billing_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'yozi' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'yozi' ) ) . '</li>';
 				}
 			?>
 		</ul>
 	<?php endif; ?>
+		<ul style="margin-top: 15px; font-weight: bold">
+				<li>Pour tout achat de moins de 100.000 HT prévoir des frais de transport de l’ordre de 12.600 HT </li>
+				<li>Pour les clients basés en province le transport est à leur charge, cependant la livraison chez leur transporteur est gratuit</li>
+		</ul>
+
 	<div class="form-row place-order">
 		<noscript>
 			<?php esc_html_e( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the <em>Update Totals</em> button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'yozi' ); ?>
 			<br/><input type="submit" class="button alt" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'yozi' ); ?>" />
 		</noscript>
 
+		<p style="color: red; font-size: 14px">
+			Nous tenons à vous rappeler l’importance de mettre les bonnes quantités dans votre devis car toute modification de quantité 
+			fera l’objet d’une nouvelle demande, ce qui peut occasionner un changement de prix. <br>Nous vous en remercions par avance 
+		</p>
 		<?php wc_get_template( 'checkout/terms.php' ); ?>
 
 		<?php do_action( 'woocommerce_review_order_before_submit' ); ?>

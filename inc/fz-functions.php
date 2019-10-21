@@ -6,6 +6,7 @@ require_once "lib/underscore.php";
 require_once 'shortcodes/after-sales-service.php';
 require_once 'shortcodes/slider.php';
 
+require_once 'classes/fzServices.php';
 require_once 'classes/fzRoles.php';
 require_once 'classes/fzSav.php';
 require_once 'classes/fzMailing.php';
@@ -68,6 +69,15 @@ try {
         'cache' => TWIG_TEMPLATE_PATH . '/cache',
         'auto_reload' => true,
     ]);
+
+    // Crée des filtres pour les template TWIG
+    $Engine->addFilter(new Twig_SimpleFilter('fakediscount', function ($item) {
+        $has_discount = wc_get_order_item_meta($item->get_id(), 'has_discount', true);
+        $fake_discount = wc_get_order_item_meta( $item->get_id(), 'fake_discount', true );
+        $has_discount= $has_discount ? boolval(intval($has_discount)) : true;
+
+        return $has_discount ? $fake_discount : '';
+    }));
 
 } catch (Twig_Error_Loader $e) {
     echo $e->getRawMessage();

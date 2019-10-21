@@ -43,7 +43,7 @@ class apiQuotation
                 }, array_values($position));
 
                 $meta_query = array_merge($meta_query, $meta);
-                $args['meta_query'] = $meta_query;
+                $args['meta_query'][] = $meta_query;
             } else {
                 $position = intval($_REQUEST['position']);
                 if (!is_nan($position)) {
@@ -60,6 +60,7 @@ class apiQuotation
 
         if (isset($_REQUEST['role']) && $_REQUEST['role'] !== '') {
             $role = $_REQUEST['role'];
+            $args['meta_query']['relation'] = 'AND';
             array_push($args['meta_query'], [
                 'key' => 'client_role',
                 'value' => $role,
@@ -76,8 +77,13 @@ class apiQuotation
                     $data = $item->get_data();
                     $response->fzItems[] = $data;
                 }
+
+                $rest_request = new WP_REST_Request();
+                $rest_request->set_param('context', 'edit');
                 
-                $response->author = $response->get_author();
+                $user_controller = new WP_REST_Users_Controller();
+                $data = $user_controller->prepare_item_for_response(new WP_User((int)$response->user_id), $rest_request);
+                $response->author = $data->get_data();
                 return $response;
             }, $the_query->posts);
 
@@ -85,6 +91,7 @@ class apiQuotation
             return [
                 "recordsTotal" => (int)$the_query->found_posts,
                 "recordsFiltered" => (int)$the_query->found_posts,
+                "args" => $args,
                 'data' => $quotations
             ];
         } else {
