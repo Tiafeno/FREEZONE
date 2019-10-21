@@ -86,6 +86,12 @@ class fzAPI
                         $post_title = strtolower($name);
                         $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}' AND post_type = 'product'";
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
+
+                        $p_cat = [];
+                        if ( ! is_array($product_cat)) {
+                            $p_cat = explode(',', $product_cat);
+                        }
+                        $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
                         if (!is_null($result)) {
                             $product = new \WC_Product($result->ID);
                         } else {
@@ -98,11 +104,8 @@ class fzAPI
                             //$current_term = is_array($current_term) && !empty($current_term) ? $current_term[0] : '';
 
                             $term_id = get_term_by( 'name', $mark, $taxonomy )->term_id;
-
+                            $categories = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request = new \WP_REST_Request();
-                            $p_cat = explode(',', $product_cat);
-                            $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
-                            $p_cat = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request->set_query_params([
                                 'type'   => 'simple',
                                 'status' => 'pending',
@@ -124,7 +127,7 @@ class fzAPI
                                     ['key'  => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
                                     ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)]
                                 ],
-                                'categories' => $p_cat,
+                                'categories' => $categories,
                                 'images'     => []
                             ]);
                             $product_controller = new \WC_REST_Products_V2_Controller();
@@ -152,7 +155,6 @@ class fzAPI
                             'total_sales' => $total_sales,
                             'user_id'     => $user_id,
                             'product_id'  => $product->get_id(),
-                            'product_cat' => explode(',', $product_cat),
                             'garentee'    => $garentee,
                             'date_add'    => $date_now,
                             'date_review' => $date_now
@@ -160,7 +162,11 @@ class fzAPI
                         ]);
                         $post_controller = new \WP_REST_Posts_Controller('fz_product');
                         $response = $post_controller->create_item($rest_request);
-
+                        $terms = array_filter($p_cat, function ($cat) { return intval($cat); });
+                        if ($response instanceof \WP_REST_Response) {
+                            $data = $response->get_data();
+                            wp_set_post_terms( (int) $data['id'], $terms, 'product_cat' );
+                        }
                         return $response;
                     },
                     'permission_callback' => function () {
