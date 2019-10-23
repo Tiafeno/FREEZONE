@@ -50,6 +50,9 @@ if (!empty($_GET)) {
             $now = date_i18n('Y-m-d H:i:s');
             $now_date = strtotime($now);
 
+            $today_date_time = new DateTime($today);
+            $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
+
             // Si le jeton a expiré on ajoute une redirection
             if ($nonce !== "update-{$User->ID}" || $now_date > $expired_date) {
                 wp_redirect(get_permalink(wc_get_page_id('myaccount')));
@@ -122,7 +125,7 @@ WHERE
             $wpdb->postmeta
         WHERE
             meta_key = 'date_review'
-                AND TIMESTAMPADD(HOUR, 24, meta_value) < CAST('$now' AS DATETIME)
+                AND CAST(meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
     )
 LIMIT $length OFFSET $offset
 CODE;
