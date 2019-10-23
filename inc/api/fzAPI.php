@@ -209,6 +209,16 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/suppliers_waiting', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [new \apiSupplier(), 'get_accepted_item_suppliers'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
 
             /**
              * Pour récuperer les clients
@@ -652,12 +662,6 @@ SQL;
                     return $role ? $role : null;
                 }
             ]);
-
-            // register_rest_field($type, 'line_items', [
-            //     'get_callback' => function ($object, $field_name) {
-            //         return $object;
-            //     }
-            // ]);
 
         }
 

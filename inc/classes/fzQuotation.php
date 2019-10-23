@@ -97,7 +97,8 @@ class fzQuotation extends \WC_Order
      * 0: En attente
      * 1: Envoyer
      * 2: Rejetés
-     * 3: Terminée
+     * 3: Acceptée
+     * 4: Terminée
      *
      * @return int
      */
