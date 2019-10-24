@@ -132,12 +132,11 @@ class fzQuotationProduct extends \WC_Product
             case 1:
             // Remise
                 return $price + $this->discount_percent();
-                break;
             case 2:
+            case 0:
             // Rajout & Aucun
             default:
                 return $price;
-                break;
         }
     }
 
@@ -147,13 +146,11 @@ class fzQuotationProduct extends \WC_Product
             case 2:
             // Rajout
                 return $this->count_item * ($price - $this->discount_percent());
-                break;
             case 1:
-            // Remise & Aucun
             case 0:
             default:
+            // Remise & Aucun
                 return $this->count_item * $price;
-                break;
 
         }
     }
