@@ -279,7 +279,7 @@ yozi_render_breadcrumbs();
                                             <td width="15%">
                                                 <div class="garentee">
                                                 <?php
-                                                $disabled = is_null($artice->garentee) || empty($artice->garentee) ? '' : 'disabled="disabled"';
+                                                $disabled = is_null($article->garentee) || empty($article->garentee) ? '' : 'disabled="disabled"';
                                                 ?>
                                                     <select name="garentee" <?= $disabled ?> style="width: 100%;">
                                                         <option value="">Aucun</option>
