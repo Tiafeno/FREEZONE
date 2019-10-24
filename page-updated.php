@@ -50,7 +50,7 @@ if (!empty($_GET)) {
             $now = date_i18n('Y-m-d H:i:s');
             $now_date = strtotime($now);
 
-            $today_date_time = new DateTime($today);
+            $today_date_time = new DateTime($now);
             $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
 
             // Si le jeton a expiré on ajoute une redirection
