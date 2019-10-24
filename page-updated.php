@@ -278,7 +278,10 @@ yozi_render_breadcrumbs();
                                             </td>
                                             <td width="15%">
                                                 <div class="garentee">
-                                                    <select name="garentee" <?= !is_null($article->garentee) ? 'disabled="disabled"': '' ?> style="width: 100%;">
+                                                <?php
+                                                $disabled = is_null($artice->garentee) || empty($artice->garentee) ? '' : 'disabled="disabled"';
+                                                ?>
+                                                    <select name="garentee" <?= $disabled ?> style="width: 100%;">
                                                         <option value="">Aucun</option>
                                                         <?php for ($i = 1; $i <= 12; $i++): ?>
                                                             <option value="<?= $i ?>" <?php echo $i==$article->garentee ? 'selected="selected"' : '' ?>>
