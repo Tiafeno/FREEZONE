@@ -29,6 +29,7 @@ add_action('init', function () {
     add_rewrite_endpoint('gd', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('pdf', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('catalogue', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
     add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
     add_filter('query_vars', function ($vars) {
@@ -69,7 +70,6 @@ TAG;
 
 }, 10);
 
-
 add_filter('woocommerce_account_menu_items', function ($items) {
     $logout = $items['customer-logout'];
 
@@ -85,6 +85,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['savs'] = "S.A.V";
         $items['gd'] = "Petites annonces";
         $items['demandes'] = "Demandes";
+        $items['catalogue'] = "Catalogues";
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";
     }
@@ -407,27 +408,67 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 
 // Service après vente
 add_action('woocommerce_account_savs_endpoint', function () {
-    global $Engine;
-    $user = wp_get_current_user();
-    $args = [
-        'post_type' => 'fz_sav',
-        'posts_per_page' => -1,
-        'meta_query' => [
-            [
-                'key' => 'sav_auctor',
-                'value' => $user->ID
-            ]
-        ]
-    ];
-
-    $the_query = new WP_Query($args);
-    $savs = array_map(function ($sav) {
-        $fzSav = new \classes\fzSav($sav->ID, true);
-        return $fzSav;
-    }, $the_query->posts);
+    global $Engine, $wp_query;
+    $route = 'index';
     $sav_url = '/sav'; // Cette url est réservé pour la publication des services àpres vente
-    echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
+    $user = wp_get_current_user();
+
+    if (isset($wp_query->query_vars['componnent'])) {
+        $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
+        $sav_id = (int) sanitize_text_field($wp_query->query_vars['sav_id']);
+        switch ($componnent) {
+            case 'revival':
+                // Envoyer un email au responsable (David & Nant.)
+                // TODO: Crée un action xxxxxx
+                if (!isset($_COOKIE['freezone_revival-' . $sav_id])) {
+                    do_action('xxxxxx', $sav_id);
+                    setcookie('freezone_revival-' . $sav_id, true,  time()+86400); // 1 day
+                    wc_add_notice("Rappe anvoyer avec succès au responsables");
+                }
+               
+                break;
+            
+            default:
+                echo "Parametre composant inconnue '{$componnent}'";
+                break;
+        }
+    }
+
+    switch ($route) {
+        case 'index':
+            $args = [
+                'post_type' => 'fz_sav',
+                'posts_per_page' => -1,
+                'meta_query' => [
+                    [
+                        'key' => 'sav_auctor',
+                        'value' => $user->ID
+                    ]
+                ]
+            ];
+        
+            $the_query = new WP_Query($args);
+            $savs = array_map(function ($sav) {
+                $fzSav = new \classes\fzSav($sav->ID, true);
+                return $fzSav;
+            }, $the_query->posts);
+            
+            echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
+            break;
+        
+        default:
+            # code...
+            break;
+    }
+
+
 }, 10);
+
+add_action('woocommerce_account_catalogue_endpoint', function() {
+    global $Engine;
+
+    echo $Engine->render('@WC/catalogues/catalogue.html', []);
+});
 
 // Demande ou devis
 add_action('woocommerce_account_demandes_endpoint', function () {
