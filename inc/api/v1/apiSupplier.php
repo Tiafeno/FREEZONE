@@ -83,6 +83,7 @@ class apiSupplier
 
                         $infos = new \stdClass();
                         $infos->quantity = $supplier->get;
+                        $infos->price = intval($item->get_total()) / intval($item->get_quantity());
                         $infos->article_id = $supplier->article_id;
                     
                         $fournisseurs[$user_id][] = $infos;
@@ -97,6 +98,7 @@ class apiSupplier
                 foreach ($infos as $info) {
                     $info_article = new \classes\fzSupplierArticle($info->article_id);
                     $info_article->item_quantity = $info->quantity;
+                    $info_article->item_price = $info->price;
                     $user_items[] = $info_article;
                 }
             }
