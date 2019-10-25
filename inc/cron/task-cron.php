@@ -45,7 +45,7 @@ SQL;
     $message .= "</ul>";
     $message = html_entity_decode($message);
     $subject = "Notification de réparation des matériels - Freezone";
-    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019]);
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
     wp_mail($to, $subject, $content, $headers);
@@ -86,7 +86,7 @@ SQL;
     $message .= "</ul>";
     $message = html_entity_decode($message);
     $subject = "Notification d'ajout de delais approximatif - Freezone";
-    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019]);
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
     wp_mail($to, $subject, $content, $headers);
@@ -136,7 +136,7 @@ SQL;
         $headers = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <$no_reply>";
-        $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019]);
+        $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
 
         // Envoyer le mail
         wp_mail($to, $subject, $content, $headers);

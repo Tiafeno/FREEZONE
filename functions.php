@@ -419,17 +419,19 @@ add_action('woocommerce_account_savs_endpoint', function () {
         switch ($componnent) {
             case 'revival':
                 // Envoyer un email au responsable (David & Nant.)
-                // TODO: Crée un action xxxxxx
                 if (!isset($_COOKIE['freezone_revival-' . $sav_id])) {
-                    do_action('xxxxxx', $sav_id);
-                    setcookie('freezone_revival-' . $sav_id, true,  time()+86400); // 1 day
-                    wc_add_notice("Rappe anvoyer avec succès au responsables");
+                    do_action('fz_sav_revival_mail', $sav_id);
+
+                    setcookie('freezone_revival-' . $sav_id, true,  time() + 86400); // 1 day
+                    wc_add_notice("Rappel anvoyer avec succès au responsables", 'success');
+                } else {
+                    wc_add_notice("Vous avez déja envoyer une rappel", 'notice');
                 }
                
                 break;
             
             default:
-                echo "Parametre composant inconnue '{$componnent}'";
+                wc_add_notice("Parametre composant inconnue '{$componnent}'", 'error');
                 break;
         }
     }
@@ -452,8 +454,10 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 $fzSav = new \classes\fzSav($sav->ID, true);
                 return $fzSav;
             }, $the_query->posts);
-            
+
+            wc_print_notices();
             echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
+            wc_clear_notices();
             break;
         
         default:

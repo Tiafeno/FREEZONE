@@ -47,6 +47,7 @@ class apiMail
             'tva' => $tva,
             'pay' => $total + $tva,
             'message' => stripslashes($message),
+            'Phone' => freezone_phone_number,
             'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 
