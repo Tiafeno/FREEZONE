@@ -471,6 +471,15 @@ add_action('woocommerce_account_savs_endpoint', function () {
 add_action('woocommerce_account_catalogue_endpoint', function() {
     global $Engine;
 
+    wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
+    // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
+    wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
+    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js' , ['vue', 'jquery'], '1.0.2');
+    wp_localize_script('account-prestation', 'account_opt', [
+        'rest_url' => esc_url_raw(rest_url()),
+        'nonce' => wp_create_nonce('wp_rest')
+    ]);
+
     echo $Engine->render('@WC/catalogues/catalogue.html', []);
 });
 
@@ -519,7 +528,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
         switch ($componnent):
             case 'edit':
-
+                // Deprecate: Not used case
                 if ($_POST) {
                     $validate = false;
                     $order = new WC_Order(intval($order_id));
@@ -731,6 +740,7 @@ add_action('woocommerce_account_pdf_endpoint', function() {
     
     if ($error) {
         wc_print_notices();
+        wc_clear_notices();
         return false;
     }
 

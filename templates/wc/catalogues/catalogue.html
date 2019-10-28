@@ -1,0 +1,23 @@
+<div id="app-prestations">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="platform">Platform</label>
+                <select class="form-control" name="platform" v-model="platform" id="platform"
+                    v-on:change="onChangePlatform($event)">
+                    <option value="">Aucun</option>
+                    <option :value="platform.key" v-for="(platform, index) in platforms">{{ platform.value }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="categorie">Categorie</label>
+                <select class="form-control" name="categorie" v-model="categorie" id="categorie">
+                    <option value="">Aucun</option>
+                    <option :value="ctg.ID" v-for="(ctg, index) in catalogues"> {{ ctg.name }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

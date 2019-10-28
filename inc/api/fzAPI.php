@@ -22,6 +22,17 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
         add_action('rest_api_init', [&$this, 'register_rest_order']);
         add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
+        
+        add_action('rest_api_init', function () {
+            add_filter('rest_catalog_query', function($args, $request) {
+                $args += array(
+                    'meta_key'   => $request['meta_key'],
+                    'meta_value' => $request['meta_value'],
+                    'meta_query' => $request['meta_query'],
+                );
+                return $args;
+            }, 99, 2);
+        });
 
         // Quotation
         add_action('rest_api_init', function () {
