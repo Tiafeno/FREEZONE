@@ -469,18 +469,19 @@ add_action('woocommerce_account_savs_endpoint', function () {
 }, 10);
 
 add_action('woocommerce_account_catalogue_endpoint', function() {
-    global $Engine;
 
     wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
     // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
     wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
-    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js' , ['vue', 'jquery'], '1.0.2');
+    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js' , ['vue', 'jquery'], rand(45, 90));
     wp_localize_script('account-prestation', 'account_opt', [
         'rest_url' => esc_url_raw(rest_url()),
         'nonce' => wp_create_nonce('wp_rest')
     ]);
 
-    echo $Engine->render('@WC/catalogues/catalogue.html', []);
+    // Render template
+    // Don't use twig because interpolation syntaxe is same for VueJS
+    include_once get_stylesheet_directory(  ) . '/templates/wc/catalogues/catalogue.html';
 });
 
 // Demande ou devis

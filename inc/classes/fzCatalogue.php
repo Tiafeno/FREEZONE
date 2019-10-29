@@ -23,6 +23,8 @@ final class fzCatalogue {
             foreach ($this->fields as $field) {
                 $this->$field = get_post_meta( $this->ID, $field, true );
             }
+
+            unset($post);
         } else {
             return new \WP_Error('', "Parametre manquant (post_id)");
         }
@@ -60,5 +62,50 @@ add_action('rest_api_init', function () {
             }
         ]);
     }
+
+    register_rest_route('api', '/catalog/', [
+        [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => function (\WP_REST_Request $rq) {
+                $per_page = isset($_REQUEST['per_page']) ? (int)$_REQUEST['per_page'] : 20;
+                $offset  = isset($_REQUEST['offset']) ? (int)$_REQUEST['offset'] : 0;
+                $args = [
+                    'post_type' => 'catalog',
+                    'post_status' => 'publish',
+                    'number' => $per_page,
+                    'offset' => $offset,
+                ];
+
+                $query = new \WP_Query($args);
+                if ($query->have_posts()) {
+                    $results = [];
+                    $request = new \WP_REST_Request();
+                    $request->set_param('context', 'edit');
+
+                    while ( $query->have_posts() ) {
+                        $query->next_post();
+                        $article_controller = new \WP_REST_Posts_Controller('catalog');
+                        $post = get_post((int) $query->post->ID);
+                        $response = $article_controller->prepare_item_for_response($post, new \WP_REST_Request());
+                        $results[] = $response->get_data();
+                    }
+                    return [
+                        "recordsTotal" => (int) $query->found_posts,
+                        "recordsFiltered" => (int) $query->found_posts,
+                        'data' => $results
+                    ];
+                } else {
+                    return [
+                        "recordsTotal" => 0,
+                        "recordsFiltered" => 0,
+                        'data' => []
+                    ];
+                }
+            },
+            'permission_callback' => function ($data) {
+                return current_user_can('edit_posts');
+            }
+        ],
+    ]);
 
 });

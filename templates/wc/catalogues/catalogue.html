@@ -2,22 +2,45 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label for="platform">Platform</label>
+                <label for="platform">Plates-forme</label>
                 <select class="form-control" name="platform" v-model="platform" id="platform"
                     v-on:change="onChangePlatform($event)">
-                    <option value="">Aucun</option>
-                    <option :value="platform.key" v-for="(platform, index) in platforms">{{ platform.value }}</option>
+                    <option value="">Sans filtre</option>
+                    <option :value="item.key" v-for="(item, index) in categories">
+                        {{item.name}}
+                    </option>
                 </select>
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="form-group">
-                <label for="categorie">Categorie</label>
-                <select class="form-control" name="categorie" v-model="categorie" id="categorie">
-                    <option value="">Aucun</option>
-                    <option :value="ctg.ID" v-for="(ctg, index) in catalogues"> {{ ctg.name }}</option>
-                </select>
-            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table
+                class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table ">
+                <thead>
+                    <tr>
+                        <th class="woocommerce-orders-table__header"><span class="nobr">Designation</span></th>
+                        <th class="woocommerce-orders-table__header "><span class="nobr">Plates-forme</span></th>
+                        <th class="woocommerce-orders-table__header "><span class="nobr">Prix</span></th>
+                        <th class="woocommerce-orders-table__header">Observation</span></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td style="padding-left: 15px">
+                            Assemblage d'un ordinateur
+                        </td>
+                        <td> PC </td>
+                        <td> Ar 780000 </td>
+                        <td> Prix atelier </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
