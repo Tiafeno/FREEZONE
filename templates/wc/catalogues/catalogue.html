@@ -2,14 +2,17 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label for="platform">Plates-forme</label>
-                <select class="form-control" name="platform" v-model="platform" id="platform"
+                <label for="platform">Plate-forme(s)</label>
+                <select class="form-control radius-0" v-model="platform" id="platform"
                     v-on:change="onChangePlatform($event)">
                     <option value="">Sans filtre</option>
-                    <option :value="item.key" v-for="(item, index) in categories">
+                    <option v-bind:value="item.key" v-for="(item, index) in platformes">
                         {{item.name}}
                     </option>
                 </select>
+            </div>
+            <div>
+                <span id="status-catalog"  style="color: red; "></span>
             </div>
         </div>
         <div class="col-sm-6">
@@ -19,7 +22,7 @@
 
     <div class="row">
         <div class="col-12">
-            <table
+            <table v-if="catalogues.length > 0"
                 class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table ">
                 <thead>
                     <tr>
@@ -31,13 +34,13 @@
                 </thead>
 
                 <tbody>
-                    <tr>
+                    <tr v-for="(ctg, index) in catalogues">
                         <td style="padding-left: 15px">
-                            Assemblage d'un ordinateur
+                            {{ctg.title.rendered}}
                         </td>
-                        <td> PC </td>
-                        <td> Ar 780000 </td>
-                        <td> Prix atelier </td>
+                        <td> {{ctg.ctg_platform | platform(platformes) }} </td>
+                        <td> {{ctg.ctg_price | currency}} </td>
+                        <td> {{ctg.ctg_observation}} </td>
                     </tr>
                 </tbody>
             </table>

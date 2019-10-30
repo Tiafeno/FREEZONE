@@ -24,10 +24,12 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
         
         add_action('rest_api_init', function () {
+            // https://wordpress.stackexchange.com/questions/271877/how-to-do-a-meta-query-using-rest-api-in-wordpress-4-7
             add_filter('rest_catalog_query', function($args, $request) {
                 $args += array(
                     'meta_key'   => $request['meta_key'],
                     'meta_value' => $request['meta_value'],
+                    'meta_compare' => $request['meta_compare'],
                     'meta_query' => $request['meta_query'],
                 );
                 return $args;

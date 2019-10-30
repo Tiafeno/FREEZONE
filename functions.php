@@ -468,6 +468,7 @@ add_action('woocommerce_account_savs_endpoint', function () {
 
 }, 10);
 
+// Menu catalogue dans l'espace client
 add_action('woocommerce_account_catalogue_endpoint', function() {
 
     wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
