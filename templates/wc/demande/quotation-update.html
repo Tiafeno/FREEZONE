@@ -89,7 +89,7 @@
                     {{ product.get_freezone_price() }}
                 </td>
                 <td>
-                    {% if product.discount is same as(0) %} - {% else %} {{product.discount}}% {% endif %}
+                    {% if product.discount_type is same as(0) %} - {% else %} {{product.discount}}% {% endif %}
                 </td>
                 <td class="currency">
                     {{product.get_freezone_subtotal()}}

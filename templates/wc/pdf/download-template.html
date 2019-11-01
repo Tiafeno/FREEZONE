@@ -106,7 +106,7 @@
                 <td>{{item.count_item}}</td>
                 <td class="currency">{{item.get_freezone_price()}}</td>
                 <td>
-                    {% if item.discount is same as(0) %} - {% else %} {{item.discount}}% {% endif %}
+                    {% if item.discount_type is same as(0) %} - {% else %} {{item.discount}}% {% endif %}
                 </td>
                 <td class="currency">{{item.get_freezone_subtotal()}}</td>
             </tr>
