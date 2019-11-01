@@ -85,7 +85,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['savs'] = "S.A.V";
         $items['gd'] = "Petites annonces";
         $items['demandes'] = "Demandes";
-        $items['catalogue'] = "Catalogues";
+        $items['catalogue'] = "Prestations";
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";
     }
