@@ -72,7 +72,7 @@
                 },
                 currency: function (value) {
                     let price = parseInt(value, 10);
-                    if (_.isNaN(price)) return 'Aucun';
+                    if (_.isNaN(price)) return 'Sur devis';
                     return new Intl.NumberFormat('de-DE', {
                         style: 'currency',
                         currency: 'MGA',

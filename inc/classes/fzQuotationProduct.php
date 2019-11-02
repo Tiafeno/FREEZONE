@@ -129,14 +129,11 @@ class fzQuotationProduct extends \WC_Product
     public function get_freezone_price() {
         $price = $this->_price;
         switch ($this->discount_type) {
-            case 1:
-            // Remise
-                return $price - $this->discount_percent();
             case 2:
             // Rajout
                 return $price + $this->discount_percent();
             case 0:
-            // Aucun
+            case 1:
             default:
                 return $price;
         }
@@ -149,10 +146,10 @@ class fzQuotationProduct extends \WC_Product
             // Rajout
                 return $this->count_item * ($price - $this->discount_percent());
             case 1:
-                return $this->get_freezone_price() * $this->count_item;
+                return ($price - $this->discount_percent()) * $this->count_item;
             case 0:
             default:
-            // Remise & Aucun
+            // Aucun
                 return $this->count_item * $price;
 
         }

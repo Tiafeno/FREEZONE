@@ -5,12 +5,12 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label for="platform">Nos differents type de support</label>
                 <select class="form-control radius-0" v-model="platform" id="platform"
                     v-on:change="onChangePlatform($event)">
-                    <option value="">Sans filtre</option>
+                    <option value="">Tous les supports</option>
                     <option v-bind:value="item.key" v-for="(item, index) in platformes">
                         {{item.name}}
                     </option>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-sm-12">
             <table v-if="catalogues.length > 0"
                 class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table ">
                 <thead>
