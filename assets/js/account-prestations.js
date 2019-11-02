@@ -26,11 +26,13 @@
                     $event.preventDefault();
                     const self = this;
                     let data = {};
-                    data.per_page = 50;
-                    data.meta_key = "ctg_platform";
-                    data.meta_value = this.platform != 3 ? [this.platform, 3] : this.platform;
-                    data.meta_compare = 'IN';
-
+                    data.per_page = 100;
+                    if (!_.isEqual(this.platform, '')) {
+                        data.meta_key = "ctg_platform";
+                        data.meta_value = this.platform != 3 ? [this.platform, 3] : this.platform;
+                        data.meta_compare = 'IN';
+                    }
+                    
                     self.changeStatus('Chargement en cours...');
                     self.queryCatalogues(data).then(response => {
                         self.changeStatus('');

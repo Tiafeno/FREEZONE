@@ -18,7 +18,7 @@ add_action('wp_enqueue_scripts', function () {
 add_filter('woocommerce_variable_sale_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_variable_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_get_price_html', 'remove_prices', 10, 2);
-function remove_prices ($price, $product)
+function remove_prices($price, $product)
 {
     if (!is_admin()) $price = '';
     return $price;
@@ -53,21 +53,19 @@ add_action('init', function () {
     add_action('delete_post', function ($post_id) {
         global $wpdb;
         $post_type = get_post_type($post_id);
-        if ($post_type === 'product'):
+        if ($post_type === 'product') :
             $get_articles_sql = <<<TAG
 SELECT ID FROM {$wpdb->posts} WHERE post_type = 'fz_product' 
   AND ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE CONVERT(LOWER(`meta_key`) USING utf8mb4) = 'product_id' 
     AND meta_value = $post_id)
 TAG;
             $results = $wpdb->get_results($get_articles_sql);
-            foreach ( $results as $post ) {
+            foreach ($results as $post) {
                 wp_delete_post(intval($post->ID), true);
             }
 
         endif;
     }, 10, 1);
-
-
 }, 10);
 
 add_filter('woocommerce_account_menu_items', function ($items) {
@@ -85,7 +83,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['savs'] = "S.A.V";
         $items['gd'] = "Petites annonces";
         $items['demandes'] = "Demandes";
-        $items['catalogue'] = "Prestations";
+        //$items['catalogue'] = "Prestations";
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";
     }
@@ -161,7 +159,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 }, 9999);
 
 add_filter('woocommerce_default_address_fields', 'disable_address_fields_validation', 999);
-function disable_address_fields_validation ($address_fields_array)
+function disable_address_fields_validation($address_fields_array)
 {
     return $address_fields_array;
 }
@@ -189,14 +187,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 $article_id = isset($wp_query->query_vars['id']) ? $wp_query->query_vars['id'] : 0;
                 if (!$article_id) return false;
                 $article_id = intval($article_id);
-                $fz_product = new \classes\fzSupplierArticle((int)$article_id);
+                $fz_product = new \classes\fzSupplierArticle((int) $article_id);
                 $parent_categories = get_terms('product_cat', [
                     'hide_empty' => false, 'parent' => 0
                 ]);
                 $categories = [];
-                foreach ( $parent_categories as $ctg ) {
+                foreach ($parent_categories as $ctg) {
                     $terms = get_terms('product_cat', ['parent' => $ctg->term_id, 'hide_empty' => false]);
-                    foreach ( $terms as $term ) {
+                    foreach ($terms as $term) {
                         $categories[] = $term;
                     }
                 }
@@ -258,27 +256,27 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     $product_exists = get_posts($verify_product_exist_args);
 
                     if (!$product_exists) {
-                        $product = get_post((int)$product_id);
-                        $product_cat = wp_get_post_terms( (int) $product_id, 'product_cat', ['fields' => 'ids'] );
+                        $product = get_post((int) $product_id);
+                        $product_cat = wp_get_post_terms((int) $product_id, 'product_cat', ['fields' => 'ids']);
                         if ($price && $stock && $product_id) {
                             $result = wp_insert_post([
                                 'post_type' => 'fz_product',
                                 'post_status' => 'publish',
                                 'post_title' => $product->post_title
                             ], true);
-                            
+
                             if (is_wp_error($result)) {
                                 wc_add_notice($result->get_error_message(), 'error');
                             } else {
                                 update_field('price', intval($price), $result);
                                 update_field('total_sales', intval($stock), $result);
                                 update_field('user_id', intval($User->ID), $result);
-                                update_field('product_id', (int)$product_id, $result);
+                                update_field('product_id', (int) $product_id, $result);
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
 
-                                update_post_meta( $result, '_fz_garentee', $garentee );
-                                wp_set_post_terms( $result, $product_cat, 'product_cat' );
+                                update_post_meta($result, '_fz_garentee', $garentee);
+                                wp_set_post_terms($result, $product_cat, 'product_cat');
                                 // Envoyer un mail au administrateur
                                 do_action('fz_insert_new_article', $result);
 
@@ -291,11 +289,10 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     } else {
                         wc_add_notice("Cette article existe déja dans votre catalogue", 'notice');
                     }
-
                 } // .end POST
 
                 wc_print_notices();
-                
+
                 echo $Engine->render('@WC/stock/article-new.html', [
                     'products' => $fz_model->get_products(),
                     'back_link' => wc_get_account_endpoint_url('stock-management')
@@ -392,7 +389,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         ]);
         $pagination .= '</ul></div>';
         $articles = [];
-        foreach ( $query->posts as $post ) {
+        foreach ($query->posts as $post) {
             $articles[] = new \classes\fzSupplierArticle($post->ID);
         }
 
@@ -427,9 +424,9 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 } else {
                     wc_add_notice("Vous avez déja envoyer une rappel", 'notice');
                 }
-               
+
                 break;
-            
+
             default:
                 wc_add_notice("Parametre composant inconnue '{$componnent}'", 'error');
                 break;
@@ -448,7 +445,7 @@ add_action('woocommerce_account_savs_endpoint', function () {
                     ]
                 ]
             ];
-        
+
             $the_query = new WP_Query($args);
             $savs = array_map(function ($sav) {
                 $fzSav = new \classes\fzSav($sav->ID, true);
@@ -456,25 +453,30 @@ add_action('woocommerce_account_savs_endpoint', function () {
             }, $the_query->posts);
 
             wc_print_notices();
-            echo $Engine->render('@WC/savs/sav-lists.html', ['savs' => $savs, 'sav_url' => $sav_url]);
+            echo $Engine->render(
+                '@WC/savs/sav-lists.html',
+                [
+                    'savs' => $savs,
+                    'sav_url' => $sav_url,
+                    'prestations_url' => wc_get_account_endpoint_url('catalogue')
+                ]
+            );
             wc_clear_notices();
             break;
-        
+
         default:
             # code...
             break;
     }
-
-
 }, 10);
 
 // Menu catalogue dans l'espace client
-add_action('woocommerce_account_catalogue_endpoint', function() {
+add_action('woocommerce_account_catalogue_endpoint', function () {
 
     wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
     // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
     wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
-    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js' , ['vue', 'jquery'], rand(45, 90));
+    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js', ['vue', 'jquery'], rand(45, 90));
     wp_localize_script('account-prestation', 'account_opt', [
         'rest_url' => esc_url_raw(rest_url()),
         'nonce' => wp_create_nonce('wp_rest')
@@ -482,7 +484,7 @@ add_action('woocommerce_account_catalogue_endpoint', function() {
 
     // Render template
     // Don't use twig because interpolation syntaxe is same for VueJS
-    include_once get_stylesheet_directory(  ) . '/templates/wc/catalogues/catalogue.html';
+    include_once get_stylesheet_directory() . '/templates/wc/catalogues/catalogue.html';
 });
 
 // Demande ou devis
@@ -535,7 +537,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $validate = false;
                     $order = new WC_Order(intval($order_id));
                     // @e.g: qt_1520 = 2 => qt_{item_id} = {quantity}
-                    foreach ( $_POST as $name => $value ) {
+                    foreach ($_POST as $name => $value) {
                         if (strpos($name, '_') !== false) {
                             $names = explode('_', $name);
                             if (empty($names) || $names[0] !== 'qt') continue;
@@ -543,24 +545,24 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                             $quantity = intval($value);
                             $order_items = $order->get_items();
 
-                            foreach ( $order_items as $id => $item ) {
+                            foreach ($order_items as $id => $item) {
                                 if ($current_item_id === $id) {
 
                                     $suppliers = wc_get_order_item_meta($id, 'suppliers', true);
                                     $suppliers = json_decode(stripslashes($suppliers));
 
-                                    $current_total = (int)$item->get_total();
+                                    $current_total = (int) $item->get_total();
                                     $current_price = $current_total / $item->get_quantity();
 
                                     $new_total = $current_price * $quantity;
                                     $item->set_quantity($quantity);
-                                    $item->set_total((string)$new_total);
+                                    $item->set_total((string) $new_total);
 
                                     $item->save();
 
                                     $rest = 0;
                                     $suppliers = array_map(function ($supplier) use ($quantity, &$rest) {
-                                        $article_id = (int)$supplier->article_id;
+                                        $article_id = (int) $supplier->article_id;
                                         $article = new \classes\fzSupplierArticle($article_id);
                                         $quantity = 0 === $rest ? $quantity : $rest;
                                         if ($article->total_sales < $quantity) {
@@ -595,14 +597,14 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 } // POST
 
                 $products = [];
-                foreach ( $items as $item ) {
+                foreach ($items as $item) {
                     // is_editable()
-                    $quotation_product = new \classes\fzQuotationProduct((int)$item['product_id'], (int)$order_id);
+                    $quotation_product = new \classes\fzQuotationProduct((int) $item['product_id'], (int) $order_id);
                     $products[] = $quotation_product;
                 }
 
                 $meta_data_suppliers = [];
-                foreach ( $products as $qProduct ) {
+                foreach ($products as $qProduct) {
 
                     if (is_null($qProduct->suppliers) || empty($qProduct->suppliers)) continue;
                     $suppliers = array_map(function ($supplier) {
@@ -618,7 +620,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 }
 
                 $quotation_params = [
-                    'order_id' => (int)$order_id,
+                    'order_id' => (int) $order_id,
                     'products' => $products,
                     'position' => intval($quotation->get_position()),
                     'date_add' => $quotation->get_dateadd(),
@@ -644,15 +646,15 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
                 // Formulaire dans quotation-update.html
                 $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
-                if (wp_verify_nonce( $nonce, 'confirmaction' )) {
+                if (wp_verify_nonce($nonce, 'confirmaction')) {
                     $value =  stripslashes($_REQUEST['value']);
                     $value = intval($value);
                     $order = new WC_Order(intval($order_id));
                     $position = get_field('position', $order->get_id());
 
                     $status = null;
-                    switch($value):
-                        case 1: 
+                    switch ($value):
+                        case 1:
                             // Demande du client accepter
                             update_field('position', 3, $order->get_id());
                             $order->update_status('completed');
@@ -671,7 +673,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     // Envoyer un mail au administrateur
                     if (!is_null($status) && !is_numeric($position))
                         do_action('complete_order', $order->get_id(), $status);
-
                 }
 
                 wc_print_notices();
@@ -679,9 +680,9 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 //Redefinir l'objet de la demande pour:
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
                 $quotation = new \classes\fzQuotation(intval($order_id));
-                
+
                 $quotation_params = [
-                    'order_id' => (int)$order_id,
+                    'order_id' => (int) $order_id,
                     'products' => $quotation->get_fz_items(),
                     'position' => intval($quotation->get_position()),
                     'date_add' => $quotation->get_dateadd()
@@ -692,16 +693,16 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     'quotation' => $quotation_params,
                     'order' => $quotation,
                     'download_url' => wc_get_account_endpoint_url('pdf'),
-                    'nonce' => wp_create_nonce( 'confirmaction' )
+                    'nonce' => wp_create_nonce('confirmaction')
                 ]);
-                
+
                 break;
         endswitch;
 
         // Effacer les notices
     } else {
         $quotations = [];
-        foreach ( $user_quotations as $order ) {
+        foreach ($user_quotations as $order) {
             $quotation = new \classes\fzQuotation($order->get_id());
             $quotations[] = [
                 'order_id' => $quotation->get_id(),
@@ -719,14 +720,12 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     }
 
     wc_clear_notices();
-
-
 }, 10);
 
 /**
  * Cette action est utiliser pour télécharger le PDF
  */
-add_action('woocommerce_account_pdf_endpoint', function() {
+add_action('woocommerce_account_pdf_endpoint', function () {
     global $Engine;
     $order = null;
     $error = false;
@@ -734,24 +733,23 @@ add_action('woocommerce_account_pdf_endpoint', function() {
     if ($_GET && isset($_GET['order_id']) && !empty($_GET['order_id'])) {
         $order_id = intval($_GET['order_id']);
         $order = new fzQuotation($order_id);
-
     } else {
         $error = true;
         wc_add_notice('Parametre manquant (order_id)', 'error');
     }
-    
+
     if ($error) {
         wc_print_notices();
         wc_clear_notices();
         return false;
     }
 
-    wp_enqueue_style( 'poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800" );
-    wp_enqueue_script( 'html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1" );
-    wp_enqueue_script( 'download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
-    wp_localize_script( 'download-pdf', 'Generator', [
+    wp_enqueue_style('poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800");
+    wp_enqueue_script('html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1");
+    wp_enqueue_script('download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
+    wp_localize_script('download-pdf', 'Generator', [
         'order_id' => $order_id
-    ] );
+    ]);
     $customer =  new WC_Customer($order->get_customer_id());
 
     // Get responsible if exist
@@ -778,7 +776,7 @@ add_action('woocommerce_account_pdf_endpoint', function() {
  */
 add_action('woocommerce_account_faq_endpoint', function () {
     global $wpdb;
-    if ( ! is_user_logged_in() ) {
+    if (!is_user_logged_in()) {
         echo "Vous n'avez pas l'autorisation necessaire pour voir les contenues de cette page";
         return true;
     }
@@ -801,10 +799,10 @@ SQL;
                        [/vc_tta_section]";
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
 
-    echo do_shortcode( $shortcode );
+    echo do_shortcode($shortcode);
 }, 10);
 
-add_action('woocommerce_account_gd_endpoint', function() {
+add_action('woocommerce_account_gd_endpoint', function () {
     global $Engine;
 
     if ($_GET) {
@@ -876,8 +874,8 @@ add_action('user_register', function ($user_id) {
     // Si le compte est une entreprise
     if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
-        foreach ( $fields as $field ) {
-            $val = sanitize_text_field($_REQUEST[ $field ]);
+        foreach ($fields as $field) {
+            $val = sanitize_text_field($_REQUEST[$field]);
             update_field($field, $val, 'user_' . $user_id);
         }
         update_field('company_name', $company_name, 'user_' . $user_id);
@@ -892,8 +890,8 @@ add_action('user_register', function ($user_id) {
     // Si le compte est particulier
     if ($role === 'particular') {
         $fields = ['cin', 'date_cin'];
-        foreach ( $fields as $field ) {
-            $val = sanitize_text_field($_REQUEST[ $field ]);
+        foreach ($fields as $field) {
+            $val = sanitize_text_field($_REQUEST[$field]);
             update_field($field, $val, 'user_' . $user_id);
         }
         // Compte ni Professionnel, ni Revendeur
@@ -908,8 +906,8 @@ add_action('user_register', function ($user_id) {
     $user_role = "fz-{$role}";
     $User->set_role($user_role);
 
-    add_user_meta( $user_id, "fz_pending_user", 1, true ); // Mettre en attente
-    add_user_meta( $user_id, "ja_disable_user", 0, true ); // Ne pas désactiver l'utilisateur
+    add_user_meta($user_id, "fz_pending_user", 1, true); // Mettre en attente
+    add_user_meta($user_id, "ja_disable_user", 0, true); // Ne pas désactiver l'utilisateur
 
     // Envoyer un email de notification pour l'administrateur
     do_action('fz_new_user', $user_id, $user_role);
@@ -933,7 +931,6 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_shipping_company($company_name);
 
     $user_customer->save_data();
-
 });
 
 add_action('wp_loaded', function () {
@@ -959,7 +956,7 @@ add_action('delete_user', function ($user_id) {
         ];
 
         $post_articles = get_posts($args);
-        foreach ( $post_articles as $post ) {
+        foreach ($post_articles as $post) {
             wp_delete_post($post->ID, true);
         }
 
@@ -979,9 +976,9 @@ add_action('woocommerce_thankyou', function ($order_id) {
     /**
      * Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
      */
-    update_post_meta( intval($order_id), 'client_role', $User->roles[0] );
+    update_post_meta(intval($order_id), 'client_role', $User->roles[0]);
 
-    foreach ( $items as $item_id => $item ) {
+    foreach ($items as $item_id => $item) {
         wc_add_order_item_meta(intval($item_id), 'status', 0);
         wc_add_order_item_meta(intval($item_id), 'suppliers', json_encode([]));
     }
