@@ -653,9 +653,9 @@ SQL;
     public function register_rest_order ()
     {
         $post_types = wc_get_order_types();
-        $metas = ['user_id', 'position'];
         foreach ( $post_types as $type ) {
-            foreach ( $metas as $meta ) {
+            // ACF field
+            foreach ( ['user_id', 'position'] as $meta ) {
                 register_rest_field($type, $meta, [
                     'update_callback' => function ($value, $object, $field_name) {
                         return update_field($field_name, $value, (int)$object->ID);
@@ -666,15 +666,20 @@ SQL;
                 ]);
             }
 
-            register_rest_field($type, 'client_role', [
-                'update_callback' => function ($value, $object, $field_name) {
-                    return update_post_meta( (int)$object->ID, $field_name, $value );
-                },
-                'get_callback' => function ($object, $field_name) {
-                    $role = get_post_meta( (int) $object['id'], $field_name, true );
-                    return $role ? $role : null;
-                }
-            ]);
+            // post meta field
+            // @var date_send: Format YYYY-MM-DD HH:mm:ss
+            foreach (['client_role', 'date_send'] as $meta) {
+                register_rest_field($type, $meta, [
+                    'update_callback' => function ($value, $object, $field_name) {
+                        return update_post_meta( (int)$object->ID, $field_name, $value );
+                    },
+                    'get_callback' => function ($object, $field_name) {
+                        $role = get_post_meta( (int) $object['id'], $field_name, true );
+                        return $role ? $role : null;
+                    }
+                ]);
+            }
+            
 
         }
 

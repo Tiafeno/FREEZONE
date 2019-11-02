@@ -31,6 +31,8 @@ require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
 require_once 'api/fzAPI.php';
 
+require_once 'cron/task-cron.php';
+
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');
 }

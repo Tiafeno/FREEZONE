@@ -1,97 +1,33 @@
 <?php
 
+include_once __DIR__ . '/function-cron.php';
+
 // Tous les jours
 add_action('everyday', function () {
-    global $wpdb, $Engine;
-
-    $no_reply = _NO_REPLY_;
     $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
     $admin_emails = [];
     foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
 
-    $to = implode(',', $admin_emails);
-    $headers = [];
-    $headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $headers[] = "From: Freezone <$no_reply>";
-
     /**
      * Vérifier si la date du delais approximatif est atteinte, s'il est atteinte on envoie un mail
-     *
      * La réparation du matériel XYV du client VVB est elle achevée ?
      */
-
-    $date_now = date_i18n('Y-m-d');
-    $sql = <<<SQL
-SELECT SQL_CALC_FOUND_ROWS pst.ID, pm.meta_value as approximate_time FROM $wpdb->posts as pst
-JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
-WHERE pst.post_type = 'fz_sav' 
-    AND pst.post_status = 'publish'
-    AND pm.meta_key = 'approximate_time' 
-    AND CAST(pm.meta_value AS DATE) < CAST('$date_now' AS DATE) 
-SQL;
-
-    $results = $wpdb->get_results($sql);
-    if (empty($results)) return;
-    $savs = get_hardwards($results);
-
-    $message = "Bonjour, <br><br>";
-    $message .= "La réparation des matériels suivant sont elles achevée?: <br>";
-    $message .= "<ul>";
-    foreach ( $savs as $sav ) {
-        $message .= "<li>Le matériel <b>{$sav['name']}</b> du client <b>{$sav['reference']}</b></li>";
-    }
-    $message .= "</ul>";
-    $message = html_entity_decode($message);
-    $subject = "Notification de réparation des matériels - Freezone";
-    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-
-    // Envoyer le mail
-    wp_mail($to, $subject, $content, $headers);
-
+    do_action( 'ask_product_repair', $admin_emails );
 
     /**
      * Envoyer un mail au téchnicien si le status du SAV est sur <à réparer>
-     *
      * Pouvez-vous rentrer le délais, approximatif de réparation du matériel XYV du client VVB »
      */
+    do_action( 'ask_approximate_date_product', $admin_emails );
 
-    $wpdb->flush();
-    $sql = <<<SQL
-SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
-JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
-WHERE pst.post_type = 'fz_sav' 
-    AND pst.post_status = 'publish'
-    AND pm.meta_key = 'status_sav' 
-    AND CAST(pm.meta_value AS SIGNED) = 3 
-SQL;
-    $results = $wpdb->get_results($sql);
-    if (empty($results)) return;
-    $savs    = get_hardwards($results);
-
-    $admins = new \WP_User_Query(['role' => ['Author']]);
-    $admin_emails = [];
-    foreach ( $admins->get_results() as $admin ) {
-        $admin_emails[] = $admin->user_email;
-    }
-    if (empty($admin_emails)) return;
-    $to = implode(',', $admin_emails);
-    $message = "Bonjour, <br><br>";
-    $message .= "Pouvez-vous rentrer le délais approximatif des matériels suivants ? <br>";
-    $message .= "<ul>";
-    foreach ( $savs as $sav ) {
-        $message .= "<li>Le matériel <b>{$sav['name']}</b> du client <b>{$sav['reference']}</b></li>";
-    }
-    $message .= "</ul>";
-    $message = html_entity_decode($message);
-    $subject = "Notification d'ajout de delais approximatif - Freezone";
-    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-
-    // Envoyer le mail
-    wp_mail($to, $subject, $content, $headers);
-
+    /**
+     * Rejetée automatiquement les demandes envoyer qui ne sont pas consulté par les clients
+     */
+    do_action('schedule_order_expired');
 }, 10);
+
 
 // Tous les 2 jours
 add_action('every_2_days', function () {
