@@ -668,14 +668,19 @@ SQL;
 
             // post meta field
             // @var date_send: Format YYYY-MM-DD HH:mm:ss
-            foreach (['client_role', 'date_send'] as $meta) {
+            foreach (['client_role', 'date_send', 'line_items_zero'] as $meta) {
                 register_rest_field($type, $meta, [
                     'update_callback' => function ($value, $object, $field_name) {
                         return update_post_meta( (int)$object->ID, $field_name, $value );
                     },
                     'get_callback' => function ($object, $field_name) {
-                        $role = get_post_meta( (int) $object['id'], $field_name, true );
-                        return $role ? $role : null;
+                        $value = get_post_meta( (int) $object['id'], $field_name, true );
+                        if ('line_items_zero' === $field_name) {
+                            if (!$value) return [];
+                            return $value;
+                        } else {
+                            return $value ? $value : null;
+                        }
                     }
                 ]);
             }

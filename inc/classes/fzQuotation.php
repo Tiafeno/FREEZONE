@@ -73,6 +73,10 @@ class fzQuotation extends \WC_Order
         return $this->fzItems;
     }
 
+    public function get_fz_items_zero() {
+        
+    }
+
     public function get_total_ht() {
         $all_total_ht = array_map(function($item) { 
             return $item->get_freezone_price() * $item->count_item; 
