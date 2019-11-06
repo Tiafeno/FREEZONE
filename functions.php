@@ -680,10 +680,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 //Redefinir l'objet de la demande pour:
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
                 $quotation = new \classes\fzQuotation(intval($order_id));
-
                 $quotation_params = [
                     'order_id' => (int) $order_id,
                     'products' => $quotation->get_fz_items(),
+                    'products_zero' => $quotation->get_fz_items_zero(),
                     'position' => intval($quotation->get_position()),
                     'date_add' => $quotation->get_dateadd()
                 ];
@@ -756,12 +756,14 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
     $items = $order->get_fz_items();
+    $items_zero = $order->get_fz_items_zero();
 
     // Afficher le template
     echo $Engine->render('@WC/pdf/download-template.html', [
         'order' => $order,
         'responsible' => $responsible,
         'items' => $items,
+        'items_zero' => $items_zero,
         'customer' => $customer,
         'hlp' => [
             'theme_url' => get_stylesheet_directory_uri()

@@ -111,6 +111,19 @@
                 <td class="currency">{{item.get_freezone_subtotal()}}</td>
             </tr>
             {% endfor %}
+
+            {% for item in items_zero %}
+            <tr>
+                <td>{{item['name']}}</td>
+                <td></td>
+                <td>-</td>
+                <td class="">-</td>
+                <td>
+                    -
+                </td>
+                <td class="currency">0</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>

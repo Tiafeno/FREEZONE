@@ -96,6 +96,26 @@
                 </td>
             </tr>
             {% endfor %}
+
+            {% for product in quotation.products_zero %}
+            <tr class="">
+                <td style="padding-left: 15px" class="not-center">
+                    {{product['name']}}
+                </td>
+                <td align="center">
+                    -
+                </td>
+                <td class="">
+                    -
+                </td>
+                <td>
+                    -
+                </td>
+                <td class="currency">
+                    0
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 
