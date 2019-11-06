@@ -799,7 +799,7 @@ SQL;
         $shortcode .= "[vc_tta_section title=\"{$title}\" tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
         [/vc_tta_section]";
     }
-        
+
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
 
     echo do_shortcode($shortcode);
@@ -938,6 +938,25 @@ add_action('user_register', function ($user_id) {
 
 add_action('wp_loaded', function () {
     //update_field('position', 1, 1431);
+
+    add_action('wp_logout', 'auto_redirect_after_logout');
+    function auto_redirect_after_logout()
+    {
+        wp_redirect(home_url());
+        exit();
+    }
+
+    // Ajouter un lien de déconnection dans le menu
+    add_filter('wp_nav_menu_items', function($items, $args) {
+        if ($args->theme_location == 'top-menu') {
+            if (is_user_logged_in()) {
+               $items .= '<li class="right"><a href="'. wp_logout_url() .'">'. __("Log Out") .'</a></li>';
+            } else {
+               $items .= '<li class="right"><a href="'. wp_login_url(get_permalink()) .'">'. __("Log In") .'</a></li>';
+            }
+         }
+         return $items;
+    }, 10, 2);
 });
 
 add_action('delete_user', function ($user_id) {
