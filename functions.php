@@ -947,9 +947,14 @@ add_action('wp_loaded', function () {
         wp_redirect(home_url());
         exit();
     }
-
-    // Ajouter un lien de déconnection dans le menu
+    
+    /* register_nav_menus( array(
+        'primary' => esc_html__( 'Primary Menu', 'yozi' ),
+        'top-menu' => esc_html__( 'Top Menu', 'yozi' ),
+        'vertical-menu' => esc_html__( 'Vertical Menu', 'yozi' ),
+    ) ); */
     add_filter('wp_nav_menu_items', function($items, $args) {
+        // Ajouter un lien de déconnection ou connexion dans le menu
         if ($args->theme_location == 'top-menu') {
             if (is_user_logged_in()) {
                $items .= '<li class="right"><a href="'. wp_logout_url() .'">'. __("Log Out") .'</a></li>';

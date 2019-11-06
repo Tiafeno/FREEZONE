@@ -149,11 +149,25 @@ add_action('fz_received_order', function ($order_id) use ($to_admins) {
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-
     $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
     $quotation = new \classes\fzQuotation($order_id);
+    $customer_id = $quotation->get_userid();
+    $message = '';
+    switch ($quotation->clientRole) {
+        case 'fz-company':
+            $company_name = get_field('company_name', 'user_' . $customer_id);
+            $message .= "Vous avez reçu une demande de devis de l’entreprise <b>{$company_name}</b>.";
+            break;
+        
+        default:
+            $customer = new WP_User($customer_id);
+            $message .= "Vous avez reçu une demande de devis d’un particulier dénommé <b>{$customer->first_name} {$customer->last_name}</b>";
+            break;
+    }
+    
     $content = $Engine->render('@MAIL/received_order.html', [
         'quotation' => $quotation,
+        'message' => html_entity_decode($message),
         'url' => $url,
         'Phone' => freezone_phone_number
     ]);
