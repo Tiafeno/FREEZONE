@@ -1,0 +1,54 @@
+<div id="app-prestations">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>Avez-vous besoin d'aide?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="platform">Nos differents type de support</label>
+                <select class="form-control radius-0" v-model="platform" id="platform"
+                    v-on:change="onChangePlatform($event)">
+                    <option value="">Tous les supports</option>
+                    <option v-bind:value="item.key" v-for="(item, index) in platformes">
+                        {{item.name}}
+                    </option>
+                </select>
+            </div>
+            <div>
+                <span id="status-catalog"  style="color: red; "></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <table v-if="catalogues.length > 0"
+                class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table ">
+                <thead>
+                    <tr>
+                        <th class="woocommerce-orders-table__header"><span class="nobr">Designation</span></th>
+                        <th class="woocommerce-orders-table__header "><span class="nobr">Plates-forme</span></th>
+                        <th class="woocommerce-orders-table__header "><span class="nobr">Prix</span></th>
+                        <th class="woocommerce-orders-table__header">Observation</span></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr v-for="(ctg, index) in catalogues">
+                        <td style="padding-left: 15px">
+                            {{ctg.title.rendered}}
+                        </td>
+                        <td> {{ctg.ctg_platform | platform(platformes) }} </td>
+                        <td> {{ctg.ctg_price | currency}} </td>
+                        <td> {{ctg.ctg_observation}} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

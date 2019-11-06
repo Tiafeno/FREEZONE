@@ -27,7 +27,8 @@ class apiQuotation
          * 0: En attente
          * 1: Envoyer
          * 2: Rejetés
-         * 3: Terminée
+         * 3: Acceptée
+         * 4: Terminée
          */
         $args['meta_query'] = [];
         if ( isset($_REQUEST['position']) && $_REQUEST['position'] != '' ) {

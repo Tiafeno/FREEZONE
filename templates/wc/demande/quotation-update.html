@@ -89,10 +89,30 @@
                     {{ product.get_freezone_price() }}
                 </td>
                 <td>
-                    {% if product.discount is same as(0) %} - {% else %} {{product.discount}}% {% endif %}
+                    {% if product.discount_type is same as(0) %} - {% else %} {{product.discount}}% {% endif %}
                 </td>
                 <td class="currency">
                     {{product.get_freezone_subtotal()}}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for product in quotation.products_zero %}
+            <tr class="">
+                <td style="padding-left: 15px" class="not-center">
+                    {{product['name']}}
+                </td>
+                <td align="center">
+                    -
+                </td>
+                <td class="">
+                    -
+                </td>
+                <td>
+                    -
+                </td>
+                <td class="currency">
+                    0
                 </td>
             </tr>
             {% endfor %}

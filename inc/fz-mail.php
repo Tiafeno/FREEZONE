@@ -98,7 +98,8 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
         'message' => html_entity_decode($message),
         'articles' => $article_posts,
-        'url' => $url
+        'url' => $url,
+        'Phone' => freezone_phone_number
     ]);
 
     $send = wp_mail($to, $subject, $content, $headers);
@@ -129,7 +130,8 @@ add_action('complete_order', function ($order_id, $status = 'completed') use ($t
     $content = $Engine->render('@MAIL/complete_order.html', [
         'quotation' => $quotation,
         'client' => $client,
-        'url' => $url
+        'url' => $url,
+        'Phone' => freezone_phone_number
     ]);
     $st = $status === 'completed' ? 'validée' : 'rejetée';
     $subject = "#{$order_id} - Une demande vient d'être {$st} sur le site freezone.click";
@@ -147,12 +149,27 @@ add_action('fz_received_order', function ($order_id) use ($to_admins) {
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-
     $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
     $quotation = new \classes\fzQuotation($order_id);
+    $customer_id = $quotation->get_userid();
+    $message = '';
+    switch ($quotation->clientRole) {
+        case 'fz-company':
+            $company_name = get_field('company_name', 'user_' . $customer_id);
+            $message .= "Vous avez reçu une demande de devis de l’entreprise <b>{$company_name}</b>.";
+            break;
+        
+        default:
+            $customer = new WP_User($customer_id);
+            $message .= "Vous avez reçu une demande de devis d’un particulier dénommé <b>{$customer->first_name} {$customer->last_name}</b>";
+            break;
+    }
+    
     $content = $Engine->render('@MAIL/received_order.html', [
         'quotation' => $quotation,
-        'url' => $url
+        'message' => html_entity_decode($message),
+        'url' => $url,
+        'Phone' => freezone_phone_number
     ]);
     $subject = "#{$order_id} - Vous avez reçu une demande de devis sur le site freezone.click";
 
@@ -184,7 +201,8 @@ add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0
     $content = $Engine->render('@MAIL/fz_updated_articles_success.html', [
         'reference' => $supplier_reference,
         'articles' => $articles,
-        'url' => $url
+        'url' => $url,
+        'Phone' => freezone_phone_number
     ]);
 
     $subject = "Un fournisseur {$supplier_reference} à mis à jour son catalogue d'article";
@@ -209,10 +227,32 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
     $message = html_entity_decode($message);
     $content = $Engine->render('@MAIL/fz_sav_contact_mail.html', [
         'message' => stripslashes($message),
-        'url' => $url
+        'url' => $url,
+        'Phone' => freezone_phone_number
     ]);
 
     wp_update_post(['ID' => (int)$sav_id, 'post_status' => 'publish'], true);
     wp_mail($to, $subject, $content, $headers);
     wp_send_json($sav_id);
 }, 10, 5);
+
+// Envoyer un rappel au administrateur
+add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
+    global $Engine;
+    $from      = "no-reply@freezone.click";
+    $to        = implode(',', ['david@freezonemada.com', 'contact@falicrea.com']);
+
+    $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
+    $sav = new classes\fzSav($sav_id);
+    $message   = "Bonjour, <br><br>Un client <b>{$user->first_name} {$user->last_name}</b> aimerait savoir l'état 
+    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->ID}</b> en SAV";
+    $message   = html_entity_decode($message);
+    $subject   = "Rappel pour SAV N°{$sav->ID} - Freezone";
+    $headers   = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: Freezone <$from>";
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
+
+    // Envoyer le mail
+    wp_mail( $to, $subject, $content, $headers );
+}, 10, 1);

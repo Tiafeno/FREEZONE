@@ -1,4 +1,7 @@
 <?php
+
+use classes\fzSupplier;
+
 /**
  * Created by IntelliJ IDEA.
  * User: you-f
@@ -8,11 +11,12 @@
 
 class apiSupplier
 {
-    public function __construct () { }
-    public function collect_suppliers (WP_REST_Request $rq)
+    public function __construct()
+    { }
+    public function collect_suppliers(WP_REST_Request $rq)
     {
-        $length = (int)$_POST['length'];
-        $start = (int)$_POST['start'];
+        $length = (int) $_POST['length'];
+        $start = (int) $_POST['start'];
 
         $args = [
             'number' => $length,
@@ -21,7 +25,7 @@ class apiSupplier
         ];
 
         $the_query = new WP_User_Query($args);
-        if ( ! empty($the_query->get_results()) ) {
+        if (!empty($the_query->get_results())) {
 
             $suppliers = array_map(function ($supplier) {
                 $response = new \classes\fzSupplier($supplier->ID);
@@ -31,37 +35,100 @@ class apiSupplier
             }, $the_query->results);
 
             return [
-                "recordsTotal" => (int)$the_query->total_users,
-                "recordsFiltered" => (int)$the_query->total_users,
+                "recordsTotal" => (int) $the_query->total_users,
+                "recordsFiltered" => (int) $the_query->total_users,
                 'data' => $suppliers
             ];
         } else {
 
             return [
-                "recordsTotal" => (int)$the_query->total_users,
-                "recordsFiltered" => (int)$the_query->total_users,
+                "recordsTotal" => (int) $the_query->total_users,
+                "recordsFiltered" => (int) $the_query->total_users,
                 'data' => []
             ];
         }
+    }
+
+    public function get_accepted_item_suppliers(WP_REST_Request $request)
+    {
+        $query_order = new WP_Query([
+            'post_type' => wc_get_order_types(),
+            'post_status' => 'any',
+            "posts_per_page" => -1,
+            'meta_query' => [
+                [
+                    'key' => 'position',
+                    'value' => 3, // Demande acceptée
+                    'compare' => '='
+                ]
+            ]
+        ]);
+
+        $results = [];
+        $fournisseurs = [];
+        foreach ($query_order->posts as $order) {
+            $current_order = new WC_Order($order->ID);
+            $items = $current_order->get_items();
+
+            foreach ($items as $item_id => $item) {
+                $suppliers = wc_get_order_item_meta($item_id, 'suppliers', true);
+                $suppliers = json_decode($suppliers);
+                $data = $item->get_data();
+                if (is_array($suppliers) && !empty($suppliers)) {
+                    foreach ($suppliers as $supplier) {
+                        $user_id = (int) $supplier->supplier;
+                        if (!isset($fournisseurs[$user_id])) {
+                            $fournisseurs[$user_id] = [];
+                        }
+
+                        $infos = new \stdClass();
+                        $infos->quantity = $supplier->get;
+                        $infos->price = intval($item->get_total()) / intval($item->get_quantity());
+                        $infos->article_id = $supplier->article_id;
+                    
+                        $fournisseurs[$user_id][] = $infos;
+                    }
+                }
+            }
+        }
+
+        foreach ($fournisseurs as $user_id => $infos) {
+            $user_items = [];
+            if (is_array($infos)) {
+                foreach ($infos as $info) {
+                    $info_article = new \classes\fzSupplierArticle($info->article_id);
+                    $info_article->item_quantity = $info->quantity;
+                    $info_article->item_price = $info->price;
+                    $user_items[] = $info_article;
+                }
+            }
+            $results[] = [
+                'user_id' => $user_id,
+                'data' => new \classes\fzSupplier($user_id),
+                'articles' => $user_items
+            ];
+        }
+
+        return ($results);
+
 
     }
 
-    public function action_collect_suppliers(WP_REST_Request $request) {
+    public function action_collect_suppliers(WP_REST_Request $request)
+    {
         global $wpdb;
-
-        $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
-        $start = isset($_REQUEST['start']) ? (int)$_REQUEST['start'] : 1;
-
+        $length = isset($_REQUEST['length']) ? (int) $_REQUEST['length'] : 10;
+        $start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 1;
         $action = $request['action'];
         if (empty($action)) wp_send_json_error("Parametre 'action' manquant");
         switch ($action) {
-            // Récupérer les fournisseurs en attente de validation
+                // Récupérer les fournisseurs en attente de validation
             case 'review':
 
                 // Récuperer tous les demandes en attente
                 $orders = new WP_Query([
                     'post_type' => wc_get_order_types(),
-                    'post_status' => array_keys( wc_get_order_statuses() ),
+                    'post_status' => array_keys(wc_get_order_statuses()),
                     "posts_per_page" => -1,
                     'meta_query' => [
                         [
@@ -81,7 +148,7 @@ class apiSupplier
                         array_push($product_ids, (int) $data['product_id']);
                     }
                 }
-                $product_ids = array_unique($product_ids, SORT_NUMERIC );
+                $product_ids = array_unique($product_ids, SORT_NUMERIC);
                 $join_product_ids = implode(',', $product_ids);
                 if (empty($join_product_ids)) {
                     return [
@@ -124,7 +191,7 @@ CPR;
                     $data = $user_controller->prepare_item_for_response(new WP_User($result->ID), $rest_request);
                     $Suppliers[] = $data->get_data();
                 }
-    
+
                 $wpdb->flush();
                 return [
                     "recordsTotal" => $total,

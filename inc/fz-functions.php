@@ -19,6 +19,7 @@ require_once 'classes/fzQuotation.php';
 require_once 'classes/fzQuotationProduct.php';
 require_once 'classes/fzGoodDeal.php';
 require_once 'classes/fzCarousel.php';
+require_once 'classes/fzCatalogue.php';
 
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
@@ -29,6 +30,8 @@ require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
 require_once 'api/fzAPI.php';
+
+require_once 'cron/task-cron.php';
 
 if (!defined('TWIG_TEMPLATE_PATH')) {
     define('TWIG_TEMPLATE_PATH', get_stylesheet_directory() . '/templates');

@@ -36,6 +36,7 @@ class fzQuotation extends \WC_Order
     public $user_id = 0;
     public $clientRole = null;
     public $fzItems = [];
+    public $fzItemsZero = [];
 
     public function __construct ($order = 0) {
         parent::__construct($order);
@@ -67,10 +68,16 @@ class fzQuotation extends \WC_Order
         $this->fzItems = array_map(function($item) {
             return new fzQuotationProduct($item['product_id'], $this->ID);
         }, $this->get_items());
+
+        $this->fzItemsZero = get_post_meta( $this->ID, 'line_items_zero', true );
     }
 
     public function get_fz_items() {
         return $this->fzItems;
+    }
+
+    public function get_fz_items_zero() {
+        return is_array($this->fzItemsZero) ? $this->fzItemsZero : [];
     }
 
     public function get_total_ht() {
@@ -97,7 +104,8 @@ class fzQuotation extends \WC_Order
      * 0: En attente
      * 1: Envoyer
      * 2: Rejetés
-     * 3: Terminée
+     * 3: Acceptée
+     * 4: Terminée
      *
      * @return int
      */

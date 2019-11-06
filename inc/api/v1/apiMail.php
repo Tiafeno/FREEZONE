@@ -27,26 +27,12 @@ class apiMail
         if ($order_id === 0 || is_null($order_id)) wp_send_json_error("Parametre 'order_id' est incorrect");
 
         $order = new WC_Order($order_id);
-
-        $total = (int) $order->get_total();
-        $tva = ($total * $this->tva) / 100;
-        $items = [];
-        foreach ($order->get_items() as $item_id => $item) {
-            $_item = new stdClass();
-            $_item->name = $item->get_name();
-            $_item->quantity = $item->get_quantity();
-            $_item->price = round((int) $item['total'] / $item->get_quantity());
-
-            $items[] = $_item;
-        }
         $data = $order->get_data();
         $message = html_entity_decode($message);
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
-            'data' => $data,
-            'items' => $items,
-            'tva' => $tva,
-            'pay' => $total + $tva,
             'message' => stripslashes($message),
+            'Phone' => freezone_phone_number,
+            'Year'  => date('Y'),
             'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
         ]);
 

@@ -1,6 +1,6 @@
 <style type="text/css">
     .woocommerce table.shop_table td {
-        padding: 5px 13px;
+        padding: 15px;
     }
 </style>
 
@@ -13,8 +13,9 @@
  {% else %}
 
     <div class="row" style="margin-bottom: 40px">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <a class="btn btn-theme radius-0" href="{{sav_url}}">S.A.V</a>
+            <a class="btn btn-theme radius-0" style="margin-left: 5px" href="{{prestations_url}}">Prestations</a>
         </div>
     </div>
 
@@ -26,6 +27,7 @@
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span class="nobr">Date</span></th>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-ref"><span class="nobr">Reference</span></th>
             <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Statut</span></th>
+            <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-action"><span class="nobr">Action</span></th>
         </tr>
         </thead>
 
@@ -43,6 +45,9 @@
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
                 {{sav.get_status_string()}}
+            </td>
+            <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
+                <a class="btn btn-theme btn-sm radius-0" href="#relance">RELANCER</a>
             </td>
         </tr>
         {% endfor %}

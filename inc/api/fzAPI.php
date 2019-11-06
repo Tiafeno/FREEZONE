@@ -22,6 +22,19 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
         add_action('rest_api_init', [&$this, 'register_rest_order']);
         add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
+        
+        add_action('rest_api_init', function () {
+            // https://wordpress.stackexchange.com/questions/271877/how-to-do-a-meta-query-using-rest-api-in-wordpress-4-7
+            add_filter('rest_catalog_query', function($args, $request) {
+                $args += array(
+                    'meta_key'   => $request['meta_key'],
+                    'meta_value' => $request['meta_value'],
+                    'meta_compare' => $request['meta_compare'],
+                    'meta_query' => $request['meta_query'],
+                );
+                return $args;
+            }, 99, 2);
+        });
 
         // Quotation
         add_action('rest_api_init', function () {
@@ -86,6 +99,12 @@ class fzAPI
                         $post_title = strtolower($name);
                         $request_product_exist_sql = "SELECT * FROM $wpdb->posts WHERE CONVERT(LOWER(`post_title`) USING utf8mb4) = '{$post_title}' AND post_type = 'product'";
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
+
+                        $p_cat = [];
+                        if ( ! is_array($product_cat)) {
+                            $p_cat = explode(',', $product_cat);
+                        }
+                        $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
                         if (!is_null($result)) {
                             $product = new \WC_Product($result->ID);
                         } else {
@@ -98,11 +117,8 @@ class fzAPI
                             //$current_term = is_array($current_term) && !empty($current_term) ? $current_term[0] : '';
 
                             $term_id = get_term_by( 'name', $mark, $taxonomy )->term_id;
-
+                            $categories = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request = new \WP_REST_Request();
-                            $p_cat = explode(',', $product_cat);
-                            $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
-                            $p_cat = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request->set_query_params([
                                 'type'   => 'simple',
                                 'status' => 'pending',
@@ -124,7 +140,7 @@ class fzAPI
                                     ['key'  => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
                                     ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)]
                                 ],
-                                'categories' => $p_cat,
+                                'categories' => $categories,
                                 'images'     => []
                             ]);
                             $product_controller = new \WC_REST_Products_V2_Controller();
@@ -152,7 +168,6 @@ class fzAPI
                             'total_sales' => $total_sales,
                             'user_id'     => $user_id,
                             'product_id'  => $product->get_id(),
-                            'product_cat' => explode(',', $product_cat),
                             'garentee'    => $garentee,
                             'date_add'    => $date_now,
                             'date_review' => $date_now
@@ -160,7 +175,11 @@ class fzAPI
                         ]);
                         $post_controller = new \WP_REST_Posts_Controller('fz_product');
                         $response = $post_controller->create_item($rest_request);
-
+                        $terms = array_filter($p_cat, function ($cat) { return intval($cat); });
+                        if ($response instanceof \WP_REST_Response) {
+                            $data = $response->get_data();
+                            wp_set_post_terms( (int) $data['id'], $terms, 'product_cat' );
+                        }
                         return $response;
                     },
                     'permission_callback' => function () {
@@ -197,6 +216,16 @@ class fzAPI
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new \apiSupplier(), 'action_collect_suppliers'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+
+            register_rest_route('api', '/suppliers_waiting', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [new \apiSupplier(), 'get_accepted_item_suppliers'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
                     }
@@ -624,9 +653,9 @@ SQL;
     public function register_rest_order ()
     {
         $post_types = wc_get_order_types();
-        $metas = ['user_id', 'position'];
         foreach ( $post_types as $type ) {
-            foreach ( $metas as $meta ) {
+            // ACF field
+            foreach ( ['user_id', 'position'] as $meta ) {
                 register_rest_field($type, $meta, [
                     'update_callback' => function ($value, $object, $field_name) {
                         return update_field($field_name, $value, (int)$object->ID);
@@ -637,21 +666,25 @@ SQL;
                 ]);
             }
 
-            register_rest_field($type, 'client_role', [
-                'update_callback' => function ($value, $object, $field_name) {
-                    return update_post_meta( (int)$object->ID, $field_name, $value );
-                },
-                'get_callback' => function ($object, $field_name) {
-                    $role = get_post_meta( (int) $object['id'], $field_name, true );
-                    return $role ? $role : null;
-                }
-            ]);
-
-            // register_rest_field($type, 'line_items', [
-            //     'get_callback' => function ($object, $field_name) {
-            //         return $object;
-            //     }
-            // ]);
+            // post meta field
+            // @var date_send: Format YYYY-MM-DD HH:mm:ss
+            foreach (['client_role', 'date_send', 'line_items_zero'] as $meta) {
+                register_rest_field($type, $meta, [
+                    'update_callback' => function ($value, $object, $field_name) {
+                        return update_post_meta( (int)$object->ID, $field_name, $value );
+                    },
+                    'get_callback' => function ($object, $field_name) {
+                        $value = get_post_meta( (int) $object['id'], $field_name, true );
+                        if ('line_items_zero' === $field_name) {
+                            if (!$value) return [];
+                            return $value;
+                        } else {
+                            return $value ? $value : null;
+                        }
+                    }
+                ]);
+            }
+            
 
         }
 
