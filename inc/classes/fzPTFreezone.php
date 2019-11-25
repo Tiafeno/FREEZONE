@@ -67,21 +67,23 @@ class fzPTFreezone
                                     $user_role->add_cap($capabilitie);
                                 endif;
 
-                                endforeach;
+                            endforeach;
                         }
                     }
                 }
+            endforeach;
+
+            // for admin access
+            $caps = ['list_users', 'upload_files', 'edit_users'];
+            foreach ($caps as $ca) {
+                foreach (['editor', 'author'] as $role):
+                    $user_role = get_role($role);
+                    if ( ! $user_role->has_cap($capabilitie) ):
+                        $user_role->add_cap($capabilitie);
+                    endif;
+
                 endforeach;
-
-            $editor_role = get_role('editor');
-            $caps = ['list_users', 'edit_users'];
-            foreach ($caps as $cap) {
-                if ( ! $editor_role->has_cap($cap) ) {
-                    $editor_role->add_cap($cap);
-                }
             }
-
-
         });
     }
 
