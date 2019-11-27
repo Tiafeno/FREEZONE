@@ -93,6 +93,12 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     return $items;
 }, 999);
 
+// enlever l'etat/Comite dans le formulaire de livraison
+add_filter( 'woocommerce_default_address_fields', function($fields) {
+    unset( $fields['state'] );
+	return $fields;
+}, 999 );
+
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
 
