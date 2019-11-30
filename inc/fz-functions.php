@@ -21,6 +21,7 @@ require_once 'classes/fzGoodDeal.php';
 require_once 'classes/fzCarousel.php';
 require_once 'classes/fzCatalogue.php';
 
+require_once 'api/v1/apiGoodDeal.php';
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
 require_once 'api/v1/apiProduct.php';
