@@ -28,6 +28,7 @@ class apiImport
         $ctg_names = explode(',', $categories);
         foreach ($ctg_names as $item) {
             $item = trim(stripslashes($item));
+            $item = ucfirst($item);
             $term = term_exists($item, $taxonomy_cat_name);
             if (null === $term || 0 === $term || !$term) {
                 $term = wp_insert_term($item, $taxonomy_cat_name);
