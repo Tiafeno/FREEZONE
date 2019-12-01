@@ -274,6 +274,19 @@ class fzAPI
                                     ]
                                 ]
                             ]);
+                        } else {
+                            $user = wp_get_current_user(  );
+                            $roles = $user->roles;
+                            if (\in_array('editor', $roles)) {
+                                $args = array_merge($args, [
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'responsible',
+                                            'value' => $user->ID
+                                        ]
+                                    ]
+                                ]);
+                            }
                         }
 
                         $user_query = new \WP_User_Query($args);
