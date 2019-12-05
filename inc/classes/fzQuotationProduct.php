@@ -88,9 +88,11 @@ class fzQuotationProduct extends \WC_Product
                 $status = wc_get_order_item_meta( $item_id, 'status', true );
                 $this->status = intval($status);
 
+                // Valeur pour la remise
                 $discount = wc_get_order_item_meta( $item_id, 'discount', true );
                 $this->discount = $discount ? intval($discount) : 0;
 
+                // Type de remise (Aucun ou Ajouter)
                 $discount_type = wc_get_order_item_meta( $item_id, 'discount_type', true );
                 $this->discount_type = $discount_type ? intval($discount_type) : 0;
 

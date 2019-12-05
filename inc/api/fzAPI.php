@@ -567,26 +567,34 @@ SQL;
             ]);
         }
 
-        $product_metas = [
+        $article_metas = [
             ['name' => 'marge', 'key'        => '_fz_marge'], // (int)
             ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'], // (int)
             ['name' => 'marge_particular', 'key' => '_fz_marge_particular'], // (int)
         ];
 
-        foreach ($product_metas as $meta) {
+        foreach ($article_metas as $meta) {
             register_rest_field('fz_product', $meta['name'], [
                 'update_callback' => function ($value, $object) use ($meta) {
-                    $product_id = get_field('product_id', (int)$object->ID);
-                    $product = new \WC_Product((int)$product_id);
-                    $product->update_meta_data($meta['key'], $value);
-                    return $product->save();
+                    // $product_id = get_field('product_id', (int)$object->ID);
+                    // $product = new \WC_Product((int)$product_id);
+                    // $product->update_meta_data($meta['key'], $value);
+                    return update_post_meta((int) $object->ID, $meta['key'], $value);
                 },
                 'get_callback' => function ($object) use ($meta) {
-                    $product_id = get_field('product_id', (int)$object['id']);
-                    $product = new \WC_Product((int)$product_id);
-                    $marge = $product->get_meta($meta['key']);
+                    $meta_value = get_post_meta((int) $object['id'], $meta['key'], true);
+                    
+                    if (!$meta_value || is_null($meta_value)) {
+                        // BUG FIX: Ici on corrige le bug que les marges doivent se trouver dans l'article mais pas dans les produits
+                        $product_id = get_field('product_id', (int)$object['id']);
+                        $product = new \WC_Product((int)$product_id);
+                        $marge = $product->get_meta($meta['key']);
 
-                    return $marge;
+                        // Update post meta
+                        update_post_meta((int) $object['id'], $meta['key'], $marge);
+                        $meta_value = $marge;
+                    }
+                    return $meta_value;
                 }
             ]);
         }
