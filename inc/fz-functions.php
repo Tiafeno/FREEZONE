@@ -139,7 +139,7 @@ add_action('admin_init', function () {
     }
 
     // Afficher les marges
-    add_filter('manage_product_posts_columns', function ($columns) {
+    add_filter('manage_fz_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
         $columns['marge_dealer'] = '% R.';
         $columns['marge_particular'] = '% P.';
@@ -147,22 +147,22 @@ add_action('admin_init', function () {
         return $columns;
     });
 
-    add_action('manage_product_posts_custom_column', function ($column, $post_id) {
-        $p = wc_get_product($post_id);
+    add_action('manage_fz_product_posts_custom_column', function ($column, $post_id) {
+        $p = get_post($post_id);
         if ($column === 'marge'):
-            $marge = $p->get_meta('_fz_marge', true);
+            $marge = get_post_meta($post_id, '_fz_marge', true);
             $marge = $marge ? $marge : 0;
             echo "{$marge} %";
         endif;
         
         if ($column === 'marge_dealer'):
-            $marge_dealer = $p->get_meta('_fz_marge_dealer', true);
+            $marge_dealer = get_post_meta($post_id, '_fz_marge_dealer', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
 
         if ($column === 'marge_particular'):
-            $marge_dealer = $p->get_meta('_fz_marge_particular', true);
+            $marge_dealer = get_post_meta($post_id, 'marge_particular', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
@@ -193,9 +193,9 @@ add_action('init', function () {
      * @return array $options
      */
     function add_column_to_importer( $options ) {
-        $options['_fz_marge'] = 'Marge compte entreprise professionel';
-        $options['_fz_marge_dealer'] = 'Marge compte entreprise revendeur';
-        $options['_fz_marge_particular'] = 'Marge compte particulier';
+        $options['_fz_marge'] = 'Marge UF';
+        $options['_fz_marge_dealer'] = 'Marge revendeur';
+        $options['_fz_marge_particular'] = 'Marge particulier';
 
         return $options;
     }
@@ -211,9 +211,9 @@ add_action('init', function () {
     function add_column_to_mapping_screen( $columns ) {
 
         // potential column name => column slug
-        $columns['Marge compte entreprise professionel'] = '_fz_marge';
-        $columns['Marge compte entreprise revendeur'] = '_fz_marge_dealer';
-        $columns['Marge compte particulier'] = '_fz_marge_particular';
+        $columns['Marge UF'] = '_fz_marge';
+        $columns['Marge revendeur'] = '_fz_marge_dealer';
+        $columns['Marge particulier'] = '_fz_marge_particular';
 
         return $columns;
     }
@@ -230,9 +230,7 @@ add_action('init', function () {
     function process_import( $object, $data ) {
         $fields = ['_fz_marge', '_fz_marge_dealer', '_fz_marge_particular'];
         foreach ($fields as $field) {
-            if ( ! empty( $data[ $field ] ) ) {
-                $object->update_meta_data( $field, $data[ $field ] );
-            }
+            $value = $data[ $field ];
         }
 
         // TODO: Ajouter une article
