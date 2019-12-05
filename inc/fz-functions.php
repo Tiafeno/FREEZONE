@@ -234,6 +234,8 @@ add_action('init', function () {
                 $object->update_meta_data( $field, $data[ $field ] );
             }
         }
+
+        // TODO: Ajouter une article
         
         return $object;
     }
