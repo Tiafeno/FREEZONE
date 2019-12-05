@@ -265,15 +265,30 @@ class fzAPI
                             'role__in' => ['fz-particular', 'fz-company'],
                             'order' => 'DESC'
                         ];
-                        if (!empty($_REQUEST['responsible'])) {
-                            $args = array_merge($args, [
-                                'meta_query' => [
-                                    [
-                                        'key' => 'responsible',
-                                        'value' => (int)$_REQUEST['responsible']
+
+                        $user = wp_get_current_user(  );
+                        if (\in_array('administrator', $user->roles)) {
+                            if (!empty($_REQUEST['responsible'])) {
+                                $args = array_merge($args, [
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'responsible',
+                                            'value' => (int)$_REQUEST['responsible']
+                                        ]
                                     ]
-                                ]
-                            ]);
+                                ]);
+                            }
+                        } else {
+                            if (\in_array('editor', $user->roles)) {
+                                $args = array_merge($args, [
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'responsible',
+                                            'value' => $user->ID
+                                        ]
+                                    ]
+                                ]);
+                            }
                         }
 
                         $user_query = new \WP_User_Query($args);
