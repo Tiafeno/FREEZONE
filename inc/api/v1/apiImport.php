@@ -139,6 +139,7 @@ class apiImport
         wp_send_json_success("Article ajouté avec succès");
     }
 
+    // Recuperer un fourniseur par son reference
     protected function get_supplier_by_ref($ref = null) {
         global $wpdb;
         $sql = <<<SQL
@@ -151,6 +152,8 @@ SQL;
         $user_id = (int) $result->user_id;
         return new WP_User($user_id);
     }
+
+    // Verifier si le produit existe
     protected function product_exist($title = '') {
         global $wpdb;
 

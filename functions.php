@@ -854,8 +854,8 @@ add_action('user_register', function ($user_id) {
     $firstname = $lastname = "";
 
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
-        $firstname = sanitize_text_field($_POST['firstname']);
-        $lastname  = sanitize_text_field($_POST['lastname']);
+        $firstname = esc_attr($_POST['firstname']);
+        $lastname  = esc_attr($_POST['lastname']);
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
