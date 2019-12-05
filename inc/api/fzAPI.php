@@ -474,9 +474,10 @@ SQL;
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) use ($admin) {
-                    if ($admin !== 'administrator' && $field_name === 'company_name') {
+                    $client_id = $object->ID;
+                    if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $object->roles)) {
                         return true;
-                    } else return update_field($field_name, $value, 'user_' . $object->ID);
+                    } else return update_field($field_name, $value, 'user_' . $client_id);
 
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
