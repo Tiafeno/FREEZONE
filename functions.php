@@ -1008,9 +1008,7 @@ add_action('woocommerce_thankyou', function ($order_id) {
     update_field('position', 0, intval($order_id));
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
-    /**
-     * Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
-     */
+    // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
     update_post_meta(intval($order_id), 'client_role', $User->roles[0]);
 
     foreach ($items as $item_id => $item) {
@@ -1041,19 +1039,20 @@ add_action('acf/save_post', function ($post_id) {
     if (!is_user_logged_in()) return;
     if (get_post_type($post_id) !== 'fz_sav') return;
     $User = wp_get_current_user();
-    update_post_meta($post_id, 'sav_auctor', $User->ID);
-    update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
-
     $product_name = get_field('product', $post_id);
     $product_mark = get_field('mark', $post_id);
-
-    wp_update_post(['ID' => $post_id, 'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"]);
-
+    wp_update_post(
+        [
+            'ID' => $post_id, 
+            'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"
+        ]
+    );
+    update_post_meta($post_id, 'sav_auctor', $User->ID);
+    update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
     // Envoyer un email aux administrateur
     do_action('fz_insert_sav', $post_id);
 });
 
 add_action('wp_loaded', function () {
-    //update_post_meta(1380, 'test', 12);
-    //wp_update_attachment_metadata(1380, ['key' => 12498469]);
+
 });

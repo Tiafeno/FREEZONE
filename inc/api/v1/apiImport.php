@@ -73,11 +73,6 @@ class apiImport
                 'description'   => !empty($description) ? stripslashes($description) : '',
                 'short_description' => !empty($short_description) ? stripslashes($short_description) : '',
                 'categories' => $categorie_terms,
-                'meta_data' => [
-                    [ 'key' => '_fz_marge', 'value' => trim($marge) ],
-                    [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
-                    [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
-                ],
                 'images' => []
             ];
 
@@ -131,6 +126,16 @@ class apiImport
         update_field('product_id', $product_id, $article_id);
         update_field('total_sales', wc_clean($quantity), $article_id);
         update_field('user_id', $supplier->ID, $article_id);
+
+        // Ajouter les meta dans l'article
+        $meta_data = [
+            [ 'key' => '_fz_marge', 'value' => trim($marge) ],
+            [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
+            [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
+        ];
+        foreach ($meta_data as $data) {
+            update_post_meta($article_id, $data['key'], $data['value']);
+        }
 
         if (!empty($terms)) {
             wp_set_post_terms($article_id, $terms, $taxonomy_cat_name);
