@@ -201,19 +201,18 @@ add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0
     global $Engine;
     $article_ids = explode(',', $_articles);
     $articles = array_map(function ($id) { return new \classes\fzSupplierArticle(intval($id)); }, $article_ids);
-
     $from = "no-reply@freezone.click";
-    $to = implode(',', apply_filters( 'get_responsible', ['editor', 'administrator'] ));
+    $to = implode(',', apply_filters( 'get_responsible', ['administrator'] ));
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-
     $supplier_reference = '';
-    if (!empty($supplier_id)) {
+    if ( 0 !== $supplier_id && is_numeric($supplier_id)) {
         $supplier = new \classes\fzSupplier($supplier_id);
         $supplier_reference = $supplier->reference;
+    } else {
+        return false;
     }
-
     $url = "https://admin.freezone.click";
     $content = $Engine->render('@MAIL/fz_updated_articles_success.html', [
         'reference' => $supplier_reference,
@@ -221,13 +220,9 @@ add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0
         'url' => $url,
         'Phone' => freezone_phone_number
     ]);
-
     $subject = "Un fournisseur {$supplier_reference} à mis à jour son catalogue d'article";
-
     wp_mail($to, $subject, $content, $headers);
-
 }, 10, 2);
-
 
 add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_id, $subject, $message) {
     global $Engine;
