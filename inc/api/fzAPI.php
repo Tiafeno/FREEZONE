@@ -482,8 +482,8 @@ SQL;
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
                     if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $object->roles)) {
-                        return get_field('reference', 'user_' . $object['id']);
-                    } else return \in_array('editor', $User->roles) ? '' : get_field($field_name, 'user_' . $object['id']);
+                        return \in_array('editor', $User->roles) ? '' : get_field('reference', 'user_' . $object['id']);
+                    } else return get_field($field_name, 'user_' . $object['id']);
                 }
             ]);
         }
