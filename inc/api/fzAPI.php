@@ -479,8 +479,7 @@ SQL;
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
                         if (\in_array('fz-company', $current_user->roles)) return $field_value;
-
-                        return \in_array('editor', $User->roles) ? get_field('reference', 'user_' . $object['id']) : $field_value;
+                        return get_field('reference', 'user_' . $object['id']);
                     } else return update_field($field_name, $value, 'user_' . $client_id);
 
                 },
@@ -490,8 +489,7 @@ SQL;
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
                         if (\in_array('fz-company', $current_user->roles)) return $field_value;
-
-                        return \in_array('editor', $User->roles) ? get_field('reference', 'user_' . $object['id']) : $field_value;
+                        return get_field('reference', 'user_' . $object['id']);
                     } else return $field_value;
                 }
             ]);
