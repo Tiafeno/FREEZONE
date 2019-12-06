@@ -475,13 +475,13 @@ SQL;
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) use ($admin) {
                     $client_id = $object->ID;
-                    if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $object->roles)) {
+                    if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $User->roles)) {
                         return true;
                     } else return update_field($field_name, $value, 'user_' . $client_id);
 
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
-                    if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $object->roles)) {
+                    if ($admin !== 'administrator' && $field_name === 'company_name' && in_array('fz-supplier', $User->roles)) {
                         return get_field('reference', 'user_' . $object['id']);
                     } else return get_field($field_name, 'user_' . $object['id']);
                 }
