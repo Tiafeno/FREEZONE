@@ -478,7 +478,7 @@ SQL;
                     $field_value = get_field($field_name, 'user_' . $object->ID);
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
-                        if (\in_array('fz-company', $current_user)) return $field_value;
+                        if (\in_array('fz-company', $current_user->roles)) return $field_value;
 
                         return \in_array('editor', $User->roles) ? get_field('reference', 'user_' . $object['id']) : $field_value;
                     } else return update_field($field_name, $value, 'user_' . $client_id);
@@ -489,7 +489,7 @@ SQL;
                     $field_value = get_field($field_name, 'user_' . $client_id);
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
-                        if (\in_array('fz-company', $current_user)) return $field_value;
+                        if (\in_array('fz-company', $current_user->roles)) return $field_value;
 
                         return \in_array('editor', $User->roles) ? get_field('reference', 'user_' . $object['id']) : $field_value;
                     } else return $field_value;
