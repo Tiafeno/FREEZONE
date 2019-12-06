@@ -1054,5 +1054,4 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 add_action('wp_loaded', function () {
-
 });

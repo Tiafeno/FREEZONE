@@ -77,6 +77,7 @@ class apiImport
             ];
 
             if ( ! empty($mark) && !is_null($mark)) {
+                // Get attribute by identification
                 $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
                 $data = array_merge($data, ['attributes' => [
                     [

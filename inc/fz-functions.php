@@ -123,11 +123,7 @@ add_action('after_setup_theme', function () {
 
 
 add_action('admin_init', function () {
-    if (is_null(get_role('fz-supplier')) ||
-        is_null(get_role('fz-company')) ||
-        is_null(get_role('fz-particular'))
-    ) {
-
+    if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-company')) || is_null(get_role('fz-particular'))) {
         \classes\fzRoles::create_roles();
     }
 
@@ -138,7 +134,7 @@ add_action('admin_init', function () {
         }
     }
 
-    // Afficher les marges
+    // Afficher les en-tete pour les marges
     add_filter('manage_fz_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
         $columns['marge_dealer'] = '% R.';
@@ -147,6 +143,7 @@ add_action('admin_init', function () {
         return $columns;
     });
 
+    // Afficher les valeurs par colonne
     add_action('manage_fz_product_posts_custom_column', function ($column, $post_id) {
         $p = get_post($post_id);
         if ($column === 'marge'):
@@ -179,7 +176,6 @@ add_action('init', function () {
             //'ignore_sticky_posts' => 1,
             'posts_per_page' => 20
         ) );
-    
         wp_send_json_success($search_results->posts);
     }
     add_action('wp_ajax_searchproducts', 'search_products');
@@ -211,9 +207,8 @@ add_action('init', function () {
     function add_column_to_mapping_screen( $columns ) {
 
         // potential column name => column slug
-        $columns['Marge UF'] = '_fz_marge';
-        $columns['Marge revendeur'] = '_fz_marge_dealer';
-        $columns['Marge particulier'] = '_fz_marge_particular';
+        $columns['Attribut'] = 'attribute';
+        $columns['Attribut valeur'] = 'attribute_value';
 
         return $columns;
     }
@@ -228,13 +223,44 @@ add_action('init', function () {
      * @return WC_Product $object
      */
     function process_import( $object, $data ) {
-        $fields = ['_fz_marge', '_fz_marge_dealer', '_fz_marge_particular'];
-        foreach ($fields as $field) {
-            $value = $data[ $field ];
+        $attributes = $data['attribute'];
+        $attribute_values = $data['attribute_value'];
+
+        if (empty($attributes)) return $object;
+
+        $attributes = explode(',', $attributes);
+        $attribute_values = explode(',', $attribute_values);
+
+        $attrs = [];
+
+        foreach ($attributes as $key => $attr) {
+            if (empty($attr)) continue;
+
+            // Get attribute by identification
+            $attr_id = wc_attribute_taxonomy_id_by_name( sanitize_title($attr) ); // @return int
+            if (0 === $attr_id) {
+                $args = [
+                    'name'  => ucfirst( stripslashes($attr) ),
+                    'has_archives'  => true
+                ];
+                $response = wc_create_attribute($args); // return int|WP_Error
+                if (is_wp_error($response)) continue;
+                $attr_id = (int) $response;
+            }
+
+            $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
+            $attrs[] = [
+                'name' => $objet_attribute->slug, // set attribute name
+                'value' => ucfirst($attribute_values[$key]), // set attribute value
+                'is_visible' => 1,
+                'is_variation' => 1,
+                'is_taxonomy' => 1
+            ];
         }
 
+
         // TODO: Ajouter une article
-        
+        update_post_meta($object->get_id(), '_product_attributes', $attrs);
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
