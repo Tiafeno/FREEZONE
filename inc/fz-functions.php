@@ -189,9 +189,8 @@ add_action('init', function () {
      * @return array $options
      */
     function add_column_to_importer( $options ) {
-        $options['_fz_marge'] = 'Marge UF';
-        $options['_fz_marge_dealer'] = 'Marge revendeur';
-        $options['_fz_marge_particular'] = 'Marge particulier';
+        $options['attribute'] = 'Attribut';
+        $options['attribute_value'] = 'Attribut valeur';
 
         return $options;
     }
@@ -249,17 +248,12 @@ add_action('init', function () {
             }
 
             $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
-            $attrs[] = [
-                'name' => $objet_attribute->slug, // set attribute name
-                'value' => ucfirst($attribute_values[$key]), // set attribute value
-                'is_visible' => 1,
-                'is_variation' => 0,
-                'is_taxonomy' => 1
-            ];
+            if (is_null($objet_attribute)) continue;
+            $attrs[] = ucfirst($attribute_values[$key]); // set attribute value];
         }
 
-        // TODO: Ajouter une article
-        update_post_meta($object->get_id(), '_product_attributes', $attrs);
+        //update_post_meta($object->get_id(), '_product_attributes', $attrs);
+        wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug, false );
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
