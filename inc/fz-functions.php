@@ -245,7 +245,7 @@ add_action('init', function () {
                 ];
                 $response = wc_create_attribute($args); // return int|WP_Error
                 if (is_wp_error($response)) continue;
-                $attr_id = (int) $response;
+                $attr_id = wc_attribute_taxonomy_id_by_name( ucfirst( stripslashes($attr) ) ); // @return int
             }
 
             $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
@@ -253,19 +253,16 @@ add_action('init', function () {
                 'name' => $objet_attribute->slug, // set attribute name
                 'value' => ucfirst($attribute_values[$key]), // set attribute value
                 'is_visible' => 1,
-                'is_variation' => 1,
+                'is_variation' => 0,
                 'is_taxonomy' => 1
             ];
         }
-
 
         // TODO: Ajouter une article
         update_post_meta($object->get_id(), '_product_attributes', $attrs);
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
-
-
 
     add_action('wp_enqueue_scripts', function () {
         wp_register_style( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0' );
