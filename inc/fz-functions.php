@@ -249,11 +249,13 @@ add_action('init', function () {
 
             $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
             if (is_null($objet_attribute)) continue;
-            $attrs[] = ucfirst($attribute_values[$key]); // set attribute value];
+            $attrs[] = ucfirst($attribute_values[$key]); // set attribute value
+
+            wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug );
         }
 
         //update_post_meta($object->get_id(), '_product_attributes', $attrs);
-        wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug, false );
+        
         return $object;
     }
     add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );

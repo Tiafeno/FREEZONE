@@ -1054,4 +1054,6 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 add_action('wp_loaded', function () {
+    $attr_id = wc_attribute_taxonomy_id_by_name( sanitize_title('brands') ); // @return int
+    echo $attr_id;
 });
