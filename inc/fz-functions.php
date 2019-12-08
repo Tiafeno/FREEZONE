@@ -230,9 +230,8 @@ add_action('init', function () {
         $attributes = explode(',', $attributes);
         $attribute_values = explode(',', $attribute_values);
 
-        $attrs = [];
-
         foreach ($attributes as $key => $attr) {
+            $attrs = [];
             if (empty($attr)) continue;
 
             // Get attribute by identification
