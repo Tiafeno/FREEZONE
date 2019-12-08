@@ -244,7 +244,7 @@ add_action('init', function () {
                 ];
                 $response = wc_create_attribute($args); // return int|WP_Error
                 if (is_wp_error($response)) continue;
-                $attr_id = wc_attribute_taxonomy_id_by_name( ucfirst( stripslashes($attr) ) ); // @return int
+                $attr_id = $response;
             }
 
             $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
