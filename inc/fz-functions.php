@@ -250,7 +250,7 @@ add_action('init', function () {
             if (is_null($objet_attribute)) continue;
             $attrs[] = ucfirst($attribute_values[$key]); // set attribute value
 
-            wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug );
+            wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug, true );
         }
 
         //update_post_meta($object->get_id(), '_product_attributes', $attrs);
