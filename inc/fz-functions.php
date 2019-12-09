@@ -219,6 +219,7 @@ add_action('init', function () {
      *
      * @param WC_Product $object - Product being imported or updated.
      * @param array $data - CSV data read for the product.
+     * 
      * @return WC_Product $object
      */
     function process_import( $object, $data ) {
@@ -230,34 +231,55 @@ add_action('init', function () {
         $attributes = explode(',', $attributes);
         $attribute_values = explode(',', $attribute_values);
 
+        // Create woocommerce product
+        $options = get_field('wc', 'option');
+        $woocommerce = new Automattic\WooCommerce\Client(
+            "http://{$_SERVER['SERVER_NAME']}", $options['ck'], $options['cs'],
+            [
+                'version' => 'wc/v3'
+            ]
+        );
+
         foreach ($attributes as $key => $attr) {
-            $attrs = [];
             if (empty($attr)) continue;
-
-            // Get attribute by identification
-            $attr_id = wc_attribute_taxonomy_id_by_name( sanitize_title($attr) ); // @return int
+            $attr_id = wc_attribute_taxonomy_id_by_name(ucfirst($attr)); // @return int
             if (0 === $attr_id) {
-                $args = [
-                    'name'  => ucfirst( stripslashes($attr) ),
-                    'has_archives'  => true
+                // Crée une attribut
+                $data = [
+                    'name' => ucfirst($attr),
+                    'type' => 'select',
+                    'order_by' => 'menu_order',
+                    'has_archives' => true
                 ];
-                $response = wc_create_attribute($args); // return int|WP_Error
-                if (is_wp_error($response)) continue;
-                $attr_id = $response;
+                
+                $created_attribute_response = $woocommerce->post('products/attributes', $data);
+                $attr_id = $created_attribute_response->id;
             }
-
-            $objet_attribute = wc_get_attribute($attr_id); // return stdClass(id, slug, name ...) otherwise null
-            if (is_null($objet_attribute)) continue;
-            $attrs[] = ucfirst($attribute_values[$key]); // set attribute value
-
-            wp_set_object_terms( $object->get_id(), $attrs, $objet_attribute->slug, true );
+            $product_id = $object->get_id();
+            $product_response = $woocommerce->get("products/{$product_id}"); // Return object rest product
+            $attributes = $product_response->attributes; // Return array
+            if (is_array($attributes)) {
+                array_push($attributes, [
+                    'id' => $attr_id,
+                    'position'  => 0,
+                    'visible'   => true,
+                    'variation' => false, // for variative products in case you would like to use it for variations
+                    'options'   => array($attribute_values[$key]) // if the attribute term doesn't exist, it will be created
+                ]);
+            }
+           
+            $args = [
+                'attributes' =>  $attributes
+            ];
+            
+            $woocommerce->put("products/{$product_id}", $args);
         }
 
         //update_post_meta($object->get_id(), '_product_attributes', $attrs);
         
         return $object;
     }
-    add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
+    add_action( 'woocommerce_product_import_inserted_product_object', 'process_import', 10, 2 );
 
     add_action('wp_enqueue_scripts', function () {
         wp_register_style( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0' );
