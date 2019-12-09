@@ -242,6 +242,7 @@ add_action('init', function () {
 
         foreach ($attributes as $key => $attr) {
             if (empty($attr)) continue;
+            $attr = stripslashes($attr);
             $attr_id = wc_attribute_taxonomy_id_by_name(ucfirst($attr)); // @return int
             if (0 === $attr_id) {
                 // Crée une attribut
@@ -256,8 +257,8 @@ add_action('init', function () {
                 $attr_id = $created_attribute_response->id;
             }
             $product_id = $object->get_id();
-            $product_response = $woocommerce->get("products/{$product_id}"); // Return object rest product
-            $attributes = $product_response->attributes; // Return array
+            $product_response = $woocommerce->get("products/{$product_id}"); // Return rest product object
+            $attributes = $product_response->attributes; // Return array of stdClass
             if (is_array($attributes)) {
                 array_push($attributes, [
                     'id' => $attr_id,
