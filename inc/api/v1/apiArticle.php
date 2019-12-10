@@ -40,7 +40,7 @@ CPR;
                 $total = $wpdb->get_var($count_sql);
                 $Suppliers = [];
                 foreach ($results as $result) {
-                    $Suppliers[] = new \classes\fzSupplierArticle((int) $result->post_id, 'edit');
+                    $Suppliers[] = new \classes\fzSupplierArticle((int) $result->ID, 'edit');
                 }
 
                 return [
@@ -112,7 +112,7 @@ SQL;
                     $quantity = [];
                     /**
                      * Récuperer tous les commandes en attente
-                     * pusis détecter et récuperer les produits de même identification pour récuperer tous la quantité demandée
+                     * puis détecter et récuperer les produits de même identification pour récuperer tous la quantité demandée
                      */
                     $orders = new WP_Query([
                         'post_type' => wc_get_order_types(),

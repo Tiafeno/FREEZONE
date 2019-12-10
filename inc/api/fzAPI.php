@@ -232,6 +232,50 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/product/(?P<action>\w+)/(?P<product_id>\d+)', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function(\WP_REST_Request $request) {
+                        global $wpdb;
+                        $action = $request['action'];
+                        $product_id = (int) $request['product_id'];
+                        if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );// Récuperer tous les articles des fournisseurs qui posséde le produit
+                        $sql = "SELECT SQL_CALC_FOUND_ROWS pts.ID FROM $wpdb->posts as pts
+                            WHERE pts.post_type = 'fz_product'
+                                AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND CAST(meta_value AS UNSIGNED) = $product_id)";
+                        $posts = $wpdb->get_results($sql);
+
+                        if ($action === 'update'):
+                            $title = stripslashes($_REQUEST['title']);
+                            $description = stripslashes($_REQUEST['description']);
+                            foreach ($posts as $post) {
+                                $response = wp_update_post([
+                                    'ID'           => (int) $post->ID,
+                                    'post_title'   => $title,
+                                    'post_content' => $description,
+                                ], true);
+
+                                if (is_wp_error( $response )) wp_send_json_error( "{$response->get_error_message()}" );
+                            }
+                            wp_send_json_success( "Mise à jours effectuer avec succès" );
+                        endif;
+
+                        if ($action === 'remove') :
+                            foreach ($posts as $post) {
+                                // @return (WP_Post|false|null) Post data on success, false or null on failure.
+                                $response = wp_delete_post((int) $post->ID, true);
+                                if (is_null( $response ) || !$response) wp_send_json_error("Une erreur s'est produit pendant la suppression de l'article");
+                            }
+
+                            wp_send_json_success( "Action successfully complete" );
+                        endif;
+
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ]
+            ]);
 
             /**
              * Pour récuperer les clients
