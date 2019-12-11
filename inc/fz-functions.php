@@ -243,6 +243,7 @@ add_action('init', function () {
         foreach ($attributes as $key => $attr) {
             if (empty($attr)) continue;
             $attr = stripslashes($attr);
+            $attr = trim($attr);
             $attr_id = wc_attribute_taxonomy_id_by_name(ucfirst($attr)); // @return int
             if (0 === $attr_id) {
                 // Crée une attribut
