@@ -266,7 +266,7 @@ add_action('init', function () {
                     'position'  => 0,
                     'visible'   => true,
                     'variation' => false, // for variative products in case you would like to use it for variations
-                    'options'   => array($attribute_values[$key]) // if the attribute term doesn't exist, it will be created
+                    'options'   => array(trim($attribute_values[$key])) // if the attribute term doesn't exist, it will be created
                 ]);
             }
            
