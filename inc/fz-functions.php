@@ -260,13 +260,14 @@ add_action('init', function () {
             $product_id = $object->get_id();
             $product_response = $woocommerce->get("products/{$product_id}"); // Return rest product object
             $attributes = $product_response->attributes; // Return array of stdClass
+            $value = ucfirst(trim($attribute_values[$key]));
             if (is_array($attributes)) {
                 array_push($attributes, [
                     'id' => $attr_id,
                     'position'  => 0,
                     'visible'   => true,
                     'variation' => false, // for variative products in case you would like to use it for variations
-                    'options'   => array(trim($attribute_values[$key])) // if the attribute term doesn't exist, it will be created
+                    'options'   => array($value) // if the attribute term doesn't exist, it will be created
                 ]);
             }
            
