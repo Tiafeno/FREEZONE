@@ -12,7 +12,7 @@ define('freezone_phone_fix_number', ' +261 20 24 292 31');
 add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
     wp_enqueue_style('yozi-child-theme', get_stylesheet_directory_uri() . '/style.css', [], $theme->get('Version'));
-    wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.2');
+    wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.3');
 }, 1000);
 
 // Ces filtres permet de ne pas afficher les prix des produits Woocommerce
