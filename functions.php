@@ -12,6 +12,7 @@ define('freezone_phone_fix_number', ' +261 20 24 292 31');
 add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
     wp_enqueue_style('yozi-child-theme', get_stylesheet_directory_uri() . '/style.css', [], $theme->get('Version'));
+    wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.2');
 }, 1000);
 
 // Ces filtres permet de ne pas afficher les prix des produits Woocommerce
@@ -751,7 +752,6 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     }
 
     wp_enqueue_style('poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800");
-    wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.2');
     wp_enqueue_script('html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1");
     wp_enqueue_script('download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
     wp_localize_script('download-pdf', 'Generator', [
