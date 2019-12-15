@@ -399,4 +399,7 @@ select#reg_role {
 .product-categories li {
     line-height: 30px !important;
 }
+.product-categories li.cat-parent > i{
+	top: 7px !important;
+}
 
