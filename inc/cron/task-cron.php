@@ -64,7 +64,7 @@ SQL;
     foreach ($savs as $sav) {
         $devis_ref = get_field('quotation_ref', $sav['sav_id']);
         $message =  "Bonjour, <br><br>";
-        $message .= "Nous vous rappelons que le matériel {$sav['name']} du client {$sav['reference']} est encore dans l’atelier aussi nous vous " .
+        $message .= "Nous vous rappelons que le matériel <b>{$sav['name']}</b> du client {$sav['reference']} est encore dans l’atelier aussi nous vous " .
             "demandons de relancer le client à propos du devis Réf $devis_ref";
         $message = html_entity_decode($message);
 
