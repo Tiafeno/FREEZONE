@@ -5,7 +5,7 @@ Description: This is a child theme for Yozi.
 Author: Tiafeno Finel
 Author URI: http://www.falicrea.com/
 Template: yozi
-Version: 1.2.3
+Version: 1.2.4
 */
 
 @import url("../yozi/style.css");
@@ -394,5 +394,9 @@ select#reg_role {
 
 .widget-banner.banner-medium .image-wrapper {
     outline: none;
+}
+
+.product-categories li {
+    line-height: 30px !important;
 }
 
