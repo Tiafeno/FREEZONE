@@ -14,12 +14,17 @@ class apiProduct
     {
         $length = (int)$_REQUEST['length'];
         $start = (int)$_REQUEST['start'];
+        $search = empty($_REQUEST['search']) ? '' : esc_sql( $_REQUEST['search'] );
         $args = [
             'limit' => $length,
             'offset' => $start,
             'paginate' => true,
             'post_type' => 'product'
         ];
+
+        if (!empty($search)) {
+            $args += ['s' => $search];
+        }
 
         $the_query = new WP_Query($args);
         $products = array_map(function ($product) {
