@@ -293,6 +293,18 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/export/csv', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => function () {
+                        do_action(export_articles_csv);
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('delete_posts');
+                    }
+                ]
+            ]);
+
             /**
              * Pour récuperer les clients
              */

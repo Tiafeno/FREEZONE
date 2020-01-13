@@ -30,6 +30,7 @@ require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
+require_once 'api/v1/apiExport.php';
 require_once 'api/fzAPI.php';
 
 require_once 'cron/task-cron.php';

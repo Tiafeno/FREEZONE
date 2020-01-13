@@ -52,6 +52,7 @@ add_action('fz_insert_new_article', function ($article_id) {
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
 
+// Envoyer un email a l'administratuer pour une inscription
 add_action('fz_new_user', function ($user_id, $role)  {
     $from = "no-reply@freezone.click";
     $to = implode(',', apply_filters( 'get_responsible', ['editor', 'administrator'] ));
