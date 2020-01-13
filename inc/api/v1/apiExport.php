@@ -24,7 +24,8 @@ add_action('export_articles_csv', function () {
         $new_article->title = $article->post_title;
         $new_article->price = (int) get_field('price', $article_id);
         foreach ($marges as $marge) {
-            $new_article->{$marge['name']} = (int) get_post_meta($article_id, $marge['key'], true);
+            $marge = get_post_meta($article_id, $marge['key'], true);
+            $new_article->{$marge['name']} =  floatval($marge);
         }
 
         array_push($response, $new_article);
