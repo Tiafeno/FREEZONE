@@ -753,6 +753,23 @@ SQL;
                 ]);
             }
 
+            $params = $_REQUEST;
+            // Envoyer comme reponse si la requete a pour context une edition
+            if (isset($params['context']) && $params['context'] === "edit") {
+                register_rest_field($type, 'customer_data', [
+                    'get_callback' => function ($object, $field_name) {
+                        $order =  new \WC_Order( (int)$object['id'] );
+
+                        $usr_controller = new \WP_REST_Users_Controller();
+                        $request = new \WP_REST_Request();
+                        $request->set_param('context', 'edit');
+                        $cs_response = $usr_controller->prepare_item_for_response(new \WP_User($order->get_customer_id()), $request);
+                        
+                        return $cs_response->data;
+                    }
+                ]);
+            }
+
             // post meta field
             // @var date_send: Format YYYY-MM-DD HH:mm:ss
             foreach (['client_role', 'date_send', 'line_items_zero'] as $meta) {
