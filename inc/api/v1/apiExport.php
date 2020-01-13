@@ -25,6 +25,16 @@ add_action('export_articles_csv', function () {
         $new_article->price = (int) get_field('price', $article_id);
         foreach ($marges as $marge) {
             $marge_value = get_post_meta($article_id, $marge['key'], true);
+            if (!$meta_value || is_null($meta_value)) {
+                // BUG FIX: Ici on corrige le bug que les marges doivent se trouver dans l'article mais pas dans les produits
+                $product_id = get_field('product_id', $article_id);
+                $product = new \WC_Product((int)$product_id);
+                $marge = $product->get_meta($marge['key']);
+
+                // Update post meta
+                update_post_meta((int) $article_id, $marge['key'], $marge);
+                $meta_value = $marge;
+            }
             $new_article->{$marge['name']} =  floatval($marge_value);
         }
 
