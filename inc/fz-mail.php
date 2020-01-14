@@ -4,7 +4,8 @@
  * Recuperer les adresses emails des responsables (Commercial et Administrateur)
  */
 add_filter( 'get_responsible', function ($args) {
-    $args = array('role__in' => is_array($args) ? $args : []);
+    $values = is_array($args) ? $args : ['administrator'];
+    $args = array('role__in' => $values);
     $editors = get_users( $args );
 
     return array_map(function($user) { return $user->user_email; }, $editors);
@@ -79,6 +80,22 @@ add_action('fz_new_user', function ($user_id, $role)  {
     $subject = "#{$user_id} - Une nouvelle inscription sur le site freezone.click";
     wp_mail($to, $subject, $content, $headers);
 
+}, 10, 2);
+
+
+add_action('fz_insert_user', function ($user_id, $pwd = "") {
+    $user = new \WP_User($user_id);
+    $from = "no-reply@freezone.click";
+    $to = $user->user_email;
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $content = "Bonjour<br><br>";
+    $content .= "Inscription reussi, pour se connecter.<br><br> Adresse email: {$user->user_email}<br> Mot de passe: {$pwd}";
+    $subject = "Inscription reussi sur le site freezone.click";
+
+    wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles

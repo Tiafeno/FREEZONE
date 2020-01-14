@@ -239,12 +239,14 @@ class fzAPI
                         global $wpdb;
                         $action = $request['action'];
                         $product_id = (int) $request['product_id'];
-                        if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );// Récuperer tous les articles des fournisseurs qui posséde le produit
+                        if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );
+                        // Récuperer tous les articles des fournisseurs qui posséde le produit
                         $sql = "SELECT SQL_CALC_FOUND_ROWS pts.ID FROM $wpdb->posts as pts
                             WHERE pts.post_type = 'fz_product'
                                 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND CAST(meta_value AS UNSIGNED) = $product_id)";
                         $posts = $wpdb->get_results($sql);
 
+                        // Mettre a jour tous les titres des articles de type "fz_product"
                         if ($action === 'update'):
                             $title = stripslashes($_REQUEST['title']);
                             $description = stripslashes($_REQUEST['description']);
@@ -260,6 +262,7 @@ class fzAPI
                             wp_send_json_success( "Mise à jours effectuer avec succès" );
                         endif;
 
+                        // Si le produit WC on supprime aussi tous les article de type "fz_product" en liaison avec celui-ci
                         if ($action === 'remove') :
                             foreach ($posts as $post) {
                                 // @return (WP_Post|false|null) Post data on success, false or null on failure.
@@ -272,7 +275,7 @@ class fzAPI
 
                     },
                     'permission_callback' => function ($data) {
-                        return current_user_can('edit_posts');
+                        return current_user_can('delete_posts');
                     }
                 ]
             ]);
@@ -280,7 +283,7 @@ class fzAPI
             /**
              * Pour récuperer les clients
              */
-            register_rest_route('api', '/import/csv/articles', [
+            register_rest_route('api', '/import/csv', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
@@ -288,7 +291,7 @@ class fzAPI
                         $Import->import_article_csv();
                     },
                     'permission_callback' => function ($data) {
-                        return current_user_can('edit_posts');
+                        return current_user_can('delete_posts');
                     }
                 ],
             ]);
@@ -385,7 +388,6 @@ class fzAPI
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
                         global $wpdb;
-
                         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
                         $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 1;
 
@@ -398,22 +400,18 @@ SQL;
                         $count_sql = "SELECT FOUND_ROWS()";
                         $total = $wpdb->get_var($count_sql);
                         $articles = [];
-
                         foreach ($results as $result) {
                             $article_controller = new \WP_REST_Posts_Controller('fz_faq_client');
-
                             $post = get_post((int) $result->ID);
                             $response = $article_controller->prepare_item_for_response($post, new \WP_REST_Request());
                             $articles[] = $response->get_data();
                         }
-
                         $wpdb->flush();
                         return [
                             "recordsTotal" => $total,
                             "recordsFiltered" => $total,
                             'data' => $articles
                         ];
-
                     },
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
@@ -456,7 +454,6 @@ SQL;
                         $sender = (int)$params['sender'];
                         $mailing_id = (int)$params['mailing_id'];
                         $sav_id = (int)$rq['sav_id'];
-
                         do_action('fz_sav_contact_mail', $sav_id, $sender, $mailing_id, $subject, $message);
                     },
                     'permission_callback' => function ($data) {
@@ -495,11 +492,23 @@ SQL;
                                 $cc .= $field_value ? $field_value : '';
                             }
                         }
-
                         // Marquer le fournisseur avec son date
                         update_user_meta($supplier_id, 'send_mail_review_date', date_i18n("Y-m-d H:i:s"));
-
                         do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc, $articles);
+                    }
+                ]
+            ]);
+
+
+            register_rest_route('api', '/mail/user/(<?P<user_id>\+d)', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $user_id = (int) $rq['user_id'];
+                        if (\is_nan($user_id)) wp_send_json_error("Identifiant introuvable");
+                        $password = sanitize_text_field($_REQUEST['pwd']);
+                    
+                        do_action("fz_insert_user", $user_id, $password);
                     }
                 ]
             ]);
@@ -565,7 +574,6 @@ SQL;
                 return get_user_meta($object['id'], $field_name, true);
             }
         ]);
-
 
         /**
          * Variable utiliser pour les clients seulement
