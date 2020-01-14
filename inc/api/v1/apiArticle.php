@@ -24,11 +24,11 @@ class apiArticle
                 $today = date_i18n('Y-m-d H:i:s');
                 $review_limit = new DateTime($today);
                 $review_limit->setTime(6, 0, 0); // Ajouter 06 du matin
-
+                $dt = $review_limit->format("Y-m-d H:i:s");
                 $sql = <<<SLQ
   SELECT SQL_CALC_FOUND_ROWS pm.* FROM $wpdb->posts as pts
     JOIN $wpdb->postmeta as pm ON (pm.post_id = pts.ID)
-        WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('{$review_limit->format("Y-m-d H:i:s")}' AS DATETIME)
+        WHERE pm.meta_key = "date_review" AND CAST(pm.meta_value AS DATETIME) < CAST('$dt' AS DATETIME)
         AND pts.post_type = "fz_product"
     GROUP BY pm.meta_value HAVING COUNT(*) > 0
     LIMIT $length OFFSET $start
@@ -112,7 +112,7 @@ SQL;
                     $quantity = [];
                     /**
                      * Récuperer tous les commandes en attente
-                     * pusis détecter et récuperer les produits de même identification pour récuperer tous la quantité demandée
+                     * puis détecter et récuperer les produits de même identification pour récuperer tous la quantité demandée
                      */
                     $orders = new WP_Query([
                         'post_type' => wc_get_order_types(),

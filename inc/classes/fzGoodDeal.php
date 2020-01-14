@@ -60,17 +60,17 @@ add_action('init', function () {
             'not_found_in_trash' => "La corbeille est vide"
         ],
         'public' => true,
-        'hierarchical' => false,
+        'hierarchical'  => false,
         'menu_position' => null,
         'show_ui' => true,
         'has_archive' => true,
         'rewrite' => ['slug' => 'bonne-affaires'],
         'capability_type' => 'post',
-        'map_meta_cap' => true,
+        'map_meta_cap'    => true,
         'menu_icon' => 'dashicons-archive',
-        'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
+        'supports'  => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
         'show_in_rest' => true,
-        'query_var' => true
+        'query_var'    => true
     ]);
 }, 10);
 

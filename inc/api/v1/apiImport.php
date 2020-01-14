@@ -28,6 +28,7 @@ class apiImport
         $ctg_names = explode(',', $categories);
         foreach ($ctg_names as $item) {
             $item = trim(stripslashes($item));
+            $item = ucfirst($item);
             $term = term_exists($item, $taxonomy_cat_name);
             if (null === $term || 0 === $term || !$term) {
                 $term = wp_insert_term($item, $taxonomy_cat_name);
@@ -72,15 +73,11 @@ class apiImport
                 'description'   => !empty($description) ? stripslashes($description) : '',
                 'short_description' => !empty($short_description) ? stripslashes($short_description) : '',
                 'categories' => $categorie_terms,
-                'meta_data' => [
-                    [ 'key' => '_fz_marge', 'value' => trim($marge) ],
-                    [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
-                    [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
-                ],
                 'images' => []
             ];
 
             if ( ! empty($mark) && !is_null($mark)) {
+                // Get attribute by identification
                 $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
                 $data = array_merge($data, ['attributes' => [
                     [
@@ -131,6 +128,16 @@ class apiImport
         update_field('total_sales', wc_clean($quantity), $article_id);
         update_field('user_id', $supplier->ID, $article_id);
 
+        // Ajouter les meta dans l'article
+        $meta_data = [
+            [ 'key' => '_fz_marge', 'value' => trim($marge) ],
+            [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
+            [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
+        ];
+        foreach ($meta_data as $data) {
+            update_post_meta($article_id, $data['key'], $data['value']);
+        }
+
         if (!empty($terms)) {
             wp_set_post_terms($article_id, $terms, $taxonomy_cat_name);
         }
@@ -138,6 +145,7 @@ class apiImport
         wp_send_json_success("Article ajouté avec succès");
     }
 
+    // Recuperer un fourniseur par son reference
     protected function get_supplier_by_ref($ref = null) {
         global $wpdb;
         $sql = <<<SQL
@@ -150,6 +158,8 @@ SQL;
         $user_id = (int) $result->user_id;
         return new WP_User($user_id);
     }
+
+    // Verifier si le produit existe
     protected function product_exist($title = '') {
         global $wpdb;
 

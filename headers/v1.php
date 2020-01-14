@@ -111,7 +111,7 @@
                     <?php if ( has_nav_menu( 'vertical-menu' ) ): ?>
                         <div class="col-md-2">
                             <div class="vertical-wrapper">
-                                <div class="title-vertical bg-theme" style="display: flex"><i class="fa fa-bars" aria-hidden="true"></i> 
+                                <div class="title-vertical bg-theme"><i class="fa fa-bars" aria-hidden="true"></i> 
 									<span class="text-title" style="font-size: 11px">
 										<?php echo esc_html__('all Departments','yozi') ?>
 									</span> 

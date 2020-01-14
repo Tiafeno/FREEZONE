@@ -34,7 +34,14 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
 <?php wc_print_notices(); ?>
 
 <?php do_action( 'woocommerce_before_customer_login_form' ); ?>
-
+<style type="text/css">
+    #customer_login input {
+        border: 2px solid #374387;
+    }
+    #customer_register input, #customer_register select {
+        border: 2px solid #374387;
+    }
+</style>
 <div class="user">
 	<div id="customer_login" class="register_login_wrapper <?php echo trim($action == '#customer_login' ? 'active' : ''); ?>">
 		<h2 class="title"><?php esc_html_e( 'Login', 'yozi' ); ?></h2>
@@ -86,24 +93,30 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
 		<h2 class="title"><?php esc_html_e( 'Register', 'yozi' ); ?></h2>
 		<form method="post" class="register widget" role="form">
 			<?php do_action( 'woocommerce_register_form_start' ); ?>
+
 			<?php if ( 'no' === get_option( 'woocommerce_registration_generate_username' ) ) : ?>
 				<p class="form-group form-row form-row-wide">
 					<label for="reg_username"><?php esc_html_e( 'Username', 'yozi' ); ?> <span class="required">*</span></label>
-					<input type="text" class="input-text form-control" name="username" id="reg_username" value="<?php if ( ! empty( $_POST['username'] ) ) echo esc_attr( $_POST['username'] ); ?>" />
+					<input type="text" class="input-text form-control" name="username" id="reg_username" 
+                    value="<?php if ( ! empty( $_POST['username'] ) ) echo esc_attr( $_POST['username'] ); ?>" />
 				</p>
-
 			<?php endif; ?>
-			<p class="form-group form-row form-row-wide">
-				<label for="reg_lastname"><?php esc_html_e( 'Nom', 'yozi' ); ?> <span class="required">*</span></label>
-				<input type="text" class="input-text form-control radius-0" placeholder="" name="lastname" id="reg_lastname" required
-                       value="<?php if ( ! empty( $_POST['lastname'] ) ) echo esc_attr( $_POST['lastname'] ); ?>" />
-			</p>
-
-            <p class="form-group form-row form-row-wide">
-                <label for="reg_firstname"><?php esc_html_e( 'Prénom', 'yozi' ); ?> </label>
-                <input type="text" class="input-text form-control radius-0" placeholder="" name="firstname" id="reg_firstname"
-                       value="<?php if ( ! empty( $_POST['firstname'] ) ) echo esc_attr( $_POST['firstname'] ); ?>" />
-            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_lastname"><?php esc_html_e( 'Nom', 'yozi' ); ?> <span class="required">*</span></label>
+                        <input type="text" class="input-text form-control radius-0" placeholder="" name="lastname" id="reg_lastname" required
+                            value="<?php if ( ! empty( $_POST['lastname'] ) ) echo esc_attr( $_POST['lastname'] ); ?>" />
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p class="form-group form-row form-row-wide">
+                        <label for="reg_firstname"><?php esc_html_e( 'Prénom', 'yozi' ); ?> </label>
+                        <input type="text" class="input-text form-control radius-0" placeholder="" name="firstname" id="reg_firstname"
+                            value="<?php if ( ! empty( $_POST['firstname'] ) ) echo esc_attr( $_POST['firstname'] ); ?>" />
+                    </p>
+                </div>
+            </div>
 
             <div class="form-group form-row form-row-wide">
                 <label for="reg_phone"><?php esc_html_e( 'Numéro de téléphone', 'yozi' ); ?> <span class="required">*</span></label>
@@ -148,7 +161,7 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
             <!-- Pour les utilisateurs de type société ou entreprise --->
             <div id="section-company" style="display: none">
                 <div class="form-group form-row form-row-wide">
-                    <label for="reg_company">Nom de l'entreprise  <span class="required">*</span></label>
+                    <label for="reg_company">Nom de l'entreprise / Société  <span class="required">*</span></label>
                     <input type="text" placeholder="" class="input-text form-control radius-0" name="company_name" id="reg_company" 
                            value="<?php if ( ! empty( $_POST['company_name'] ) ) echo esc_attr( $_POST['company_name'] ); ?>" />
                 </div>

@@ -232,6 +232,50 @@ class fzAPI
                 ],
             ]);
 
+            register_rest_route('api', '/product/(?P<action>\w+)/(?P<product_id>\d+)', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function(\WP_REST_Request $request) {
+                        global $wpdb;
+                        $action = $request['action'];
+                        $product_id = (int) $request['product_id'];
+                        if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );// Récuperer tous les articles des fournisseurs qui posséde le produit
+                        $sql = "SELECT SQL_CALC_FOUND_ROWS pts.ID FROM $wpdb->posts as pts
+                            WHERE pts.post_type = 'fz_product'
+                                AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND CAST(meta_value AS UNSIGNED) = $product_id)";
+                        $posts = $wpdb->get_results($sql);
+
+                        if ($action === 'update'):
+                            $title = stripslashes($_REQUEST['title']);
+                            $description = stripslashes($_REQUEST['description']);
+                            foreach ($posts as $post) {
+                                $response = wp_update_post([
+                                    'ID'           => (int) $post->ID,
+                                    'post_title'   => $title,
+                                    'post_content' => $description,
+                                ], true);
+
+                                if (is_wp_error( $response )) wp_send_json_error( "{$response->get_error_message()}" );
+                            }
+                            wp_send_json_success( "Mise à jours effectuer avec succès" );
+                        endif;
+
+                        if ($action === 'remove') :
+                            foreach ($posts as $post) {
+                                // @return (WP_Post|false|null) Post data on success, false or null on failure.
+                                $response = wp_delete_post((int) $post->ID, true);
+                                if (is_null( $response ) || !$response) wp_send_json_error("Une erreur s'est produit pendant la suppression de l'article");
+                            }
+
+                            wp_send_json_success( "Action successfully complete" );
+                        endif;
+
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ]
+            ]);
 
             /**
              * Pour récuperer les clients
@@ -247,6 +291,18 @@ class fzAPI
                         return current_user_can('edit_posts');
                     }
                 ],
+            ]);
+
+            register_rest_route('api', '/export/csv', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => function () {
+                        do_action(export_articles_csv);
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('delete_posts');
+                    }
+                ]
             ]);
 
             /**
@@ -265,15 +321,30 @@ class fzAPI
                             'role__in' => ['fz-particular', 'fz-company'],
                             'order' => 'DESC'
                         ];
-                        if (!empty($_REQUEST['responsible'])) {
-                            $args = array_merge($args, [
-                                'meta_query' => [
-                                    [
-                                        'key' => 'responsible',
-                                        'value' => (int)$_REQUEST['responsible']
+
+                        $user = wp_get_current_user(  );
+                        if (\in_array('administrator', $user->roles)) {
+                            if (!empty($_REQUEST['responsible'])) {
+                                $args = array_merge($args, [
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'responsible',
+                                            'value' => (int)$_REQUEST['responsible']
+                                        ]
                                     ]
-                                ]
-                            ]);
+                                ]);
+                            }
+                        } else {
+                            if (\in_array('editor', $user->roles)) {
+                                $args = array_merge($args, [
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'responsible',
+                                            'value' => $user->ID
+                                        ]
+                                    ]
+                                ]);
+                            }
                         }
 
                         $user_query = new \WP_User_Query($args);
@@ -459,15 +530,23 @@ SQL;
         foreach ( $metas as $meta ) {
             register_rest_field('user', $meta, [
                 'update_callback' => function ($value, $object, $field_name) use ($admin) {
+                    $client_id = $object->ID;
+                    $field_value = get_field($field_name, 'user_' . $object->ID);
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
-                        return true;
-                    } else return update_field($field_name, $value, 'user_' . $object->ID);
+                        $current_user = new \WP_User($client_id);
+                        if (\in_array('fz-company', $current_user->roles)) return $field_value;
+                        return get_field('reference', 'user_' . $object['id']);
+                    } else return update_field($field_name, $value, 'user_' . $client_id);
 
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
+                    $client_id = (int) $object['id'];
+                    $field_value = get_field($field_name, 'user_' . $client_id);
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
+                        $current_user = new \WP_User($client_id);
+                        if (\in_array('fz-company', $current_user->roles)) return $field_value;
                         return get_field('reference', 'user_' . $object['id']);
-                    } else return get_field($field_name, 'user_' . $object['id']);
+                    } else return $field_value;
                 }
             ]);
         }
@@ -551,26 +630,34 @@ SQL;
             ]);
         }
 
-        $product_metas = [
+        $article_metas = [
             ['name' => 'marge', 'key'        => '_fz_marge'], // (int)
             ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'], // (int)
             ['name' => 'marge_particular', 'key' => '_fz_marge_particular'], // (int)
         ];
 
-        foreach ($product_metas as $meta) {
+        foreach ($article_metas as $meta) {
             register_rest_field('fz_product', $meta['name'], [
                 'update_callback' => function ($value, $object) use ($meta) {
-                    $product_id = get_field('product_id', (int)$object->ID);
-                    $product = new \WC_Product((int)$product_id);
-                    $product->update_meta_data($meta['key'], $value);
-                    return $product->save();
+                    // $product_id = get_field('product_id', (int)$object->ID);
+                    // $product = new \WC_Product((int)$product_id);
+                    // $product->update_meta_data($meta['key'], $value);
+                    return update_post_meta((int) $object->ID, $meta['key'], $value);
                 },
                 'get_callback' => function ($object) use ($meta) {
-                    $product_id = get_field('product_id', (int)$object['id']);
-                    $product = new \WC_Product((int)$product_id);
-                    $marge = $product->get_meta($meta['key']);
+                    $meta_value = get_post_meta((int) $object['id'], $meta['key'], true);
+                    
+                    if (!$meta_value || is_null($meta_value)) {
+                        // BUG FIX: Ici on corrige le bug que les marges doivent se trouver dans l'article mais pas dans les produits
+                        $product_id = get_field('product_id', (int)$object['id']);
+                        $product = new \WC_Product((int)$product_id);
+                        $marge = $product->get_meta($meta['key']);
 
-                    return $marge;
+                        // Update post meta
+                        update_post_meta((int) $object['id'], $meta['key'], $marge);
+                        $meta_value = $marge;
+                    }
+                    return $meta_value;
                 }
             ]);
         }
@@ -662,6 +749,23 @@ SQL;
                     },
                     'get_callback' => function ($object, $field_name) {
                         return get_field($field_name, (int)$object['id']);
+                    }
+                ]);
+            }
+
+            $params = $_REQUEST;
+            // Envoyer comme reponse si la requete a pour context une edition
+            if (isset($params['context']) && $params['context'] === "edit") {
+                register_rest_field($type, 'customer_data', [
+                    'get_callback' => function ($object, $field_name) {
+                        $order =  new \WC_Order( (int)$object['id'] );
+
+                        $usr_controller = new \WP_REST_Users_Controller();
+                        $request = new \WP_REST_Request();
+                        $request->set_param('context', 'edit');
+                        $cs_response = $usr_controller->prepare_item_for_response(new \WP_User($order->get_customer_id()), $request);
+                        
+                        return $cs_response->data;
                     }
                 ]);
             }

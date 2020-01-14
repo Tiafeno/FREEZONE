@@ -21,6 +21,7 @@ require_once 'classes/fzGoodDeal.php';
 require_once 'classes/fzCarousel.php';
 require_once 'classes/fzCatalogue.php';
 
+require_once 'api/v1/apiGoodDeal.php';
 require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
 require_once 'api/v1/apiProduct.php';
@@ -29,6 +30,7 @@ require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
+require_once 'api/v1/apiExport.php';
 require_once 'api/fzAPI.php';
 
 require_once 'cron/task-cron.php';
@@ -122,11 +124,7 @@ add_action('after_setup_theme', function () {
 
 
 add_action('admin_init', function () {
-    if (is_null(get_role('fz-supplier')) ||
-        is_null(get_role('fz-company')) ||
-        is_null(get_role('fz-particular'))
-    ) {
-
+    if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-company')) || is_null(get_role('fz-particular'))) {
         \classes\fzRoles::create_roles();
     }
 
@@ -137,8 +135,8 @@ add_action('admin_init', function () {
         }
     }
 
-    // Afficher les marges
-    add_filter('manage_product_posts_columns', function ($columns) {
+    // Afficher les en-tete pour les marges
+    add_filter('manage_fz_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
         $columns['marge_dealer'] = '% R.';
         $columns['marge_particular'] = '% P.';
@@ -146,22 +144,23 @@ add_action('admin_init', function () {
         return $columns;
     });
 
-    add_action('manage_product_posts_custom_column', function ($column, $post_id) {
-        $p = wc_get_product($post_id);
+    // Afficher les valeurs par colonne
+    add_action('manage_fz_product_posts_custom_column', function ($column, $post_id) {
+        $p = get_post($post_id);
         if ($column === 'marge'):
-            $marge = $p->get_meta('_fz_marge', true);
+            $marge = get_post_meta($post_id, '_fz_marge', true);
             $marge = $marge ? $marge : 0;
             echo "{$marge} %";
         endif;
         
         if ($column === 'marge_dealer'):
-            $marge_dealer = $p->get_meta('_fz_marge_dealer', true);
+            $marge_dealer = get_post_meta($post_id, '_fz_marge_dealer', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
 
         if ($column === 'marge_particular'):
-            $marge_dealer = $p->get_meta('_fz_marge_particular', true);
+            $marge_dealer = get_post_meta($post_id, 'marge_particular', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
@@ -178,7 +177,6 @@ add_action('init', function () {
             //'ignore_sticky_posts' => 1,
             'posts_per_page' => 20
         ) );
-    
         wp_send_json_success($search_results->posts);
     }
     add_action('wp_ajax_searchproducts', 'search_products');
@@ -192,9 +190,8 @@ add_action('init', function () {
      * @return array $options
      */
     function add_column_to_importer( $options ) {
-        $options['_fz_marge'] = 'Marge compte entreprise professionel';
-        $options['_fz_marge_dealer'] = 'Marge compte entreprise revendeur';
-        $options['_fz_marge_particular'] = 'Marge compte particulier';
+        $options['attribute'] = 'Attribut';
+        $options['attribute_value'] = 'Attribut valeur';
 
         return $options;
     }
@@ -210,9 +207,8 @@ add_action('init', function () {
     function add_column_to_mapping_screen( $columns ) {
 
         // potential column name => column slug
-        $columns['Marge compte entreprise professionel'] = '_fz_marge';
-        $columns['Marge compte entreprise revendeur'] = '_fz_marge_dealer';
-        $columns['Marge compte particulier'] = '_fz_marge_particular';
+        $columns['Attribut'] = 'attribute';
+        $columns['Attribut valeur'] = 'attribute_value';
 
         return $columns;
     }
@@ -224,21 +220,70 @@ add_action('init', function () {
      *
      * @param WC_Product $object - Product being imported or updated.
      * @param array $data - CSV data read for the product.
+     * 
      * @return WC_Product $object
      */
     function process_import( $object, $data ) {
-        $fields = ['_fz_marge', '_fz_marge_dealer', '_fz_marge_particular'];
-        foreach ($fields as $field) {
-            if ( ! empty( $data[ $field ] ) ) {
-                $object->update_meta_data( $field, $data[ $field ] );
+        $attributes = $data['attribute'];
+        $attribute_values = $data['attribute_value'];
+
+        if (empty($attributes)) return $object;
+
+        $attributes = explode(',', $attributes);
+        $attribute_values = explode(',', $attribute_values);
+
+        // Create woocommerce product
+        $options = get_field('wc', 'option');
+        $woocommerce = new Automattic\WooCommerce\Client(
+            "http://{$_SERVER['SERVER_NAME']}", $options['ck'], $options['cs'],
+            [
+                'version' => 'wc/v3'
+            ]
+        );
+
+        foreach ($attributes as $key => $attr) {
+            if (empty($attr)) continue;
+            $attr = stripslashes($attr);
+            $attr = trim($attr);
+            $attr_id = wc_attribute_taxonomy_id_by_name(ucfirst($attr)); // @return int
+            if (0 === $attr_id) {
+                // Crée une attribut
+                $data = [
+                    'name' => ucfirst($attr),
+                    'type' => 'select',
+                    'order_by' => 'menu_order',
+                    'has_archives' => true
+                ];
+                
+                $created_attribute_response = $woocommerce->post('products/attributes', $data);
+                $attr_id = $created_attribute_response->id;
             }
+            $product_id = $object->get_id();
+            $product_response = $woocommerce->get("products/{$product_id}"); // Return rest product object
+            $attributes = $product_response->attributes; // Return array of stdClass
+            $value = ucfirst(trim($attribute_values[$key]));
+            if (is_array($attributes)) {
+                array_push($attributes, [
+                    'id' => $attr_id,
+                    'position'  => 0,
+                    'visible'   => true,
+                    'variation' => false, // for variative products in case you would like to use it for variations
+                    'options'   => array($value) // if the attribute term doesn't exist, it will be created
+                ]);
+            }
+           
+            $args = [
+                'attributes' =>  $attributes
+            ];
+            
+            $woocommerce->put("products/{$product_id}", $args);
         }
+
+        //update_post_meta($object->get_id(), '_product_attributes', $attrs);
         
         return $object;
     }
-    add_filter( 'woocommerce_product_import_pre_insert_product_object', 'process_import', 10, 2 );
-
-
+    add_action( 'woocommerce_product_import_inserted_product_object', 'process_import', 10, 2 );
 
     add_action('wp_enqueue_scripts', function () {
         wp_register_style( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0' );

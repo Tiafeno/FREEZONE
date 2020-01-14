@@ -12,6 +12,7 @@ define('freezone_phone_fix_number', ' +261 20 24 292 31');
 add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
     wp_enqueue_style('yozi-child-theme', get_stylesheet_directory_uri() . '/style.css', [], $theme->get('Version'));
+    wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.3');
 }, 1000);
 
 // Ces filtres permet de ne pas afficher les prix des produits Woocommerce
@@ -92,6 +93,12 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     $items['customer-logout'] = $logout;
     return $items;
 }, 999);
+
+// enlever l'etat/Comite dans le formulaire de livraison
+add_filter( 'woocommerce_default_address_fields', function($fields) {
+    unset( $fields['state'] );
+	return $fields;
+}, 999 );
 
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
@@ -848,8 +855,8 @@ add_action('user_register', function ($user_id) {
     $firstname = $lastname = "";
 
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
-        $firstname = sanitize_text_field($_POST['firstname']);
-        $lastname  = sanitize_text_field($_POST['lastname']);
+        $firstname = esc_attr($_POST['firstname']);
+        $lastname  = esc_attr($_POST['lastname']);
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
@@ -1002,9 +1009,7 @@ add_action('woocommerce_thankyou', function ($order_id) {
     update_field('position', 0, intval($order_id));
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
-    /**
-     * Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
-     */
+    // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
     update_post_meta(intval($order_id), 'client_role', $User->roles[0]);
 
     foreach ($items as $item_id => $item) {
@@ -1035,19 +1040,19 @@ add_action('acf/save_post', function ($post_id) {
     if (!is_user_logged_in()) return;
     if (get_post_type($post_id) !== 'fz_sav') return;
     $User = wp_get_current_user();
-    update_post_meta($post_id, 'sav_auctor', $User->ID);
-    update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
-
     $product_name = get_field('product', $post_id);
     $product_mark = get_field('mark', $post_id);
-
-    wp_update_post(['ID' => $post_id, 'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"]);
-
+    wp_update_post(
+        [
+            'ID' => $post_id, 
+            'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"
+        ]
+    );
+    update_post_meta($post_id, 'sav_auctor', $User->ID);
+    update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
     // Envoyer un email aux administrateur
     do_action('fz_insert_sav', $post_id);
 });
 
 add_action('wp_loaded', function () {
-    //update_post_meta(1380, 'test', 12);
-    //wp_update_attachment_metadata(1380, ['key' => 12498469]);
 });

@@ -23,7 +23,7 @@ if (!empty($_POST)) {
         $article = new \classes\fzSupplierArticle(intval($article_id));
         $article->set_price((int)$price);
         $article->set_total_sales((int)$stock);
-        $article->set_garentee((int)$stock);
+        $article->set_garentee((int)$garentee);
         $article->save();
 
         $article->update_date_review(); // Mettre à jour l'article
@@ -279,12 +279,12 @@ yozi_render_breadcrumbs();
                                             <td width="15%">
                                                 <div class="garentee">
                                                 <?php
-                                                $disabled = is_null($article->garentee) || $article->garentee === 'null' || empty($article->garentee) ? '' : 'disabled="disabled"';
+                                                $disabled = in_array(intval($article->garentee), range(1, 12)) ? 'disabled="disabled"' : '';
                                                 ?>
                                                     <select name="garentee" <?= $disabled ?> style="width: 100%;">
                                                         <option value="">Aucun</option>
                                                         <?php for ($i = 1; $i <= 12; $i++): ?>
-                                                            <option value="<?= $i ?>" <?php echo $i==$article->garentee ? 'selected="selected"' : '' ?>>
+                                                            <option value="<?= $i ?>" <?php echo $i === intval($article->garentee) ? 'selected="selected"' : '' ?>>
                                                                 <?= $i ?> mois
                                                             </option>
                                                         <?php endfor; ?>
