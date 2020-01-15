@@ -1,3 +1,4 @@
+{% set TVA = 20 %}
 <style type="text/css">
     .woocommerce table.shop_table td:not(.not-center),
     .woocommerce table.shop_table th:not(.not-center) {
@@ -102,30 +103,25 @@
                 <td style="padding-left: 15px" class="not-center">
                     {{product['name']}}
                 </td>
-                <td align="center">
-                    -
-                </td>
-                <td class="">
-                    -
-                </td>
-                <td>
-                    -
-                </td>
-                <td class="currency">
-                    0
-                </td>
+                <td align="center">-</td>
+                <td class="">-</td>
+                <td>-</td>
+                <td>Non disponible</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <div style="margin-top: 40px"></div>
+    {% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
+    {% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
+    {% if not TOTAL == 0 %}
     <table class="table table-bordered ">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Total HT Brut</th>
                 <th scope="col">Total Net</th>
-                <th scope="col">TVA 20%</th>
+                <th scope="col">TVA {{ TVA }}%</th>
                 <th scope="col">Montant Taxe</th>
                 <th scope="col">NET A PAYER</th>
             </tr>
@@ -134,24 +130,26 @@
             <tr>
                 <td class="currency">{{order.get_total_ht()}}</td>
                 <td class="currency">{{order.get_total_net()}}</td>
-                <td>20%</td>
-                <td class="currency">{{ (20 * order.get_total_net()) / 100 }}</td>
+                <td>{{ TVA }}%</td>
+                <td class="currency">{{ TOTAL_NET }}</td>
                 <td>
                     <span style="font-size: 14px"
-                        class="currency">{{ (20 * order.get_total_net()) / 100 + order.get_total_net() }}</span>
+                        class="currency">{{ TOTAL }}</span>
                 </td>
             </tr>
         </tbody>
     </table>
+    {% endif %}
     <div>
         {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
-
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1"
-            class="btn btn-theme radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
-            {% endif %}>Accepter</a>
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0"
-            class="btn btn-danger radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
-            {% endif %}>Rejeter</a>
+            {% if not TOTAL == 0 %}
+            <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1"
+                class="btn btn-theme radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
+                {% endif %}>Accepter</a>
+            <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0"
+                class="btn btn-danger radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
+                {% endif %}>Rejeter</a>
+            {% endif %}
         {% endif %}
         <a href="{{download_url}}?order_id={{quotation.order_id}}" class="btn btn-success radius-0">Telecharger</a>
     </div>

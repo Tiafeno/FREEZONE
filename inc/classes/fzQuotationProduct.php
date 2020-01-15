@@ -118,10 +118,13 @@ class fzQuotationProduct extends \WC_Product
         /**
          * Vérifier s'il y a plusieur fournisseur utiliser
          */
-        $suppliers = array_filter($this->suppliers, function ($supplier) { return 0 !== intval($supplier->get); });
-        if (is_array($suppliers) && count($suppliers) > 1) {
-            $this->editable = false;
+        if (is_array($suppliers)) {
+            $suppliers = array_filter($this->suppliers, function ($supplier) { return 0 !== intval($supplier->get); });
+            if (count($suppliers) > 1) {
+                $this->editable = false;
+            }
         }
+        
     }
 
     public function discount_percent() {

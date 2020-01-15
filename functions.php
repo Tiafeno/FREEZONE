@@ -81,9 +81,9 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['stock-management'] = 'Gestion de stock';
     } else {
         unset($items['stock-management']);
+        $items['demandes'] = "Demandes";
         $items['savs'] = "S.A.V";
         $items['gd'] = "Petites annonces";
-        $items['demandes'] = "Demandes";
         //$items['catalogue'] = "Prestations";
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";

@@ -1,4 +1,4 @@
-
+{% set TVA = 20 %}
 <button class="btn btn-theme radius-0" id="download-btn">Telecharger</button>
 <div style="margin-top: 40px"></div>
 <div class="pdf-document" id="pdf-document">
@@ -121,18 +121,22 @@
                 <td>
                     -
                 </td>
-                <td class="currency">0</td>
+                <td>Non disponible</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    {% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
+    {% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
     <div style="margin-top: 40px"></div>
+    {% if not TOTAL == 0 %}
     <table class="table table-bordered ">
         <thead>
             <tr>
                 <th scope="col">Total HT Brut</th>
                 <th scope="col">Total Net</th>
-                <th scope="col">TVA 20%</th>
+                <th scope="col">TVA {{TVA}}%</th>
                 <th scope="col">Montant Taxe</th>
                 <th scope="col">NET A PAYER</th>
             </tr>
@@ -141,13 +145,13 @@
             <tr>
                 <td class="currency">{{order.get_total_ht()}}</td>
                 <td class="currency">{{order.get_total_net()}}</td>
-                <td>20%</td>
-                <td class="currency">{{ (20 * order.get_total_net()) / 100 }}</td>
+                <td>{{TVA}}%</td>
+                <td class="currency">{{ TOTAL_NET }}</td>
                 <td>
-                    <span style="font-size: 14px" class="currency">{{ (20 * order.get_total_net()) / 100 + order.get_total_net() }}</span>
+                    <span style="font-size: 14px" class="currency">{{ TOTAL }}</span>
                 </td>
             </tr>
         </tbody>
     </table>
-
+    {% endif %}
 </div>
