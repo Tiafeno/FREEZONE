@@ -700,7 +700,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     'quotation' => $quotation_params,
                     'order' => $quotation,
                     'download_url' => wc_get_account_endpoint_url('pdf'),
-                    'nonce' => wp_create_nonce('confirmaction')
+                    'nonce' => wp_create_nonce('confirmaction'),
+                    'define' => [
+                        'min_cost_with_transport' => $quotation->get_min_cost_with_transport(),
+                        'cost_transport' => $quotation->get_cost_transport()
+                    ]
                 ]);
 
                 break;
@@ -774,6 +778,10 @@ add_action('woocommerce_account_pdf_endpoint', function () {
         'customer' => $customer,
         'hlp' => [
             'theme_url' => get_stylesheet_directory_uri()
+        ],
+        'define' => [
+            'min_cost_with_transport' => $order->get_min_cost_with_transport(),
+            'cost_transport' => $order->get_cost_transport()
         ]
     ]);
     wc_clear_notices();

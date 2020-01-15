@@ -87,6 +87,8 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
+    {% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
+    {% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -118,17 +120,21 @@
                 <td></td>
                 <td>-</td>
                 <td class="">-</td>
-                <td>
-                    -
-                </td>
+                <td>-</td>
                 <td>Non disponible</td>
             </tr>
             {% endfor %}
         </tbody>
+        {% if TOTAL > 0 and TOTAL > define.min_cost_with_transport %}
+        <tfoot>
+            <tr style="background-color: #eae6e6;">
+                <th colspan="5" class="pl-4 text-right">Frais de transport</th>
+                <th class="currency">{{define.cost_transport}}</th>
+            </tr>
+        </tfoot>
+        {% endif %}
     </table>
 
-    {% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
-    {% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
     <div style="margin-top: 40px"></div>
     {% if not TOTAL == 0 %}
     <table class="table table-bordered ">

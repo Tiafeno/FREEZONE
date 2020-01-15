@@ -37,6 +37,8 @@ class fzQuotation extends \WC_Order
     public $clientRole = null;
     public $fzItems = [];
     public $fzItemsZero = [];
+    private $min_cost_with_transport = 100000;
+    private $cost_transport = 12600;
 
     public function __construct ($order = 0) {
         parent::__construct($order);
@@ -92,12 +94,21 @@ class fzQuotation extends \WC_Order
         $all_total_net = array_map(function($item) { 
             return $item->get_freezone_subtotal(); 
         }, $this->fzItems);
-
-        return array_sum($all_total_net);
+        // Ajouter le frais de transport
+        $total = array_sum($all_total_net);
+        return $total > $this->min_cost_with_transport ? ($total + $this->cost_transport) : $total ;
     }
 
     public function get_dateadd() {
         return $this->date_add;
+    }
+
+    public function get_min_cost_with_transport() {
+        return $this->min_cost_with_transport;
+    }
+
+    public function get_cost_transport() {
+        return $this->cost_transport;
     }
 
     /**
