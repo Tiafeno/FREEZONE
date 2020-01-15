@@ -358,7 +358,8 @@ class fzAPI
 
                             foreach ( $user_query->get_results() as $user ) {
                                 $user_controller = new \WC_REST_Customers_V2_Controller();
-                                $response = $user_controller->prepare_item_for_response(new \WC_Customer($user->ID), $request);
+                                $customer = new \WP_User($user->ID);
+                                $response = $user_controller->prepare_item_for_response($customer, $request);
 
                                 // TODO: Ne pas afficher au commercial certain contenue du client
                                 $results[] = $response->data;
@@ -497,21 +498,20 @@ SQL;
                         do_action('fz_submit_articles_for_validation', $supplier_id, $subject, $content, $cc, $articles);
                     }
                 ]
-            ]);
+            ], false);
 
 
-            register_rest_route('api', '/mail/user/(<?P<user_id>\+d)', [
+            register_rest_route('api', '/mail/user/(?P<user_id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
                         $user_id = (int) $rq['user_id'];
                         if (\is_nan($user_id)) wp_send_json_error("Identifiant introuvable");
                         $password = sanitize_text_field($_REQUEST['pwd']);
-                    
-                        do_action("fz_insert_user", $user_id, $password);
+                        do_action("fz_mail_api_insert_user", $user_id, $password);
                     }
                 ]
-            ]);
+            ], false);
 
         });
 

@@ -83,19 +83,35 @@ add_action('fz_new_user', function ($user_id, $role)  {
 }, 10, 2);
 
 
-add_action('fz_insert_user', function ($user_id, $pwd = "") {
-    $user = new \WP_User($user_id);
+add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
+    $user = new \WP_User((int) $user_id);
+    $account_url = wc_get_account_endpoint_url('demandes');
     $from = "no-reply@freezone.click";
     $to = $user->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
 
-    $content = "Bonjour<br><br>";
-    $content .= "Inscription reussi, pour se connecter.<br><br> Adresse email: {$user->user_email}<br> Mot de passe: {$pwd}";
+    $content = "Bonjour,<br>
+    Suite à votre demande de devis nous vous informons que votre demande est désormais disponible et consultable sur notre site 
+    <a href=\"{$account_url}\" target=\"_blank\">en cliquant ici</a>
+    <br><br>
+    À noter que cette demande sera expirée dans 7 jours.
+    <br><br>
+    Actuellement vous possédez un accès espace client Freezone pour gérer et créer une demande de devis tout en parcourant norte catalogue en ligne.<br>
+    Votre compte:<br>
+    Adresse email: {$user->user_email}<br>
+    Mot de passe: {$pwd}
+    <br><br>
+    N’hésitez pas à nous contacter si vous avez des questions<br>
+    Merci";
     $subject = "Inscription reussi sur le site freezone.click";
-
-    wp_mail($to, $subject, $content, $headers);
+    $send = wp_mail($to, $subject, $content, $headers);
+    if ($send) {
+        wp_send_json_success("Message envoyer avec succes");
+    } else {
+        wp_send_json_error("Une erreur s'est produit pendant l'envoie");
+    }
 }, 10, 2);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
