@@ -147,7 +147,7 @@ yozi_render_breadcrumbs();
                                             </th>
                                             <td width="10%">
                                                 <div class="stock">
-                                                    <input type="number" v-on:change="onChangeQty" v-model="article.qty_disp"  style="width: 100%;" min="0" class="form-control radius-0"/>
+                                                    <input type="number" v-on:change="onChangeQty($event, index)" v-model="article.qty_disp"  style="width: 100%;" min="0" class="form-control radius-0"/>
                                                 </div>
                                             </td>
                                             <td width="10%">

@@ -27,34 +27,52 @@
                         });
                     });
                 },
-                onChangeQty: function(e) {
+                onChangeQty: function(e, index) {
                     e.preventDefault();
                     var element = e.currentTarget;
                     if (0 === parseInt(element.value)) {
+                        this.verifyQtyValue(index);
+                    }
+                },
+                verifyQtyValue: function (index) {
+                    return new Promise((resolve, reject) => {
                         Swal.fire({
                             title: 'confirmation',
                             html: "Cet article est en rupture de stock chez vous ?",
                             type: 'info',
-                            showCancelButton: false,
-                            width: "60rem" 
+                            width: "60rem",
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Oui',
+                            cancelButtonText: 'Non'
                         }).then(result => {
                             if (result.value) {
-
+                                // Rendre l'article en rupture de stock si la quantite est egale a 0
+                                this.articles[index].condition = 1;
+                                resolve(true);
+                            } else {
+                                resolve(false);
                             }
                         });
-                    }
+                    });
                 },
                 submitForm: function(e) {
                     e.preventDefault();
                     var btnSubmit = document.querySelector('#submit-update-form');
                     var deferreds = [];
-                    this.articles.forEach(article => {
+                    this.articles.forEach((article, index) => {
+                        // Verifier si la quantite est egale a Zero (0)
+                        var qty = parseInt(article.qty_disp);
+                        if (0 === qty) this.verifyQtyValue(index).then(res => {
+                            if (!res) throw new Error('La valeur du quantite requis.');
+                        });
                         var query = $.ajax({
                             method: "POST",
                             data: {
                                 id: article.id,
                                 price: parseInt(article.cost),
-                                total_sales: parseInt(article.qty_disp),
+                                total_sales: qty,
                                 garentee: _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee),
                                 date_review: article.date_review,
                                 condition: parseInt(article.condition)
