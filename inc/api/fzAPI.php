@@ -691,8 +691,21 @@ SQL;
                 $product_id = get_field('product_id', (int)$object['id']);
                 $product = new \WC_Product((int)$product_id);
                 $marge = $product->get_status();
-
                 return $marge;
+            }
+        ]);
+
+        /***
+         * Cette variable est requis pour l'administrateur
+         * Disponible - 0, Rupture -1, Obsolete - 2, et Commande - 3
+         */
+        register_rest_field('fz_product', 'condition', [
+            'update_callback' => function ($value, $object) {
+                return update_post_meta( (int)$object->ID, '_fz_condition', $value );
+            },
+            'get_callback' => function ($object, $field_name) {
+                $condition = get_post_meta( (int) $object['id'], '_fz_condition', true );
+                return (int) $condition;
             }
         ]);
 

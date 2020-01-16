@@ -650,7 +650,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
             case 'update':
             case 'confirmaction':
                 $products = [];
-
                 // Formulaire dans quotation-update.html
                 $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
                 if (wp_verify_nonce($nonce, 'confirmaction')) {
@@ -658,7 +657,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     $value = intval($value);
                     $order = new WC_Order(intval($order_id));
                     $position = get_field('position', $order->get_id());
-
                     $status = null;
                     switch ($value):
                         case 1:
@@ -668,7 +666,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                             $status = 'completed';
                             wc_add_notice("Demande accepter avec succès", 'notice');
                             break;
-
                         case 0:
                             // Rejeter la demande du client
                             update_field('position', 2, $order->get_id());
@@ -676,14 +673,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                             wc_add_notice("Demande rejetée avec succès", 'error');
                             break;
                     endswitch;
-
                     // Envoyer un mail au administrateur
                     if (!is_null($status) && !is_numeric($position))
                         do_action('complete_order', $order->get_id(), $status);
                 }
-
                 wc_print_notices();
-
                 //Redefinir l'objet de la demande pour:
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
                 $quotation = new \classes\fzQuotation(intval($order_id));
@@ -695,7 +689,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                     'date_add' => $quotation->get_dateadd()
                 ];
                 /** ************************ */
-
                 echo $Engine->render('@WC/demande/quotation-update.html', [
                     'quotation' => $quotation_params,
                     'order' => $quotation,
@@ -706,7 +699,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                         'cost_transport' => $quotation->get_cost_transport()
                     ]
                 ]);
-
                 break;
         endswitch;
 
@@ -756,7 +748,7 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     }
 
     wp_enqueue_style('poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800");
-    wp_enqueue_script('html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf.bundle.min.js', null, "0.9.1");
+    wp_enqueue_script('html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf/html2pdf.bundle.min.js', null, "0.9.1");
     wp_enqueue_script('download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
     wp_localize_script('download-pdf', 'Generator', [
         'order_id' => $order_id
@@ -808,7 +800,6 @@ SELECT * FROM $wpdb->posts WHERE post_status = "publish"
     AND post_type = "fz_faq_client" 
     AND ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = "faq_category" AND meta_value = $category)
 SQL;
-
     $results = $wpdb->get_results($sql);
     $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
     foreach ($results as $result) {
@@ -816,15 +807,12 @@ SQL;
         $shortcode .= "[vc_tta_section title=\"{$title}\" tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
         [/vc_tta_section]";
     }
-
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
-
     echo do_shortcode($shortcode);
 }, 10);
 
 add_action('woocommerce_account_gd_endpoint', function () {
     global $Engine;
-
     if ($_GET) {
         if (isset($_GET['edited'])) {
             // TODO: Modifier une annonce d'un client
@@ -832,7 +820,6 @@ add_action('woocommerce_account_gd_endpoint', function () {
             return true;
         }
     }
-
     $user = wp_get_current_user();
     $args = [
         'post_type' => 'good-deal',
@@ -844,13 +831,11 @@ add_action('woocommerce_account_gd_endpoint', function () {
             ]
         ]
     ];
-
     $the_query = new WP_Query($args);
     $good_deals = array_map(function ($good_deal) {
         $gd = new \classes\fzGoodDeal($good_deal->ID);
         return $gd;
     }, $the_query->posts);
-
     echo $Engine->render('@WC/gd/gd-lists.html', ['gooddeals' => $good_deals]);
 }, 10);
 
@@ -861,7 +846,6 @@ add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
     $firstname = $lastname = "";
-
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = esc_attr($_POST['firstname']);
         $lastname  = esc_attr($_POST['lastname']);
@@ -883,14 +867,12 @@ add_action('user_register', function ($user_id) {
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
-
     $user_customer = new WC_Customer(intval($user_id));
     /**
      * Role de l'utilisateur
      * Particulier ou entreprise
      */
     $role = sanitize_text_field($_REQUEST['role']);
-
     // Si le compte est une entreprise
     if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
@@ -906,7 +888,6 @@ add_action('user_register', function ($user_id) {
         // Ajouter le secteur d'activité pour l'entreprise
         update_user_meta($user_id, 'sector_activity', $sector_activity);
     }
-
     // Si le compte est particulier
     if ($role === 'particular') {
         $fields = ['cin', 'date_cin'];
@@ -921,20 +902,17 @@ add_action('user_register', function ($user_id) {
         // 0: not pending, 1: Pending
         update_user_meta($user_id, "fz_pending_user", 1);
     }
-
     // Ajouter le role du client
     $user_role = "fz-{$role}";
     $User->set_role($user_role);
-
     add_user_meta($user_id, "fz_pending_user", 1, true); // Mettre en attente
     add_user_meta($user_id, "ja_disable_user", 0, true); // Ne pas désactiver l'utilisateur
-
     // Envoyer un email de notification pour l'administrateur
     do_action('fz_new_user', $user_id, $user_role);
-
     // Update customer woocommerce user field
     $zip = sanitize_text_field($_REQUEST['postal_code']);
     $city = sanitize_text_field($_REQUEST['city']);
+    // Billing
     $user_customer->set_billing_location('MG', '', $zip, $city);
     $user_customer->set_billing_email($User->user_email);
     $user_customer->set_billing_company($company_name);
@@ -943,26 +921,23 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_billing_last_name($lastname);
     $user_customer->set_billing_address($address);
     $user_customer->set_billing_phone($phone);
-
+    // Shipping
     $user_customer->set_shipping_location('MG', '', $zip, $city);
     $user_customer->set_shipping_address_1($address);
     $user_customer->set_shipping_first_name($firstname);
     $user_customer->set_shipping_last_name($lastname);
     $user_customer->set_shipping_company($company_name);
-
     $user_customer->save_data();
 });
 
 add_action('wp_loaded', function () {
     //update_field('position', 1, 1431);
-
     add_action('wp_logout', 'auto_redirect_after_logout');
     function auto_redirect_after_logout()
     {
         wp_redirect(home_url());
         exit();
     }
-    
     /* register_nav_menus( array(
         'primary' => esc_html__( 'Primary Menu', 'yozi' ),
         'top-menu' => esc_html__( 'Top Menu', 'yozi' ),
@@ -998,12 +973,10 @@ add_action('delete_user', function ($user_id) {
                 ]
             ]
         ];
-
         $post_articles = get_posts($args);
         foreach ($post_articles as $post) {
             wp_delete_post($post->ID, true);
         }
-
         // Ne pas effacer les demandes ou les commandes
     }
 }, 10, 1);
@@ -1011,7 +984,6 @@ add_action('delete_user', function ($user_id) {
 add_action('woocommerce_thankyou', function ($order_id) {
     if (!is_user_logged_in()) return false;
     $User = wp_get_current_user();
-
     $order = new WC_Order(intval($order_id));
     $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
     update_field('position', 0, intval($order_id));
@@ -1019,15 +991,12 @@ add_action('woocommerce_thankyou', function ($order_id) {
     update_field('user_id', $User->ID, intval($order_id));
     // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
     update_post_meta(intval($order_id), 'client_role', $User->roles[0]);
-
     foreach ($items as $item_id => $item) {
         wc_add_order_item_meta(intval($item_id), 'status', 0);
         wc_add_order_item_meta(intval($item_id), 'suppliers', json_encode([]));
     }
-
     // Envoyer un mail aux administrateurs
     do_action('fz_received_order', $order_id);
-
     // Mettre les fournisseurs qui posséde ces produits en attente d'envoie (mail)
     $apiSupplier = new apiSupplier();
     $request = new WP_REST_Request();
@@ -1061,6 +1030,72 @@ add_action('acf/save_post', function ($post_id) {
     // Envoyer un email aux administrateur
     do_action('fz_insert_sav', $post_id);
 });
+
+// Recuperer les articles en attente en format JSON
+add_action('wp_ajax_get_review_articles', function() {
+    global $wpdb;
+    $fzProducts = [];
+    // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
+    $articles = isset($_COOKIE['freezone_ua']) ? $_COOKIE['freezone_ua'] : '';
+    $item_articles = explode(',', $articles);
+    // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
+    // a partir de 06h du matin
+    $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
+    $today_date_time = new DateTime($now);
+    $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
+    $sql = <<<CODE
+SELECT SQL_CALC_FOUND_ROWS pts.ID
+FROM $wpdb->posts AS pts
+WHERE
+    pts.ID IN ($articles) 
+    AND pts.post_type = 'fz_product'
+    AND pts.post_status = 'publish'
+    AND pts.ID IN (SELECT post_id
+        FROM $wpdb->postmeta
+        WHERE meta_key = 'date_review'
+            AND CAST(meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
+        )
+CODE;
+
+    $post_products = $wpdb->get_results($sql);
+    $count_sql = "SELECT FOUND_ROWS()";
+    $total = $wpdb->get_var($count_sql);
+    // Boucler une a une les articles trouver dans la recherche
+    foreach ( $post_products as $_post ) {
+        $article = new \classes\fzSupplierArticle($_post->ID);
+        $product_id = $article->get_product_id();
+        $quantity = [];
+        // Récuperer les quantité demander pour cette article dans les commandes "en attente"
+        $orders = new WP_Query([
+            'post_type' => wc_get_order_types(),
+            'post_status' => array_keys(wc_get_order_statuses()),
+            "posts_per_page" => -1,
+            'meta_query' => [
+                [
+                    'key' => 'position',
+                    'value' => 0, // Tous les commande en attente
+                    'compare' => '='
+                ]
+            ]
+        ]);
+        if (empty($orders->posts)) continue;
+        // Boucler tous le commandes trouver dans la recherche
+        foreach ( $orders->posts as $order ) {
+            $current_order = new WC_Order($order->ID);
+            $items = $current_order->get_items();
+            foreach ( $items as $item_id => $item ) {
+                $data = $item->get_data();
+                if ($data['product_id'] === $product_id) {
+                    $quantity[] = (int)$data['quantity'];
+                }
+            }
+        }
+        $article->quantity = array_sum($quantity);
+        $fzProducts[] = $article;
+    }
+    wp_send_json_success($fzProducts);
+});
+
 
 add_action('wp_loaded', function () {
 });

@@ -9,15 +9,17 @@
  * Template Name: Update articles supplier
  */
 
-$fzProducts = [];
 
 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
+wp_enqueue_script('momenjs', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js", ['jquery']);
 // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
 wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
-wp_localize_script('vue', 'rest_api', [
+wp_enqueue_script('update-articles', get_stylesheet_directory_uri() . '/assets/js/update-articles.js', ['jquery', 'vue']);
+wp_localize_script('update-articles', 'rest_api', [
     'rest_url' => esc_url_raw(rest_url()),
     'nonce' => wp_create_nonce('wp_rest'),
-    'admin_url' =>  admin_url('admin-ajax.php'),
+    'ajax_url' =>  admin_url('admin-ajax.php'),
+    'account_url' => get_permalink( wc_get_page_id( 'myaccount' ) )
 ]);
 
 /**
@@ -69,86 +71,24 @@ if (!empty($_GET)) {
                 // Redirection
                 fz_reload_header();
             }
-            global $wpdb;
-            // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
-            $articles = isset($_COOKIE['freezone_ua']) ? $_COOKIE['freezone_ua'] : '';
-            $item_articles = explode(',', $articles);
-            // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
-            // a partir de 06h du matin
-            $today_date_time = new DateTime($now);
-            $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
-            $sql = <<<CODE
-SELECT  SQL_CALC_FOUND_ROWS pts.ID
-FROM $wpdb->posts AS pts
-WHERE
-    pts.ID IN ($articles) 
-    AND pts.post_type = 'fz_product'
-    AND pts.post_status = 'publish'
-    AND pts.ID IN (SELECT post_id
-        FROM $wpdb->postmeta
-        WHERE meta_key = 'date_review'
-            AND CAST(meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
-    )
-CODE;
-
-            $post_products = $wpdb->get_results($sql);
-            $count_sql = "SELECT FOUND_ROWS()";
-            $total = $wpdb->get_var($count_sql);
-            // Boucler une a une les articles trouver dans la recherche
-            foreach ( $post_products as $_post ) {
-                $article = new \classes\fzSupplierArticle($_post->ID);
-                $product_id = $article->get_product_id();
-                $quantity = [];
-                // Récuperer les quantité demander pour cette article dans les commandes "en attente"
-                $orders = new WP_Query([
-                    'post_type' => wc_get_order_types(),
-                    'post_status' => array_keys(wc_get_order_statuses()),
-                    "posts_per_page" => -1,
-                    'meta_query' => [
-                        [
-                            'key' => 'position',
-                            'value' => 0, // Tous les commande en attente
-                            'compare' => '='
-                        ]
-                    ]
-                ]);
-                if (empty($orders->posts)) continue;
-                // Boucler tous le commandes trouver dans la recherche
-                foreach ( $orders->posts as $order ) {
-                    $current_order = new WC_Order($order->ID);
-                    $items = $current_order->get_items();
-                    foreach ( $items as $item_id => $item ) {
-                        $data = $item->get_data();
-                        if ($data['product_id'] === $product_id) {
-                            $quantity[] = (int)$data['quantity'];
-                        }
-                    }
-                }
-                $article->quantity = array_sum($quantity);
-                $fzProducts[] = $article;
-            }
         }
     }
 }
 
-function fz_reload_header ()
-{
-    $current_url = get_the_permalink();
+function fz_reload_header () {
+    $url = get_the_permalink();
     setcookie('freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
     setcookie('__freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
-
-
     wp_redirect(add_query_arg([
         //'articles' => isset($_GET['articles']) ? $_GET['articles'] : '',
         'fznonce' => isset($_GET['fznonce']) ? $_GET['fznonce'] : '',
         'email' => isset($_GET['email']) ? $_GET['email'] : '',
         'e' => isset($_GET['e']) ? $_GET['e'] : '',
-    ], $current_url));
+    ], $url));
     exit;
 }
 
 get_header();
-$current_user = wp_get_current_user();
 $sidebar_configs = yozi_get_page_layout_configs();
 yozi_render_breadcrumbs();
 ?>
@@ -168,22 +108,14 @@ yozi_render_breadcrumbs();
             position: relative;
         }
     </style>
-
-    <script type="text/javascript">
-        var _apiArticles = <?= json_encode($fzProducts); ?>;
-        var _userId = <?= $current_user->ID ?>;
-    </script>
-
     <section id="main-container" class="<?php echo apply_filters('yozi_page_content_class', 'container'); ?> inner">
-        <?php wc_print_notices(); ?>
         <div class="row">
             <div id="main-content" class="main-page">
                 <main id="main" class="site-main clearfix" role="main" style="margin-bottom: 40px">
-
                     <?php
                     wc_print_notices();
-                    if (!is_user_logged_in()) {
-                        wc_get_template('woocommerce/myaccount/form-login.php');
+                    if ( ! is_user_logged_in() ) {
+                       wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
                         ?>
                         <div style="margin-bottom: 14px">
@@ -193,69 +125,69 @@ yozi_render_breadcrumbs();
                             endwhile;
                             ?>
                         </div>
-
-                        <?php
-                        if (!empty($fzProducts)) : ?>
-
-                                <form method="POST" name="form_update" class="updated-form" id="app-update-articles">
-                                    <table class="table table-striped" style="margin-bottom: 0px !important">
-
-                                        <thead style="background: #2584cf;color: white;">
-                                            <tr>
-                                                <th scope="col">Designation</th>
-                                                <th scope="col">Qté disponible</th>
-                                                <th scope="col">Qté demandée</th>
-                                                <th scope="col">Prix en ariary</th>
-                                                <th scope="col">Garantie</th>
-                                                <th scope="col">#</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">
-                                                    <div class="form-row form-row-wide designation"
-                                                        style="font-weight: lighter">
-                                                        <?= $article->name ?>
-                                                    </div>
-                                                </th>
-                                                <td width="15%">
-                                                    <div class="stock">
-                                                        <input type="number" name="stock" style="width: 100%;"
-                                                            id="reg_stock" min="0"
-                                                            value="0"/>
-                                                    </div>
-                                                </td>
-                                                <td width="15%">
-                                                    <div class="qty_request">
-                                                        <input type="number" disabled="disabled" name="qty_request" style="width: 100%;"
-                                                            id="reg_qty_request" min="0"
-                                                            value="<?= $article->quantity ?>"/>
-                                                    </div>
-                                                </td>
-                                                <td width="15%">
-                                                    <div class="price">
-                                                        <input type="number" name="price" style="width: 100%;"
-                                                            id="reg_price" min="0"
-                                                            value="<?= $article->regular_price ?>"/>
-                                                    </div>
-                                                </td>
-                                                <td width="15%">
-                                                    <div class="garentee">
-                                                        <select name="garentee"  style="width: 100%;">
-                                                            <option value="">Aucun</option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </form>
-                            <?php 
-                        else:
-                            echo "Vous n'avez aucun article en attente de révision";
-                        endif;
-                        ?>
+                        <div id="app-update-articles">
+                            <form method="POST" name="form_update" class="updated-form" @submit="submitForm" action="" >
+                                <table class="table table-striped" style="margin-bottom: 0px !important">
+                                    <thead style="background: #2584cf;color: white;" v-if="articles.length > 0">
+                                        <tr>
+                                            <th scope="col">Designation</th>
+                                            <th scope="col">Qté disponible</th>
+                                            <th scope="col">Qté demandée</th>
+                                            <th scope="col">Statut de produit</th>
+                                            <th scope="col">Prix en ariary</th>
+                                            <th scope="col">Garantie</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(article, index) in articles">
+                                            <th scope="row">
+                                                <div class="form-row form-row-wide designation" style="font-weight: lighter">
+                                                   {{ article.designation }}
+                                                </div>
+                                            </th>
+                                            <td width="10%">
+                                                <div class="stock">
+                                                    <input type="number" v-on:change="onChangeQty" v-model="article.qty_disp"  style="width: 100%;" min="0" class="form-control radius-0"/>
+                                                </div>
+                                            </td>
+                                            <td width="10%">
+                                                <div class="qty_request">
+                                                    <input type="number" v-model="article.qty_ask"  disabled="disabled"  style="width: 100%;" min="0" class="form-control radius-0" />
+                                                </div>
+                                            </td>
+                                            <td width="12%">
+                                                <div class="statut">
+                                                    <select v-model="article.condition" class="form-control radius-0" style="width: 100%;">
+                                                        <option :value="condition.key" :checked="condition.key == article.condition" v-for="condition in condition_product">
+                                                            {{ condition.value }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td width="15%">
+                                                <div class="price">
+                                                    <input type="number" v-model="article.cost" step="100" style="width: 100%;" min="0" class="form-control radius-0" />
+                                                </div>
+                                            </td>
+                                            <td width="10%">
+                                                <div class="garentee">
+                                                    <select v-model="article.garentee" class="form-control radius-0" style="width: 100%;">
+                                                        <option value="0">Aucun</option>
+                                                        <option :value="item" v-for="item in _.range(1, 13)">{{ item }} mois</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row" v-if="articles.length > 0">
+                                    <button class="btn btn-primary" type="submit" id="submit-update-form">Enregistrer</button>
+                                </div>
+                                <div class="row" v-if="articles.length == 0">
+                                    Vous n'avez aucun articles en attente
+                                </div>
+                            </form>
+                        </div>
                     <?php } ?>
 
                     <!--                    Test -->

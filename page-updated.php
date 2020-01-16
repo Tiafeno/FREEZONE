@@ -6,7 +6,7 @@
  */
 
 /**
- * Template Name: Page Updated Review
+ * Template Name: Page Updated Review (deprecate)
  */
 
 $fzProducts = [];
