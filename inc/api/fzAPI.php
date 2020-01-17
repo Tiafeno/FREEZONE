@@ -513,12 +513,37 @@ SQL;
                 ]
             ], false);
 
+            register_rest_route('api', '/options', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        // nif, stat, rc, & cif
+                        foreach ($_REQUEST as $option => $value)
+                            update_option($option, sanitize_text_field($value));
+                        wp_send_json_success("Donnee mise a jour avec succes");
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('delete_posts');
+                    },
+                ],
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => function () {
+                        $option_fields = ['nif', 'stat', 'rc', 'cif', 'bmoi'];
+                        $results = [];
+                        foreach ($option_fields as $field) {
+                            $results[ $field ] = get_option($field, null);
+                        }
+                        wp_send_json($results);
+                    }
+                ]
+            ], false);
+
         });
 
     }
 
-    public function register_rest_user ()
-    {
+    public function register_rest_user () {
         $metas = [
             'company_name',
             'address',
@@ -623,8 +648,7 @@ SQL;
 
     }
 
-    public function register_rest_fz_product ()
-    {
+    public function register_rest_fz_product () {
         $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
             register_rest_field('fz_product', $meta, [
@@ -721,8 +745,6 @@ SQL;
             }
         ]);
 
-
-
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {
             register_rest_field('fz_product', 'supplier', [
@@ -738,7 +760,6 @@ SQL;
                 }
             ]);
         }
-
     }
 
     public function register_rest_faq_client() {
@@ -758,8 +779,7 @@ SQL;
         }
     }
 
-    public function register_rest_order ()
-    {
+    public function register_rest_order () {
         $post_types = wc_get_order_types();
         foreach ( $post_types as $type ) {
             // ACF field
@@ -814,7 +834,6 @@ SQL;
         }
 
     }
-
 }
 
 /**

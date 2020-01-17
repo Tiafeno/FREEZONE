@@ -84,6 +84,10 @@ try {
         return $has_discount ? $fake_discount : '';
     }));
 
+    $Engine->addFilter(new Twig_SimpleFilter('wpoption', function ($field) {
+        return get_option($field, 'N/A');
+    }));
+
 } catch (Twig_Error_Loader $e) {
     echo $e->getRawMessage();
 }
