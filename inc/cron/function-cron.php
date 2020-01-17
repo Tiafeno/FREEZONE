@@ -31,7 +31,7 @@ function fn_query_expired_order($day) {
                     'compare' => "="
                 ],
                 [
-                    'key' => 'date_send',
+                    'key' => 'date_send', // contient la date d'envoye du mail au client
                     'type' => 'DATETIME',
                     'compare' => 'NOT EXISTS'
                 ]
@@ -50,6 +50,9 @@ add_action('schedule_order_expired', function() {
     if ($the_query) {
         array_map(function ($post) {
             $order = wc_get_order($post->ID);
+            // Envoyer un mail au client
+            $customer = new WP_User($order->get_customer_id());
+            do_action("fz_cron_intervention_client_2", $customer, $order);
             // Rejetée la demande automatiquement si la date d'expiration arrive
             $order->update_meta_data('position', 2); // 2: Rejeter
             $order->save_meta_data();
@@ -60,6 +63,25 @@ add_action('schedule_order_expired', function() {
 
 add_action('attente_intervention_client', function() {
     // SQL: https://www.w3schools.com/sql/func_mysql_date_add.asp
+    global $wpdb;
+    $order_post_type = "shop_order";
+    $date_now = new DateTime("now");
+    $data_now_string = $date_now->format('Y-m-d H:i:s');
+    // Recuprer les commandes 2 jours avant la date expiration, s'il n'y a pas d'intervention par le client
+    $query_sql = "SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
+        JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
+        JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
+        WHERE pst.post_type = '{$order_post_type}' 
+            AND (pm.meta_key = 'date_send' AND cast(DATE_ADD(pm.meta_value, INTERVAL 4 DAY) AS DATE) = CAST('{$data_now_string}' AS DATE))
+            AND (pm2.meta_key = 'position' AND CAST(pm2.meta_value AS unsigned) = 1)";
+    $results = $wpdb->get_results($query_sql);
+    //if (empty($results)) return;
+    foreach ($results as $shop_order) {
+        $order = wc_get_order((int) $shop_order->ID);
+        $customer = new WP_User($order->get_customer_id());
+        // Envoyer un mail au client
+        do_action('fz_cron_intervention_client_1', $customer, $order);
+    }
 });
 
 add_action('ask_product_repair', function ($admin_emails) {
@@ -74,7 +96,7 @@ add_action('ask_product_repair', function ($admin_emails) {
 SELECT SQL_CALC_FOUND_ROWS pst.ID, pm.meta_value as approximate_time FROM $wpdb->posts as pst
 JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
 WHERE pst.post_type = 'fz_sav' AND pst.post_status = 'publish'
-    AND pm.meta_key = 'approximate_time' AND CAST(pm.meta_value AS DATE) < CAST('$date_now' AS DATE) 
+    AND pm.meta_key = 'approximate_time' AND CAST(pm.meta_value AS DATETIME) < CAST('$date_now' AS DATETIME) 
 SQL;
     $results = $wpdb->get_results($sql);
     if (empty($results)) return;
