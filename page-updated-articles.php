@@ -171,7 +171,7 @@ yozi_render_breadcrumbs();
                                             </td>
                                             <td width="10%">
                                                 <div class="garentee">
-                                                    <select v-model="article.garentee" class="form-control radius-0" style="width: 100%;">
+                                                    <select v-model="article.garentee" v-bind:disabled="article.garentee != 0" class="form-control radius-0" style="width: 100%;">
                                                         <option value="0">Aucun</option>
                                                         <option :value="item" v-for="item in _.range(1, 13)">{{ item }} mois</option>
                                                     </select>

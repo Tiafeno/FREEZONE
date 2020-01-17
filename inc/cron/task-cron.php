@@ -26,6 +26,13 @@ add_action('everyday', function () {
      * Rejetée automatiquement les demandes envoyer qui ne sont pas consulté par les clients
      */
     do_action('schedule_order_expired');
+
+    /**
+     * Vérifier la validité d’un devis sur une semaine. Si le client n’est pas intervenu 
+     * sur le devis au d’une semaine lui envoyer une notification pour lui dire de 
+     * refaire une demande
+     */
+    do_action('attente_intervention_client');
 }, 10);
 
 
@@ -52,7 +59,6 @@ SQL;
     $results = $wpdb->get_results($sql);
     if (empty($results)) return;
     $savs    = get_hardwards($results);
-
     $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
     $admin_emails = [];
     foreach ( $admins->get_results() as $admin ) {
@@ -73,13 +79,10 @@ SQL;
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <$no_reply>";
         $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-
         // Envoyer le mail
         wp_mail($to, $subject, $content, $headers);
     }
-
 }, 10);
-
 
 function get_hardwards ($results)
 {
@@ -89,9 +92,7 @@ function get_hardwards ($results)
         $client_id = (int)get_post_meta($post->ID, 'sav_auctor', true);
         if (is_nan($client_id) || 0 === $client_id || empty($client_id)) continue;
         $client_reference = get_field('reference', 'user_' . $client_id);
-
         $response[] = ['name' => $name, 'reference' => $client_reference, 'sav_id' => (int) $post->ID];
     }
-
     return $response;
 }
