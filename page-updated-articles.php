@@ -147,7 +147,8 @@ yozi_render_breadcrumbs();
                                             </th>
                                             <td width="10%">
                                                 <div class="stock">
-                                                    <input type="number" v-on:change="onChangeQty($event, index)" v-model="article.qty_disp"  style="width: 100%;" min="0" class="form-control radius-0"/>
+                                                    <input type="number" v-on:change="onChangeQty($event, index)" v-model="article.qty_disp" 
+                                                    v-bind:disabled="article.condition == 1 || article.condition == 2" style="width: 100%;" min="0" class="form-control radius-0"/>
                                                 </div>
                                             </td>
                                             <td width="10%">
@@ -157,7 +158,7 @@ yozi_render_breadcrumbs();
                                             </td>
                                             <td width="12%">
                                                 <div class="statut">
-                                                    <select v-model="article.condition" class="form-control radius-0" style="width: 100%;">
+                                                    <select v-model="article.condition" class="form-control radius-0" v-on:change="onChangeCondition($event, index)" style="width: 100%;">
                                                         <option :value="condition.key" :checked="condition.key == article.condition" v-for="condition in condition_product">
                                                             {{ condition.value }}
                                                         </option>
