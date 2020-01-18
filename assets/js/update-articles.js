@@ -34,6 +34,13 @@
                         this.verifyQtyValue(index);
                     }
                 },
+                onChangeCondition: function(e, index) {
+                    var el = e.currentTarget;
+                    if (el.value == 1 || el.value == 2) {
+                        // On remet le quantité egale 0 si la condition est en rupture ou obsolete
+                        this.articles[index].qty_disp = 0;
+                    }
+                },
                 verifyQtyValue: function (index) {
                     return new Promise((resolve, reject) => {
                         Swal.fire({
@@ -63,10 +70,10 @@
                     var deferreds = [];
                     this.articles.forEach((article, index) => {
                         // Verifier si la quantite est egale a Zero (0)
-                        var qty = parseInt(article.qty_disp);
-                        if (0 === qty) this.verifyQtyValue(index).then(res => {
-                            if (!res) throw new Error('La valeur du quantite requis.');
-                        });
+                        if (0 === parseInt(article.qty_disp) && !_.containes([1, 2], parseInt(article.condition))) 
+                            this.verifyQtyValue(index).then(res => {
+                                if (!res) throw new Error('La valeur du quantite requis.');
+                            });
                         var query = $.ajax({
                             method: "POST",
                             data: {
