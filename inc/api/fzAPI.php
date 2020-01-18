@@ -324,7 +324,6 @@ class fzAPI
                             'role__in' => ['fz-particular', 'fz-company'],
                             'order' => 'DESC'
                         ];
-
                         $user = wp_get_current_user(  );
                         if (\in_array('administrator', $user->roles)) {
                             if (!empty($_REQUEST['responsible'])) {
@@ -349,7 +348,6 @@ class fzAPI
                                 ]);
                             }
                         }
-
                         $user_query = new \WP_User_Query($args);
                         if (!empty($user_query->get_results())) {
                             $results = [];
@@ -382,7 +380,6 @@ class fzAPI
                     }
                 ],
             ]);
-
 
             register_rest_route('api', '/faq-client/', [
                 [
@@ -420,7 +417,6 @@ SQL;
                     'args' => []
                 ]
             ]);
-
 
             /**
              * Envoyer un mail au client pour le devis
@@ -470,7 +466,6 @@ SQL;
                 ]
             ], false);
 
-
             /**
              * Envoyer un mail pour un fournisseur.
              * Cette registre permet d'envoyer un mail avec un lien pour mettre à jours l'articles
@@ -499,7 +494,6 @@ SQL;
                     }
                 ]
             ], false);
-
 
             register_rest_route('api', '/mail/user/(?P<user_id>\d+)', [
                 [

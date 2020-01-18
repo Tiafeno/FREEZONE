@@ -649,13 +649,15 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
             case 'update':
             case 'confirmaction':
+                wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
+                wp_enqueue_script('quotation-update', get_stylesheet_directory_uri() . '/assets/js/quotation-update.js', ['jquery']);
                 $products = [];
                 // Formulaire dans quotation-update.html
                 $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
                 if (wp_verify_nonce($nonce, 'confirmaction')) {
                     $value =  stripslashes($_REQUEST['value']);
                     $value = intval($value);
-                    $order = new WC_Order(intval($order_id));
+                    $order = wc_get_order(intval($order_id));
                     $position = get_field('position', $order->get_id());
                     $status = null;
                     switch ($value):

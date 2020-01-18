@@ -96,7 +96,7 @@ class fzQuotation extends \WC_Order
         }, $this->fzItems);
         // Ajouter le frais de transport
         $total = array_sum($all_total_net);
-        return $total > $this->min_cost_with_transport ? ($total + $this->cost_transport) : $total ;
+        return $total < $this->min_cost_with_transport ? ($total + $this->cost_transport) : $total ;
     }
 
     public function get_dateadd() {
