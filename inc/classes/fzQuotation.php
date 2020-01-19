@@ -78,6 +78,9 @@ class fzQuotation extends \WC_Order
         return $this->fzItems;
     }
 
+    /**
+     * Recuperer les items non disponible
+     */
     public function get_fz_items_zero() {
         return is_array($this->fzItemsZero) ? $this->fzItemsZero : [];
     }

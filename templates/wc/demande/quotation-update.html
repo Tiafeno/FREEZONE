@@ -75,7 +75,7 @@
             <tr class="">
                 <td style="padding-left: 15px" class="not-center"> {{product.get_name()}}  </td>
                 <td align="center"> <span style="text-align: center">{{product.count_item}}</span> </td>
-                <td class="currency"> {{ product.get_freezone_price() }} </td>
+                <td class="currency"> {{product.get_freezone_price()}} {{product.is_quantity_override() ? '*' : ''}}</td>
                 <td> {% if product.discount_type is same as(0) %} - {% else %} {{product.discount}}% {% endif %} </td>
                 <td class="currency"> {{product.get_freezone_subtotal()}} </td>
             </tr>

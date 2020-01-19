@@ -33,12 +33,13 @@ class fzQuotationProduct extends \WC_Product
      */
     public $count_item = 0;
     public $total = 0;
+
+    // Quantite disponible pour tous les articles ajouter pour cette item.
     public $item_limit = 0;
 
-    /**
-     * Cette valeur contient la condition du nombre de fournisseur ajouter
-     */
+    // Cette valeur contient la condition du nombre de fournisseur ajouter
     public $multi_supplier = false;
+
     /**
      * Short description of attribute order_id
      *
@@ -48,16 +49,15 @@ class fzQuotationProduct extends \WC_Product
     private $order_id = 0;
 
     /**
-     * Cette valeur est utiliser si le quantité peut être modifier par le client
-     * @var bool
-     */
-    private $editable = true;
-
-    /**
      * La remise pour les entreprises
      */
     public $discount = 0;
     public $discount_type = 0;
+     /**
+     * Cette valeur est utiliser si le quantité peut être modifier par le client
+     * @var bool
+     */
+    private $editable = true;
 
     /**
      * Short description of method __construct
@@ -68,50 +68,42 @@ class fzQuotationProduct extends \WC_Product
      * @param  Integer order_id
      * @return mixed
      */
-    public function __construct( $product_id, $order_id)
-    {
+    public function __construct($product_id, $order_id) {
         parent::__construct($product_id);
         $this->order_id = intval($order_id);
         // Récuperer les fournisseurs
-
-        $order = new \WC_Order($order_id);
+        $order = new \WC_Order($this->order_id);
         $items = $order->get_items();
         foreach ($items as $item_id => $item) {
             if (intval($item['product_id']) === intval($product_id)) {
                 $this->count_item = intval($item->get_quantity());
                 $this->total = intval($item->get_total());
                 $this->_price = $this->total / $this->count_item;
-
                 $suppliers = wc_get_order_item_meta( $item_id, 'suppliers', true );
                 $this->suppliers = json_decode($suppliers);
-
                 $status = wc_get_order_item_meta( $item_id, 'status', true );
                 $this->status = intval($status);
-
                 // Valeur pour la remise
                 $discount = wc_get_order_item_meta( $item_id, 'discount', true );
                 $this->discount = $discount ? intval($discount) : 0;
-
-                // Type de remise (Aucun ou Ajouter)
+                // Type de remise (Aucun ou Ajouterun remise)
                 $discount_type = wc_get_order_item_meta( $item_id, 'discount_type', true );
                 $this->discount_type = $discount_type ? intval($discount_type) : 0;
-
                 $this->item_id = (int) $item_id;
-                
                 break;
             } else continue;
         }
-
         if (empty($this->count_item)) {
             $this->error = new \WP_Error('broke', 'Produit introuvable');
             return false;
         }
-
-        // Get item limit
         if (is_array($this->suppliers) && ! empty($this->suppliers)) {
+            // Boucler tous les articles de fournisseurs ajouter
             foreach ($this->suppliers as $supplier) {
-                $supplier_article = new fzSupplierArticle((int) $supplier->article_id);
-                $this->item_limit += (int) $supplier_article->total_sales;
+                $total_sales = (int) get_field('total_sales', (int)$supplier->article_id);
+                $total_sales = \is_nan($total_sales) ? 0 : $total_sales;
+                // Ajouter la somme des tous les quantite pour tous ces articles
+                $this->item_limit += $total_sales;
             }
         }
 
@@ -124,7 +116,32 @@ class fzQuotationProduct extends \WC_Product
                 $this->editable = false;
             }
         }
-        
+    }
+
+    public function has_stock_request() {
+        $stock_request = wc_get_order_item_meta( $this->item_id, 'stock_request', true );
+        if (!$stock_request) return false;
+        return (0 === (int)$stock_request) ? false : true;
+    }
+
+    public function get_stock_request() {
+        $stock_request = wc_get_order_item_meta( $this->item_id, 'stock_request', true );
+        if (!$stock_request || null === $stock_request) return 0;
+        return intval($stock_request);
+    }
+
+    public function get_articles_condition($ids = []) {
+        // Recuperer les identifiants des articles
+        $article_ids = array_map(function($supplier) { return intval($supplier->article_id); }, $this->suppliers);
+        $article_conditions = array_map(function($id) {
+            $condition = (int)get_post_meta($id, "_fz_condition", true);
+            return  is_nan($condition) ? 0 : $condition;
+        }, $article_ids);
+        return $article_conditions;
+    }
+
+    public function is_quantity_override() {
+        return $this->has_stock_request();
     }
 
     public function discount_percent() {
@@ -138,7 +155,7 @@ class fzQuotationProduct extends \WC_Product
             // Rajout
                 return $price + $this->discount_percent();
             case 0:
-            case 1:
+           // case 1:
             default:
                 return $price;
         }
@@ -150,13 +167,12 @@ class fzQuotationProduct extends \WC_Product
             case 2:
             // Rajout
                 return $this->count_item * ($price - $this->discount_percent());
-            case 1:
-                return ($price - $this->discount_percent()) * $this->count_item;
+            // case 1:
+            //     return ($price - $this->discount_percent()) * $this->count_item;
             case 0:
             default:
             // Aucun
                 return $this->count_item * $price;
-
         }
     }
 
