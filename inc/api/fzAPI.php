@@ -84,7 +84,6 @@ class fzAPI
                         global $wpdb;
                         $product = null;
                         extract($_REQUEST, EXTR_PREFIX_SAME, 'REST');
-
                         /** @var string $name */
                         /** @var string $price */
                         /** @var string $total_sales */
