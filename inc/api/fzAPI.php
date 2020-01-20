@@ -643,9 +643,10 @@ SQL;
     }
 
     public function register_rest_fz_product () {
+        $current_post_type = "fz_product";
         $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         foreach ( $metas as $meta ) {
-            register_rest_field('fz_product', $meta, [
+            register_rest_field($current_post_type, $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
                     return update_field($field_name, $value, (int)$object->ID);
                 },
@@ -663,7 +664,7 @@ SQL;
         ];
 
         foreach ($article_metas as $meta) {
-            register_rest_field('fz_product', $meta['name'], [
+            register_rest_field($current_post_type, $meta['name'], [
                 'update_callback' => function ($value, $object) use ($meta) {
                     // $product_id = get_field('product_id', (int)$object->ID);
                     // $product = new \WC_Product((int)$product_id);
@@ -689,7 +690,7 @@ SQL;
         }
 
         // @type string Out/In
-        register_rest_field('fz_product', 'garentee', [
+        register_rest_field($current_post_type, 'garentee', [
             'update_callback' => function ($value, $object) {
                 return update_post_meta( (int)$object->ID, '_fz_garentee', $value );
             },
@@ -699,7 +700,7 @@ SQL;
             }
         ]);
 
-        register_rest_field('fz_product', 'product_status', [
+        register_rest_field($current_post_type, 'product_status', [
             'update_callback' => function ($value, $object) {
                 $product_id = get_field('product_id', (int)$object->ID);
                 $product = new \WC_Product((int)$product_id);
@@ -727,7 +728,23 @@ SQL;
             }
         ]);
 
-        register_rest_field('fz_product', 'product_thumbnail', [
+        /**
+         * Cette enregistrement consiste a stocker la quantité ajouter par le fournisseurs ou l'administrqteur
+         * NB: Cette quantité est utiliser pour stocker le stock initial pour la gestion de stock.
+         * e.g: la valeur de totla_sales se decremente, celui-ci stocke la valeur initial.
+         */
+        register_rest_field($current_post_type, '_quantity', [
+            'update_callback' => function ($value, $object) {
+                return update_post_meta( (int) $object->ID, '_fz_quantity', $value);
+            },  
+            'get_callback' => function($object) {
+                $qty = get_post_meta( (int)$object['id'], '_fz_quantity', true );
+                if (!$qty || is_null($qty)) return 0;
+                return intval($qty);
+            }
+        ]);
+
+        register_rest_field($current_post_type, 'product_thumbnail', [
             'get_callback' => function ($object) {
                 $product_id = get_field('product_id', (int)$object['id']);
                 $product_controller = new \WC_REST_Products_V2_Controller();
@@ -741,13 +758,7 @@ SQL;
 
         $params = $_REQUEST;
         if (isset($params['context']) && $params['context'] === "edit") {
-            register_rest_field('fz_product', 'supplier', [
-                'get_callback' => function ($object) {
-                    $user_id = get_field('user_id', (int)$object['id']);
-                    return new fzSupplier((int)$user_id);
-                }
-            ]);
-            register_rest_field('fz_product', 'supplier', [
+            register_rest_field($current_post_type, 'supplier', [
                 'get_callback' => function ($object) {
                     $user_id = get_field('user_id', (int)$object['id']);
                     return new fzSupplier((int)$user_id);

@@ -212,6 +212,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         $stock = sanitize_text_field($_POST['stock']);
                         update_field('price', intval($regular_price), $article_id);
                         update_field('total_sales', intval($stock), $article_id);
+                        update_post_meta( $article_id, '_fz_quantity', intval($stock));
                         update_field('date_review', date_i18n('Y-m-d H:m:s'), $article_id);
 
                         wc_add_notice("Article mis à jour avec succès", 'success');

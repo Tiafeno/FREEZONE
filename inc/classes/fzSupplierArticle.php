@@ -73,12 +73,12 @@ class fzSupplierArticle
 
 
     /**
-     * Short description of attribute total_sales
-     *
-     * @access public
-     * @var Integer
+     * C'est la quantité de stock pour cette article, mais cette quantité diminue lorsque les commercial envoie un devis
+     * au client.
      */
     public $total_sales = 0;
+    // Quantité initial pour la gestion de stock
+    public $_quantity = 0;
     public $error = null;
     public $garentee = null;
 
@@ -92,12 +92,10 @@ class fzSupplierArticle
      */
     public function __construct($post_id, $context = 'view')
     {
-
         if ( ! is_numeric($post_id) ) {
             $this->error = new \WP_Error('broke', "Une erreur de parametre s'est produit");
             return false;
         }
-
         $post_id    = intval($post_id);
         $article    = get_post($post_id);
         $this->ID   = &$post_id;
@@ -108,10 +106,9 @@ class fzSupplierArticle
         $this->total_sales = (int) get_field('total_sales', $post_id);
         $this->user_id     = get_field('user_id', $post_id);
         $this->garentee    = get_post_meta( $post_id, '_fz_garentee', true );
-
+        $this->_quantity   = get_post_meta( $post_id, '_fz_quantity', true );
         $product   = get_field('product_id', $this->ID);
         $this->url = get_permalink(is_object($product) ? $product->ID : intval($product));
-
         if ($context === "edit") {
             $this->supplier = new fzSupplier(intval($this->user_id));
         }
@@ -142,7 +139,6 @@ class fzSupplierArticle
     {
         $post_product  = get_field('product_id', $this->ID);
         $this->product = is_object($post_product) ? $post_product : new \WC_Product(intval($post_product));
-
         return $this->product;
     }
 
@@ -153,8 +149,6 @@ class fzSupplierArticle
         $User = is_object($this->user_id) ? $this->user_id : new \WP_User((int) $this->user_id);
         return $User;
     }
-
-
 
     /**
      * Short description of method setPrice
