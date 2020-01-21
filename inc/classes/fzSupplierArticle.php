@@ -81,6 +81,11 @@ class fzSupplierArticle
     public $_quantity = 0;
     public $error = null;
     public $garentee = null;
+    /***
+     * Cette variable est requis pour l'administrateur
+     * Disponible - 0, Rupture -1, Obsolete - 2, et Commande - 3
+     */
+    public $condition = 0;
 
     /**
      * Short description of method __construct
@@ -105,6 +110,7 @@ class fzSupplierArticle
         $this->date_review = get_field('date_review', $post_id);
         $this->total_sales = (int) get_field('total_sales', $post_id);
         $this->user_id     = get_field('user_id', $post_id);
+        $this->condition   = get_post_meta( $post_id, '_fz_condition', true );
         $this->garentee    = get_post_meta( $post_id, '_fz_garentee', true );
         $this->_quantity   = get_post_meta( $post_id, '_fz_quantity', true );
         $product   = get_field('product_id', $this->ID);
