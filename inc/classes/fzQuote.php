@@ -62,8 +62,8 @@ class FZ_Quote extends \WC_Order
          * +fz-particular
          */
         $this->clientRole = $client_role ? $client_role : null;
-        $this->fzItems = array_map(function($item) {
-            return new FZ_Item_Order($item['product_id'], $this->ID);
+        $this->fzItems = array_map(function(\WC_Order_Item_Product $item) {
+            return new FZ_Item_Order($item->get_id(), $this->ID);
         }, $this->get_items());
         $this->fzItemsZero = get_post_meta( $this->ID, 'line_items_zero', true );
     }
