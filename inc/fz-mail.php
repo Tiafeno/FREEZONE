@@ -192,7 +192,7 @@ add_action('complete_order', function ($order_id, $status = 'completed')  {
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
     $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
-    $quotation = new \classes\fzQuotation($order_id);
+    $quotation = new \classes\FZ_Quote($order_id);
     $client = $quotation->get_author();
     $content = $Engine->render('@MAIL/complete_order.html', [
         'quotation' => $quotation,
@@ -216,7 +216,7 @@ add_action('fz_received_order', function ($order_id) {
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
     $url = "https://admin.freezone.click/dashboard/quotation/{$order_id}/edit";
-    $quotation = new \classes\fzQuotation($order_id);
+    $quotation = new \classes\FZ_Quote($order_id);
     $customer_id = $quotation->get_userid();
     $message = '';
     switch ($quotation->clientRole) {

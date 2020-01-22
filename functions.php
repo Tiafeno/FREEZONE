@@ -1,6 +1,6 @@
 <?php
 
-use classes\fzQuotation;
+use classes\FZ_Quote;
 
 require_once get_stylesheet_directory() . '/vendor/autoload.php';
 require_once get_stylesheet_directory() . '/inc/fz-mail.php';
@@ -526,7 +526,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
         $order_id = $wp_query->query_vars['id'];
 
-        $quotation = new \classes\fzQuotation(intval($order_id));
+        $quotation = new \classes\FZ_Quote(intval($order_id));
         $items = $quotation->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
 
         switch ($quotation->get_position()) {
@@ -539,120 +539,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         }
 
         switch ($componnent):
-            case 'edit':
-                // Deprecate: Not used case
-                if ($_POST) {
-                    $validate = false;
-                    $order = new WC_Order(intval($order_id));
-                    // @e.g: qt_1520 = 2 => qt_{item_id} = {quantity}
-                    foreach ($_POST as $name => $value) {
-                        if (strpos($name, '_') !== false) {
-                            $names = explode('_', $name);
-                            if (empty($names) || $names[0] !== 'qt') continue;
-                            $current_item_id = intval($names[1]);
-                            $quantity = intval($value);
-                            $order_items = $order->get_items();
-
-                            foreach ($order_items as $id => $item) {
-                                if ($current_item_id === $id) {
-
-                                    $suppliers = wc_get_order_item_meta($id, 'suppliers', true);
-                                    $suppliers = json_decode(stripslashes($suppliers));
-
-                                    $current_total = (int) $item->get_total();
-                                    $current_price = $current_total / $item->get_quantity();
-
-                                    $new_total = $current_price * $quantity;
-                                    $item->set_quantity($quantity);
-                                    $item->set_total((string) $new_total);
-
-                                    $item->save();
-
-                                    $rest = 0;
-                                    $suppliers = array_map(function ($supplier) use ($quantity, &$rest) {
-                                        $article_id = (int) $supplier->article_id;
-                                        $article = new \classes\fzSupplierArticle($article_id);
-                                        $quantity = 0 === $rest ? $quantity : $rest;
-                                        if ($article->total_sales < $quantity) {
-                                            $take = $article->total_sales;
-                                            $rest = $quantity - $article->total_sales;
-                                        } else {
-                                            $take = $quantity;
-                                            $rest = 0;
-                                        }
-
-                                        $supplier->get = $take;
-
-                                        return $supplier;
-                                    }, $suppliers);
-
-                                    // https://docs.woocommerce.com/wc-apidocs/function-wc_update_order_item_meta.html
-                                    wc_update_order_item_meta($current_item_id, 'suppliers', json_encode($suppliers));
-                                }
-                            }
-                            $validate = true;
-                        }
-                    }
-
-                    if ($validate) {
-                        update_field('position', 3, $order->get_id());
-                        $order->update_status('completed');
-                        // Envoyer un mail au administrateur
-                        do_action('complete_order', $order->get_id(), 'completed');
-                    }
-                    wc_add_notice("Validation envoyer avec succès", 'success');
-                    unset($order);
-                } // POST
-
-                $products = [];
-                foreach ($items as $item) {
-                    // is_editable()
-                    $quotation_product = new \classes\fzQuotationProduct((int) $item['product_id'], (int) $order_id);
-                    $products[] = $quotation_product;
-                }
-
-                $meta_data_suppliers = [];
-                foreach ($products as $qProduct) {
-
-                    if (is_null($qProduct->suppliers) || empty($qProduct->suppliers)) continue;
-                    $suppliers = array_map(function ($supplier) {
-                        $fzSupplierArticle = new \classes\fzSupplierArticle(intval($supplier->article_id));
-
-                        $supplier->price = intval($fzSupplierArticle->regular_price);
-                        $supplier->get = intval($supplier->get);
-                        $supplier->total_sales = $fzSupplierArticle->total_sales;
-
-                        return $supplier;
-                    }, $qProduct->suppliers);
-                    $meta_data_suppliers[] = $suppliers;
-                }
-
-                $quotation_params = [
-                    'order_id' => (int) $order_id,
-                    'products' => $products,
-                    'position' => intval($quotation->get_position()),
-                    'date_add' => $quotation->get_dateadd(),
-                    'meta_data' => json_encode($meta_data_suppliers)
-                ];
-
-                wc_print_notices();
-
-                /**
-                 * 0: En attente
-                 * 1: Envoyer
-                 * 2: Rejetés
-                 * 3: Terminée
-                 */
-                if ($quotation->get_position() !== 0 && $quotation->get_position() !== 2)
-                    echo $Engine->render('@WC/demande/quotation-edit.html', ['quotation' => $quotation_params]);
-
-                break;
-
             case 'update':
             case 'confirmaction':
                 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
                 wp_enqueue_script('quotation-update', get_stylesheet_directory_uri() . '/assets/js/quotation-update.js', ['jquery']);
-                $products = [];
                 // Formulaire dans quotation-update.html
                 $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
                 if (wp_verify_nonce($nonce, 'confirmaction')) {
@@ -683,21 +573,21 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 wc_print_notices();
                 //Redefinir l'objet de la demande pour:
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
-                $quotation = new \classes\fzQuotation(intval($order_id));
+                $quotation = new \classes\FZ_Quote(intval($order_id));
                 $quotation_params = [
                     'order_id' => (int) $order_id,
-                    'products' => $quotation->get_fz_items(),
-                    'products_zero' => $quotation->get_fz_items_zero(),
+                    'lines' => $quotation->fz_items(),
+                    'lines_zero' => $quotation->fz_items_zero(),
                     'position' => intval($quotation->get_position()),
-                    'date_add' => $quotation->get_dateadd()
+                    'date_add' => $quotation->date_add()
                 ];
                 /** ************************ */
                 echo $Engine->render('@WC/demande/quotation-update.html', [
-                    'quotation' => $quotation_params,
+                    'quote' => $quotation_params,
                     'order' => $quotation,
                     'download_url' => wc_get_account_endpoint_url('pdf'),
-                    'nonce' => wp_create_nonce('confirmaction'),
                     'define' => [
+                        'nonce' => wp_create_nonce('confirmaction'),
                         'min_cost_with_transport' => $quotation->get_min_cost_with_transport(),
                         'cost_transport' => $quotation->get_cost_transport()
                     ]
@@ -709,11 +599,11 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     } else {
         $quotations = [];
         foreach ($user_quotations as $order) {
-            $quotation = new \classes\fzQuotation($order->get_id());
+            $quotation = new \classes\FZ_Quote($order->get_id());
             $quotations[] = [
                 'order_id' => $quotation->get_id(),
                 'position' => intval($quotation->get_position()),
-                'date_add' => $quotation->get_dateadd()
+                'date_add' => $quotation->date_add()
             ];
         }
 
@@ -738,7 +628,7 @@ add_action('woocommerce_account_pdf_endpoint', function () {
 
     if ($_GET && isset($_GET['order_id']) && !empty($_GET['order_id'])) {
         $order_id = intval($_GET['order_id']);
-        $order = new fzQuotation($order_id);
+        $order = new FZ_Quote($order_id);
     } else {
         $error = true;
         wc_add_notice('Parametre manquant (order_id)', 'error');
@@ -761,8 +651,8 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     // Get responsible if exist
     $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
-    $items = $order->get_fz_items();
-    $items_zero = $order->get_fz_items_zero();
+    $items = $order->fz_items();
+    $items_zero = $order->fz_items_zero();
 
     // Afficher le template
     echo $Engine->render('@WC/pdf/download-template.html', [

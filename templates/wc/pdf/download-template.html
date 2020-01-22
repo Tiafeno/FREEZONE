@@ -87,8 +87,8 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-    {% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
-    {% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
+    {% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
+    {% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -102,30 +102,32 @@
         </thead>
         <tbody>
             {% for item in items %}
-            <tr>
-                <td>{{item.get_name()}}</td>
-                <td></td>
-                <td>{{item.count_item}}</td>
-                <td class="currency">{{item.get_freezone_price()}}</td>
+            <tr class="">
+                <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
+                <td align="center"> <span style="text-align: center">{{line.qty_UI()}}</span> </td>
+                <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
                 <td>
-                    {% if item.discount_type is same as(0) %} - {% else %} {{item.discount}}% {% endif %}
+                    {{line.discount_type is same as(0) ? '-' : item.discount}}
+                    {{line.discount_type is same as(0) ? '' : ' %'}}
                 </td>
-                <td class="currency">{{item.get_freezone_subtotal()}}</td>
+                <td class="currency">
+                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}<
+                </td>
             </tr>
             {% endfor %}
 
             {% for item in items_zero %}
             <tr>
                 <td>{{item['name']}}</td>
-                <td></td>
-                <td>-</td>
-                <td class="">-</td>
-                <td>-</td>
+                <td align="center">-</td>
+                <td align="center">-</td>
+                <td align="center">-</td>
+                <td align="center">-</td>
                 <td>Non disponible</td>
             </tr>
             {% endfor %}
         </tbody>
-        {% if TOTAL > 0 and TOTAL > define.min_cost_with_transport %}
+        {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport %}
         <tfoot>
             <tr style="background-color: #eae6e6;">
                 <th colspan="5" class="pl-4 text-right">Frais de transport</th>

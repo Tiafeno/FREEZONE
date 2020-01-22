@@ -47,8 +47,8 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-{% set TOTAL = (TVA * order.get_total_net()) / 100 + order.get_total_net() %}
-{% set TOTAL_NET = (TVA * order.get_total_net()) / 100 %}
+{% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
+{% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
     <table class="woocommerce-orders-table shop_table_responsive shop_table account-orders-table">
         <thead>
             <tr>
@@ -71,17 +71,22 @@
             </tr>
         </thead>
         <tbody>
-            {% for product in quotation.products %}
+            {% for line in quote.lines %}
             <tr class="">
-                <td style="padding-left: 15px" class="not-center"> {{product.get_name()}}  </td>
-                <td align="center"> <span style="text-align: center">{{product.count_item}}</span> </td>
-                <td class="currency"> {{product.get_freezone_price()}} {{product.is_quantity_override() ? '*' : ''}}</td>
-                <td> {% if product.discount_type is same as(0) %} - {% else %} {{product.discount}}% {% endif %} </td>
-                <td class="currency"> {{product.get_freezone_subtotal()}} </td>
+                <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
+                <td align="center"> <span style="text-align: center">{{line.qty_UI()}}</span> </td>
+                <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
+                <td>
+                    {{line.discount_type is same as(0) ? '-' : item.discount}}
+                    {{line.discount_type is same as(0) ? '' : ' %'}}
+                </td>
+                <td class="currency">
+                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}<
+                </td>
             </tr>
             {% endfor %}
 
-            {% for product in quotation.products_zero %}
+            {% for product in quote.lines_zero %}
             <tr class="">
                 <td style="padding-left: 15px" class="not-center"> {{product['name']}} </td>
                 <td align="center">-</td>
@@ -116,8 +121,8 @@
         </thead>
         <tbody>
             <tr>
-                <td class="currency">{{order.get_total_ht()}}</td>
-                <td class="currency">{{order.get_total_net()}}</td>
+                <td class="currency">{{order.total_ht()}}</td>
+                <td class="currency">{{order.total_net()}}</td>
                 <td>{{ TVA }}%</td>
                 <td class="currency">{{ TOTAL_NET }}</td>
                 <td>
@@ -130,17 +135,17 @@
     <div>
         {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
         {% if not TOTAL == 0 %}
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1"
+        <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=1"
             class="btn btn-theme sub-quotation-update radius-0" {% if quotation.position is same as (0) %}
             disabled="disabled"
             {% endif %}>Accepter</a>
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0"
+        <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=0"
             class="btn btn-danger radius-0" {% if quotation.position is same as (0) %}
             disabled="disabled"
             {% endif %}>Rejeter</a>
         {% endif %}
         {% endif %}
-        <a href="{{download_url}}?order_id={{quotation.order_id}}" class="btn btn-success radius-0">Telecharger</a>
+        <a href="{{download_url}}?order_id={{quote.order_id}}" class="btn btn-success radius-0">Telecharger</a>
     </div>
 
 </form>
