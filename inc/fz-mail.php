@@ -23,9 +23,8 @@ add_action('fz_cron_intervention_client_1', function($user, $order) {
 
     $content = "Bonjour<br><br>";
     $content .= "Nous vous informons que votre demande <b>N°{$order->get_id()}</b> sera bientôt expirée dans deux jours,<br> 
-    Si il n'y a pas de réponse de votre part il sera rejeté. Pour voir vos demandes en cours <a href='{$account_url}' target='_blank'>cliquez ici</a><br>.
-    Merci de votre compréhension <br><br> Cordialement<br> Equipe Freezone";
-
+        Si il n'y a pas de réponse de votre part il sera rejeté. Pour voir vos demandes en cours <a href='{$account_url}' target='_blank'>cliquez ici</a><br>.
+        Merci de votre compréhension <br><br> Cordialement<br> Equipe Freezone";
     $subject = "Demande #{$$order->get_id()} - Votre demande seras expirée dans deux(2) jours sur Freezone";
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
@@ -36,7 +35,6 @@ add_action('fz_cron_intervention_client_1', function($user, $order) {
 add_action('fz_cron_intervention_client_2', function($user, $order) {
     $from = "no-reply@freezone.click";
     $to = $user->user_email;
-    $account_url = wc_get_account_endpoint_url('demandes');
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -49,6 +47,22 @@ add_action('fz_cron_intervention_client_2', function($user, $order) {
     $subject = "Demande #{$$order->get_id()} - Votre demande seras expirée dans deux(2) jours sur Freezone";
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
+
+
+add_action('fz_cron_intervention_order_admin', function(WC_Order $order) {
+    $from = "no-reply@freezone.click";
+    $to = implode(',', apply_filters( 'get_responsible', ['editor', 'administrator'] ));
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+
+    $content = "Bonjour<br><br>";
+    $content .= "Nous vous informons que la demande <b>N°{$order->get_id()}</b> est expirée.<br> 
+        Vous pouvez le supprimer.<br><br> Cordialement<br> Freezone";
+
+    $subject = "Demande #{$$order->get_id()} - Demande rejeter expirée sur Freezone";
+    wp_mail($to, $subject, $content, $headers);
+}, 10, 1);
 
 /**
  * Cette action permet d'envoyer au administrateur un mail pour

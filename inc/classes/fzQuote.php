@@ -19,16 +19,16 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  * @access public
  * @reference https://docs.woocommerce.com/wp-content/images/wc-apidocs/class-WC_Abstract_Order.html
  */
-class FZ_Quote extends \WC_Order
-{
+class FZ_Quote extends \WC_Order {
 
-    /**
-     * Short description of attribute status
-     *
-     * @access public
-     * @var Boolean
-     */
     public $ID = 0;
+    /**
+     * 0: En attente
+     * 1: Envoyer
+     * 2: Rejetés
+     * 3: Acceptée
+     * 4: Terminée
+     */
     public $position = 0;
     public $date_add = null;
     public $user_id = 0;
@@ -107,15 +107,6 @@ class FZ_Quote extends \WC_Order
         return $this->cost_transport;
     }
 
-    /**
-     * 0: En attente
-     * 1: Envoyer
-     * 2: Rejetés
-     * 3: Acceptée
-     * 4: Terminée
-     *
-     * @return int
-     */
     public function get_position() {
         return $this->position;
     }
