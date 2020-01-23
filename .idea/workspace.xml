@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/classes/fzQuote.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/classes/fzQuote.php" afterDir="false" />
-    </list>
+    <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,20 +29,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="fzQuote.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="fzQuote.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
-              <caret line="74" lean-forward="true" selection-start-line="74" selection-end-line="74" />
+            <state relative-caret-position="576">
+              <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fzItemOrder.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="fzItemOrder.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="52" column="38" selection-start-line="52" selection-start-column="30" selection-end-line="52" selection-end-column="38" />
+            <state relative-caret-position="709">
+              <caret line="117" column="63" lean-forward="true" selection-start-line="117" selection-start-column="63" selection-end-line="117" selection-end-column="63" />
               <folding>
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
               </folding>
@@ -301,59 +298,7 @@
             <path>
               <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
               <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="wc" type="462c0819:PsiDirectoryNode" />
-              <item name="demande" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="wc" type="462c0819:PsiDirectoryNode" />
-              <item name="gd" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="wc" type="462c0819:PsiDirectoryNode" />
-              <item name="pdf" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="wc" type="462c0819:PsiDirectoryNode" />
-              <item name="savs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="wc" type="462c0819:PsiDirectoryNode" />
-              <item name="stock" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="automattic" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
               <item name="woocommerce" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="freezone" type="b2602c69:ProjectViewProjectNode" />
-              <item name="freezone" type="462c0819:PsiDirectoryNode" />
-              <item name="woocommerce" type="462c0819:PsiDirectoryNode" />
-              <item name="myaccount" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -563,7 +508,7 @@
       <workItem from="1579689998745" duration="59000" />
       <workItem from="1579690076685" duration="91000" />
       <workItem from="1579690184407" duration="36000" />
-      <workItem from="1579690239188" duration="11958000" />
+      <workItem from="1579690239188" duration="12127000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -583,7 +528,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="741110000" />
+    <option name="totallyTimeSpent" value="741279000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
@@ -1091,20 +1036,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="52" column="38" selection-start-line="52" selection-start-column="30" selection-end-line="52" selection-end-column="38" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="576">
+          <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="74" lean-forward="true" selection-start-line="74" selection-end-line="74" />
+        <state relative-caret-position="709">
+          <caret line="117" column="63" lean-forward="true" selection-start-line="117" selection-start-column="63" selection-end-line="117" selection-end-column="63" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

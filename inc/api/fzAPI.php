@@ -241,8 +241,9 @@ class fzAPI
                         if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );
                         // Récuperer tous les articles des fournisseurs qui posséde le produit
                         $sql = "SELECT SQL_CALC_FOUND_ROWS pts.ID FROM $wpdb->posts as pts
-                            WHERE pts.post_type = 'fz_product'
-                                AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND CAST(meta_value AS UNSIGNED) = $product_id)";
+                                WHERE pts.post_type = 'fz_product'
+                                 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta
+                                  WHERE meta_key = 'product_id' AND CAST(meta_value AS UNSIGNED) = $product_id)";
                         $posts = $wpdb->get_results($sql);
 
                         // Mettre a jour tous les titres des articles de type "fz_product"
