@@ -8,6 +8,7 @@
     .woocommerce table.shop_table td {
         padding: 10px;
     }
+
     .swal2-content {
         text-align: left;
         font-size: 1.4em;
@@ -47,8 +48,8 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-{% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
-{% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
+    {% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
+    {% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
     <table class="woocommerce-orders-table shop_table_responsive shop_table account-orders-table">
         <thead>
             <tr>
@@ -81,13 +82,8 @@
                     {{line.discount_type is same as(0) ? '' : ' %'}}
                 </td>
                 <td class="currency">
-                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}<
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% for product in quote.lines_zero %}
-            <tr class="">
+                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}< </td> </tr>
+                        {% endfor %} {% for product in quote.lines_zero %} <tr class="">
                 <td style="padding-left: 15px" class="not-center"> {{product['name']}} </td>
                 <td align="center">-</td>
                 <td class="">-</td>
@@ -96,18 +92,25 @@
             </tr>
             {% endfor %}
         </tbody>
-        {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
         <tfoot>
+            {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
             <tr style="background-color: #fcff21;">
                 <th colspan="4" class="pl-4 text-left">Frais de transport</th>
                 <th class="currency">{{define.cost_transport}}</th>
             </tr>
+            {% endif %}
+            <tr style="background-color: #ebedee;">
+                <th colspan="4" class="pl-4">
+                    <small>*Cet article est en rupture de stock chez nous, nous vous tiendrons informé</small><br>
+                    <small>** Cet article est épuisé chez nous mais disponible sur commande</small>
+                </th>
+                <th></th>
+            </tr>
         </tfoot>
-        {% endif %}
     </table>
 
     <div style="margin-top: 40px"></div>
-    
+
     {% if not TOTAL == 0 %}
     <table class="table table-bordered ">
         <thead class="thead-dark">
@@ -137,11 +140,9 @@
         {% if not TOTAL == 0 %}
         <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=1"
             class="btn btn-theme sub-quotation-update radius-0" {% if quotation.position is same as (0) %}
-            disabled="disabled"
-            {% endif %}>Accepter</a>
+            disabled="disabled" {% endif %}>Accepter</a>
         <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=0"
-            class="btn btn-danger radius-0" {% if quotation.position is same as (0) %}
-            disabled="disabled"
+            class="btn btn-danger radius-0" {% if quotation.position is same as (0) %} disabled="disabled"
             {% endif %}>Rejeter</a>
         {% endif %}
         {% endif %}

@@ -6,13 +6,13 @@
         <tbody>
             <tr>
                 <td rowspan="2" align="top">
-                    <img width="250" src="{{hlp.theme_url}}/assets/img/logo.png"/>
+                    <img width="250" src="{{hlp.theme_url}}/assets/img/logo.png" />
                     <p>Adresse: Androhibe BP 7595,<br>
-                    Telma Fixe: +261 20 24 292 31<br>
-                    Mobile Telma : +261 34 86 319 90<br>
-                    Mobile Orange : +261 32 53 408 03<br>
-                    Mobile Airtel : +261 33 82 589 08<br>
-                    E-mail: commercial@freezonemada.com</p>
+                        Telma Fixe: +261 20 24 292 31<br>
+                        Mobile Telma : +261 34 86 319 90<br>
+                        Mobile Orange : +261 32 53 408 03<br>
+                        Mobile Airtel : +261 33 82 589 08<br>
+                        E-mail: commercial@freezonemada.com</p>
                     <ul>
                         <li>STAT : {{'stat' | wpoption}}</li>
                         <li>NIF : {{'nif' | wpoption}}</li>
@@ -30,12 +30,12 @@
 
                     {% if not customer.meta_exists('company_name') or customer.get_meta('company_name', true) is empty %}
                     <h6 style="margin-bottom: 0px; padding-bottom: 0px">
-                        {{ customer.get_billing_first_name() }}  {{customer.get_billing_last_name() }}
+                        {{ customer.get_billing_first_name() }} {{customer.get_billing_last_name() }}
                     </h6>
 
                     {% endif %}
                     <p>{{ customer.get_meta('address', true) }} </p>
-                    
+
                     <ul>
                         {% if customer.meta_exists('stat') %}
                         <li>STAT : {{ customer.get_meta('stat', true) }}</li>
@@ -80,7 +80,7 @@
                 {# <td>REF{{order.get_id()}}</td> #}
                 <td>
                     {% if responsible is not same as(null) %}
-                       {{responsible.last_name}}
+                    {{responsible.last_name}}
                     {% endif %}
                 </td>
             </tr>
@@ -111,13 +111,8 @@
                     {{line.discount_type is same as(0) ? '' : ' %'}}
                 </td>
                 <td class="currency">
-                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}<
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% for item in items_zero %}
-            <tr>
+                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}< </td> </tr>
+                        {% endfor %} {% for item in items_zero %} <tr>
                 <td>{{item['name']}}</td>
                 <td align="center">-</td>
                 <td align="center">-</td>
@@ -127,14 +122,21 @@
             </tr>
             {% endfor %}
         </tbody>
-        {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport %}
         <tfoot>
-            <tr style="background-color: #eae6e6;">
-                <th colspan="5" class="pl-4 text-right">Frais de transport</th>
+            {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
+            <tr style="background-color: #fcff21;">
+                <th colspan="4" class="pl-4 text-left">Frais de transport</th>
                 <th class="currency">{{define.cost_transport}}</th>
             </tr>
+            {% endif %}
+            <tr style="background-color: #ebedee;">
+                <th colspan="4" class="pl-4">
+                    <small>*Cet article est en rupture de stock chez nous, nous vous tiendrons informé</small><br>
+                    <small>** Cet article est épuisé chez nous mais disponible sur commande</small>
+                </th>
+                <th></th>
+            </tr>
         </tfoot>
-        {% endif %}
     </table>
 
     <div style="margin-top: 40px"></div>
