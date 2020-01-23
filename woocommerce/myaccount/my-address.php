@@ -41,7 +41,7 @@ $col = 1;
 
 <?php foreach ( $get_addresses as $name => $title ) : ?>
 
-	<div class="col-md-6 col-sm-6 <?php //echo ( ( $col = $col * -1 ) < 0 ) ? 1 : 2; ?> address">
+	<div class="col-md-6 col-sm-6 <?php //echo ( ( $col = $col * -1 ) < 0 ) ? 1 : 2; ?> address" style="margin-bottom: 40px">
 		<header class="title">
 			<h3><?php echo trim( $title ); ?></h3>
 

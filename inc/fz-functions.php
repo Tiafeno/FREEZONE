@@ -14,6 +14,7 @@ require_once 'classes/fzPTFreezone.php';
 require_once 'classes/fzParticular.php';
 require_once 'classes/fzCompany.php';
 require_once 'classes/fzSupplier.php';
+require_once 'classes/fzClient.php';
 require_once 'classes/fzSupplierArticle.php';
 require_once 'classes/fzQuote.php';
 require_once 'classes/fzItemOrder.php';
@@ -60,9 +61,7 @@ if (function_exists('acf_add_options_page')) {
  */
 $fz_model = new \model\fzModel();
 $Engine = null;
-
 try {
-
     $file_system = new Twig_Loader_Filesystem();
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/vc', 'VC');
     $file_system->addPath(TWIG_TEMPLATE_PATH . '/shortcodes', 'SC');
@@ -74,8 +73,6 @@ try {
         'cache' => TWIG_TEMPLATE_PATH . '/cache',
         'auto_reload' => true,
     ]);
-
-    // Crée des filtres pour les template TWIG
     $Engine->addFilter(new Twig_SimpleFilter('fakediscount', function ($item) {
         $has_discount = wc_get_order_item_meta($item->get_id(), 'has_discount', true);
         $fake_discount = wc_get_order_item_meta( $item->get_id(), 'fake_discount', true );
@@ -83,11 +80,9 @@ try {
 
         return $has_discount ? $fake_discount : '';
     }));
-
     $Engine->addFilter(new Twig_SimpleFilter('wpoption', function ($field) {
         return get_option($field, 'N/A');
     }));
-
 } catch (Twig_Error_Loader $e) {
     echo $e->getRawMessage();
 }
@@ -97,7 +92,6 @@ add_action('after_switch_theme', function () {
         do_action('fz_activate_theme'); // Action Model (fz-model.php)
     }
     load_theme_textdomain(__SITENAME__, get_template_directory() . '/languages');
-
     /** @link https://codex.wordpress.org/Post_Thumbnails */
     add_theme_support('post-thumbnails');
     add_theme_support('category-thumbnails');
@@ -108,11 +102,9 @@ add_action('after_switch_theme', function () {
         'width' => 250,
         'flex-width' => true,
     ]);
-
     add_image_size('sidebar-thumb', 120, 120, true);
     add_image_size('homepage-thumb', 220, 180);
     add_image_size('singlepost-thumb', 590, 9999);
-
     /**
  * This function will not resize your existing featured images.
                 * To regenerate existing images in the new size,
@@ -131,32 +123,26 @@ add_action('admin_init', function () {
     if (is_null(get_role('fz-supplier')) || is_null(get_role('fz-company')) || is_null(get_role('fz-particular'))) {
         \classes\fzRoles::create_roles();
     }
-
     if (is_user_logged_in()) {
         $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : home_url('/');
         if (is_admin() && !defined('DOING_AJAX') && !current_user_can('administrator')) {
             exit(wp_redirect($redirect, 301));
         }
     }
-
     // Afficher les en-tete pour les marges
     add_filter('manage_fz_product_posts_columns', function ($columns) {
         $columns['marge'] = '%';
         $columns['marge_dealer'] = '% R.';
         $columns['marge_particular'] = '% P.';
-
         return $columns;
     });
-
     // Afficher les valeurs par colonne
     add_action('manage_fz_product_posts_custom_column', function ($column, $post_id) {
-        $p = get_post($post_id);
         if ($column === 'marge'):
             $marge = get_post_meta($post_id, '_fz_marge', true);
             $marge = $marge ? $marge : 0;
             echo "{$marge} %";
         endif;
-        
         if ($column === 'marge_dealer'):
             $marge_dealer = get_post_meta($post_id, '_fz_marge_dealer', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
@@ -169,7 +155,6 @@ add_action('admin_init', function () {
             echo "{$marge_dealer} %";
         endif;
     }, 10, 2);
-
 }, 100);
 
 add_action('init', function () {
@@ -185,8 +170,6 @@ add_action('init', function () {
     }
     add_action('wp_ajax_searchproducts', 'search_products');
     add_action('wp_ajax_nopriv_searchproducts', 'search_products');
-
-    // Init wordpress
     /**
      * Register the 'Custom Column' column in the importer.
      *
@@ -196,7 +179,6 @@ add_action('init', function () {
     function add_column_to_importer( $options ) {
         $options['attribute'] = 'Attribut';
         $options['attribute_value'] = 'Attribut valeur';
-
         return $options;
     }
     add_filter( 'woocommerce_csv_product_import_mapping_options', 'add_column_to_importer' );
@@ -209,11 +191,9 @@ add_action('init', function () {
      * @return array $columns
      */
     function add_column_to_mapping_screen( $columns ) {
-
         // potential column name => column slug
         $columns['Attribut'] = 'attribute';
         $columns['Attribut valeur'] = 'attribute_value';
-
         return $columns;
     }
     add_filter( 'woocommerce_csv_product_import_mapping_default_columns', 'add_column_to_mapping_screen' );
@@ -230,12 +210,9 @@ add_action('init', function () {
     function process_import( $object, $data ) {
         $attributes = $data['attribute'];
         $attribute_values = $data['attribute_value'];
-
         if (empty($attributes)) return $object;
-
         $attributes = explode(',', $attributes);
         $attribute_values = explode(',', $attribute_values);
-
         // Create woocommerce product
         $options = get_field('wc', 'option');
         $woocommerce = new Automattic\WooCommerce\Client(
@@ -244,7 +221,6 @@ add_action('init', function () {
                 'version' => 'wc/v3'
             ]
         );
-
         foreach ($attributes as $key => $attr) {
             if (empty($attr)) continue;
             $attr = stripslashes($attr);
@@ -279,16 +255,12 @@ add_action('init', function () {
             $args = [
                 'attributes' =>  $attributes
             ];
-            
             $woocommerce->put("products/{$product_id}", $args);
         }
-
         //update_post_meta($object->get_id(), '_product_attributes', $attrs);
-        
         return $object;
     }
     add_action( 'woocommerce_product_import_inserted_product_object', 'process_import', 10, 2 );
-
     add_action('wp_enqueue_scripts', function () {
         wp_register_style( 'owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0' );
         wp_register_style( 'owlCarousel-green', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.theme.green.min.css', '', '2.0.0' );
