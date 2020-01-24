@@ -492,17 +492,43 @@ add_action('woocommerce_account_catalogue_endpoint', function () {
 // Demande ou devis
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
-    wp_enqueue_script('underscore');
+
     $shop_url = get_permalink(wc_get_page_id('shop'));
-    $User = wp_get_current_user();
-    if (!in_array('fz-particular', $User->roles) && !in_array('fz-company', $User->roles)) {
+    $user_id = get_current_user_id();
+
+    // Executer ici la mise a jours du formulaire, si un formulaire est envoyer
+    do_action( "woocommerce_before_edit_address_form_billing" );
+
+    $clientInstance = \classes\fzClient::initializeClient($user_id);
+    // Verification de securite
+    if (!in_array($clientInstance->get_role(), ["fz-particular", "fz-company"]) ) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
         wc_clear_notices();
         return false;
     }
+    $client = $clientInstance->get_client();
+    $form = false;
+    // Si les donnee du client ne sont pas correct, On essai de lui faire remplire le formulaire
+    if ($clientInstance->get_role() === "fz-company" && (!$client->stat && !$client->nif && !$client->sector_activity)) {
+        // Si le client est une entreprise
+        $form = true;
+    }
+
+    if ($clientInstance->get_role() === "fz-particular" && (!$client->cin && !$client->date_cin)) {
+        // Si le client est un particulier
+        $form = true;
+    }
+
+    if ($form) {
+        wc_add_notice("Pour que vous puissiez y accéder a votre demande nous vous prions de bien vouloir remplir les informations suivants", "notice");
+        wc_print_notices();
+        do_action('woocommerce_account_edit-address_endpoint', 'billing');
+        return false;
+    }
+
     // https://github.com/woocommerce/woocommerce/wiki/wc_get_orders-and-WC_Order_Query
-    $user_quotations = wc_get_orders(['customer_id' => $User->ID]);
+    $user_quotations = wc_get_orders(['customer_id' => $user_id]);
     if (empty($user_quotations)) {
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
@@ -526,6 +552,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         switch ($componnent):
             case 'update':
             case 'confirmaction':
+                wp_enqueue_script('underscore');
                 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
                 wp_enqueue_script('quotation-update', get_stylesheet_directory_uri() . '/assets/js/quotation-update.js', ['jquery']);
                 // Formulaire dans quotation-update.html

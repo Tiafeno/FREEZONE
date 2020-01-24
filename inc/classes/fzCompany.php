@@ -77,4 +77,5 @@ class fzCompany extends \WP_User
     }
 
 
+
 }

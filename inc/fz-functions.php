@@ -272,7 +272,6 @@ add_action('init', function () {
     add_action("woocommerce_before_edit_address_form_billing", function () {
         if (isset($_REQUEST['woocommerce-edit-address-nonce']) &&
             wp_verify_nonce($_REQUEST['woocommerce-edit-address-nonce'], 'woocommerce-edit_address')) {
-            print_r($_REQUEST);
             $customer_id = get_current_user_id();
             $fields = [['key' => 'billing_phone', 'field' => 'phone'], ['key' => 'billing_address_2', 'field' => 'address']];
             foreach ( $fields as $field ) {
@@ -297,6 +296,7 @@ add_action('init', function () {
                     }
                     break;
             }
+            wc_add_notice("Vos données ont étés mise à jour avec succès", "success");
         }
     }, 10);
 
