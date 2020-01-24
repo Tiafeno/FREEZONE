@@ -174,6 +174,8 @@ class fzSupplierArticle
     public function set_total_sales($value) {
         if ( ! is_numeric($value) ) return false;
         $result = update_field('total_sales', intval($value), $this->ID);
+        update_post_meta($this->ID, '_fz_quantity', intval($value));
+        $this->_quantity = $this->total_sales = intval($value);
 
         return $result;
     }
@@ -182,6 +184,13 @@ class fzSupplierArticle
         if (empty($garentee)) return false;
         $result = update_post_meta( $this->ID, "_fz_garentee", $garentee );
 
+        return $result;
+    }
+
+    public function set_condition($value) {
+        if ( ! is_numeric($value) ) return false;
+        $result = update_post_meta($this->ID, '_fz_condition', intval($value));
+        $this->condition = intval($value);
         return $result;
     }
 

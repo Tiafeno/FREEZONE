@@ -9,6 +9,7 @@
  * Template Name: Update articles supplier
  */
 
+$User = wp_get_current_user();
 wp_enqueue_script('underscore');
 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
 wp_enqueue_script('momenjs', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js", ['jquery']);
@@ -16,8 +17,8 @@ wp_enqueue_script('momenjs', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2
 wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
 wp_enqueue_script('update-articles', get_stylesheet_directory_uri() . '/assets/js/update-articles.js', ['jquery', 'vue', 'underscore']);
 wp_localize_script('update-articles', 'rest_api', [
-    'rest_url' => esc_url_raw(rest_url()),
-    'nonce' => wp_create_nonce('wp_rest'),
+    //'root' => esc_url_raw(rest_url()),
+    //'nonce' => wp_create_nonce('wp_rest'),
     'ajax_url' =>  admin_url('admin-ajax.php'),
     'account_url' => get_permalink( wc_get_page_id( 'myaccount' ) )
 ]);
@@ -88,6 +89,8 @@ function fz_reload_header () {
     exit;
 }
 
+
+
 get_header();
 $sidebar_configs = yozi_get_page_layout_configs();
 yozi_render_breadcrumbs();
@@ -147,13 +150,14 @@ yozi_render_breadcrumbs();
                                             </th>
                                             <td width="10%">
                                                 <div class="stock">
-                                                    <input type="number" v-on:change="onChangeQty($event, index)" v-model="article.qty_disp" 
-                                                    v-bind:disabled="article.condition == 1 || article.condition == 2" style="width: 100%;" min="0" class="form-control radius-0"/>
+                                                    <input type="number" v-on:blur="onChangeQty($event, index)" v-model="article.qty_disp"
+                                                    v-bind:disabled="article.condition == 1 || article.condition == 2" style="width: 100%;" min="0"
+                                                           class="form-control radius-0 input-qty-disp"/>
                                                 </div>
                                             </td>
                                             <td width="10%">
                                                 <div class="qty_request">
-                                                    <input type="number" v-model="article.qty_ask"  disabled="disabled"  style="width: 100%;" min="0" class="form-control radius-0" />
+                                                    <input type="number" v-model="article.qty_ask"  disabled="disabled"  style="width: 100%;" min="0" class="form-control radius-0 " />
                                                 </div>
                                             </td>
                                             <td width="12%">
@@ -181,8 +185,8 @@ yozi_render_breadcrumbs();
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="row" v-if="articles.length > 0">
-                                    <button class="btn btn-primary" type="submit" id="submit-update-form">Enregistrer</button>
+                                <div class="row" v-if="articles.length > 0" style="margin-left: 15px; margin-top: 15px">
+                                    <button class="btn btn-primary radius-0" type="submit" id="submit-update-form">Enregistrer</button>
                                 </div>
                                 <div class="row" v-if="articles.length == 0 && loading == false">
                                     Vous n'avez aucun articles en attente

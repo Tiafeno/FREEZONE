@@ -995,5 +995,19 @@ CODE;
     wp_send_json_success($fzProducts);
 });
 
+add_action('wp_ajax_update_fz_product', function() {
+    if (empty($_REQUEST) || !isset($_REQUEST['id'])) wp_send_json_error("parametre manquant");
+    $article_id = intval($_REQUEST['id']);
+    $fzProduct = new \classes\fzSupplierArticle($article_id);
+    $fzProduct->set_price(intval($_REQUEST['price']));
+    $fzProduct->set_total_sales(intval($_REQUEST['total_sales']));
+    $fzProduct->set_garentee(intval($_REQUEST['garentee']));
+    $fzProduct->set_condition(intval($_REQUEST['condition']));
+    $fzProduct->update_date_review();
+
+    wp_send_json_success("Success");
+
+});
+
 add_action('wp_loaded', function () {
 });

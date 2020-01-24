@@ -43,6 +43,23 @@
                     }
                     return "";
                 },
+                verifyQtyValue: function(index) {
+                    Swal.fire({
+                        title: 'confirmation',
+                        html: "Cet article est en rupture de stock chez vous ?",
+                        type: 'info',
+                        width: "60rem",
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Oui',
+                        cancelButtonText: 'Non'
+                    }).then(result => {
+                        if (result.value) {
+                            this.articles[index].condition = 1;
+                        }
+                    });
+                },
                 onChangeQty: function(e, index) {
                     e.preventDefault();
                     var element = e.currentTarget;
@@ -57,57 +74,57 @@
                         this.articles[index].qty_disp = 0;
                     }
                 },
-                verifyQtyValue: function (index) {
-                    return new Promise((resolve, reject) => {
-                        Swal.fire({
-                            title: 'confirmation',
-                            html: "Cet article est en rupture de stock chez vous ?",
-                            type: 'info',
-                            width: "60rem",
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Oui',
-                            cancelButtonText: 'Non'
-                        }).then(result => {
-                            if (result.value) {
-                                // Rendre l'article en rupture de stock si la quantite est egale a 0
-                                this.articles[index].condition = 1;
-                                resolve(true);
-                            } else {
-                                resolve(false);
-                            }
-                        });
-                    });
-                },
                 submitForm: function(e) {
                     e.preventDefault();
+                    for (let [index, article] of this.articles.entries()) {
+                        if (0 === parseInt(article.qty_disp) && !_.contains([1, 2], parseInt(article.condition))) {
+                            var name = article.designation;
+                            Swal.fire({
+                                title: 'confirmation',
+                                html: `L'article <b>${name}</b> en rupture de stock chez vous ?`,
+                                type: 'info',
+                                width: "60rem",
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Oui',
+                                cancelButtonText: 'Non'
+                            }).then(result => {
+                                if (result.value) {
+                                    this.articles[index].condition = 1;
+                                }
+                            });
+                            return false;
+                        }
+                    }
+                    this.updatePost();
+                },
+                updatePost: function() {
                     var self = this;
                     var btnSubmit = document.querySelector('#submit-update-form');
                     var deferreds = [];
                     this.articles.forEach((article, index) => {
-                        // Verifier si la quantite est egale a Zero (0)
-                        if (0 === parseInt(article.qty_disp) && !_.contains([1, 2], parseInt(article.condition)))
-                            this.verifyQtyValue(index).then(res => {
-                                if (!res) throw new Error('La valeur du quantite requis.');
-                            });
                         var formData = new FormData();
-                        formData.append('price', parseInt(article.cost));
-                        formData.append('total_sales', article.qty_disp);
-                        formData.append('garentee', _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee));
-                        formData.append('date_review',article.date_review);
-                        formData.append('condition', parseInt(article.condition));
+                        // formData.append('price', parseInt(article.cost));
+                        // formData.append('total_sales', article.qty_disp);
+                        // formData.append('garentee', _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee));
+                        // formData.append('date_review',article.date_review);
+                        // formData.append('condition', parseInt(article.condition));
                         var query = $.ajax({
-                            url: `${rest_api.rest_url}wp/v2/fz_product/${article.id}`,
+                            url: rest_api.ajax_url,
                             method: "POST",
-                            data: formData,
-                            dataType: 'json',
-                            contentType: false,
-                            processData: false,
+                            data: {
+                                id: article.id,
+                                action: "update_fz_product",
+                                price: parseInt(article.cost),
+                                total_sales: article.qty_disp,
+                                garentee: _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee),
+                                date_review: article.date_review,
+                                condition: parseInt(article.condition),
+                            },
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
-                            },
-                            complete: function () { }
+                            }
                         });
                         deferreds.push(query)
                     });
@@ -116,8 +133,6 @@
                     this.loading = true;
                     $.when.apply($, deferreds).done(function() {
                         console.log(arguments);
-                        btnSubmit.nodeValue = "Enregistrer";
-                        btnSubmit.removeAttribute('disabled');
                         Swal.fire({
                             title: 'Succes',
                             html: "Mise a jour effectuer avec succes",
@@ -129,7 +144,12 @@
                                 window.location.href = rest_api.account_url
                             }
                         });
+                    }).fail(er => {
+                        Swal.fire("Erreur", "Une erreur s'est produit", 'error');
+                    }).always(function () {
                         self.loading = false;
+                        btnSubmit.nodeValue = "Enregistrer";
+                        btnSubmit.removeAttribute('disabled');
                     });
                     return false;
                 }
