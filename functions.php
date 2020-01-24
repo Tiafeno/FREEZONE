@@ -13,14 +13,17 @@ add_action('wp_enqueue_scripts', function () {
     $theme = wp_get_theme('freezone');
     wp_enqueue_style('yozi-child-theme', get_stylesheet_directory_uri() . '/style.css', [], $theme->get('Version'));
     wp_enqueue_script('fz-custom', get_stylesheet_directory_uri() . '/assets/js/fz-custom.js', ['jquery'], null, '0.0.3');
+
+    wp_register_style('owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.carousel.min.css', '', '2.0.0');
+    wp_register_style('owlCarousel-green', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/assets/owl.theme.green.min.css', '', '2.0.0');
+    wp_register_script('owlCarousel', get_stylesheet_directory_uri() . '/assets/js/owlcarousel/owl.carousel.min.js', ['jquery'], '2.0.0', true);
 }, 1000);
 
 // Ces filtres permet de ne pas afficher les prix des produits Woocommerce
 add_filter('woocommerce_variable_sale_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_variable_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_get_price_html', 'remove_prices', 10, 2);
-function remove_prices($price, $product)
-{
+function remove_prices($price, $product) {
     if (!is_admin()) $price = '';
     return $price;
 }
@@ -31,8 +34,8 @@ add_action('init', function () {
     add_rewrite_endpoint('faq', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('pdf', EP_PERMALINK | EP_PAGES);
     add_rewrite_endpoint('catalogue', EP_PERMALINK | EP_PAGES);
-    add_rewrite_endpoint('stock-management', EP_ROOT | EP_PAGES);
-    add_rewrite_endpoint('demandes', EP_ROOT | EP_PAGES);
+    add_rewrite_endpoint('stock-management', EP_PERMALINK | EP_PAGES);
+    add_rewrite_endpoint('demandes', EP_PERMALINK | EP_PAGES);
     add_filter('query_vars', function ($vars) {
         $vars[] = 'stock-management';
         $vars[] = 'demandes';
@@ -70,11 +73,9 @@ TAG;
 }, 10);
 
 add_filter('woocommerce_account_menu_items', function ($items) {
-    $logout = $items['customer-logout'];
-
+    //$logout = $items['customer-logout'];
     unset($items['customer-logout']);
     unset($items['orders']);
-
     $User = wp_get_current_user();
     if (in_array('fz-supplier', $User->roles)) {
         unset($items['edit-address']);
@@ -88,7 +89,6 @@ add_filter('woocommerce_account_menu_items', function ($items) {
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";
     }
-
     //$items['customer-logout'] = $logout;
     return $items;
 }, 999);
@@ -172,8 +172,6 @@ function disable_address_fields_validation($address_fields_array)
 
 // Note: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format
 add_action('woocommerce_account_stock-management_endpoint', function () {
-    global $wpdb;
-
     $posts_per_page = 10;
     // Access security
     $User = wp_get_current_user();
@@ -430,7 +428,6 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 } else {
                     wc_add_notice("Vous avez déja envoyer une rappel", 'notice');
                 }
-
                 break;
 
             default:
@@ -451,7 +448,6 @@ add_action('woocommerce_account_savs_endpoint', function () {
                     ]
                 ]
             ];
-
             $the_query = new WP_Query($args);
             $savs = array_map(function ($sav) {
                 $fzSav = new \classes\fzSav($sav->ID, true);
@@ -613,7 +609,6 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     global $Engine;
     $order = null;
     $error = false;
-
     if ($_GET && isset($_GET['order_id']) && !empty($_GET['order_id'])) {
         $order_id = intval($_GET['order_id']);
         $order = new FZ_Quote($order_id);
@@ -621,13 +616,11 @@ add_action('woocommerce_account_pdf_endpoint', function () {
         $error = true;
         wc_add_notice('Parametre manquant (order_id)', 'error');
     }
-
     if ($error) {
         wc_print_notices();
         wc_clear_notices();
         return false;
     }
-
     wp_enqueue_style('poppins', "https://fonts.googleapis.com/css?family=Poppins:300,400,700,800");
     wp_enqueue_script('html2pdf', get_stylesheet_directory_uri() . '/assets/js/html2pdf/html2pdf.bundle.min.js', null, "0.9.1");
     wp_enqueue_script('download-pdf', get_stylesheet_directory_uri() . '/assets/js/download-pdf.js', ['html2pdf'], '1.0.0', true);
@@ -635,13 +628,11 @@ add_action('woocommerce_account_pdf_endpoint', function () {
         'order_id' => $order_id
     ]);
     $customer =  new WC_Customer($order->get_customer_id());
-
     // Get responsible if exist
     $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
     $items = $order->fz_items();
     $items_zero = $order->fz_items_zero();
-
     // Afficher le template
     echo $Engine->render('@WC/pdf/download-template.html', [
         'order' => $order,
@@ -750,6 +741,7 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $postal_code  = isset($_POST['postal_code']) ? $_POST['postal_code'] : '';
     $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
@@ -784,7 +776,7 @@ add_action('user_register', function ($user_id) {
     }
     // Ajouter le role du client
     $user_role = "fz-{$role}";
-    $User->set_role($user_role);
+    $user_data->set_role($user_role);
     add_user_meta($user_id, "fz_pending_user", 1, true); // Mettre en attente
     add_user_meta($user_id, "ja_disable_user", 0, true); // Ne pas désactiver l'utilisateur
     // Envoyer un email de notification pour l'administrateur
@@ -792,7 +784,7 @@ add_action('user_register', function ($user_id) {
     // Update customer woocommerce user field
     $zip = sanitize_text_field($_REQUEST['postal_code']);
     $city = sanitize_text_field($_REQUEST['city']);
-    // Billing
+    // Billing (Facturation)
     $user_customer->set_billing_location('MG', '', $zip, $city);
     $user_customer->set_billing_email($user_data->user_email);
     $user_customer->set_billing_company($company_name);
@@ -801,20 +793,21 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_billing_last_name($lastname);
     $user_customer->set_billing_address($address);
     $user_customer->set_billing_phone($phone);
+    $user_customer->set_billing_postcode($postal_code);
     // Shipping
     $user_customer->set_shipping_location('MG', '', $zip, $city);
     $user_customer->set_shipping_address_1($address);
     $user_customer->set_shipping_first_name($firstname);
     $user_customer->set_shipping_last_name($lastname);
     $user_customer->set_shipping_company($company_name);
+    $user_customer->set_shipping_postcode($postal_code);
     $user_customer->save_data();
 });
 
 add_action('wp_loaded', function () {
     //update_field('position', 1, 1431);
     add_action('wp_logout', 'auto_redirect_after_logout');
-    function auto_redirect_after_logout()
-    {
+    function auto_redirect_after_logout() {
         wp_redirect(home_url());
         exit();
     }
@@ -840,7 +833,6 @@ add_action('delete_user', function ($user_id) {
     $user_obj = get_userdata($user_id);
     $roles = $user_obj->roles;
     if (in_array('fz-supplier', $roles)) {
-        // Effacer tous ces articles
         $args = [
             'post_type' => "fz_product",
             'post_type' => "any",

@@ -17,10 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$services = new fzServices();
-$sector_activity = $services->get_sector_activity(); // Array of sector activity
 $page_title = ( 'billing' === $load_address ) ? __( 'Billing address', 'woocommerce' ) : __( 'Shipping address', 'woocommerce' );
-
 $customer_id = get_current_user_id();
 $role = \classes\fzClient::initializeClient($customer_id)->get_role();
 do_action( 'woocommerce_before_edit_account_address_form' ); ?>
@@ -44,7 +41,8 @@ do_action( 'woocommerce_before_edit_account_address_form' ); ?>
                     <div class="woocommerce-address-fields__field-wrapper">
                         <?php
                         foreach ( $address as $key => $field ) {
-                            if (in_array($key, ['billing_address_1', 'billing_address_2', 'billing_country'])) continue;
+                            if (in_array($key, [ 'billing_address_1', 'billing_country'])) continue;
+                            if ($key === "billing_address_2") $field['placeholder'] = "Votre adresse";
                             woocommerce_form_field( $key, $field, wc_get_post_data_by_key( $key, $field['value'] ) );
                         }
                         ?>
@@ -53,6 +51,8 @@ do_action( 'woocommerce_before_edit_account_address_form' ); ?>
                 <div class="col-md-6">
                     <?php if ($role === "fz-company"):
                             $company = \classes\fzClient::initializeClient($customer_id)->get_client();
+                            $services = new fzServices();
+                            $sector_activity = $services->get_sector_activity(); // Array of sector activity
                         ?>
                     <div id="section-company" >
                         <div class="form-group form-row form-row-wide">
@@ -61,39 +61,59 @@ do_action( 'woocommerce_before_edit_account_address_form' ); ?>
                                     value="<?= $company->sector_activity ?>" required>
                                 <option value="0">Aucun</option>
                                 <?php foreach ($sector_activity as $activity): ?>
-                                    <option value="<?= $activity['id'] ?>"><?= $activity['name'] ?></option>
+                                    <option value="<?= $activity['id'] ?>" <?= $activity['id'] == $company->sector_activity ? "selected" : '' ?>>
+                                        <?= $activity['name'] ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div class="row">
                             <div class="col-sm-6">
                                 <p class="form-group form-row form-row-wide">
                                     <label for="reg_stat">STAT  <span class="required">*</span></label>
-                                    <input type="text" placeholder="" class="input-text form-control radius-0" name="stat"
+                                    <input type="text" placeholder="" required class="input-text form-control radius-0" name="stat"
                                            value="<?= $company->stat ?>" />
                                 </p>
                             </div>
                             <div class="col-sm-6">
                                 <p class="form-group form-row form-row-wide">
                                     <label for="reg_nif">NIF  <span class="required">*</span></label>
-                                    <input type="text" placeholder="" class="input-text form-control radius-0" name="nif"
+                                    <input type="text" placeholder="" required class="input-text form-control radius-0" name="nif"
                                            value="<?= $company->nif ?>" />
                                 </p>
                             </div>
                         </div>
-
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_rc">RC  <span class="required">*</span></label>
-                            <input type="text" placeholder="" class="input-text form-control radius-0" name="rc"
+                            <input type="text" placeholder="" required class="input-text form-control radius-0" name="rc"
                                    value="<?= $company->rc ?>" />
                         </p>
                         <p class="form-group form-row form-row-wide">
                             <label for="reg_cif">CIF  <span class="required">*</span></label>
-                            <input type="text" placeholder="" class="input-text form-control radius-0" name="cif"
+                            <input type="text" placeholder="" required class="input-text form-control radius-0" name="cif"
                                    value="<?= $company->cif ?>" />
                         </p>
                     </div>
+                    <?php endif; ?>
+                    <?php if ($role === "fz-particular"):
+                        $particular = \classes\fzClient::initializeClient($customer_id)->get_client();
+                        ?>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="form-group form-row form-row-wide">
+                                    <label for="reg_stat">CIN  <span class="required">*</span></label>
+                                    <input type="number" placeholder="" min="12" required class="input-text form-control radius-0" name="stat"
+                                           value="<?= $company->cin ?>" />
+                                </p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="form-group form-row form-row-wide">
+                                    <label for="reg_nif">Fait le  <span class="required">*</span></label>
+                                    <input type="date" placeholder="" required class="input-text form-control radius-0" name="nif"
+                                           value="<?= $company->date_cin ?>" />
+                                </p>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
