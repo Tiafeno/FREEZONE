@@ -74,7 +74,7 @@ class fzPTFreezone
             endforeach;
 
             // for admin access
-            $caps = ['list_users', 'upload_files', 'edit_users'];
+            $caps = ['list_users', 'upload_files', 'edit_users', 'add_users', 'create_users'];
             foreach ($caps as $cap) {
                 foreach (['editor', 'author'] as $role):
                     $user_role = get_role($role);

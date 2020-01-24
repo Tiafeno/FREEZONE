@@ -739,6 +739,7 @@ add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $User = new WP_User(intval($user_id));
     $firstname = $lastname = "";
+    $company_name    = isset($_POST['company_name']) ? $_POST['company_name'] : '';
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = esc_attr($_POST['firstname']);
         $lastname  = esc_attr($_POST['lastname']);
@@ -746,8 +747,8 @@ add_action('user_register', function ($user_id) {
             'ID' => intval($user_id),
             'first_name' => $firstname,
             'last_name'  => $lastname,
-            'nickname'   => 'CL' . $user_id,
-            'user_login' => 'CL' . $user_id
+            'nickname'   => 'CL' . sanitize_title( $company_name, $user_id),
+            'user_login' => 'CL' . sanitize_title( $company_name, $user_id)
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
@@ -755,7 +756,7 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
-    $company_name    = isset($_POST['company_name']) ? $_POST['company_name'] : '';
+    
     $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
