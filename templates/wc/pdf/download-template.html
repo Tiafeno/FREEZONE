@@ -93,7 +93,6 @@
         <thead>
             <tr>
                 <th scope="col" width=315>Designation</th>
-                <th scope="col">Unité</th>
                 <th scope="col">Qté</th>
                 <th scope="col">P.U.HT</th>
                 <th scope="col">Rem</th>
@@ -101,10 +100,10 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in items %}
+            {% for line in items %}
             <tr class="">
                 <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
-                <td align="center"> <span style="text-align: center">{{line.qty_UI()}}</span> </td>
+                <td align="center"> <span style="text-align: center">{{line.qty_UI() | raw}}</span> </td>
                 <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
                 <td>
                     {{line.discount_type is same as(0) ? '-' : item.discount}}
@@ -153,8 +152,8 @@
         </thead>
         <tbody>
             <tr>
-                <td class="currency">{{order.get_total_ht()}}</td>
-                <td class="currency">{{order.get_total_net()}}</td>
+                <td class="currency">{{order.total_ht()}}</td>
+                <td class="currency">{{order.total_net()}}</td>
                 <td>{{TVA}}%</td>
                 <td class="currency">{{ TOTAL_NET }}</td>
                 <td>

@@ -53,7 +53,7 @@
                     minimumFractionDigits: 0
                 });
 
-                $('.currency').each((index, element) => {
+                $('.currency').each(function (index, element) {
                     var cost = $(element).text();
                     cost = parseFloat(cost);
                     var value = _.isNaN(cost) ? '-' : formatter.format(cost);

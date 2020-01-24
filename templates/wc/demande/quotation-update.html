@@ -15,21 +15,21 @@
     }
 </style>
 
-{% if quotation.position is same as(2) %}
+{% if quote.position is same as(2) %}
 <p style="padding: 10px; background-color: #e23e1d; color: white; font-size: 15px;">
     Demande rejetée
 </p>
 {% endif %}
 
-{% if quotation.position is same as(3) %}
+{% if quote.position is same as(3) %}
 <p style="padding: 10px; background-color: #5cb85c; color: white; font-size: 15px;">
     Demande acceptée
 </p>
 {% endif %}
 
-{% if quotation.position is not same as (0) %}
+{% if quote.position is not same as (0) %}
 <form name="quotation_item" method="post" action="">
-    <h2 class="text-bold">Demande n°{{quotation.order_id}}</h2>
+    <h2 class="text-bold">Demande n°{{quote.order_id}}</h2>
 
     <table class="table table-bordered">
         <thead>
@@ -136,15 +136,15 @@
     </table>
     {% endif %}
     <div>
-        {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
-        {% if not TOTAL == 0 %}
-        <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=1"
-            class="btn btn-theme sub-quotation-update radius-0" {% if quotation.position is same as (0) %}
-            disabled="disabled" {% endif %}>Accepter</a>
-        <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=0"
-            class="btn btn-danger radius-0" {% if quotation.position is same as (0) %} disabled="disabled"
-            {% endif %}>Rejeter</a>
-        {% endif %}
+        {% if quote.position is not same as(3) and quote.position is not same as(2) %}
+            {% if not TOTAL == 0 %}
+            <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=1"
+                class="btn btn-theme sub-quotation-update radius-0" {% if quote.position is same as (0) %}
+                disabled="disabled" {% endif %}>Accepter</a>
+            <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=0"
+                class="btn btn-danger radius-0" {% if quote.position is same as (0) %} disabled="disabled"
+                {% endif %}>Rejeter</a>
+            {% endif %}
         {% endif %}
         <a href="{{download_url}}?order_id={{quote.order_id}}" class="btn btn-success radius-0">Telecharger</a>
     </div>
