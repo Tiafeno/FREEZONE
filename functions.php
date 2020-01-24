@@ -82,15 +82,14 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     } else {
         unset($items['stock-management']);
         $items['demandes'] = "Demandes";
+        $items['catalogue'] = "Prestations";
         $items['savs'] = "S.A.V";
         $items['gd'] = "Petites annonces";
-        //$items['catalogue'] = "Prestations";
         $items['faq'] = "FAQ";
         //$items['pdf'] = "PDF";
     }
 
-    // Insert back the logout item.
-    $items['customer-logout'] = $logout;
+    //$items['customer-logout'] = $logout;
     return $items;
 }, 999);
 
@@ -426,7 +425,6 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 // Envoyer un email au responsable (David & Nant.)
                 if (!isset($_COOKIE['freezone_revival-' . $sav_id])) {
                     do_action('fz_sav_revival_mail', $sav_id);
-
                     setcookie('freezone_revival-' . $sav_id, true,  time() + 86400); // 1 day
                     wc_add_notice("Rappel anvoyer avec succès au responsables", 'success');
                 } else {
@@ -498,37 +496,29 @@ add_action('woocommerce_account_catalogue_endpoint', function () {
 // Demande ou devis
 add_action('woocommerce_account_demandes_endpoint', function () {
     global $Engine, $wp_query;
-
     wp_enqueue_script('underscore');
     $shop_url = get_permalink(wc_get_page_id('shop'));
     $User = wp_get_current_user();
-
     if (!in_array('fz-particular', $User->roles) && !in_array('fz-company', $User->roles)) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
         wc_clear_notices();
         return false;
     }
-
     // https://github.com/woocommerce/woocommerce/wiki/wc_get_orders-and-WC_Order_Query
     $user_quotations = wc_get_orders(['customer_id' => $User->ID]);
-
     if (empty($user_quotations)) {
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
         $content .= 'Voir les catalogues</a> Aucune demande n\'a été passée.	</div>';
         echo $content;
-
         return false;
     }
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
         $order_id = $wp_query->query_vars['id'];
-
         $quotation = new \classes\FZ_Quote(intval($order_id));
-        $items = $quotation->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-
         switch ($quotation->get_position()) {
             case 0:
                 wc_add_notice("Votre demande est en cours de validation. Veuillez réessayer plus tard", "notice");
@@ -537,7 +527,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 wc_add_notice("Vous ne pouvez plus modifier cette demande", "notice");
                 break;
         }
-
         switch ($componnent):
             case 'update':
             case 'confirmaction':
@@ -606,7 +595,6 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 'date_add' => $quotation->date_add()
             ];
         }
-
         wc_print_notices();
         $content = '<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">';
         $content .= '<a class="woocommerce-Button button" href="' . $shop_url . '">';
@@ -698,7 +686,7 @@ SQL;
     foreach ($results as $result) {
         $title = apply_filters('the_title', $result->post_title, $result->ID);
         $shortcode .= "[vc_tta_section title=\"{$title}\" tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
-        [/vc_tta_section]";
+            [/vc_tta_section]";
     }
     $shortcode .= "[/vc_tta_accordion][/vc_column][/vc_row]";
     echo do_shortcode($shortcode);
@@ -926,6 +914,7 @@ add_action('acf/save_post', function ($post_id) {
 });
 
 // Recuperer les articles en attente en format JSON
+// Utiliser dans la page de mise a jours pour les fournisseurs
 add_action('wp_ajax_get_review_articles', function() {
     global $wpdb;
     $fzProducts = [];
@@ -989,7 +978,6 @@ CODE;
     }
     wp_send_json_success($fzProducts);
 });
-
 
 add_action('wp_loaded', function () {
 });

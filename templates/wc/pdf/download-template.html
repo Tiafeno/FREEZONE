@@ -70,7 +70,7 @@
                 <th scope="col">N°</th>
                 <th scope="col">DATE</th>
                 {# <th scope="col">REFERENCE</th> #}
-                <th scope="col">Suivi par</th>
+                <th scope="col">Géré par : </th>
             </tr>
         </thead>
         <tbody>
@@ -80,7 +80,7 @@
                 {# <td>REF{{order.get_id()}}</td> #}
                 <td>
                     {% if responsible is not same as(null) %}
-                    {{responsible.last_name}}
+                        {{responsible.first_name}}
                     {% endif %}
                 </td>
             </tr>
