@@ -140,7 +140,7 @@ add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
         Suite à votre demande de devis nous vous informons que votre demande est désormais disponible et consultable sur notre site 
         <a href=\"{$account_url}\" target=\"_blank\">en cliquant ici</a><br><br>
         À noter que cette demande sera expirée dans 7 jours.<br><br>
-        Actuellement vous possédez un accès espace client Freezone pour gérer et créer une demande de devis tout en parcourant norte catalogue en ligne.<br>
+        Actuellement vous possédez un accès espace client Freezone pour gérer et créer une demande de devis tout en parcourant notre catalogue en ligne.<br>
         Votre compte:<br>
         Adresse email: {$user->user_email}<br>
         Mot de passe: {$pwd}<br><br>

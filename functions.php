@@ -736,7 +736,7 @@ add_action('user_register', function ($user_id) {
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = esc_attr($_POST['firstname']);
         $lastname  = esc_attr($_POST['lastname']);
-        $nickname = $role === 'company' ? 'CL' . sanitize_title( $company_name, $user_id) : 'CL' . $user_id;
+        $nickname = $role === 'company' ? 'CL' . sanitize_title( $company_name, '') . '-' . $user_id: 'CL' . $user_id;
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
@@ -750,13 +750,11 @@ add_action('user_register', function ($user_id) {
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
-    
     $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
     update_field('client_reference', "CL{$user_id}", 'user_' . $user_id);
     $user_customer = new WC_Customer(intval($user_id));
-   
     // Si le compte est une entreprise
     if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
@@ -780,7 +778,6 @@ add_action('user_register', function ($user_id) {
         }
         // Compte ni Professionnel, ni Revendeur
         update_field('company_status', false, 'user_' . $user_id);
-
         // Mettre le compte particulier en attente par default
         // 0: not pending, 1: Pending
         update_user_meta($user_id, "fz_pending_user", 1);
