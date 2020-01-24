@@ -123,7 +123,7 @@
                                 condition: parseInt(article.condition),
                             },
                             beforeSend: function (xhr) {
-                                xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
+                                //xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
                             }
                         });
                         deferreds.push(query)
