@@ -723,14 +723,14 @@ add_action('user_register', function ($user_id) {
      * Particulier ou entreprise
      */
     $role = sanitize_text_field($_REQUEST['role']);
-    $company_name    = isset($_POST['company_name']) ? $_POST['company_name'] : '';
-    if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
-        $firstname = esc_attr($_POST['firstname']);
-        $lastname  = esc_attr($_POST['lastname']);
+    $company_name    = isset($_REQUEST['company_name']) ? $_REQUEST['company_name'] : '';
+    if (!empty($_REQUEST['lastname'])) {
+        $firstname = sanitize_text_field($_REQUEST['firstname']);
+        $lastname  = sanitize_text_field($_REQUEST['lastname']);
         $nickname = $role === 'company' ? 'CL' . sanitize_title( $company_name, '') . '-' . $user_id: 'CL' . $user_id;
         $result = wp_update_user([
             'ID' => intval($user_id),
-            'first_name' => $firstname,
+            'first_name' => $firstname ? $firstname : '',
             'last_name'  => $lastname,
             'nickname'   => $nickname,
             'user_login' => $nickname
@@ -811,11 +811,6 @@ add_action('wp_loaded', function () {
         wp_redirect(home_url());
         exit();
     }
-    /* register_nav_menus( array(
-        'primary' => esc_html__( 'Primary Menu', 'yozi' ),
-        'top-menu' => esc_html__( 'Top Menu', 'yozi' ),
-        'vertical-menu' => esc_html__( 'Vertical Menu', 'yozi' ),
-    ) ); */
     add_filter('wp_nav_menu_items', function($items, $args) {
         // Ajouter un lien de déconnection ou connexion dans le menu
         if ($args->theme_location == 'top-menu') {
