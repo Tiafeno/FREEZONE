@@ -737,7 +737,11 @@ add_action('user_register', function ($user_id) {
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
+            return false;
         }
+    } else {
+        wc_add_notice("Le champ Nom est obligatoire", 'error');
+        return false;
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
