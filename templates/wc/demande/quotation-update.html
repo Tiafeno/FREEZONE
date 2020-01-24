@@ -75,7 +75,7 @@
             {% for line in quote.lines %}
             <tr class="">
                 <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
-                <td align="center"> <span style="text-align: center">{{line.qty_UI()}}</span> </td>
+                <td align="center"> <span style="text-align: center">{{line.qty_UI()|raw}}</span> </td>
                 <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
                 <td>
                     {{line.discount_type is same as(0) ? '-' : item.discount}}

@@ -73,6 +73,7 @@ class FZ_Item_Order {
     }
 
     public function meta_supplier_lines_fn () {
+        if (empty($this->suppliers)) return [];
         $lines = array_map(function ($line) {
             $condition = (int)get_post_meta(intval($line->article_id), "_fz_condition", true);
             $condition_value = is_nan($condition) ? 0 : $condition;
@@ -128,7 +129,7 @@ class FZ_Item_Order {
             }
         }
         $qty = (0 === $qty) ? $this->quantity : $qty;
-        return "{$qty} <span style='color: red'>{$ui}</span>span>";
+        return "{$qty} <span style='color: red'>{$ui}</span>";
     }
 
 

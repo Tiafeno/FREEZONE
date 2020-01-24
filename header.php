@@ -56,7 +56,8 @@
                 $('.currency').each((index, element) => {
                     var cost = $(element).text();
                     cost = parseFloat(cost);
-                    $(element).text(formatter.format(cost));
+                    var value = _.isNaN(cost) ? '-' : formatter.format(cost);
+                    $(element).text(value);
                 });
             });
         })(jQuery)

@@ -1,5 +1,6 @@
 (function ($) {
     $(document).ready(function () {
+
         new Vue({
             el: '#app-prestations',
             data: {
