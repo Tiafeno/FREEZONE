@@ -102,7 +102,7 @@
         <tbody>
             {% for line in items %}
             <tr class="">
-                <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
+                <td style="padding-left: 15px" width="450" class="not-center"> {{line.name}} </td>
                 <td align="center"> <span style="text-align: center">{{line.qty_UI() | raw}}</span> </td>
                 <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
                 <td>
