@@ -3,6 +3,7 @@
         new Vue({
             el: '#app-update-articles',
             data: {
+                loading: false,
                 articles: [],
                 condition_product: [
                     { key: 0, value: "Disponible" },
@@ -81,25 +82,28 @@
                 },
                 submitForm: function(e) {
                     e.preventDefault();
+                    var self = this;
                     var btnSubmit = document.querySelector('#submit-update-form');
                     var deferreds = [];
                     this.articles.forEach((article, index) => {
                         // Verifier si la quantite est egale a Zero (0)
-                        if (0 === parseInt(article.qty_disp) && !_.containes([1, 2], parseInt(article.condition))) 
+                        if (0 === parseInt(article.qty_disp) && !_.contains([1, 2], parseInt(article.condition)))
                             this.verifyQtyValue(index).then(res => {
                                 if (!res) throw new Error('La valeur du quantite requis.');
                             });
+                        var formData = new FormData();
+                        formData.append('price', parseInt(article.cost));
+                        formData.append('total_sales', article.qty_disp);
+                        formData.append('garentee', _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee));
+                        formData.append('date_review',article.date_review);
+                        formData.append('condition', parseInt(article.condition));
                         var query = $.ajax({
-                            method: "POST",
-                            data: {
-                                id: article.id,
-                                price: parseInt(article.cost),
-                                total_sales: qty,
-                                garentee: _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee),
-                                date_review: article.date_review,
-                                condition: parseInt(article.condition)
-                            },
                             url: `${rest_api.rest_url}wp/v2/fz_product/${article.id}`,
+                            method: "POST",
+                            data: formData,
+                            dataType: 'json',
+                            contentType: false,
+                            processData: false,
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
                             },
@@ -109,6 +113,7 @@
                     });
                     btnSubmit.nodeValue = "Chargement...";
                     btnSubmit.setAttribute('disabled', 'disabled');
+                    this.loading = true;
                     $.when.apply($, deferreds).done(function() {
                         console.log(arguments);
                         btnSubmit.nodeValue = "Enregistrer";
@@ -124,6 +129,7 @@
                                 window.location.href = rest_api.account_url
                             }
                         });
+                        self.loading = false;
                     });
                     return false;
                 }
@@ -133,6 +139,7 @@
                 const self = this;
                 return new Promise(resolve => {
                     var articleIds = self.getCookie('freezone_ua');
+                    self.loading = true;
                     $.ajax({
                         method: "GET",
                         url: rest_api.ajax_url,
@@ -146,7 +153,7 @@
                             resolve(true);
                         },
                         complete: function () {
-
+                            self.loading = false;
                         }
                     });
                 });

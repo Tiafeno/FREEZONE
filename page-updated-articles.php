@@ -9,12 +9,12 @@
  * Template Name: Update articles supplier
  */
 
-
+wp_enqueue_script('underscore');
 wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
 wp_enqueue_script('momenjs', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js", ['jquery']);
 // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
 wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
-wp_enqueue_script('update-articles', get_stylesheet_directory_uri() . '/assets/js/update-articles.js', ['jquery', 'vue']);
+wp_enqueue_script('update-articles', get_stylesheet_directory_uri() . '/assets/js/update-articles.js', ['jquery', 'vue', 'underscore']);
 wp_localize_script('update-articles', 'rest_api', [
     'rest_url' => esc_url_raw(rest_url()),
     'nonce' => wp_create_nonce('wp_rest'),
@@ -167,7 +167,7 @@ yozi_render_breadcrumbs();
                                             </td>
                                             <td width="15%">
                                                 <div class="price">
-                                                    <input type="number" v-model="article.cost" step="100" style="width: 100%;" min="0" class="form-control radius-0" />
+                                                    <input type="number" v-model="article.cost" step="1" style="width: 100%;" min="0" class="form-control radius-0" />
                                                 </div>
                                             </td>
                                             <td width="10%">
@@ -184,8 +184,11 @@ yozi_render_breadcrumbs();
                                 <div class="row" v-if="articles.length > 0">
                                     <button class="btn btn-primary" type="submit" id="submit-update-form">Enregistrer</button>
                                 </div>
-                                <div class="row" v-if="articles.length == 0">
+                                <div class="row" v-if="articles.length == 0 && loading == false">
                                     Vous n'avez aucun articles en attente
+                                </div>
+                                <div class="row" v-if="loading == true">
+                                    Chargement...
                                 </div>
                             </form>
                         </div>

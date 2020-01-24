@@ -936,6 +936,7 @@ add_action('wp_ajax_get_review_articles', function() {
     $fzProducts = [];
     // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
     $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
+    if (empty($articles)) wp_send_json_success([]);
     // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
     // a partir de 06h du matin
     $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
