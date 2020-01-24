@@ -725,18 +725,24 @@ add_action('woocommerce_account_gd_endpoint', function () {
  */
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
-    $User = new WP_User(intval($user_id));
+    $user_data = get_userdata(intval($user_id));
     $firstname = $lastname = "";
+     /**
+     * Role de l'utilisateur
+     * Particulier ou entreprise
+     */
+    $role = sanitize_text_field($_REQUEST['role']);
     $company_name    = isset($_POST['company_name']) ? $_POST['company_name'] : '';
     if (!empty($_POST['firstname']) && !empty($_POST['lastname'])) {
         $firstname = esc_attr($_POST['firstname']);
         $lastname  = esc_attr($_POST['lastname']);
+        $nickname = $role === 'company' ? 'CL' . sanitize_title( $company_name, $user_id) : 'CL' . $user_id;
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname,
             'last_name'  => $lastname,
-            'nickname'   => 'CL' . sanitize_title( $company_name, $user_id),
-            'user_login' => 'CL' . sanitize_title( $company_name, $user_id)
+            'nickname'   => $nickname,
+            'user_login' => $nickname
         ]);
         if (is_wp_error($result)) {
             wc_add_notice($result->get_error_message(), 'error');
@@ -748,13 +754,9 @@ add_action('user_register', function ($user_id) {
     $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
-    update_field('client_reference', "CL{$User->ID}", 'user_' . $user_id);
+    update_field('client_reference', "CL{$user_id}", 'user_' . $user_id);
     $user_customer = new WC_Customer(intval($user_id));
-    /**
-     * Role de l'utilisateur
-     * Particulier ou entreprise
-     */
-    $role = sanitize_text_field($_REQUEST['role']);
+   
     // Si le compte est une entreprise
     if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
@@ -766,7 +768,6 @@ add_action('user_register', function ($user_id) {
         // Ajouter un statut Professionnel ou revendeur
         // par default: En attente
         update_field('company_status', 'pending', 'user_' . $user_id);
-
         // Ajouter le secteur d'activité pour l'entreprise
         update_user_meta($user_id, 'sector_activity', $sector_activity);
     }
@@ -796,7 +797,7 @@ add_action('user_register', function ($user_id) {
     $city = sanitize_text_field($_REQUEST['city']);
     // Billing
     $user_customer->set_billing_location('MG', '', $zip, $city);
-    $user_customer->set_billing_email($User->user_email);
+    $user_customer->set_billing_email($user_data->user_email);
     $user_customer->set_billing_company($company_name);
     $user_customer->set_billing_address_1($address);
     $user_customer->set_billing_first_name($firstname);
