@@ -935,8 +935,7 @@ add_action('wp_ajax_get_review_articles', function() {
     global $wpdb;
     $fzProducts = [];
     // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
-    $articles = isset($_COOKIE['freezone_ua']) ? $_COOKIE['freezone_ua'] : '';
-    $item_articles = explode(',', $articles);
+    $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
     // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
     // a partir de 06h du matin
     $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
@@ -946,7 +945,7 @@ add_action('wp_ajax_get_review_articles', function() {
 SELECT SQL_CALC_FOUND_ROWS pts.ID
 FROM $wpdb->posts AS pts
 WHERE
-    pts.ID IN ($articles) 
+    pts.ID IN ({$articles}) 
     AND pts.post_type = 'fz_product'
     AND pts.post_status = 'publish'
     AND pts.ID IN (SELECT post_id

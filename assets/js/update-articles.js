@@ -27,6 +27,21 @@
                         });
                     });
                 },
+                getCookie: function(cname) {
+                    var name = cname + "=";
+                    var decodedCookie = decodeURIComponent(document.cookie);
+                    var ca = decodedCookie.split(';');
+                    for(var i = 0; i <ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                            return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
+                },
                 onChangeQty: function(e, index) {
                     e.preventDefault();
                     var element = e.currentTarget;
@@ -117,10 +132,11 @@
                 // https://vuejs.org/v2/guide/instance.html
                 const self = this;
                 return new Promise(resolve => {
+                    var articleIds = self.getCookie('freezone_ua');
                     $.ajax({
                         method: "GET",
                         url: rest_api.ajax_url,
-                        data: { 'action': 'get_review_articles' },
+                        data: { 'action': 'get_review_articles', articles: articleIds },
                         success: (resp, status, xhr) => {
                             var articles = resp.data;
                             if (_.isEmpty(articles)) {
