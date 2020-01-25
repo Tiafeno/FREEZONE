@@ -1,3 +1,9 @@
+<style type="text/css">
+    #app-prestations table.shop_table td {
+        padding: 10px !important;
+    }
+</style>
+
 <div id="app-prestations">
     <div class="row">
         <div class="col-sm-6">
@@ -31,6 +37,7 @@
                 class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table_responsive shop_table ">
                 <thead>
                     <tr>
+                        <th></th>
                         <th class="woocommerce-orders-table__header"><span class="nobr">Designation</span></th>
                         <th class="woocommerce-orders-table__header "><span class="nobr">Plates-forme</span></th>
                         <th class="woocommerce-orders-table__header "><span class="nobr">Prix</span></th>
@@ -40,13 +47,17 @@
 
                 <tbody>
                     <tr v-for="(ctg, index) in catalogues">
-                        <td style="padding-left: 15px">
-                            {{ctg.title.rendered}}
-                        </td>
+                        <td style="padding-left: 15px"> <input type="checkbox" v-model="inputs" v-bind:value="ctg.id" name="inputs"> </td>
+                        <td> {{ctg.title.rendered}} </td>
                         <td> {{ctg.ctg_platform | platform(platformes) }} </td>
                         <td> {{ctg.ctg_price | currency}} </td>
                         <td> {{ctg.ctg_observation}} </td>
                     </tr>
+                <tr>
+                    <th colspan="5">
+                        <button class="btn btn-sm" v-on:click="onClickCatalog($event)">Envoyer mes prestations</button>
+                    </th>
+                </tr>
                 </tbody>
             </table>
         </div>

@@ -215,4 +215,82 @@ class fzSupplierArticle
 
 } /* end of class fzSupplierArticle */
 
+// Mettre a jour une article via AJAX
+add_action('wp_ajax_update_fz_product', function() {
+    if (empty($_REQUEST) || !isset($_REQUEST['id'])) wp_send_json_error("parametre manquant");
+    $article_id = intval($_REQUEST['id']);
+    $fzProduct = new \classes\fzSupplierArticle($article_id);
+    $fzProduct->set_price(intval($_REQUEST['price']));
+    $fzProduct->set_total_sales(intval($_REQUEST['total_sales']));
+    $fzProduct->set_garentee(intval($_REQUEST['garentee']));
+    $fzProduct->set_condition(intval($_REQUEST['condition']));
+    $fzProduct->update_date_review();
+
+    wp_send_json_success("Success");
+
+});
+
+// Recuperer les articles en attente en format JSON
+// Utiliser dans la page de mise a jours pour les fournisseurs
+add_action('wp_ajax_get_review_articles', function() {
+    global $wpdb;
+    $fzProducts = [];
+    // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
+    $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
+    if (empty($articles)) wp_send_json_success([]);
+    // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
+    // a partir de 06h du matin
+    $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
+    $today_date_time = new DateTime($now);
+    $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
+    $sql = <<<CODE
+SELECT SQL_CALC_FOUND_ROWS pts.ID
+FROM $wpdb->posts AS pts
+WHERE
+    pts.ID IN ({$articles}) 
+    AND pts.post_type = 'fz_product'
+    AND pts.post_status = 'publish'
+    AND pts.ID IN (SELECT post_id
+        FROM $wpdb->postmeta
+        WHERE meta_key = 'date_review'
+            AND CAST(meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
+        )
+CODE;
+
+    $post_products = $wpdb->get_results($sql);
+    // Boucler une a une les articles trouver dans la recherche
+    foreach ( $post_products as $_post ) {
+        $article = new \classes\fzSupplierArticle($_post->ID);
+        $product_id = $article->get_product_id();
+        $quantity = [];
+        // Récuperer les quantité demander pour cette article dans les commandes "en attente"
+        $orders = new WP_Query([
+            'post_type' => wc_get_order_types(),
+            'post_status' => array_keys(wc_get_order_statuses()),
+            "posts_per_page" => -1,
+            'meta_query' => [
+                [
+                    'key' => 'position',
+                    'value' => 0, // Tous les commande en attente
+                    'compare' => '='
+                ]
+            ]
+        ]);
+        if (empty($orders->posts)) continue;
+        // Boucler tous le commandes trouver dans la recherche
+        foreach ( $orders->posts as $order ) {
+            $current_order = new WC_Order($order->ID);
+            $items = $current_order->get_items();
+            foreach ( $items as $item_id => $item ) {
+                $data = $item->get_data();
+                if ($data['product_id'] === $product_id) {
+                    $quantity[] = (int)$data['quantity'];
+                }
+            }
+        }
+        $article->quantity = array_sum($quantity);
+        $fzProducts[] = $article;
+    }
+    wp_send_json_success($fzProducts);
+});
 ?>

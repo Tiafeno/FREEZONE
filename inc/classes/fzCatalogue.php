@@ -19,17 +19,14 @@ final class fzCatalogue {
             $post = get_post(intval($post_id));
             $this->ID = $post->ID;
             $this->name = $post->post_title;
-
             foreach ($this->fields as $field) {
                 $this->$field = get_post_meta( $this->ID, $field, true );
             }
-
             unset($post);
         } else {
             return new \WP_Error('', "Parametre manquant (post_id)");
         }
     }
-
 }
 
 add_action('init', function () {
@@ -49,7 +46,6 @@ add_action('init', function () {
         'query_var' => true
     ]);
 }, 10);
-
 add_action('rest_api_init', function () {
     $metas = ['ctg_platform', 'ctg_observation', 'ctg_price'];
     foreach ( $metas as $meta ) {
@@ -107,5 +103,8 @@ add_action('rest_api_init', function () {
             }
         ],
     ]);
+
+});
+add_action('wp_ajax_send_selected_ctg', function () {
 
 });
