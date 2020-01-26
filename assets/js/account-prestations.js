@@ -27,7 +27,10 @@
             },
             methods: {
                 onSend: function ($event) {
+                    var self = this;
                     if (_.isEmpty(this.inputs)) return [];
+                    this.loading = true;
+                    this.changeStatus('Envoie en cours...');
                     $.ajax({
                         method: "POST",
                         url: account_opt.ajax_url,
@@ -39,6 +42,13 @@
                             xhr.setRequestHeader('X-WP-Nonce', account_opt.nonce);
                         },
                         success: (response, status, xhr) => {
+                            self.loading = false;
+                            this.changeStatus('');
+                            if (response.success) {
+                                Swal.fire("Succes", response.data, "success");
+                            } else {
+                                Swal.fire("Erreur", response.data, "error");
+                            }
                         }
                     });
                 },
