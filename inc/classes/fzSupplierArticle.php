@@ -241,7 +241,7 @@ add_action('wp_ajax_get_review_articles', function() {
     // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
     // a partir de 06h du matin
     $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
-    $today_date_time = new DateTime($now);
+    $today_date_time = new \DateTime($now);
     $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
     $sql = <<<CODE
 SELECT SQL_CALC_FOUND_ROWS pts.ID
@@ -264,7 +264,7 @@ CODE;
         $product_id = $article->get_product_id();
         $quantity = [];
         // Récuperer les quantité demander pour cette article dans les commandes "en attente"
-        $orders = new WP_Query([
+        $orders = new \WP_Query([
             'post_type' => wc_get_order_types(),
             'post_status' => array_keys(wc_get_order_statuses()),
             "posts_per_page" => -1,
@@ -279,7 +279,7 @@ CODE;
         if (empty($orders->posts)) continue;
         // Boucler tous le commandes trouver dans la recherche
         foreach ( $orders->posts as $order ) {
-            $current_order = new WC_Order($order->ID);
+            $current_order = new \WC_Order($order->ID);
             $items = $current_order->get_items();
             foreach ( $items as $item_id => $item ) {
                 $data = $item->get_data();
