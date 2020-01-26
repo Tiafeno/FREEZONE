@@ -820,6 +820,7 @@ add_action('user_register', function ($user_id) {
     $user_customer->set_billing_email($user_data->user_email);
     $user_customer->set_billing_company($company_name);
     $user_customer->set_billing_address_1($address);
+    $user_customer->set_billing_address_2($address);
     $user_customer->set_billing_first_name($firstname);
     $user_customer->set_billing_last_name($lastname);
     $user_customer->set_billing_address($address);
@@ -828,6 +829,7 @@ add_action('user_register', function ($user_id) {
     // Shipping
     $user_customer->set_shipping_location('MG', '', $zip, $city);
     $user_customer->set_shipping_address_1($address);
+    $user_customer->set_shipping_address_2($address);
     $user_customer->set_shipping_first_name($firstname);
     $user_customer->set_shipping_last_name($lastname);
     $user_customer->set_shipping_company($company_name);

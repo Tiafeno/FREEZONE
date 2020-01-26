@@ -103,14 +103,14 @@ do_action( 'woocommerce_before_edit_account_address_form' ); ?>
                                 <p class="form-group form-row form-row-wide">
                                     <label for="reg_stat">CIN  <span class="required">*</span></label>
                                     <input type="number" placeholder="" min="12" required class="input-text form-control radius-0" name="stat"
-                                           value="<?= $company->cin ?>" />
+                                           value="<?= $particular->cin ?>" />
                                 </p>
                             </div>
                             <div class="col-sm-6">
                                 <p class="form-group form-row form-row-wide">
                                     <label for="reg_nif">Fait le  <span class="required">*</span></label>
                                     <input type="date" placeholder="" required class="input-text form-control radius-0" name="nif"
-                                           value="<?= $company->date_cin ?>" />
+                                           value="<?= $particular->date_cin ?>" />
                                 </p>
                             </div>
                         </div>
