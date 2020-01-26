@@ -571,6 +571,7 @@ SQL;
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
                     $client_id = (int) $object['id'];
+                    if ($client_id === 0) return null;
                     $field_value = get_field($field_name, 'user_' . $client_id);
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
