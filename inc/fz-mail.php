@@ -190,7 +190,6 @@ add_action("fz_mail_send_selected_catalogue", function ($ids = []) {
     $content .= "</ul>";
     $subject = "#{$user_id} - Une demande de prestation sur freezone";
     $send = wp_mail($to, $subject, $content, $headers);
-    echo $content;
     if ($send) {
         wp_send_json_success("Message envoyer avec succes");
     } else {
