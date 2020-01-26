@@ -38,8 +38,7 @@ class fzSav
     public $status_product;
     public $product_provider;
 
-    public function __construct ($sav_id, $api = false)
-    {
+    public function __construct ($sav_id, $api = false) {
         $this->ID = $sav_id;
         foreach ( self::$fields as $key ) {
             if ($key === 'auctor' || $key === 'reference' || $key === 'garentee') {
@@ -52,11 +51,9 @@ class fzSav
                     $this->$key = $user_controller->prepare_item_for_response(new \WP_User((int)$value), $request);
                     continue;
                 }
-
                 $this->$key = $value;
                 continue;
             }
-
             $field_value = get_field($key, $sav_id);
             $this->$key = $field_value;
         }
