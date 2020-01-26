@@ -649,12 +649,15 @@ SQL;
     public function register_rest_fz_product () {
         $current_post_type = "fz_product";
         $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
+        $current_client_id = get_current_user_id();
         foreach ( $metas as $meta ) {
             register_rest_field($current_post_type, $meta, [
-                'update_callback' => function ($value, $object, $field_name) {
+                'update_callback' => function ($value, $object, $field_name) use ($current_client_id) {
+                    if ($current_client_id === 0) return null;
                     return update_field($field_name, $value, (int)$object->ID);
                 },
-                'get_callback' => function ($object, $field_name) {
+                'get_callback' => function ($object, $field_name) use ($current_client_id) {
+                    if ($current_client_id === 0) return null;
                     $value = get_field($field_name, (int)$object['id']);
                     return $value;
                 }

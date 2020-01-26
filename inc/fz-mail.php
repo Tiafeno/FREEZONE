@@ -166,9 +166,16 @@ add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
 /**
  * Envoyer un mail au responsable pour informer q'un client a selectionner un ou des prestations
  */
-add_action("fz_mail_send_selected_catalogue", function ($args = []) {
-    if (empty($aargs)) return false;
-    $current_userdata = get_userdata( get_current_user_id() );
+add_action("fz_mail_send_selected_catalogue", function ($ids = []) {
+    if (!is_array($ids) || empty($ids)) return false;
+    $prestations = [];
+    foreach ($ids as $id) {
+        $id = intval($id);
+        if (!$id || is_nan($id)) continue;
+        $prestations[] = new \classes\fzCatalogue($id);
+    }
+    $user_id = get_current_user_id();
+    $current_userdata = get_userdata( $user_id );
     $from = $current_userdata->user_email;
     $to = implode(',', apply_filters( 'get_responsible', ['editor', 'administrator'] ));
     $headers = [];
@@ -176,12 +183,14 @@ add_action("fz_mail_send_selected_catalogue", function ($args = []) {
     $headers[] = "From: FreeZone <{$from}>";
     $content = "Bonjour<br><br> Vous avez recus une demande de prestation:<br>";
     $content .= "<ul>";
-    foreach ($args as $prestation) {
-        $content .= "<li> {$prestation->name} <i>({$prestation->price} MGA, {$prestation->platform})</i></li>";
+    foreach ($prestations as $prestation) {
+        $price = $prestation->price ? $prestation->price.' MGA, ' : '';
+        $content .= "<li> {$prestation->name} <i>({$price}{$prestation->platform['name']})</i></li>";
     }
     $content .= "</ul>";
-    $subject = "#{$user_id} - Une demqnde de prestation sur freezone";
+    $subject = "#{$user_id} - Une demande de prestation sur freezone";
     $send = wp_mail($to, $subject, $content, $headers);
+    echo $content;
     if ($send) {
         wp_send_json_success("Message envoyer avec succes");
     } else {

@@ -19,14 +19,12 @@ final class fzCatalogue {
         'ctg_observation',
         'ctg_price'
     ];
-    public $platform = null;
-    public $price = null;
     private $categories = [
          ['key' => 1, 'name' => "PC"] ,
          ['key' => 2, 'name' => "Laptop"],
          ['key' => 3, 'name' => "Tous les plates-formes"]
     ];
-    public function __construc($post_id) {
+    public function __construct($post_id) {
         if (\is_numeric($post_id)) {
             $post = get_post(intval($post_id));
             $this->ID = $post->ID;
@@ -131,15 +129,9 @@ add_action('rest_api_init', function () {
 
 add_action('wp_ajax_send_selected_ctg', function () {
     if (isset($_REQUEST['ids'])) {
-        $ids = explode(',', $ids);
-        $args = [];
-        foreach ($ids as $id) {
-            $id = intval($id);
-            if (!$id || is_nan($id)) continue;
-            $args[] = new fzCatalogue($id);
-        }
+        $ids = explode(',', $_REQUEST['ids']);
         // Envoyer un mail au administrateurs (Commercial et super utilisateur)
-        do_action("fz_mail_send_selected_catalogue", $args);
+        do_action("fz_mail_send_selected_catalogue", $ids);
     } else {
         wp_send_json_error( "Vous n'avez selectionnée aucune prestation. Veuillez selectionner" );
     }
