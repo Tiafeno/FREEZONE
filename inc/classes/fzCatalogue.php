@@ -9,10 +9,22 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 final class fzCatalogue {
     public $ID;
     public $name;
+    /**
+     * public $ctg_platform; // int value, 
+     * public $ctg_observation;
+     * public $ctg_price; // int value,
+     */
     public $fields = [ // meta field
         'ctg_platform',
         'ctg_observation',
         'ctg_price'
+    ];
+    public $platform = null;
+    public $price = null;
+    private $categories = [
+         ['key' => 1, 'name' => "PC"] ,
+         ['key' => 2, 'name' => "Laptop"],
+         ['key' => 3, 'name' => "Tous les plates-formes"]
     ];
     public function __construc($post_id) {
         if (\is_numeric($post_id)) {
@@ -26,6 +38,17 @@ final class fzCatalogue {
         } else {
             return new \WP_Error('', "Parametre manquant (post_id)");
         }
+    }
+
+    public function __get($property) {
+        if ($property === "platform") {
+            $search_key = array_search((int) $this->ctg_platform, array_column($this->categories, 'key')); // return key of array
+            return $this->categories[$search_key];
+        }
+        if ($property === "price") {
+            return intval($this->ctg_price);
+        }
+        return $this->$property;
     }
 }
 
@@ -105,6 +128,19 @@ add_action('rest_api_init', function () {
     ]);
 
 });
-add_action('wp_ajax_send_selected_ctg', function () {
 
+add_action('wp_ajax_send_selected_ctg', function () {
+    if (isset($_REQUEST['ids'])) {
+        $ids = explode(',', $ids);
+        $args = [];
+        foreach ($ids as $id) {
+            $id = intval($id);
+            if (!$id || is_nan($id)) continue;
+            $args[] = new fzCatalogue($id);
+        }
+        // Envoyer un mail au administrateurs (Commercial et super utilisateur)
+        do_action("fz_mail_send_selected_catalogue", $args);
+    } else {
+        wp_send_json_error( "Vous n'avez selectionnée aucune prestation. Veuillez selectionner" );
+    }
 });

@@ -4,6 +4,7 @@
         new Vue({
             el: '#app-prestations',
             data: {
+                loading : false,
                 pageIndex: 0, // 0 default page. https://mail.google.com/mail/u/0/#inbox/FMfcgxwDrHspMhGPsmTbwtrqRXFsLpst?projector=1&messagePartId=0.2
                 platformes: [
                     {
@@ -25,8 +26,21 @@
                 categorie: ''
             },
             methods: {
-                onClickCatalog: function ($event) {
-                    console.log(this.inputs);
+                onSend: function ($event) {
+                    if (_.isEmpty(this.inputs)) return [];
+                    $.ajax({
+                        method: "POST",
+                        url: account_opt.ajax_url,
+                        data: {
+                            action: "send_selected_ctg",
+                            ids: this.inputs.join(',')
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', account_opt.nonce);
+                        },
+                        success: (response, status, xhr) => {
+                        }
+                    });
                 },
                 onChangePlatform: function($event) {
                     $event.preventDefault();

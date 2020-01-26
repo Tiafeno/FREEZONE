@@ -481,7 +481,8 @@ add_action('woocommerce_account_catalogue_endpoint', function () {
     wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js', ['vue', 'jquery'], rand(45, 90));
     wp_localize_script('account-prestation', 'account_opt', [
         'rest_url' => esc_url_raw(rest_url()),
-        'nonce' => wp_create_nonce('wp_rest')
+        'nonce' => wp_create_nonce('wp_rest'),
+        'ajax_url' =>  admin_url('admin-ajax.php'),
     ]);
 
     // Render template

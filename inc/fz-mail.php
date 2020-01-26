@@ -128,6 +128,14 @@ add_action('fz_new_user', function ($user_id, $role)  {
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
 
+/**
+ * Envoyer un mail au client que le responsable vient d'ajouter
+ * pour l'informer que sont compte à été crée et bien actif
+ * 
+ * NB: Avant que le client voit les demandes ajouter par le commercial,
+ * il devrais remplir le formulaire d'information sur lui ou son entreprise avant
+ * de valider ou rejeter les demandes crée à son compte
+ */
 add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
     $user = new \WP_User((int) $user_id);
     $account_url = wc_get_account_endpoint_url('demandes');
@@ -146,7 +154,7 @@ add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
         Mot de passe: {$pwd}<br><br>
         N’hésitez pas à nous contacter si vous avez des questions<br>
         Merci";
-    $subject = "Inscription reussi sur le site freezone.click";
+    $subject = "Inscription reussi sur le site freezone";
     $send = wp_mail($to, $subject, $content, $headers);
     if ($send) {
         wp_send_json_success("Message envoyer avec succes");
@@ -154,6 +162,32 @@ add_action('fz_mail_api_insert_user', function ($user_id, $pwd = "") {
         wp_send_json_error("Une erreur s'est produit pendant l'envoie");
     }
 }, 10, 2);
+
+/**
+ * Envoyer un mail au responsable pour informer q'un client a selectionner un ou des prestations
+ */
+add_action("fz_mail_send_selected_catalogue", function ($args = []) {
+    if (empty($aargs)) return false;
+    $current_userdata = get_userdata( get_current_user_id() );
+    $from = $current_userdata->user_email;
+    $to = implode(',', apply_filters( 'get_responsible', ['editor', 'administrator'] ));
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: FreeZone <{$from}>";
+    $content = "Bonjour<br><br> Vous avez recus une demande de prestation:<br>";
+    $content .= "<ul>";
+    foreach ($args as $prestation) {
+        $content .= "<li> {$prestation->name} <i>({$prestation->price} MGA, {$prestation->platform})</i></li>";
+    }
+    $content .= "</ul>";
+    $subject = "#{$user_id} - Une demqnde de prestation sur freezone";
+    $send = wp_mail($to, $subject, $content, $headers);
+    if ($send) {
+        wp_send_json_success("Message envoyer avec succes");
+    } else {
+        wp_send_json_error("Une erreur s'est produit pendant l'envoie");
+    }
+}, 10, 1);
 
 // Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
@@ -215,7 +249,7 @@ add_action('complete_order', function ($order_id, $status = 'completed')  {
         'Phone' => freezone_phone_number
     ]);
     $st = $status === 'completed' ? 'validée' : 'rejetée';
-    $subject = "#{$order_id} - Une demande vient d'être {$st} sur le site freezone.click";
+    $subject = "#{$order_id} - Une demande vient d'être {$st} sur le site freezone";
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
 
@@ -249,7 +283,7 @@ add_action('fz_received_order', function ($order_id) {
         'url' => $url,
         'Phone' => freezone_phone_number
     ]);
-    $subject = "#{$order_id} - Vous avez reçu une demande de devis sur le site freezone.click";
+    $subject = "#{$order_id} - Vous avez reçu une demande de devis sur le site freezone";
     wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
 
