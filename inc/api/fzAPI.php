@@ -560,6 +560,8 @@ SQL;
                 'update_callback' => function ($value, $object, $field_name) use ($admin) {
                     $client_id = $object->ID;
                     $field_value = get_field($field_name, 'user_' . $object->ID);
+                    // Corriger la securite sur la modification de ces deux champ: pending, disable
+                    if ($$client_id === 0) return null;
                     if ($admin !== 'administrator' && $field_name === 'company_name') {
                         $current_user = new \WP_User($client_id);
                         if (\in_array('fz-company', $current_user->roles)) return $field_value;
