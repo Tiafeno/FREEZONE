@@ -1,3 +1,4 @@
+{% set TVA = 20 %}
 <style type="text/css">
     .woocommerce table.shop_table td:not(.not-center),
     .woocommerce table.shop_table th:not(.not-center) {
@@ -7,23 +8,28 @@
     .woocommerce table.shop_table td {
         padding: 10px;
     }
+
+    .swal2-content {
+        text-align: left;
+        font-size: 1.4em;
+    }
 </style>
 
-{% if quotation.position is same as(2) %}
+{% if quote.position is same as(2) %}
 <p style="padding: 10px; background-color: #e23e1d; color: white; font-size: 15px;">
     Demande rejetée
 </p>
 {% endif %}
 
-{% if quotation.position is same as(3) %}
+{% if quote.position is same as(3) %}
 <p style="padding: 10px; background-color: #5cb85c; color: white; font-size: 15px;">
     Demande acceptée
 </p>
 {% endif %}
 
-{% if quotation.position is not same as (0) %}
+{% if quote.position is not same as (0) %}
 <form name="quotation_item" method="post" action="">
-    <h2 class="text-bold">Demande n°{{quotation.order_id}}</h2>
+    <h2 class="text-bold">Demande n°{{quote.order_id}}</h2>
 
     <table class="table table-bordered">
         <thead>
@@ -42,8 +48,8 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-
-
+    {% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
+    {% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
     <table class="woocommerce-orders-table shop_table_responsive shop_table account-orders-table">
         <thead>
             <tr>
@@ -65,95 +71,82 @@
                 </th>
             </tr>
         </thead>
-
         <tbody>
-            {% for product in quotation.products %}
+            {% for line in quote.lines %}
             <tr class="">
-                <td style="padding-left: 15px" class="not-center">
-                    {{product.get_name()}}
-                </td>
-                <td align="center">
-
-                    <div class="row" style="display: flex;">
-                        <div class="col-sm-6" style="margin-left: auto">
-                            <input class="form-control qt-input-changer radius-0"
-                                style="min-width: 110px; text-align: center" name="qt_{{product.item_id}}"
-                                value="{{product.count_item}}" data-item-id="{{product.item_id}}"
-                                data-unit-cost="{{product.get_freezone_price()}}" min="0" max="{{product.item_limit}}"
-                                type="number" disabled="disabled">
-                        </div>
-                    </div>
-
-                </td>
-                <td class="currency">
-                    {{ product.get_freezone_price() }}
-                </td>
+                <td style="padding-left: 15px" class="not-center"> {{line.name}} </td>
+                <td align="center"> <span style="text-align: center">{{line.qty_UI()|raw}}</span> </td>
+                <td> <span class="currency">{{line.price_fn() is same as(0) ? '-' : line.price_fn()}}</span></td>
                 <td>
-                    {% if product.discount_type is same as(0) %} - {% else %} {{product.discount}}% {% endif %}
+                    {{line.discount_type is same as(0) ? '-' : item.discount}}
+                    {{line.discount_type is same as(0) ? '' : ' %'}}
                 </td>
                 <td class="currency">
-                    {{product.get_freezone_subtotal()}}
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% for product in quotation.products_zero %}
-            <tr class="">
-                <td style="padding-left: 15px" class="not-center">
-                    {{product['name']}}
-                </td>
-                <td align="center">
-                    -
-                </td>
-                <td class="">
-                    -
-                </td>
-                <td>
-                    -
-                </td>
-                <td class="currency">
-                    0
-                </td>
+                    {{line.subtotal_net_fn() is same as(0) ? "Non disponible" : line.subtotal_net_fn()}}< </td> </tr>
+                        {% endfor %} {% for product in quote.lines_zero %} <tr class="">
+                <td style="padding-left: 15px" class="not-center"> {{product['name']}} </td>
+                <td align="center">-</td>
+                <td class="">-</td>
+                <td>-</td>
+                <td>Non disponible</td>
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
+            <tr style="background-color: #fcff21;">
+                <th colspan="4" class="pl-4 text-left">Frais de transport</th>
+                <th class="currency">{{define.cost_transport}}</th>
+            </tr>
+            {% endif %}
+            <tr style="background-color: #ebedee;">
+                <th colspan="4" class="pl-4">
+                    <small>*Cet article est en rupture de stock chez nous, nous vous tiendrons informé</small><br>
+                    <small>** Cet article est épuisé chez nous mais disponible sur commande</small>
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
     </table>
 
     <div style="margin-top: 40px"></div>
+
+    {% if not TOTAL == 0 %}
     <table class="table table-bordered ">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Total HT Brut</th>
                 <th scope="col">Total Net</th>
-                <th scope="col">TVA 20%</th>
+                <th scope="col">TVA {{ TVA }}%</th>
                 <th scope="col">Montant Taxe</th>
                 <th scope="col">NET A PAYER</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="currency">{{order.get_total_ht()}}</td>
-                <td class="currency">{{order.get_total_net()}}</td>
-                <td>20%</td>
-                <td class="currency">{{ (20 * order.get_total_net()) / 100 }}</td>
+                <td class="currency">{{order.total_ht()}}</td>
+                <td class="currency">{{order.total_net()}}</td>
+                <td>{{ TVA }}%</td>
+                <td class="currency">{{ TOTAL_NET }}</td>
                 <td>
-                    <span style="font-size: 14px"
-                        class="currency">{{ (20 * order.get_total_net()) / 100 + order.get_total_net() }}</span>
+                    <span style="font-size: 14px" class="currency">{{ TOTAL }}</span>
                 </td>
             </tr>
         </tbody>
     </table>
+    {% endif %}
     <div>
-        {% if quotation.position is not same as(3) and quotation.position is not same as(2) %}
-
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=1"
-            class="btn btn-theme radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
-            {% endif %}>Accepter</a>
-        <a href="?componnent=confirmaction&id={{quotation.order_id}}&nonce={{nonce}}&value=0"
-            class="btn btn-danger radius-0" type="submit" {% if quotation.position is same as (0) %} disabled="disabled"
-            {% endif %}>Rejeter</a>
+        {% if quote.position is not same as(3) and quote.position is not same as(2) %}
+            {% if not TOTAL == 0 %}
+            <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=1"
+                class="btn btn-theme sub-quotation-update radius-0" {% if quote.position is same as (0) %}
+                disabled="disabled" {% endif %}>Accepter</a>
+            <a href="?componnent=confirmaction&id={{quote.order_id}}&nonce={{define.nonce}}&value=0"
+                class="btn btn-danger radius-0" {% if quote.position is same as (0) %} disabled="disabled"
+                {% endif %}>Rejeter</a>
+            {% endif %}
         {% endif %}
-        <a href="{{download_url}}?order_id={{quotation.order_id}}" class="btn btn-success radius-0">Telecharger</a>
+        <a href="{{download_url}}?order_id={{quote.order_id}}" class="btn btn-success radius-0">Telecharger</a>
     </div>
 
 </form>

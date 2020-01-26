@@ -1,10 +1,13 @@
 (function ($) {
     $(document).ready(function () {
+
         new Vue({
             el: '#app-prestations',
             data: {
+                loading : false,
                 pageIndex: 0, // 0 default page. https://mail.google.com/mail/u/0/#inbox/FMfcgxwDrHspMhGPsmTbwtrqRXFsLpst?projector=1&messagePartId=0.2
-                platformes: [{
+                platformes: [
+                    {
                         key: 1,
                         name: "PC"
                     },
@@ -18,14 +21,41 @@
                     }
                 ],
                 catalogues: [],
+                inputs: [],
                 platform: '',
                 categorie: ''
             },
             methods: {
+                onSend: function ($event) {
+                    var self = this;
+                    if (_.isEmpty(this.inputs)) return [];
+                    this.loading = true;
+                    this.changeStatus('Envoie en cours...');
+                    $.ajax({
+                        method: "POST",
+                        url: account_opt.ajax_url,
+                        data: {
+                            action: "send_selected_ctg",
+                            ids: this.inputs.join(',')
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', account_opt.nonce);
+                        },
+                        success: (response, status, xhr) => {
+                            self.loading = false;
+                            this.changeStatus('');
+                            if (response.success) {
+                                Swal.fire("Succes", response.data, "success");
+                            } else {
+                                Swal.fire("Erreur", response.data, "error");
+                            }
+                        }
+                    });
+                },
                 onChangePlatform: function($event) {
                     $event.preventDefault();
-                    const self = this;
-                    let data = {};
+                    var self = this;
+                    var data = {};
                     data.per_page = 100;
                     if (!_.isEqual(this.platform, '')) {
                         data.meta_key = "ctg_platform";
@@ -33,12 +63,11 @@
                         data.meta_compare = 'IN';
                     }
                     
-                    self.changeStatus('Chargement en cours...');
-                    self.queryCatalogues(data).then(response => {
+                    this.changeStatus('Chargement en cours...');
+                    this.queryCatalogues(data).then(function(response) {
                         self.changeStatus('');
                         self.catalogues = _.clone(response);
                     });
-
                 },
                 queryCatalogues: function (queryData) {
                     return new Promise((resolve, reject) => {
@@ -59,19 +88,19 @@
                     })
                 },
                 changeStatus: function (status) {
-                    let element = document.querySelector('#status-catalog');
+                    var element = document.querySelector('#status-catalog');
                     element.innerHTML = status;
                 }
             },
             filters: {
                 platform: function (value, platformes) {
                     value = _.isNaN(parseInt(value)) ? null : parseInt(value);
-                    let findPlatforme = _.find(platformes, {key: parseInt(value)});
+                    var findPlatforme = _.find(platformes, {key: parseInt(value)});
                     if (_.isUndefined(findPlatforme)) return 'Aucun';
                     return findPlatforme.name;
                 },
                 currency: function (value) {
-                    let price = parseInt(value, 10);
+                    var price = parseInt(value, 10);
                     if (_.isNaN(price)) return 'Sur devis';
                     return new Intl.NumberFormat('de-DE', {
                         style: 'currency',
@@ -82,7 +111,7 @@
             },
             created: function () {
                 // https://vuejs.org/v2/guide/instance.html
-                const self = this;
+                var self = this;
                 return new Promise(resolve => {
                     self.changeStatus('Chagement en cours...');
                     $.ajax({

@@ -53,11 +53,12 @@ class fzCompany extends \WP_User
      * 2: Revendeur
      */
     public $type;
-    public $company_name;
+    public $company_name = null;
     public $stat;
     public $nif;
     public $rc;
     public $cif;
+    public $sector_activity = null;
 
 
     public function __construct ($id = 0, $name = '', $site_id = '') {
@@ -68,11 +69,13 @@ class fzCompany extends \WP_User
         $this->reference = get_field('client_reference', 'user_'.$this->ID);
         $this->type = get_field('role_office', 'user_'.$this->ID);
         $this->company_name = get_field('company_name', 'user_'.$this->ID);
+        $this->sector_activity = (int) get_user_meta($this->ID, 'sector_activity', true);
         $this->stat = get_field('stat', 'user_'.$this->ID);
         $this->nif = get_field('nif', 'user_'.$this->ID);
         $this->rc = get_field('rc', 'user_'.$this->ID);
         $this->cif = get_field('cif', 'user_'.$this->ID);
     }
+
 
 
 }

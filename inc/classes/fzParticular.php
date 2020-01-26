@@ -50,6 +50,8 @@ class fzParticular extends \WP_User
         $this->lastname = $this->last_name;
         $this->address = get_field('address', 'user_'.$this->ID);
         $this->phone = get_field('phone', 'user_'.$this->ID);
+        $this->cin = get_field('cin', 'user_'.$this->ID);
+        $this->date_cin = get_field('date_cin', 'user_'.$this->ID);
     }
 
 }

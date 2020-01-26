@@ -9,27 +9,45 @@ if (0 > version_compare(PHP_VERSION, '5')) {
 final class fzCatalogue {
     public $ID;
     public $name;
+    /**
+     * public $ctg_platform; // int value, 
+     * public $ctg_observation;
+     * public $ctg_price; // int value,
+     */
     public $fields = [ // meta field
         'ctg_platform',
         'ctg_observation',
         'ctg_price'
     ];
-    public function __construc($post_id) {
+    private $categories = [
+         ['key' => 1, 'name' => "PC"] ,
+         ['key' => 2, 'name' => "Laptop"],
+         ['key' => 3, 'name' => "Tous les plates-formes"]
+    ];
+    public function __construct($post_id) {
         if (\is_numeric($post_id)) {
             $post = get_post(intval($post_id));
             $this->ID = $post->ID;
             $this->name = $post->post_title;
-
             foreach ($this->fields as $field) {
                 $this->$field = get_post_meta( $this->ID, $field, true );
             }
-
             unset($post);
         } else {
             return new \WP_Error('', "Parametre manquant (post_id)");
         }
     }
 
+    public function __get($property) {
+        if ($property === "platform") {
+            $search_key = array_search((int) $this->ctg_platform, array_column($this->categories, 'key')); // return key of array
+            return $this->categories[$search_key];
+        }
+        if ($property === "price") {
+            return intval($this->ctg_price);
+        }
+        return $this->$property;
+    }
 }
 
 add_action('init', function () {
@@ -49,7 +67,6 @@ add_action('init', function () {
         'query_var' => true
     ]);
 }, 10);
-
 add_action('rest_api_init', function () {
     $metas = ['ctg_platform', 'ctg_observation', 'ctg_price'];
     foreach ( $metas as $meta ) {
@@ -108,4 +125,14 @@ add_action('rest_api_init', function () {
         ],
     ]);
 
+});
+
+add_action('wp_ajax_send_selected_ctg', function () {
+    if (isset($_REQUEST['ids'])) {
+        $ids = explode(',', $_REQUEST['ids']);
+        // Envoyer un mail au administrateurs (Commercial et super utilisateur)
+        do_action("fz_mail_send_selected_catalogue", $ids);
+    } else {
+        wp_send_json_error( "Vous n'avez selectionnée aucune prestation. Veuillez selectionner" );
+    }
 });

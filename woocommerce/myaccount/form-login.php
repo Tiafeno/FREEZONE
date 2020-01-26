@@ -105,14 +105,14 @@ $sector_activity = $services->get_sector_activity(); // Array of sector activity
                 <div class="col-md-6">
                     <p class="form-group form-row form-row-wide">
                         <label for="reg_lastname"><?php esc_html_e( 'Nom', 'yozi' ); ?> <span class="required">*</span></label>
-                        <input type="text" class="input-text form-control radius-0" placeholder="" name="lastname" id="reg_lastname" required
+                        <input type="text" class="input-text form-control radius-0" placeholder="" name="lastname" required
                             value="<?php if ( ! empty( $_POST['lastname'] ) ) echo esc_attr( $_POST['lastname'] ); ?>" />
                     </p>
                 </div>
                 <div class="col-md-6">
                     <p class="form-group form-row form-row-wide">
                         <label for="reg_firstname"><?php esc_html_e( 'Prénom', 'yozi' ); ?> </label>
-                        <input type="text" class="input-text form-control radius-0" placeholder="" name="firstname" id="reg_firstname"
+                        <input type="text" class="input-text form-control radius-0" placeholder="" name="firstname"
                             value="<?php if ( ! empty( $_POST['firstname'] ) ) echo esc_attr( $_POST['firstname'] ); ?>" />
                     </p>
                 </div>

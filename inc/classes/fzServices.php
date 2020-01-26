@@ -42,10 +42,6 @@ class fzServices
             'name' => "Culture / Sports / Loisirs"
         ],
         [
-            'id' => 8,
-            'name' => "Droit / Juriste"
-        ],
-        [
             'id' => 9,
             'name' => "Énergie / Environnement / Recyclage"
         ],
@@ -128,6 +124,10 @@ class fzServices
         [
             'id' => 29,
             'name' => "Tourisme / Voyage"
+        ],
+        [
+            'id' => 30,
+            'name' => "Droit / Juriste"
         ]
     ];
     public function __construct () { }

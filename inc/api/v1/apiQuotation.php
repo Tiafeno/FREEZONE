@@ -72,7 +72,7 @@ class apiQuotation
         $the_query = new WP_Query($args);
         if ($the_query) {
             $quotations = array_map(function ($quotation) {
-                $response = new \classes\fzQuotation($quotation->ID);
+                $response = new \classes\FZ_Quote($quotation->ID);
                 $items = $response->get_items();
                 foreach ($items as $item_id => $item) {
                     $data = $item->get_data();

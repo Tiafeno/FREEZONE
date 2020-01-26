@@ -85,7 +85,7 @@ global $woocommerce;
 
 			<p class="total text-theme empty"><strong><?php esc_html_e( 'Currently Empty', 'yozi' ); ?>:</strong> <?php echo WC()->cart->get_cart_subtotal(); ?></p>
 			<p class="buttons clearfix">
-				<a href="<?php echo get_permalink( woocommerce_get_page_id( 'shop' ) ); ?>" class="btn btn-block btn-primary wc-forward"><?php esc_html_e( 'Continue shopping', 'yozi' ); ?></a>
+				<a href="<?php echo get_permalink( wc_get_page_id( 'shop' ) ); ?>" class="btn btn-block btn-primary wc-forward"><?php esc_html_e( 'Continue shopping', 'yozi' ); ?></a>
 			</p>
 		<?php endif; ?>
 	</div><!-- end product list -->

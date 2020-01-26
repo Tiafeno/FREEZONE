@@ -89,7 +89,7 @@ yozi_render_breadcrumbs();
                         bill: '', // Numéro de la facture
                         serial_number: '', // Numéro de serie,
                         description: '', // Identification de la demande
-                        delais_garentee: '', // Delais de la garantie
+                        delais_garentee: 1, // Delais de la garantie (1 mois par default)
 
                         // Cette variable controle la visibilité des champs dans le formulaire
                         ck_bill: true,
@@ -99,6 +99,9 @@ yozi_render_breadcrumbs();
                     },
                     methods: {
                         statusHandler: function (evt) {
+                            if (this.status_product == 1) {
+                                this.delais_garentee = 1;
+                            }
                             if (this.status_product == 1 && this.product_provider == 1) {
                                 this.ck_date_purchase = this.ck_bill = this.ck_serial_number = true;
                             } else {
@@ -275,14 +278,26 @@ yozi_render_breadcrumbs();
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="product">Produit</label>
+                                        <label for="product">Nom du produit</label>
                                         <input type="text" v-model="product"
                                                class=" form-control tt-input"
                                                id="product"
+                                               v-bind:required="true"
                                                placeholder="Produit">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="serial_number">Numéro de série (S/N)</label>
+                                        <input type="text" v-model="serial_number" class="form-control"
+                                               id="serial_number"
+                                               placeholder="Veuillez saisir le numéro de série">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="mark">Marque</label>
                                         <input type="text" v-model="mark" class="form-control" id="mark"
@@ -294,22 +309,12 @@ yozi_render_breadcrumbs();
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label for="status_product">Statut du produit</label>
+                                        <label for="status_product">Garantie du produit</label>
                                         <select name="status_product" v-model="status_product" id="status_product"
                                                 v-on:change="statusHandler">
                                             <option value="">Aucun</option>
                                             <option value="1">Sous garantie</option>
                                             <option value="2">Hors garantie</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="mark">Fournisseur du produit</label>
-                                        <select name="product_provider" v-model="product_provider" id="product_provider"
-                                                v-on:change="statusHandler">
-                                            <option value="1">Freezone</option>
-                                            <option value="2">Autre fournisseur</option>
                                         </select>
                                     </div>
                                 </div>
@@ -325,28 +330,34 @@ yozi_render_breadcrumbs();
                             </div>
 
                             <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="mark">Fournisseur du produit</label>
+                                        <select name="product_provider" v-model="product_provider" id="product_provider"
+                                                v-on:change="statusHandler">
+                                            <option value="1">Freezone</option>
+                                            <option value="2">Autre fournisseur</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-sm-4" v-if="ck_date_purchase">
                                     <div class="form-group">
                                         <label for="date_purchase">Date d'achat</label>
-                                        <input type="date" v-model="date_purchase" class="form-control"
-                                               id="date_purchase" placeholder="">
+                                        <input type="date" v-model="date_purchase" v-bind:required="product_provider == 1"
+                                               id="date_purchase" style="display: block; line-height: 1.85; padding: 4px; width: 100%">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" v-if="ck_bill">
                                     <div class="form-group">
                                         <label for="bill">Numéro de la facture</label>
-                                        <input type="text" v-model="bill" class="form-control" id="bill"
+                                        <input type="text" v-model="bill" v-bind:required="product_provider == 1" class="form-control" id="bill"
                                                placeholder="Veuillez saisir le numéro de la facture">
                                     </div>
                                 </div>
-                                <div class="col-sm-4" v-if="ck_serial_number">
-                                    <div class="form-group">
-                                        <label for="serial_number">Numéro de série</label>
-                                        <input type="text" v-model="serial_number" class="form-control"
-                                               id="serial_number"
-                                               placeholder="Veuillez saisir le numéro de série">
-                                    </div>
-                                </div>
+
                             </div>
 
                             <div class="row">
