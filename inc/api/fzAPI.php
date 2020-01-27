@@ -34,6 +34,7 @@ class fzAPI
                 return $args;
             }, 99, 2);
 
+            // Cette filtre permet de faire une recherche sur le nom de l'entreprise
             add_filter('rest_users_query', function ( $args, $request ) {
                 $search = $request->get_param('search');
                 if (!empty($search)) {
@@ -52,7 +53,7 @@ class fzAPI
         // Quotation
         add_action('rest_api_init', function () {
             // Ceci autorise tous les sites web d'accéder au contenue via l'API
-            header("Access-Control-Allow-Origin: *.freezone.click");
+            header("Access-Control-Allow-Origin: *");
 
             register_rest_route('api', '/quotations/', [
                 [
