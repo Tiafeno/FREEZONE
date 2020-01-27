@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/classes/fzSupplierArticle.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/classes/fzSupplierArticle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wc/demande/quotation-update.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wc/demande/quotation-update.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wc/pdf/download-template.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wc/pdf/download-template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/api/fzAPI.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/api/fzAPI.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -37,8 +35,8 @@
       <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="588" column="47" selection-start-line="588" selection-start-column="47" selection-end-line="588" selection-end-column="47" />
+            <state relative-caret-position="7952">
+              <caret line="733" column="14" selection-start-line="733" selection-start-column="8" selection-end-line="733" selection-end-column="14" />
               <folding>
                 <element signature="e#7447#18555#1#PHP" />
                 <element signature="e#19987#20102#1#PHP" />
@@ -47,69 +45,47 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="fzAPI.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="47" column="29" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="fzQuote.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
+            <state relative-caret-position="640">
               <caret line="40" column="20" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fzItemOrder.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
+      <file leaf-file-name="catalogue.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/wc/catalogues/catalogue.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="583">
-              <caret line="44" column="17" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="17" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="784">
+              <caret line="49" column="109" selection-start-line="49" selection-start-column="109" selection-end-line="49" selection-end-column="109" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="quotation-update.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/wc/demande/quotation-update.html">
+      <file leaf-file-name="fz-mail.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="98" column="8" selection-start-line="98" selection-start-column="8" selection-end-line="118" selection-end-column="16" />
-              <folding>
-                <element signature="n#style#0;n#tr#0;n#tfoot#0;n#table#1;n#form#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#th#0;n#tr#0;n#tfoot#0;n#table#1;n#form#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#0;n#th#0;n#tr#0;n#tfoot#0;n#table#1;n#form#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#ul#0;n#th#0;n#tr#0;n#tfoot#0;n#table#1;n#form#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#th#0;n#tr#1;n#tfoot#0;n#table#1;n#form#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="16">
+              <caret line="199" column="55" selection-start-line="199" selection-start-column="55" selection-end-line="199" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="download-template.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/wc/pdf/download-template.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="143" column="16" selection-start-line="143" selection-start-column="16" selection-end-line="143" selection-end-column="16" />
-              <folding>
-                <element signature="n#style#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#th#0;n#tr#1;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="footer.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/footer.php">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="fzSupplierArticle.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="fzSupplierArticle.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inc/classes/fzSupplierArticle.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="283" column="33" selection-start-line="283" selection-start-column="33" selection-end-line="283" selection-end-column="33" />
+            <state relative-caret-position="128">
+              <caret line="257" column="5" lean-forward="true" selection-start-line="257" selection-start-column="5" selection-end-line="257" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -153,8 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get_item(</find>
-      <find>item_limit</find>
       <find>editable</find>
       <find>get_dateadd</find>
       <find>FZ_Quote</find>
@@ -183,6 +157,8 @@
       <find>statusHandler</find>
       <find>DateTime</find>
       <find>WP_Query</find>
+      <find>_query</find>
+      <find>shop_order</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -241,16 +217,16 @@
         <option value="$PROJECT_DIR$/style.css" />
         <option value="$PROJECT_DIR$/woocommerce/myaccount/form-edit-address.php" />
         <option value="$PROJECT_DIR$/functions.php" />
-        <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
         <option value="$PROJECT_DIR$/inc/classes/fzCatalogue.php" />
-        <option value="$PROJECT_DIR$/inc/fz-mail.php" />
-        <option value="$PROJECT_DIR$/templates/wc/catalogues/catalogue.html" />
         <option value="$PROJECT_DIR$/assets/js/account-prestations.js" />
         <option value="$PROJECT_DIR$/inc/classes/fzSav.php" />
         <option value="$PROJECT_DIR$/page-sav.php" />
         <option value="$PROJECT_DIR$/templates/wc/demande/quotation-update.html" />
         <option value="$PROJECT_DIR$/templates/wc/pdf/download-template.html" />
         <option value="$PROJECT_DIR$/inc/classes/fzSupplierArticle.php" />
+        <option value="$PROJECT_DIR$/templates/wc/catalogues/catalogue.html" />
+        <option value="$PROJECT_DIR$/inc/fz-mail.php" />
+        <option value="$PROJECT_DIR$/inc/api/fzAPI.php" />
       </list>
     </option>
   </component>
@@ -260,6 +236,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
   <component name="PhpServers">
     <servers />
   </component>
@@ -277,8 +254,8 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1583" />
-    <option name="y" value="-8" />
+    <option name="x" value="219" />
+    <option name="y" value="-30" />
     <option name="width" value="1376" />
     <option name="height" value="754" />
   </component>
@@ -287,8 +264,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -608,7 +585,8 @@
       <workItem from="1579968335899" duration="5518000" />
       <workItem from="1580026864681" duration="4114000" />
       <workItem from="1580035986395" duration="7503000" />
-      <workItem from="1580055780483" duration="4154000" />
+      <workItem from="1580055780483" duration="5278000" />
+      <workItem from="1580114810300" duration="2549000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -792,14 +770,28 @@
       <option name="project" value="LOCAL" />
       <updated>1580050195994</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Critical fix">
+      <created>1580061863173</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1580061863173</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Critical fix">
+      <created>1580062901094</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1580062901094</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="806590000" />
+    <option name="totallyTimeSpent" value="810263000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1592" y="-8" width="1456" height="886" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -810,8 +802,9 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.3298969" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.44974226" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20057307" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18251929" />
       <window_info anchor="right" id="Database" order="3" weight="0.32904884" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Learn" order="2" weight="0.32969153" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -823,29 +816,28 @@
       <window_info anchor="bottom" id="Messages" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16645244" />
       <window_info id="Learn" order="2" weight="0.32969153" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="7" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32732317" />
       <window_info anchor="bottom" id="Run" order="3" weight="0.3298969" />
+      <window_info anchor="bottom" id="Find" order="2" />
       <window_info id="Designer" order="4" />
-      <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="right" id="Database" order="3" weight="0.32904884" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.44974226" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32732317" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.3298969" />
-      <window_info anchor="bottom" id="Find" order="2" />
+      <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Messages" order="0" />
       <window_info id="Favorites" order="3" side_tool="true" />
     </layout-to-restore>
@@ -902,7 +894,8 @@
     <MESSAGE value="Fix security access" />
     <MESSAGE value="Fix security" />
     <MESSAGE value="Update &amp; fix error" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update &amp; fix error" />
+    <MESSAGE value="Critical fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Critical fix" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -949,7 +942,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/inc/api/fzAPI.php</url>
-          <line>213</line>
+          <line>226</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -959,17 +952,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/inc/api/fzAPI.php</url>
-          <line>184</line>
+          <line>197</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/inc/api/fzAPI.php</url>
-          <line>79</line>
+          <line>92</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/inc/api/fzAPI.php</url>
-          <line>590</line>
+          <line>603</line>
           <option name="timeStamp" value="33" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -979,7 +972,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/inc/api/fzAPI.php</url>
-          <line>630</line>
+          <line>643</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -1037,6 +1030,20 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzParticular.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="15" column="2" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3184">
+          <caret line="199" column="55" lean-forward="true" selection-start-line="199" selection-start-column="55" selection-end-line="199" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../../plugins/woocommerce/includes/class-wc-order.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -1237,31 +1244,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="191" column="55" selection-start-line="191" selection-start-column="55" selection-end-line="191" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/assets/js/account-prestations.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-384">
           <caret line="45" column="47" selection-start-line="45" selection-start-column="47" selection-end-line="45" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/wc/catalogues/catalogue.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="57" column="94" selection-start-line="57" selection-start-column="94" selection-end-line="57" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-304">
-          <caret line="684" column="82" selection-start-line="684" selection-start-column="82" selection-end-line="684" selection-end-column="82" />
         </state>
       </provider>
     </entry>
@@ -1311,9 +1297,6 @@
         <state relative-caret-position="-576" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/payment-method.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/woocommerce/checkout/review-order.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1056" />
@@ -1336,34 +1319,6 @@
         <state relative-caret-position="-352" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="588" column="47" selection-start-line="588" selection-start-column="47" selection-end-line="588" selection-end-column="47" />
-          <folding>
-            <element signature="e#7447#18555#1#PHP" />
-            <element signature="e#19987#20102#1#PHP" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="40" column="20" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="583">
-          <caret line="44" column="17" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="17" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/wc/demande/quotation-update.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
@@ -1382,23 +1337,62 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="528">
           <caret line="143" column="16" selection-start-line="143" selection-start-column="16" selection-end-line="143" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzItemOrder.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="44" column="17" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="17" />
           <folding>
-            <element signature="n#style#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#th#0;n#tr#0;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#th#0;n#tr#1;n#tfoot#0;n#table#2;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/footer.php">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/templates/wc/catalogues/catalogue.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="784">
+          <caret line="49" column="109" selection-start-line="49" selection-start-column="109" selection-end-line="49" selection-end-column="109" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/fz-mail.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16">
+          <caret line="199" column="55" selection-start-line="199" selection-start-column="55" selection-end-line="199" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7952">
+          <caret line="733" column="14" selection-start-line="733" selection-start-column="8" selection-end-line="733" selection-end-column="14" />
+          <folding>
+            <element signature="e#7447#18555#1#PHP" />
+            <element signature="e#19987#20102#1#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/classes/fzQuote.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="640">
+          <caret line="40" column="20" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="20" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inc/classes/fzSupplierArticle.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="283" column="33" selection-start-line="283" selection-start-column="33" selection-end-line="283" selection-end-column="33" />
+        <state relative-caret-position="128">
+          <caret line="257" column="5" lean-forward="true" selection-start-line="257" selection-start-column="5" selection-end-line="257" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inc/api/fzAPI.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="47" column="29" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
         </state>
       </provider>
     </entry>

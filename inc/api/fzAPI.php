@@ -22,7 +22,6 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_fz_product']);
         add_action('rest_api_init', [&$this, 'register_rest_order']);
         add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
-        
         add_action('rest_api_init', function () {
             // https://wordpress.stackexchange.com/questions/271877/how-to-do-a-meta-query-using-rest-api-in-wordpress-4-7
             add_filter('rest_catalog_query', function($args, $request) {
@@ -34,12 +33,26 @@ class fzAPI
                 );
                 return $args;
             }, 99, 2);
+
+            add_filter('rest_users_query', function ( $args, $request ) {
+                $search = $request->get_param('search');
+                if (!empty($search)) {
+                    $args[ 'meta_query' ] = array(
+                        'company_name' => array(
+                            'key' => 'company_name',
+                            'value' => $search,
+                            'compare' => 'LIKE',
+                        )
+                    );
+                }
+                return $args;
+            }, 10, 2);
         });
 
         // Quotation
         add_action('rest_api_init', function () {
             // Ceci autorise tous les sites web d'accéder au contenue via l'API
-            header("Access-Control-Allow-Origin: *");
+            header("Access-Control-Allow-Origin: *.freezone.click");
 
             register_rest_route('api', '/quotations/', [
                 [
