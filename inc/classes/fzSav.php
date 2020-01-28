@@ -7,53 +7,55 @@
  */
 
 namespace classes;
-
 define('_NO_REPLY_', 'no-reply@freezone.clik');
 
-/**
- * @property  status_product
- * @property  product_provider
- */
 class fzSav
 {
-    public $ID;
+    public $id = 0;
     public $date_add = null;
-    private static $fields = [
-        'client',
-        'product',
-        'mark',
-        'status_product',
-        'product_provider',
-        'date_purchase',
-        'bill',
-        'serial_number',
+    public $guarentee_product = [];
+    public $product_provider = [];
+    public static $fields = [
+        'product', // Nom du produit
+        'mark', // Marque et modele
+        'guarentee_product', // Garantie du produit
+        'garentee', // Le nombre de mois de garantie
+        'product_provider', // Fournisseur du produit Freezone ou autre
+        'date_purchase', // Date d'achat
+        'date_receipt', // Date de réception du matériel par le SAV
+        'date_release', // * Date de sortie dans l'atelier
+        'date_handling', // * Date de prise en main
+        'date_diagnostic_end', // * Date de fin diagnostic
+        'bill', // Numero de facture
+        'serial_number', // Numero de serie (S/N)
         'description',
-        'status_sav',
-        'approximate_time',
+        'status_sav', // ... diagnostique, reparation
+        //'approximate_time',
         'quotation_ref', // Reference du devis (SAGE)
-        'auctor',
-        'reference', // Reference
-        'garentee'
+        //'auctor', // WP_User (json)
+        //'reference', // Reference de l'article (fz_sav)
+        'accessorie', // number
+        'other_accessories_desc'
     ];
-    public $status_product;
-    public $product_provider;
+
+    public function __get ($name) {
+        if ($name === 'customer') {
+            $user_controller = new \WP_REST_Users_Controller();
+            $request = new \WP_REST_Request();
+            $request->set_param('context', 'edit');
+            $customer_id = $this->get_customer_id();
+            return $user_controller->prepare_item_for_response(new \WP_User((int)$customer_id), $request);
+        }
+        if ($name === 'customer_role') {
+            $customer_id = $this->get_customer_id();
+            $user_data = get_userdata($customer_id);
+            return in_array("fz-company", $user_data->roles) ? "Entreprise" : "Particulier";
+        }
+    }
 
     public function __construct ($sav_id, $api = false) {
-        $this->ID = $sav_id;
+        $this->id = $sav_id;
         foreach ( self::$fields as $key ) {
-            if ($key === 'auctor' || $key === 'reference' || $key === 'garentee') {
-                $value = get_post_meta($sav_id, 'sav_' . $key, true);
-                if ($api && $key === 'auctor') {
-                    $user_controller = new \WP_REST_Users_Controller();
-                    $request = new \WP_REST_Request();
-                    $request->set_param('context', 'edit');
-
-                    $this->$key = $user_controller->prepare_item_for_response(new \WP_User((int)$value), $request);
-                    continue;
-                }
-                $this->$key = $value;
-                continue;
-            }
             $field_value = get_field($key, $sav_id);
             $this->$key = $field_value;
         }
@@ -62,30 +64,22 @@ class fzSav
             $this->date_add = $post_sav->post_date;
     }
 
-    public static function get_fields ()
-    {
-        return self::$fields;
+    public function get_customer_id() {
+        $id = get_field("customer", $this->id);
+        return $id ? intval($id) : 0;
     }
 
     public function get_status_string() {
-        /**
-         * 1 : Diagnostic réalisé
-         * 2 : Diagnostic non réalisé
-         * 3 : A réparer
-         * 4 : Ne pas réparer
-         * 5 : Terminer
-         */
         $status = intval($this->status_sav);
         if (is_nan($status)) return 'Non definie';
         switch ($status) {
-            case 1: return 'Diagnostic réalisé'; break;
-            case 2: return 'Diagnostic non réalisé'; break;
-            case 3: return 'A réparer'; break;
-            case 4: return 'Ne pas réparer'; break;
-            case 5: return 'Terminer'; break;
+            case 1: return 'Diagnostique en cours'; break;
+            case 2: return 'Diagnostique fini'; break;
+            case 3: return 'Réparation accordée'; break;
+            case 4: return 'Réparation refusée'; break;
+            case 5: return 'Produit récupéré par le client'; break;
         }
     }
-
 }
 
 add_action('init', function() {
@@ -97,18 +91,14 @@ add_action('init', function() {
             global $Engine;
 
             $no_reply = _NO_REPLY_;
-
             $client_id = get_post_meta($post_id, 'sav_auctor', true);
-            $client_id = intval($client_id);
-            $client = get_userdata($client_id);
-
+            $client = get_userdata(intval($client_id));
             $Sav = new fzSav($post_id);
             $message = '';
-            // hors garantie
-            $status_product = is_array($Sav->status_product) ? (int)$Sav->status_product['value'] : (int)$Sav->status_product;
+            $guarentee_product = is_array($Sav->guarentee_product) ? (int)$Sav->guarentee_product['value'] : (int)$Sav->guarentee_product;
             $product_provider = is_array($Sav->product_provider) ? (int)$Sav->product_provider['value'] : (int)$Sav->product_provider;
-
-            if ($status_product == 2) {
+            // Hors garantie
+            if ($guarentee_product == 2) {
                 $message = "Cher Client, <br> <br> Votre demande sera étudiée sous 24 heures jours ouvrables, " .
                     "nous vous demanderons de nous déposer le matériel à réparer dans notre atelier car " .
                     "nous ne réparons pas chez le client. Une fois le matériel en notre possession le " .
@@ -117,16 +107,14 @@ add_action('init', function() {
                     "le diagnostic soit vous refusez de réparer le matériel vous aurez à vous acquitter " .
                     "du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
             }
-
             // Sous garantie & freezone
-            if ($status_product == 1 && $product_provider == 1) {
+            if ($guarentee_product == 1 && $product_provider == 1) {
                 $message = "Cher Client, <br> <br> Votre demande sera étudiée sous 24 heures jours ouvrables, " .
                     "nous vous demanderons de nous déposer le matériel à réparer dans notre atelier " .
                     "car nous ne réparons pas chez le client.";
             }
-
             // Sous garantie & autre fournisseur
-            if ($status_product == 1 && $product_provider == 2) {
+            if ($guarentee_product == 1 && $product_provider == 2) {
                 $message = "Cher Client, <br> <br> Votre demande sera traitée sous 24 heures jours ouvrables, " .
                     "Pour votre information sachez qu’en nous confiant un produit qui est sous garantie " .
                     "chez un autre revendeur vous risquez de perdre votre garantie chez ce revendeur. <br>" .
@@ -137,20 +125,20 @@ add_action('init', function() {
                     "le diagnostic soit vous refusez de réparer le matériel vous aurez à vous acquitter" .
                     " du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
             }
-
-
             $message   = html_entity_decode($message);
             $to        = $client->user_email;
             $subject   = "Cher client - Freezone";
             $headers   = [];
             $headers[] = 'Content-Type: text/html; charset=UTF-8';
             $headers[] = "From: Freezone <$no_reply>";
-            $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-
-            // Envoyer un mail
+            $content   = $Engine->render('@MAIL/default.html', [
+                'message' => $message,
+                'Year'  => 2019,
+                'Phone' => freezone_phone_number
+            ]);
             $result = wp_mail( $to, $subject, $content, $headers );
             if ($result) {
-                wp_send_json_success("Email envoyer avec seccès");
+                wp_send_json_success("Email envoyer avec succès");
             } else {
                 wp_send_json_error("Une erreur s'est produit: {$message}");
             }
@@ -159,28 +147,20 @@ add_action('init', function() {
 });
 
 add_action('rest_api_init', function() {
-    foreach ( fzSav::get_fields() as $field ) {
+    $fields = array_merge(fzSav::$fields, ['customer']);
+    foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [
             'update_callback' => function ($value, $object, $field_name) {
 
                 switch ($field_name) {
-                    case 'product_provider':
-                        // Ajouter la reference
-                        update_post_meta($object->ID, 'sav_reference', "SAV{$object->ID}");
-                        break;
-                    case 'auctor':
-                    case 'reference':
-                    case 'garentee':
-                        return update_post_meta($object->ID, 'sav_' . $field_name, $value);
-                        break;
                     case 'status_sav':
 
                         /**
-                         * 1 : Diagnostic réalisé
-                         * 2 : Diagnostic non réalisé
-                         * 3 : A réparer
-                         * 4 : Ne pas réparer
-                         * 5 : Terminer
+                         *   1 : Diagnostique en cours
+                         *   2 : Diagnostique fini
+                         *   3 : Réparation accordée
+                         *   4 : Réparation refusée
+                         *   5 : Produit récupéré par le client
                          */
 
                         /**
