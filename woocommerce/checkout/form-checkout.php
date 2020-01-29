@@ -49,14 +49,14 @@ do_action( 'woocommerce_before_checkout_form', $checkout );
 
 // If checkout registration is disabled and not logged in, the user cannot checkout
 if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_user_logged_in() ) {
-	echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', esc_html__( 'You must be logged in to checkout.', 'yozi' ) );
+    // Vous devez être identifié pour demander un devis.
+	//echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', esc_html__( 'You must be logged in to checkout.', 'yozi' ) );
+    wc_get_template('woocommerce/myaccount/form-login.php');
 	return;
 }
 
 ?>
-
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
-
 <div class="row">
     <div class="col-md-12 col-xs-12">
         <div class="details-review">
@@ -93,7 +93,7 @@ if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_us
 	</div>
 </div>
 
-	
+
 
 </form>
 

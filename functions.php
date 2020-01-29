@@ -103,9 +103,7 @@ add_filter( 'woocommerce_default_address_fields', function($fields) {
 add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['billing']['billing_address_1']['label'] = 'Adresse';
-
     $fields['billing']['billing_country']['default'] = 'MG';
-
     $fields['billing']['billing_country']['required'] = false;
     $fields['billing']['billing_state']['required'] = false;
     $fields['billing']['billing_first_name']['required'] = false;
@@ -165,8 +163,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 }, 9999);
 
 add_filter('woocommerce_default_address_fields', 'disable_address_fields_validation', 999);
-function disable_address_fields_validation($address_fields_array)
-{
+function disable_address_fields_validation($address_fields_array) {
     return $address_fields_array;
 }
 
@@ -630,9 +627,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     wc_clear_notices();
 }, 10);
 
-/**
- * Cette action est utiliser pour télécharger le PDF
- */
+// Cette action est utiliser pour télécharger le PDF
 add_action('woocommerce_account_pdf_endpoint', function () {
     global $Engine;
     $order = null;
@@ -925,8 +920,8 @@ add_action('acf/save_post', function ($post_id) {
             'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"
         ]
     );
-    update_post_meta($post_id, 'sav_auctor', $User->ID);
-    update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
+    //update_post_meta($post_id, 'sav_auctor', $User->ID);
+    //update_post_meta($post_id, 'sav_reference', "SAV" . $post_id);
     // Envoyer un email aux administrateur
     do_action('fz_insert_sav', $post_id);
 });

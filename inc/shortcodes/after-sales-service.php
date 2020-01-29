@@ -13,9 +13,5 @@ function after_sales_service ($attrs, $content = '')
         get_template_part("woocommerce/myaccount/form", 'login');
     }
 
-    if (isset($wp_query->query_vars['sav'])) {
-        // TODO: Enregistrer les données du formulaire
-    }
-
     return $Engine->render('@SC/after_sales_service.html', []);
 }

@@ -83,7 +83,7 @@ try {
     $Engine->addFilter(new Twig_SimpleFilter('wpoption', function ($field) {
         return get_option($field, 'N/A');
     }));
-} catch (Twig_Error_Loader $e) {
+} catch (\Twig_Error_Loader $e) {
     echo $e->getRawMessage();
 }
 
@@ -269,6 +269,7 @@ add_action('init', function () {
     }
     add_action('woocommerce_product_import_inserted_product_object', 'process_import', 10, 2);
 
+    // Mise a jour d'adresse dans l'espace client
     add_action("woocommerce_before_edit_address_form_billing", function () {
         if (isset($_REQUEST['woocommerce-edit-address-nonce']) &&
             wp_verify_nonce($_REQUEST['woocommerce-edit-address-nonce'], 'woocommerce-edit_address')) {
