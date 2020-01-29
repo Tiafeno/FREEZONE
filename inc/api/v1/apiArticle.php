@@ -75,6 +75,7 @@ CPR;
                     $items = $current_order->get_items();
                     foreach ($items as $item_id => $item) {
                         $data = $item->get_data();
+                        // Recuperer tous les produits dans les demandes en attente
                         array_push($product_ids, (int) $data['product_id']);
                     }
                 }
@@ -89,10 +90,20 @@ CPR;
                 }
 
                 global $wpdb;
+                // Recuperer seulement les articles en attente
+                $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
+                $today_date_time = new \DateTime($now);
+                $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
+
                 $your_articles_request = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts as pts
 WHERE pts.post_type = "fz_product" AND pts.post_status = "publish"
 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'user_id' AND meta_value = $supplier_id)
+AND pts.ID IN (SELECT post_id
+        FROM $wpdb->postmeta
+        WHERE meta_key = 'date_review'
+            AND CAST(meta_value AS DATE) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATE)
+        )
 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND meta_value IN ($join_product_ids)) 
 SQL;
                 $results = $wpdb->get_results($your_articles_request);
