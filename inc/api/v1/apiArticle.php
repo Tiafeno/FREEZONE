@@ -99,12 +99,12 @@ CPR;
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts as pts
 WHERE pts.post_type = "fz_product" AND pts.post_status = "publish"
 AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'user_id' AND meta_value = $supplier_id)
+AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND meta_value IN ($join_product_ids))
 AND pts.ID IN (SELECT post_id
         FROM $wpdb->postmeta
         WHERE meta_key = 'date_review'
             AND CAST(meta_value AS DATE) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATE)
-        )
-AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'product_id' AND meta_value IN ($join_product_ids)) 
+    ) 
 SQL;
                 $results = $wpdb->get_results($your_articles_request);
                 $count_sql = "SELECT FOUND_ROWS()";
