@@ -49,6 +49,7 @@ do_action( 'woocommerce_before_checkout_form', $checkout );
 
 // If checkout registration is disabled and not logged in, the user cannot checkout
 if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_user_logged_in() ) {
+    $_COOKIE['yozi_login_register'] = "#customer_register";
     // Vous devez être identifié pour demander un devis.
 	//echo apply_filters( 'woocommerce_checkout_must_be_logged_in_message', esc_html__( 'You must be logged in to checkout.', 'yozi' ) );
     wc_get_template('woocommerce/myaccount/form-login.php');

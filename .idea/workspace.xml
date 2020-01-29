@@ -9,10 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4cf7e657-1f31-48bc-9b55-6b92b888ace1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/fz-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/fz-functions.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/shortcodes/after-sales-service.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/shortcodes/after-sales-service.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/woocommerce/checkout/form-billing.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce/checkout/form-billing.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -74,10 +70,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="functions.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="functions.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="610">
+            <state relative-caret-position="850">
               <caret line="72" column="7" lean-forward="true" selection-start-line="72" selection-start-column="7" selection-end-line="72" selection-end-column="7" />
               <folding>
                 <element signature="e#2567#3144#1#PHP" />
@@ -92,6 +88,30 @@
                 <element signature="e#31759#32536#1#PHP" />
                 <element signature="e#37414#37901#1#PHP" />
                 <element signature="e#37942#38618#1#PHP" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="form-checkout.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-checkout.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="104">
+              <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
+              <folding>
+                <element signature="e#6#113#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="form-login.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-login.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="585">
+              <caret line="91" column="107" lean-forward="true" selection-start-line="91" selection-start-column="107" selection-end-line="91" selection-end-column="125" />
+              <folding>
+                <element signature="e#1706#3224#0#HTML" />
               </folding>
             </state>
           </provider>
@@ -205,8 +225,8 @@
         <option value="$PROJECT_DIR$/inc/shortcodes/after-sales-service.php" />
         <option value="$PROJECT_DIR$/inc/fz-functions.php" />
         <option value="$PROJECT_DIR$/functions.php" />
-        <option value="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" />
         <option value="$PROJECT_DIR$/woocommerce/checkout/form-billing.php" />
+        <option value="$PROJECT_DIR$/woocommerce/checkout/form-checkout.php" />
       </list>
     </option>
   </component>
@@ -578,7 +598,7 @@
       <workItem from="1580127900271" duration="2850000" />
       <workItem from="1580201249496" duration="14061000" />
       <workItem from="1580236252301" duration="82000" />
-      <workItem from="1580280024413" duration="4164000" />
+      <workItem from="1580280024413" duration="5206000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1556225550983</created>
@@ -797,11 +817,18 @@
       <option name="project" value="LOCAL" />
       <updated>1580236316434</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Fix checkout page">
+      <created>1580285128029</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1580285128029</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="832229000" />
+    <option name="totallyTimeSpent" value="833271000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
@@ -911,7 +938,8 @@
     <MESSAGE value="Fix users search" />
     <MESSAGE value="Fix" />
     <MESSAGE value="Update SAV" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update SAV" />
+    <MESSAGE value="Fix checkout page" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix checkout page" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1159,13 +1187,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-login.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="114" column="115" selection-start-line="114" selection-start-column="115" selection-end-line="114" selection-end-column="115" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-edit-address.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1520">
@@ -1366,16 +1387,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-checkout.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="53" column="60" selection-start-line="53" selection-start-column="60" selection-end-line="53" selection-end-column="60" />
-          <folding>
-            <element signature="e#6#113#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-billing.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="128">
@@ -1397,7 +1408,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
+        <state relative-caret-position="850">
           <caret line="72" column="7" lean-forward="true" selection-start-line="72" selection-start-column="7" selection-end-line="72" selection-end-column="7" />
           <folding>
             <element signature="e#2567#3144#1#PHP" />
@@ -1412,6 +1423,26 @@
             <element signature="e#31759#32536#1#PHP" />
             <element signature="e#37414#37901#1#PHP" />
             <element signature="e#37942#38618#1#PHP" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/myaccount/form-login.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="91" column="107" lean-forward="true" selection-start-line="91" selection-start-column="107" selection-end-line="91" selection-end-column="125" />
+          <folding>
+            <element signature="e#1706#3224#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/woocommerce/checkout/form-checkout.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
+          <folding>
+            <element signature="e#6#113#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
