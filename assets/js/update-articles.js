@@ -131,6 +131,7 @@
                     btnSubmit.nodeValue = "Chargement...";
                     btnSubmit.setAttribute('disabled', 'disabled');
                     this.loading = true;
+                    Swqal.fire("", "Chargement en cours. Veuillez ne pas quitter ou fermer cette page.", 'info');
                     $.when.apply($, deferreds).done(function() {
                         console.log(arguments);
                         Swal.fire({
