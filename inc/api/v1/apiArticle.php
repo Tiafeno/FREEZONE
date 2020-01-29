@@ -40,7 +40,7 @@ CPR;
                 $total = $wpdb->get_var($count_sql);
                 $Suppliers = [];
                 foreach ($results as $result) {
-                    $Suppliers[] = new \classes\fzSupplierArticle((int) $result->post_id, 'edit');
+                    $Suppliers[] = new \classes\fzProduct((int) $result->post_id, 'edit');
                 }
 
                 return [

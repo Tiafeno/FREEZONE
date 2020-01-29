@@ -92,7 +92,7 @@ add_action('fz_insert_new_article', function ($article_id) {
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-    $article = new \classes\fzSupplierArticle($article_id);
+    $article = new \classes\fzProduct($article_id);
     $supplier_id = $article->get_user_id();
     $reference = get_field('reference', 'user_' . $supplier_id);
     $url = "https://admin.freezone.click/articles";
@@ -221,7 +221,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $expired_encode = base64_encode($date_expired->format('Y-m-d H:i:s'));
     $url .= "&e={$expired_encode}&articles=$articles";
     $article_ids = explode(',', $articles);
-    $article_posts = array_map(function ($id) { return new \classes\fzSupplierArticle((int)$id); }, $article_ids);
+    $article_posts = array_map(function ($id) { return new \classes\fzProduct((int)$id); }, $article_ids);
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
         'message' => html_entity_decode($message),
         'articles' => $article_posts,
@@ -301,7 +301,7 @@ add_action('fz_received_order', function ($order_id) {
 add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
     global $Engine;
     $article_ids = explode(',', $_articles);
-    $articles = array_map(function ($id) { return new \classes\fzSupplierArticle(intval($id)); }, $article_ids);
+    $articles = array_map(function ($id) { return new \classes\fzProduct(intval($id)); }, $article_ids);
     $from = "no-reply@freezone.click";
     $to = implode(',', apply_filters( 'get_responsible', ['administrator'] ));
     $headers = [];

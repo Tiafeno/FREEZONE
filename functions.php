@@ -188,7 +188,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 $article_id = isset($wp_query->query_vars['id']) ? $wp_query->query_vars['id'] : 0;
                 if (!$article_id) return false;
                 $article_id = intval($article_id);
-                $fz_product = new \classes\fzSupplierArticle((int) $article_id);
+                $fz_product = new \classes\fzProduct((int) $article_id);
                 $parent_categories = get_terms('product_cat', [
                     'hide_empty' => false, 'parent' => 0
                 ]);
@@ -392,7 +392,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         $pagination .= '</ul></div>';
         $articles = [];
         foreach ($query->posts as $post) {
-            $articles[] = new \classes\fzSupplierArticle($post->ID);
+            $articles[] = new \classes\fzProduct($post->ID);
         }
 
         wc_print_notices();

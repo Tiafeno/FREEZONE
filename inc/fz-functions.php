@@ -15,7 +15,7 @@ require_once 'classes/fzParticular.php';
 require_once 'classes/fzCompany.php';
 require_once 'classes/fzSupplier.php';
 require_once 'classes/fzClient.php';
-require_once 'classes/fzSupplierArticle.php';
+require_once 'classes/fzProduct.php';
 require_once 'classes/fzQuote.php';
 require_once 'classes/fzItemOrder.php';
 require_once 'classes/fzGoodDeal.php';

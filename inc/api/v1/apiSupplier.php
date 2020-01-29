@@ -96,7 +96,7 @@ class apiSupplier
             $user_items = [];
             if (is_array($infos)) {
                 foreach ($infos as $info) {
-                    $info_article = new \classes\fzSupplierArticle($info->article_id);
+                    $info_article = new \classes\fzProduct($info->article_id);
                     $info_article->item_quantity = $info->quantity;
                     $info_article->item_price = $info->price;
                     $user_items[] = $info_article;

@@ -18,7 +18,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  *
  * @access public
  */
-class fzSupplierArticle
+class fzProduct
 {
 
     /**
@@ -213,13 +213,13 @@ class fzSupplierArticle
         return $this->update_date_review();
     }
 
-} /* end of class fzSupplierArticle */
+} /* end of class fzProduct */
 
 // Mettre a jour une article via AJAX
 add_action('wp_ajax_update_fz_product', function() {
     if (empty($_REQUEST) || !isset($_REQUEST['id'])) wp_send_json_error("parametre manquant");
     $article_id = intval($_REQUEST['id']);
-    $fzProduct = new \classes\fzSupplierArticle($article_id);
+    $fzProduct = new \classes\fzProduct($article_id);
     $fzProduct->set_price(intval($_REQUEST['price']));
     $fzProduct->set_total_sales(intval($_REQUEST['total_sales']));
     $fzProduct->set_garentee(intval($_REQUEST['garentee']));
@@ -229,6 +229,29 @@ add_action('wp_ajax_update_fz_product', function() {
     wp_send_json_success("Success");
 
 });
+
+add_action( 'rest_post_query', 'custom_topic_query', 10, 2 );
+function custom_topic_query( $args, $request ) {
+    if ( isset($request['search']) ) {
+        $pre_meta_query = array(
+            'relation' => 'OR'
+        );
+        $topics = explode( ',', $request['search'] );  // NOTE: Assumes comma separated taxonomies
+        for ( $i = 0; $i < count( $topics ); $i++) {
+            array_push( $pre_meta_query, array(
+                'key' => 'company_name',
+                'value' => $topics[$i],
+                'compare' => "LIKE"
+            ));
+        }
+        $meta_query = array(
+            'relation' => 'AND',
+            $pre_meta_query
+        );
+        $args[ 'meta_query' ] = $meta_query;
+    }
+
+} // end function
 
 // Recuperer les articles en attente en format JSON
 // Utiliser dans la page de mise a jours pour les fournisseurs
@@ -260,7 +283,7 @@ CODE;
     $post_products = $wpdb->get_results($sql);
     // Boucler une a une les articles trouver dans la recherche
     foreach ( $post_products as $_post ) {
-        $article = new \classes\fzSupplierArticle($_post->ID);
+        $article = new \classes\fzProduct($_post->ID);
         $product_id = $article->get_product_id();
         $quantity = [];
         // Récuperer les quantité demander pour cette article dans les commandes "en attente"
