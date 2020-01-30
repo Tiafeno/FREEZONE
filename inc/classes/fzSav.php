@@ -12,7 +12,7 @@ define('_NO_REPLY_', 'no-reply@freezone.clik');
 class fzSav
 {
     public $id = 0;
-    public $date_add = null;
+    public $date_add = null; // Date d'ajout ou demande de SAV
     public $guarentee_product = [];
     public $product_provider = [];
     public static $fields = [
@@ -32,10 +32,9 @@ class fzSav
         'status_sav', // ... diagnostique, reparation
         //'approximate_time',
         'quotation_ref', // Reference du devis (SAGE)
-        //'auctor', // WP_User (json)
-        //'reference', // Reference de l'article (fz_sav)
+        'reference', // Reference de l'article (fz_sav)
         'accessorie', // number
-        'other_accessories_desc'
+        'other_accessories_desc'// Si l'accessoire est definie sur autre, ce champ contient la valer pour autre
     ];
 
     public function __get ($name) {
@@ -64,11 +63,13 @@ class fzSav
             $this->date_add = $post_sav->post_date;
     }
 
+    // Recupéré l'identifiannt du client
     public function get_customer_id() {
         $id = get_field("customer", $this->id);
         return $id ? intval($id) : 0;
     }
 
+    // Retourne la description exacte sur le status actuelle de l'SAV
     public function get_status_string() {
         $status = intval($this->status_sav);
         if (is_nan($status)) return 'Non definie';
@@ -85,15 +86,19 @@ class fzSav
 add_action('init', function() {
     // Envoyer un mail (Nouvelle article SAV)
     add_action('wp_ajax_new_sav', function() {
+        $no_reply = _NO_REPLY_;
         if (empty($_POST['post_id'])) wp_send_json_error("Parametre manquant (post_id)");
         $post_id = intval($_POST['post_id']);
         if (get_post_type($post_id) === 'fz_sav') {
             global $Engine;
 
-            $no_reply = _NO_REPLY_;
-            $client_id = get_post_meta($post_id, 'sav_auctor', true);
-            $client = get_userdata(intval($client_id));
+            // Mettre à jour la reference
+            // Le SAV est ajouté depuis le RESTFull API, donc la mise à jour nécessite son ID
+            update_field('reference', "SAV{$post_id}", $post_id);
+
             $Sav = new fzSav($post_id);
+            $customer_id = $Sav->get_customer_id();
+            $customer = get_userdata( $customer_id );
             $message = '';
             $guarentee_product = is_array($Sav->guarentee_product) ? (int)$Sav->guarentee_product['value'] : (int)$Sav->guarentee_product;
             $product_provider = is_array($Sav->product_provider) ? (int)$Sav->product_provider['value'] : (int)$Sav->product_provider;
@@ -125,15 +130,18 @@ add_action('init', function() {
                     "le diagnostic soit vous refusez de réparer le matériel vous aurez à vous acquitter" .
                     " du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
             }
+            // Ne pas envoyer si le message à envoyer est vide
+            if (empty($message)) return wp_send_json_error( "Email non envoyer. Aucun messsage n'est formulé pour cette demande" );
+
             $message   = html_entity_decode($message);
-            $to        = $client->user_email;
+            $to        = $customer->user_email;
             $subject   = "Cher client - Freezone";
             $headers   = [];
             $headers[] = 'Content-Type: text/html; charset=UTF-8';
             $headers[] = "From: Freezone <$no_reply>";
             $content   = $Engine->render('@MAIL/default.html', [
                 'message' => $message,
-                'Year'  => 2019,
+                'Year'  => date('Y'),
                 'Phone' => freezone_phone_number
             ]);
             $result = wp_mail( $to, $subject, $content, $headers );
@@ -156,12 +164,22 @@ add_action('rest_api_init', function() {
                     case 'status_sav':
 
                         /**
+                         * /////////// Deprecate status //////////
                          *   1 : Diagnostique en cours
                          *   2 : Diagnostique fini
                          *   3 : Réparation accordée
                          *   4 : Réparation refusée
                          *   5 : Produit récupéré par le client
+                         * //////////////////////////////////////
                          */
+
+                         /**
+                            case 1:  'Diagnostique en cours'
+                            case 2:  'Diagnostique fini'
+                            case 3:  'Réparation accordée'
+                            case 4:  'Réparation refusée'
+                            case 5:  'Produit récupéré par le client'
+                          */
 
                         /**
                          * Le status du SAV est sur <Terminer>
@@ -182,32 +200,20 @@ add_action('rest_api_init', function() {
                         }
 
                         break;
-                    case 'approximate_time':
-
-                        /**
-                         * La date du diagnostic du matériel XYV du client VVB a été de nouveau prolongé au XX/XX/XX
-                         */
-
-                        do_action('sav_change_approximate_time', $object->ID, $value);
-
-                        break;
                 }
                 return update_field($field_name, $value, $object->ID);
 
             },
             'get_callback' => function ($object, $field_name) {
-                if ($field_name === 'auctor' || $field_name === 'reference' || $field_name === 'garentee') {
-                    $value = get_post_meta($object['id'], 'sav_' . $field_name, true);
-                    if ($field_name === 'auctor') {
-                        $user_controller = new \WP_REST_Users_Controller();
-                        $request = new \WP_REST_Request();
-                        $request->set_param('context', 'edit');
-                        $response = $user_controller->prepare_item_for_response(new \WP_User((int)$value), $request);
-                        return $response->get_data();
-                    } else {
-                        return $value;
-                    }
+                if ($field_name === 'customer' ) {
+                    $fzSAV = new fzSav($object['id']);
+                    return $fzSAV->customer;
                 }
+
+                if ($field_name === 'reference') {
+
+                }
+
                 return get_field($field_name, $object['id']);
             }
         ]);
@@ -229,8 +235,7 @@ add_action('sav_status_finish', function ($post_id) {
         $admin_emails[] = $admin->user_email;
     }
     $Sav = new fzSav($post_id);
-    $message   = "Bonjour, <br><br>Veuillez envoyer une facture au client id <b>{$client->ID}</b> ({$client->first_name} 
-{$client->last_name}) pour la réparation de la machine {$Sav->product}";
+    $message   = "Bonjour, <br><br>Veuillez envoyer une facture au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la réparation de la machine {$Sav->product}";
     $message   = html_entity_decode($message);
     $to        = implode(',', $admin_emails);
     $subject   = "#{$post_id} Facture pour la réparation - Freezone";
@@ -258,8 +263,7 @@ add_action('sav_status_do_not_repair', function ($post_id) {
         $admin_emails[] = $admin->user_email;
     }
     $Sav = new fzSav($post_id);
-    $message   = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} 
-{$client->last_name}) pour la machine {$Sav->product}";
+    $message   = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la machine {$Sav->product}";
     $message   = html_entity_decode($message);
     $to        = implode(',', $admin_emails);
     $subject   = "#{$post_id} Facture pour le diagnostic  - Freezone";
@@ -272,30 +276,3 @@ add_action('sav_status_do_not_repair', function ($post_id) {
     wp_mail( $to, $subject, $content, $headers );
 }, 10, 1);
 
-add_action('sav_change_approximate_time', function ($post_id, $date) {
-    global $Engine;
-
-    $client_id = get_post_meta($post_id, 'sav_auctor', true);
-    $client_id = intval($client_id);
-    $client = get_userdata($client_id);
-    $no_reply = _NO_REPLY_;
-
-    $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
-    $admin_emails = [];
-    foreach ($admins->get_results() as $admin) {
-        $admin_emails[] = $admin->user_email;
-    }
-    $Sav = new fzSav($post_id);
-    $message   = "Bonjour, <br><br>La date du diagnostic du matériel {$Sav->product} du client id <b>{$client->ID}</b> 
-({$client->first_name} {$client->last_name}) a été de nouveau prolongé au $date";
-    $message   = html_entity_decode($message);
-    $to        = implode(',', $admin_emails);
-    $subject   = "#{$post_id} Date nouveau prolongé  - Freezone";
-    $headers   = [];
-    $headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-
-    // Envoyer le mail
-    wp_mail( $to, $subject, $content, $headers );
-}, 10, 2);
