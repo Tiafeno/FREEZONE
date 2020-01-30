@@ -329,9 +329,9 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
     global $Engine;
 
     $SAV = new \classes\fzSav($sav_id, true);
-    $author_data = $SAV->auctor->get_data();
+    $author_data = get_userdata($SAV->get_customer_id);
     $from = "no-reply@freezone.click";
-    $to = $author_data['email'];
+    $to = $author_data->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -358,9 +358,9 @@ add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
     $sav = new classes\fzSav($sav_id);
     $message   = "Bonjour, <br><br>Un client <b>{$user->first_name} {$user->last_name}</b> aimerait savoir l'état 
-    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->ID}</b> en SAV";
+    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->id}</b> en SAV";
     $message   = html_entity_decode($message);
-    $subject   = "Rappel pour SAV N°{$sav->ID} - Freezone";
+    $subject   = "Rappel pour SAV N°{$sav->id} - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$from>";

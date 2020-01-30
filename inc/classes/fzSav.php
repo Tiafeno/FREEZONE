@@ -165,21 +165,21 @@ add_action('rest_api_init', function() {
 
                         /**
                          * /////////// Deprecate status //////////
-                         *   1 : Diagnostique en cours
-                         *   2 : Diagnostique fini
-                         *   3 : Réparation accordée
-                         *   4 : Réparation refusée
-                         *   5 : Produit récupéré par le client
+                         *   1 : Diagnostic réalisé
+                         *   2 : Diagnostic non réalisé
+                         *   3 : A réparer
+                         *   4 : Ne pas réparer
+                         *   5 : Terminer
                          * //////////////////////////////////////
                          */
 
-                         /**
+                        /**
                             case 1:  'Diagnostique en cours'
                             case 2:  'Diagnostique fini'
                             case 3:  'Réparation accordée'
                             case 4:  'Réparation refusée'
                             case 5:  'Produit récupéré par le client'
-                          */
+                        */
 
                         /**
                          * Le status du SAV est sur <Terminer>
