@@ -352,7 +352,7 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
 // Envoyer un rappel au administrateur
 add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     global $Engine;
-    $from      = "no-reply@freezone.click";
+    $from      = "no-reply@freezone.click"; 
     $to        = implode(',', apply_filters( 'get_responsible', ['author', 'administrator'] ));
 
     $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
