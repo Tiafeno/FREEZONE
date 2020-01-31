@@ -43,7 +43,8 @@ class fzSav
             $request = new \WP_REST_Request();
             $request->set_param('context', 'edit');
             $customer_id = $this->get_customer_id();
-            return $user_controller->prepare_item_for_response(new \WP_User((int)$customer_id), $request);
+            $response = $user_controller->prepare_item_for_response(new \WP_User((int)$customer_id), $request);
+            return $response->get_data();
         }
         if ($name === 'customer_role') {
             $customer_id = $this->get_customer_id();
@@ -79,6 +80,7 @@ class fzSav
             case 3: return 'Réparation accordée'; break;
             case 4: return 'Réparation refusée'; break;
             case 5: return 'Produit récupéré par le client'; break;
+            default: return 'Aucun'; break;
         }
     }
 }
@@ -155,6 +157,15 @@ add_action('init', function() {
 });
 
 add_action('rest_api_init', function() {
+    add_filter('rest_fz_sav_query', function($args, $request) {
+        $args += array(
+            'meta_key'   => $request['meta_key'],
+            'meta_value' => $request['meta_value'],
+            'meta_query' => $request['meta_query'],
+        );
+        return $args;
+    }, 99, 2);
+
     $fields = array_merge(fzSav::$fields, ['customer']);
     foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [

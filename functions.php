@@ -440,7 +440,7 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 'posts_per_page' => -1,
                 'meta_query' => [
                     [
-                        'key' => 'sav_auctor',
+                        'key' => 'customer',
                         'value' => $user->ID
                     ]
                 ]
