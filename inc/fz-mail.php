@@ -329,9 +329,9 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
     global $Engine;
 
     $SAV = new \classes\fzSav($sav_id, true);
-    $author_data = $SAV->auctor->get_data();
+    $author_data = get_userdata($SAV->get_customer_id);
     $from = "no-reply@freezone.click";
-    $to = $author_data['email'];
+    $to = $author_data->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -352,7 +352,7 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
 // Envoyer un rappel au administrateur
 add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     global $Engine;
-    $from      = "no-reply@freezone.click";
+    $from      = "no-reply@freezone.click"; 
     $to        = implode(',', apply_filters( 'get_responsible', ['author', 'administrator'] ));
 
     $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
