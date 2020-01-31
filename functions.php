@@ -58,11 +58,11 @@ add_action('init', function () {
         global $wpdb;
         $post_type = get_post_type($post_id);
         if ($post_type === 'product') :
-            $get_articles_sql = <<<TAG
+            $get_articles_sql = <<<SQL
 SELECT ID FROM {$wpdb->posts} WHERE post_type = 'fz_product' 
   AND ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE CONVERT(LOWER(`meta_key`) USING utf8mb4) = 'product_id' 
     AND meta_value = $post_id)
-TAG;
+SQL;
             $results = $wpdb->get_results($get_articles_sql);
             foreach ($results as $post) {
                 wp_delete_post(intval($post->ID), true);
@@ -398,7 +398,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
     }
 }, 10);
 
-// Service après vente
+// Service après vente - S.A.V
 add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine, $wp_query;
     $route = 'index';
@@ -407,11 +407,11 @@ add_action('woocommerce_account_savs_endpoint', function () {
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
-        $sav_id = (int) sanitize_text_field($wp_query->query_vars['sav_id']);
+        $sav_id = (int) sanitize_text_field($wp_query->query_vars['id']);
         switch ($componnent) {
             case 'revival':
                 // Envoyer un email au responsable (David & Nant.)
-                if (!isset($_COOKIE['freezone_revival-' . $sav_id])) {
+                if ( ! isset($_COOKIE['freezone_revival-' . $sav_id]) ) {
                     do_action('fz_sav_revival_mail', $sav_id);
                     setcookie('freezone_revival-' . $sav_id, true,  time() + 86400); // 1 day
                     wc_add_notice("Rappel anvoyer avec succès au responsables", 'success');
@@ -452,7 +452,8 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 [
                     'savs' => $savs,
                     'sav_url' => $sav_url,
-                    'prestations_url' => wc_get_account_endpoint_url('catalogue')
+                    'prestations_url' => wc_get_account_endpoint_url('catalogue'),
+                    'sav_endpoint_url' => wc_get_account_endpoint_url('savs'),
                 ]
             );
             wc_clear_notices();

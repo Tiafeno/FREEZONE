@@ -47,7 +47,8 @@
                 {{sav.get_status_string()}}
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
-                <a class="btn btn-theme btn-sm radius-0" href="#relance">RELANCER</a>
+                <a class="btn btn-theme btn-sm radius-0"
+                    href="{{sav_endpoint_url}}?componnent=revival&id={{sav.id}}">RELANCER</a>
             </td>
         </tr>
         {% endfor %}

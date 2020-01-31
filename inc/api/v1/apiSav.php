@@ -2,15 +2,14 @@
 class apiSav
 {
     public function __construct () { 
-        add_action('rest_api_init', function () {
+        add_action('rest_api_init', function (){
             register_rest_route('api', '/savs/', [
                 [
                     'methods' => WP_REST_Server::READABLE,
                     'callback' => [&$this, 'collect_sav'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
-                    },
-                    'args' => []
+                    }
                 ]
             ]);
 
@@ -20,8 +19,7 @@ class apiSav
                     'callback' => [&$this, 'get_customers_responsible'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
-                    },
-                    'args' => []
+                    }
                 ]
             ]);
 
@@ -86,6 +84,20 @@ class apiSav
 
     public function get_customers_responsible(WP_REST_Request $request) {
         $commercial_id = $request['com_id'];
+        $customer_ids = [];
+        $args = [
+            'role__in' => ['fz-company', 'fz-particular'],
+            'number' => -1,
+            'meta_key' => 'responsible',
+            'meta_value' => $commercial_id,
+            'meta_compare' => 'NUMERIC'
+        ];
+        $customers = new WP_User_Query($args);
+        foreach ( $customers->get_results() as $customer ) {
+            $customer_ids[] = $customer->ID;
+        }
+
+        wp_send_json($customer_ids);
     }
 
 }

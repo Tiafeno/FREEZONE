@@ -131,7 +131,7 @@ add_action('admin_init', function () {
     }
     // Afficher les en-tete pour les marges
     add_filter('manage_fz_product_posts_columns', function ($columns) {
-        $columns['marge'] = '%';
+        $columns['marge'] = '% UF';
         $columns['marge_dealer'] = '% R.';
         $columns['marge_particular'] = '% P.';
         return $columns;

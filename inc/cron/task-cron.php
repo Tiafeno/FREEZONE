@@ -11,7 +11,7 @@ add_action('everyday', function () {
     }
     // Vérifier si la date du delais approximatif est atteinte, s'il est atteinte on envoie un mail
     // La réparation du matériel XYV du client VVB est elle achevée ?
-    //do_action( 'ask_product_repair', $admin_emails );
+    do_action( 'ask_product_repair', $admin_emails );
 
     // Envoyer un mail au téchnicien si le status du SAV est sur <à réparer>
     // Pouvez-vous rentrer le délais, approximatif de réparation du matériel XYV du client VVB »
@@ -29,6 +29,28 @@ add_action('everyday', function () {
     do_action("schedule_order_reject_expired");
 }, 10);
 
+add_action('every_3_days', function(){
+    // TODO: Mail de notification pour `La réparation accordée` et `La réparation refusée`
+}, 10);
+
+add_action('every_2_days', function () {
+    $date_now = new DateTime("now");
+    $data_now_string = $date_now->format('Y-m-d H:i:s');
+    /**
+     * Envoyer un mail si le status du SAV est non definie
+     *
+     * Nous vous rappelons que le matériel XYV du client VVB est encore dans l’atelier aussi nous
+     * vous demandons de relancer le client à propos du devis Réf TTTT
+     */
+    $sql_nothing_status = <<<SQL
+SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
+WHERE pst.post_type = 'fz_sav' 
+    AND pst.post_status = 'publish'
+    AND NOT EXISTS (SELECT * FROM $wpdb->postmeta pm WHERE pm.meta_key = 'status_sav' AND pst.ID = pm.post_id)
+    AND cast(DATE_ADD(pst.post_date, INTERVAL 1 DAY) AS DATE) < cast('{$data_now_string}' AS DATE)
+SQL;
+    // TODO: Envoyer un mail si le SAV a une status 'Non definie'
+}, 10);
 
 // Tous les 2 jours
 add_action('every_2_days', function () {
@@ -42,33 +64,37 @@ add_action('every_2_days', function () {
      * vous demandons de relancer le client à propos du devis Réf TTTT
      */
 
-    $sql = <<<SQL
+    $sql_diagnostic_progress = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
 JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
 WHERE pst.post_type = 'fz_sav' 
     AND pst.post_status = 'publish'
-    AND pm.meta_key = 'status_sav' 
-    AND CAST(pm.meta_value AS SIGNED) = 1
+    AND (pm.meta_key = 'status_sav' AND cast(pm.meta_value AS UNSIGNED) = 1 )
 SQL;
-    $results = $wpdb->get_results($sql);
+
+    $results = $wpdb->get_results($sql_diagnostic_progress);
     if (empty($results)) return;
-    $savs    = get_hardwards($results);
-    $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
+    $fields    = get_hardwards($results);
+    $admins = new \WP_User_Query(['role' => ['Administrator']]);
+    
     $admin_emails = [];
     foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
     if (empty($admin_emails)) return;
-    $to = implode(',', $admin_emails);
-
-    foreach ($savs as $sav) {
-        $devis_ref = get_field('quotation_ref', $sav['sav_id']);
+    foreach ($fields as $field) {
+        $sav_id = (int) $field['sav_id'];
+        $devis_ref = get_field('reference', $sav_id);
+        $commerical = get_editor_for_customer_id((int) $field['customer_id']);
+        // Ajouter l'adresse email du commercial responsable
+        if ($commerical) { $admin_emails[] = $commerical->user_email; }
+        $to = implode(',', $admin_emails);
         $message =  "Bonjour, <br><br>";
-        $message .= "Nous vous rappelons que le matériel <b>{$sav['name']}</b> du client {$sav['reference']} est encore dans l’atelier aussi nous vous " .
+        $message .= "Nous vous rappelons que le matériel <b>{$field['name']}</b> du client {$field['reference']} est encore dans l’atelier aussi nous vous " .
             "demandons de relancer le client à propos du devis Réf $devis_ref";
         $message = html_entity_decode($message);
 
-        $subject = "Notification d'ajout de delais approximatif - Freezone";
+        $subject = "SAV{$sav_id} - Notification su le diagnostique en cours - Freezone";
         $headers = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <$no_reply>";
@@ -78,15 +104,25 @@ SQL;
     }
 }, 10);
 
-function get_hardwards ($results)
-{
+function get_hardwards ($results) {
     $response = [];
     foreach ( $results as $post ) {
         $name = get_field('product', (int)$post->ID);
-        $client_id = (int)get_post_meta($post->ID, 'sav_auctor', true);
-        if (is_nan($client_id) || 0 === $client_id || empty($client_id)) continue;
-        $client_reference = get_field('reference', 'user_' . $client_id);
-        $response[] = ['name' => $name, 'reference' => $client_reference, 'sav_id' => (int) $post->ID];
+        $customer_id = (int)get_post_meta($post->ID, 'cutomer', true);
+        if (is_nan($customer_id) || 0 === $customer_id || empty($customer_id)) continue;
+        $client_reference = get_field('reference', 'user_' . $customer_id);
+        $response[] = [
+            'name' => $name, 
+            'reference' => $client_reference, 
+            'sav_id' => (int) $post->ID, 
+            'customer_id' => $customer_id
+        ];
     }
     return $response;
+}
+
+function get_editor_for_customer_id($customer_id) {
+    $editor_id = \classes\fzClient::initializeClient($customer_id, false)->get_responsible();
+    if (intval($editor_id) === 0 || is_nan($editor_id)) return false;
+    return new WP_User( (int) $editor_id);
 }

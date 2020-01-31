@@ -193,16 +193,16 @@ add_action('rest_api_init', function() {
                         */
 
                         /**
-                         * Le status du SAV est sur <Terminer>
+                         * Le status du SAV est sur <Produit récupéré par le client>
                          *
                          * Veuillez envoyer une facture au client VVB pour la réparation de la machine XYZ
                          */
                         if (intval($value) === 5) {
-                            do_action('sav_status_finish', $object->ID);
+                            do_action('sav_status_release', $object->ID);
                         }
 
                         /**
-                         * Le status du SAV est sur <Ne pas réparer>
+                         * Le status du SAV est sur <Réparation refusée>
                          *
                          * Veuillez envoyer une facture pour le diagnostic au client VVB pour la machine XYZ.
                          */
@@ -221,10 +221,6 @@ add_action('rest_api_init', function() {
                     return $fzSAV->customer;
                 }
 
-                if ($field_name === 'reference') {
-
-                }
-
                 return get_field($field_name, $object['id']);
             }
         ]);
@@ -232,10 +228,10 @@ add_action('rest_api_init', function() {
 });
 
 
-add_action('sav_status_finish', function ($post_id) {
+add_action('sav_status_release', function ($post_id) {
     global $Engine;
 
-    $client_id = get_post_meta($post_id, 'sav_auctor', true);
+    $client_id = get_post_meta($post_id, 'customer', true);
     $client_id = intval($client_id);
     $client = get_userdata($client_id);
     $no_reply = _NO_REPLY_;
@@ -249,7 +245,7 @@ add_action('sav_status_finish', function ($post_id) {
     $message   = "Bonjour, <br><br>Veuillez envoyer une facture au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la réparation de la machine {$Sav->product}";
     $message   = html_entity_decode($message);
     $to        = implode(',', $admin_emails);
-    $subject   = "#{$post_id} Facture pour la réparation - Freezone";
+    $subject   = "SAV{$post_id} Facture pour la réparation - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
@@ -263,7 +259,7 @@ add_action('sav_status_finish', function ($post_id) {
 add_action('sav_status_do_not_repair', function ($post_id) {
     global $Engine;
 
-    $client_id = get_post_meta($post_id, 'sav_auctor', true);
+    $client_id = get_post_meta($post_id, 'customer', true);
     $client_id = intval($client_id);
     $client = get_userdata($client_id);
     $no_reply = _NO_REPLY_;
@@ -277,7 +273,7 @@ add_action('sav_status_do_not_repair', function ($post_id) {
     $message   = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la machine {$Sav->product}";
     $message   = html_entity_decode($message);
     $to        = implode(',', $admin_emails);
-    $subject   = "#{$post_id} Facture pour le diagnostic  - Freezone";
+    $subject   = "SAV{$post_id} Facture pour le diagnostic  - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
