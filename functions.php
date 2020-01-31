@@ -208,7 +208,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         update_field('total_sales', intval($stock), $article_id);
                         update_post_meta( $article_id, '_fz_quantity', intval($stock));
                         update_field('date_review', date_i18n('Y-m-d H:m:s'), $article_id);
-
                         wc_add_notice("Article mis à jour avec succès", 'success');
                     }
                 }
@@ -224,7 +223,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
             case 'new':
                 wp_enqueue_style('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css');
                 wp_enqueue_script('select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', ['jquery']);
-
                 wp_enqueue_script('article-new', get_stylesheet_directory_uri() . '/assets/js/article-new.js', ['jquery', 'select2'], '0.0.3');
                 wp_localize_script('article-new', 'fzOptions', [
                     'root' => esc_url_raw(rest_url()),
@@ -256,7 +254,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         ]
                     ];
                     $product_exists = get_posts($verify_product_exist_args);
-
                     if (!$product_exists) {
                         $product = get_post((int) $product_id);
                         $product_cat = wp_get_post_terms((int) $product_id, 'product_cat', ['fields' => 'ids']);
@@ -276,7 +273,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 update_field('product_id', (int) $product_id, $result);
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
-
                                 update_post_meta($result, '_fz_garentee', $garentee);
                                 wp_set_post_terms($result, $product_cat, 'product_cat');
                                 // Envoyer un mail au administrateur
@@ -294,12 +290,10 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 } // .end POST
 
                 wc_print_notices();
-
                 echo $Engine->render('@WC/stock/article-new.html', [
                     'products' => $fz_model->get_products(),
                     'back_link' => wc_get_account_endpoint_url('stock-management')
                 ]);
-
                 wc_clear_notices();
                 break;
 
@@ -378,7 +372,6 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
             'paged' => $paged
         ];
         $query = new WP_Query($args);
-
         $pagination = '<div class="apus-pagination"><ul class="page-numbers">';
         $pagination .= paginate_links([
             'base' => @add_query_arg('pa_', '%#%'),
@@ -410,7 +403,7 @@ add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine, $wp_query;
     $route = 'index';
     $sav_url = '/sav'; // Cette url est réservé pour la publication des services àpres vente
-    $user = wp_get_current_user();
+    $user_id = get_current_user_id();
 
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
@@ -435,13 +428,15 @@ add_action('woocommerce_account_savs_endpoint', function () {
 
     switch ($route) {
         case 'index':
+        default:
+            // Récuperer tous les demandes SAV effectuer par le client 
             $args = [
                 'post_type' => 'fz_sav',
                 'posts_per_page' => -1,
                 'meta_query' => [
                     [
                         'key' => 'customer',
-                        'value' => $user->ID
+                        'value' => $user_id
                     ]
                 ]
             ];
@@ -462,16 +457,11 @@ add_action('woocommerce_account_savs_endpoint', function () {
             );
             wc_clear_notices();
             break;
-
-        default:
-            # code...
-            break;
     }
 }, 10);
 
 // Menu catalogue dans l'espace client
 add_action('woocommerce_account_catalogue_endpoint', function () {
-
     wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
     // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
     wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
@@ -493,10 +483,8 @@ add_action('woocommerce_account_demandes_endpoint', function () {
 
     $shop_url = get_permalink(wc_get_page_id('shop'));
     $user_id = get_current_user_id();
-
     // Executer ici la mise a jours du formulaire, si un formulaire est envoyer
     do_action( "woocommerce_before_edit_address_form_billing" );
-
     $clientInstance = \classes\fzClient::initializeClient($user_id);
     // Verification de securite
     if (!in_array($clientInstance->get_role(), ["fz-particular", "fz-company"]) ) {

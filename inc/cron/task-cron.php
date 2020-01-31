@@ -11,11 +11,11 @@ add_action('everyday', function () {
     }
     // Vérifier si la date du delais approximatif est atteinte, s'il est atteinte on envoie un mail
     // La réparation du matériel XYV du client VVB est elle achevée ?
-    do_action( 'ask_product_repair', $admin_emails );
+    //do_action( 'ask_product_repair', $admin_emails );
 
     // Envoyer un mail au téchnicien si le status du SAV est sur <à réparer>
     // Pouvez-vous rentrer le délais, approximatif de réparation du matériel XYV du client VVB »
-    do_action( 'ask_approximate_date_product', $admin_emails );
+    // do_action( 'ask_approximate_date_product', $admin_emails );
 
     // Rejetée automatiquement les demandes envoyer qui ne sont pas consulté par les clients
     do_action('schedule_order_expired');

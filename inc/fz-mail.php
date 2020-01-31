@@ -197,7 +197,7 @@ add_action("fz_mail_send_selected_catalogue", function ($ids = []) {
     }
 }, 10, 1);
 
-// Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
+// Cette action permet d'envoyer un mail au fournisseur avec un lien pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
     global $Engine;
     $Supplier = new \classes\fzSupplier($supplier_id);
