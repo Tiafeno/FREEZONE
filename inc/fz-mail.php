@@ -197,7 +197,7 @@ add_action("fz_mail_send_selected_catalogue", function ($ids = []) {
     }
 }, 10, 1);
 
-// Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
+// Cette action permet d'envoyer un mail au fournisseur avec un lien pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
     global $Engine;
     $Supplier = new \classes\fzSupplier($supplier_id);
@@ -358,9 +358,9 @@ add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
     $sav = new classes\fzSav($sav_id);
     $message   = "Bonjour, <br><br>Un client <b>{$user->first_name} {$user->last_name}</b> aimerait savoir l'état 
-    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->ID}</b> en SAV";
+    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->id}</b> en SAV";
     $message   = html_entity_decode($message);
-    $subject   = "Rappel pour SAV N°{$sav->ID} - Freezone";
+    $subject   = "Rappel pour SAV N°{$sav->id} - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$from>";

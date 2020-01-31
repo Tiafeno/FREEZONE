@@ -71,7 +71,7 @@ add_action('schedule_order_reject_expired', function () {
     // la commande sera automatiquement "Rejeter".
     // Donc, on attend 7j encore pour envoyer au administrateur un mail pour informe la supperssion de cette commande
     $query_sql = <<<TAG
-SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
+    SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
         JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
         JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
         WHERE pst.post_type = '{$order_post_type}' 
@@ -111,6 +111,7 @@ TAG;
     }
 });
 
+// @SAV
 add_action('ask_product_repair', function ($admin_emails) {
     global $wpdb, $Engine;
     $to = implode(',', $admin_emails);
