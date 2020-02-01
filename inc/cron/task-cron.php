@@ -58,7 +58,7 @@ add_action('every_2_days', function () {
     $no_reply = _NO_REPLY_;
 
     /**
-     * Envoyer un mail si le status du SAV est sur <diagnostique réalisé>
+     * Envoyer un mail si le status du SAV est sur <Diagnostique fini>
      *
      * Nous vous rappelons que le matériel XYV du client VVB est encore dans l’atelier aussi nous
      * vous demandons de relancer le client à propos du devis Réf TTTT
@@ -69,7 +69,7 @@ SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
 JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
 WHERE pst.post_type = 'fz_sav' 
     AND pst.post_status = 'publish'
-    AND (pm.meta_key = 'status_sav' AND cast(pm.meta_value AS UNSIGNED) = 1 )
+    AND (pm.meta_key = 'status_sav' AND cast(pm.meta_value AS UNSIGNED) = 2 )
 SQL;
 
     $results = $wpdb->get_results($sql_diagnostic_progress);
