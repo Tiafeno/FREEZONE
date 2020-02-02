@@ -76,18 +76,7 @@ class fzAPI
                     'args' => []
                 ],
             ]);
-
-            register_rest_route('api', '/product/', [
-                [
-                    'methods' => \WP_REST_Server::CREATABLE,
-                    'callback' => [new \apiProduct(), 'collect_products'],
-                    'permission_callback' => function ($data) {
-                        return current_user_can('edit_posts');
-                    },
-                    'args' => []
-                ],
-            ]);
-
+            
             /**
              * Permet de crée une article depuis la B.O
              */
@@ -204,7 +193,7 @@ class fzAPI
             register_rest_route('api', '/fz_product/(?P<action>\w+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
-                    'callback' => [new \apiArticle(), 'action_collect_articles'],
+                    'callback' => [new \apiFzProduct(), 'action_collect_articles'],
                     'permission_callback' => function ($data) {
                         return current_user_can('edit_posts');
                     }
@@ -819,7 +808,6 @@ SQL;
             
 
         }
-
     }
 }
 

@@ -93,14 +93,14 @@ add_action('attente_intervention_client', function() {
     $date_now = new DateTime("now");
     $data_now_string = $date_now->format('Y-m-d H:i:s');
     // Recuprer les commandes 2 jours avant la date expiration, s'il n'y a pas d'intervention par le client
-    $query_sql = <<<TAG
+    $query_sql = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
         JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
         JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
         WHERE pst.post_type = '{$order_post_type}' 
             AND (pm.meta_key = 'date_send' AND cast(DATE_ADD(pm.meta_value, INTERVAL 4 DAY) AS DATE) = cast('{$data_now_string}' AS DATE))
             AND (pm2.meta_key = 'position' AND cast(pm2.meta_value AS unsigned) = 1)
-TAG;
+SQL;
     $results = $wpdb->get_results($query_sql);
     if (empty($results)) return;
     foreach ($results as $shop_order) {

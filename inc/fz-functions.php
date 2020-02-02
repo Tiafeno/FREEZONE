@@ -27,7 +27,6 @@ require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
 require_once 'api/v1/apiProduct.php';
 require_once 'api/v1/apiFzProduct.php';
-require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
@@ -150,12 +149,23 @@ add_action('admin_init', function () {
         endif;
 
         if ($column === 'marge_particular'):
-            $marge_dealer = get_post_meta($post_id, 'marge_particular', true);
+            $marge_dealer = get_post_meta($post_id, '_fz_marge_particular', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
     }, 10, 2);
 }, 100);
+
+// https://developer.wordpress.org/block-editor/tutorials/metabox/meta-block-2-register-meta/
+$meta_args = array(
+    'type'         => 'integer',
+    'description'  => 'A meta key associated with a string meta value.',
+    'single'       => true,
+    'show_in_rest' => true,
+);
+register_post_meta( 'fz_product', '_fz_marge', $meta_args );
+register_post_meta( 'fz_product', '_fz_marge_dealer', $meta_args );
+register_post_meta( 'fz_product', '_fz_marge_particular', $meta_args );
 
 add_action('init', function () {
     function search_products ()

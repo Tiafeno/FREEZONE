@@ -22,6 +22,7 @@ class fzClient
 
     /**
      * @param int $id
+     * @param bool $hasInstance
      * @return fzClient|null
      */
     public static function initializeClient($id = 0, $hasInstance = true) {
