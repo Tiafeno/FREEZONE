@@ -15,7 +15,7 @@ require_once 'classes/fzParticular.php';
 require_once 'classes/fzCompany.php';
 require_once 'classes/fzSupplier.php';
 require_once 'classes/fzClient.php';
-require_once 'classes/fzSupplierArticle.php';
+require_once 'classes/fzProduct.php';
 require_once 'classes/fzQuote.php';
 require_once 'classes/fzItemOrder.php';
 require_once 'classes/fzGoodDeal.php';
@@ -27,7 +27,6 @@ require_once 'api/v1/apiQuotation.php';
 require_once 'api/v1/apiSupplier.php';
 require_once 'api/v1/apiProduct.php';
 require_once 'api/v1/apiFzProduct.php';
-require_once 'api/v1/apiArticle.php';
 require_once 'api/v1/apiMail.php';
 require_once 'api/v1/apiSav.php';
 require_once 'api/v1/apiImport.php';
@@ -83,7 +82,7 @@ try {
     $Engine->addFilter(new Twig_SimpleFilter('wpoption', function ($field) {
         return get_option($field, 'N/A');
     }));
-} catch (Twig_Error_Loader $e) {
+} catch (\Twig_Error_Loader $e) {
     echo $e->getRawMessage();
 }
 
@@ -131,7 +130,7 @@ add_action('admin_init', function () {
     }
     // Afficher les en-tete pour les marges
     add_filter('manage_fz_product_posts_columns', function ($columns) {
-        $columns['marge'] = '%';
+        $columns['marge'] = '% UF';
         $columns['marge_dealer'] = '% R.';
         $columns['marge_particular'] = '% P.';
         return $columns;
@@ -150,12 +149,23 @@ add_action('admin_init', function () {
         endif;
 
         if ($column === 'marge_particular'):
-            $marge_dealer = get_post_meta($post_id, 'marge_particular', true);
+            $marge_dealer = get_post_meta($post_id, '_fz_marge_particular', true);
             $marge_dealer = $marge_dealer ? $marge_dealer : 0;
             echo "{$marge_dealer} %";
         endif;
     }, 10, 2);
 }, 100);
+
+// https://developer.wordpress.org/block-editor/tutorials/metabox/meta-block-2-register-meta/
+$meta_args = array(
+    'type'         => 'integer',
+    'description'  => 'A meta key associated with a string meta value.',
+    'single'       => true,
+    'show_in_rest' => true,
+);
+register_post_meta( 'fz_product', '_fz_marge', $meta_args );
+register_post_meta( 'fz_product', '_fz_marge_dealer', $meta_args );
+register_post_meta( 'fz_product', '_fz_marge_particular', $meta_args );
 
 add_action('init', function () {
     function search_products ()
@@ -269,6 +279,7 @@ add_action('init', function () {
     }
     add_action('woocommerce_product_import_inserted_product_object', 'process_import', 10, 2);
 
+    // Mise a jour d'adresse dans l'espace client
     add_action("woocommerce_before_edit_address_form_billing", function () {
         if (isset($_REQUEST['woocommerce-edit-address-nonce']) &&
             wp_verify_nonce($_REQUEST['woocommerce-edit-address-nonce'], 'woocommerce-edit_address')) {

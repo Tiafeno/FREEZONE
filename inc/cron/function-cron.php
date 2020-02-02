@@ -70,14 +70,14 @@ add_action('schedule_order_reject_expired', function () {
     // On ajouter 14j car le 7em Jour sans reponse de la par du client, On se refere toujours par la date d'envoie,
     // la commande sera automatiquement "Rejeter".
     // Donc, on attend 7j encore pour envoyer au administrateur un mail pour informe la supperssion de cette commande
-    $query_sql = <<<TAG
+    $query_sql = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
-        JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
-        JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
-        WHERE pst.post_type = '{$order_post_type}' 
-            AND (pm.meta_key = 'date_send' AND cast(DATE_ADD(pm.meta_value, INTERVAL 14 DAY) AS DATE) < cast('{$data_now_string}' AS DATE))
-            AND (pm2.meta_key = 'position' AND cast(pm2.meta_value AS unsigned) = 2)
-TAG;
+    JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
+    JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
+    WHERE pst.post_type = '{$order_post_type}' 
+        AND (pm.meta_key = 'date_send' AND cast(DATE_ADD(pm.meta_value, INTERVAL 14 DAY) AS DATE) < cast('{$data_now_string}' AS DATE))
+        AND (pm2.meta_key = 'position' AND cast(pm2.meta_value AS unsigned) = 2)
+SQL;
     $results = $wpdb->get_results($query_sql);
     foreach ($results as $post) {
         $order = wc_get_order((int)$post->ID);
@@ -93,14 +93,14 @@ add_action('attente_intervention_client', function() {
     $date_now = new DateTime("now");
     $data_now_string = $date_now->format('Y-m-d H:i:s');
     // Recuprer les commandes 2 jours avant la date expiration, s'il n'y a pas d'intervention par le client
-    $query_sql = <<<TAG
+    $query_sql = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS pst.ID FROM {$wpdb->posts} as pst
         JOIN {$wpdb->postmeta} as pm ON (pm.post_id = pst.ID) 
         JOIN {$wpdb->postmeta} as pm2 ON (pm2.post_id = pst.ID)
         WHERE pst.post_type = '{$order_post_type}' 
             AND (pm.meta_key = 'date_send' AND cast(DATE_ADD(pm.meta_value, INTERVAL 4 DAY) AS DATE) = cast('{$data_now_string}' AS DATE))
             AND (pm2.meta_key = 'position' AND cast(pm2.meta_value AS unsigned) = 1)
-TAG;
+SQL;
     $results = $wpdb->get_results($query_sql);
     if (empty($results)) return;
     foreach ($results as $shop_order) {
@@ -111,6 +111,7 @@ TAG;
     }
 });
 
+// @SAV
 add_action('ask_product_repair', function ($admin_emails) {
     global $wpdb, $Engine;
     $to = implode(',', $admin_emails);
@@ -154,7 +155,7 @@ add_action('ask_approximate_date_product', function ($admin_emails) {
 SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
 JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
 WHERE pst.post_type = 'fz_sav' AND pst.post_status = 'publish'
-    AND pm.meta_key = 'status_sav' AND CAST(pm.meta_value AS SIGNED) = 3 
+    AND pm.meta_key = 'status_sav' AND CAST(pm.meta_value AS UNSIGNED) = 3 
 SQL;
     $results = $wpdb->get_results($sql);
     if (empty($results)) return;

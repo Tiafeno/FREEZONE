@@ -92,7 +92,7 @@ add_action('fz_insert_new_article', function ($article_id) {
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-    $article = new \classes\fzSupplierArticle($article_id);
+    $article = new \classes\fzProduct($article_id);
     $supplier_id = $article->get_user_id();
     $reference = get_field('reference', 'user_' . $supplier_id);
     $url = "https://admin.freezone.click/articles";
@@ -197,7 +197,7 @@ add_action("fz_mail_send_selected_catalogue", function ($ids = []) {
     }
 }, 10, 1);
 
-// Cette action permet d'envoyer un mail au fournisseur pour valider leur articles
+// Cette action permet d'envoyer un mail au fournisseur avec un lien pour valider leur articles
 add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject, $message, $cc = '', $articles = '') {
     global $Engine;
     $Supplier = new \classes\fzSupplier($supplier_id);
@@ -221,7 +221,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $expired_encode = base64_encode($date_expired->format('Y-m-d H:i:s'));
     $url .= "&e={$expired_encode}&articles=$articles";
     $article_ids = explode(',', $articles);
-    $article_posts = array_map(function ($id) { return new \classes\fzSupplierArticle((int)$id); }, $article_ids);
+    $article_posts = array_map(function ($id) { return new \classes\fzProduct((int)$id); }, $article_ids);
     $content = $Engine->render('@MAIL/fz_submit_articles_for_validation.html', [
         'message' => html_entity_decode($message),
         'articles' => $article_posts,
@@ -301,7 +301,7 @@ add_action('fz_received_order', function ($order_id) {
 add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
     global $Engine;
     $article_ids = explode(',', $_articles);
-    $articles = array_map(function ($id) { return new \classes\fzSupplierArticle(intval($id)); }, $article_ids);
+    $articles = array_map(function ($id) { return new \classes\fzProduct(intval($id)); }, $article_ids);
     $from = "no-reply@freezone.click";
     $to = implode(',', apply_filters( 'get_responsible', ['administrator'] ));
     $headers = [];
@@ -329,9 +329,9 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
     global $Engine;
 
     $SAV = new \classes\fzSav($sav_id, true);
-    $author_data = $SAV->auctor->get_data();
+    $author_data = get_userdata($SAV->get_customer_id);
     $from = "no-reply@freezone.click";
-    $to = $author_data['email'];
+    $to = $author_data->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
@@ -352,15 +352,14 @@ add_action('fz_sav_contact_mail', function ($sav_id, $sender_user_id, $mailing_i
 // Envoyer un rappel au administrateur
 add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     global $Engine;
-    $from      = "no-reply@freezone.click";
+    $from      = "no-reply@freezone.click"; 
     $to        = implode(',', apply_filters( 'get_responsible', ['author', 'administrator'] ));
-
-    $user = $user_id === O || is_null($user_id) ? wp_get_current_user() : new WP_User(intval($user_id));
+    $user = $user_id === O  ? wp_get_current_user() : new WP_User(intval($user_id));
     $sav = new classes\fzSav($sav_id);
     $message   = "Bonjour, <br><br>Un client <b>{$user->first_name} {$user->last_name}</b> aimerait savoir l'état 
-    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->ID}</b> en SAV";
+    de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->id}</b> en SAV";
     $message   = html_entity_decode($message);
-    $subject   = "Rappel pour SAV N°{$sav->ID} - Freezone";
+    $subject   = "Rappel pour SAV N°{$sav->id} - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$from>";

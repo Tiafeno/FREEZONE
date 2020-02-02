@@ -8,10 +8,26 @@
 
 class apiProduct
 {
-    public function __construct () { }
-
-    public function collect_products (WP_REST_Request $rq)
-    {
+    public function __construct () {
+        add_action('rest_api_init', function () {
+             register_rest_route('api', '/product/', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => [&$this, 'handler_post_products'],
+                    'permission_callback' => function ($data) {
+                        return current_user_can('edit_posts');
+                    }
+                ],
+            ]);
+            register_rest_route('api', '/products/categories', [
+                [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [&$this, 'handler_taxonomie_categories'],
+                ],
+            ]);
+        });
+    }
+    public function handler_post_products (WP_REST_Request $rq) {
         $length = (int)$_REQUEST['length'];
         $start = (int)$_REQUEST['start'];
         $search = empty($_REQUEST['search']) ? '' : esc_sql( $_REQUEST['search'] );
@@ -56,4 +72,16 @@ class apiProduct
         }
 
     }
+
+    public function handler_taxonomie_categories(WP_REST_Request $rq) {
+        $number = isset($_GET['number']) ? intval(sanitize_text_field($_GET['number'])) : 0;
+        $taxonomies = get_terms( array(
+            'taxonomy' => 'product_cat',
+            'hide_empty' => false,
+            'number' => $number
+        ) );
+        wp_send_json($taxonomies);
+    }
 }
+
+new apiProduct();
