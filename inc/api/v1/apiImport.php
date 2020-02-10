@@ -26,9 +26,9 @@ class apiImport
         if (!$current_article_status) wp_send_json_error("Unknown status");
         // Processus de mise a jour
         $article = new \classes\fzProduct($article_id);
-        $article->set_marge_uf(intval($marge));
-        $article->set_marge_dealer(intval($marge_dealer));
-        $article->set_marge_particular(intval($marge_particular));
+        $article->set_marge_uf(floatval($marge));
+        $article->set_marge_dealer(floatval($marge_dealer));
+        $article->set_marge_particular(floatval($marge_particular));
 
         wp_send_json_success("Update succefuly!");
     }
