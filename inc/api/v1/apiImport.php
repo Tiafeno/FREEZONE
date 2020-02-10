@@ -8,15 +8,36 @@
 
 class apiImport
 {
-
+    public $taxonomy_cat_name = "product_cat";
     public function __construct () { }
+
+    public function import_update_by_csv() {
+        // Extraire les variables envoyer depuis la B.O
+        extract($_POST, EXTR_PREFIX_SAME, 'WC');
+        /** @var int $id */
+        /** @var string $name */
+        /** @var string $marge */
+        /** @var string $marge_dealer */
+        /** @var string $marge_particular */
+
+        $article_id = intval($id);
+        if (is_nan($article_id)) wp_send_json_error("Indentification isn't correct");
+        $current_article_status = get_post_status($article_id);
+        if (!$current_article_status) wp_send_json_error("Unknown status");
+        // Processus de mise a jour
+        $article = new \classes\fzProduct($article_id);
+        $article->set_marge_uf(intval($marge));
+        $article->set_marge_dealer(intval($marge_dealer));
+        $article->set_marge_particular(intval($marge_particular));
+
+        wp_send_json_success("Update succefuly!");
+    }
 
     /**
      * @param WP_REST_Request $request
      * @return bool
      */
     public function import_article_csv() {
-        $taxonomy_cat_name = "product_cat";
         // Extraire les variables envoyer depuis la B.O
         extract($_POST, EXTR_PREFIX_SAME, 'WC');
         // Insert product cat or get it if exist
@@ -26,9 +47,9 @@ class apiImport
         foreach ($ctg_names as $item) {
             $item = trim(stripslashes($item));
             $item = ucfirst($item);
-            $term = term_exists($item, $taxonomy_cat_name);
+            $term = term_exists($item, $this->taxonomy_cat_name);
             if (null === $term || 0 === $term || !$term) {
-                $term = wp_insert_term($item, $taxonomy_cat_name);
+                $term = wp_insert_term($item, $this->taxonomy_cat_name);
                 if (is_wp_error($term)) {
                     $term = get_term_by('name', $item);
                 }
@@ -89,7 +110,7 @@ class apiImport
                 (is_array($create_product) && isset($create_product['id']) ? $create_product['id'] : null);
 
             if (!empty($terms)) {
-                wp_set_post_terms($product_id, $terms, $taxonomy_cat_name);
+                wp_set_post_terms($product_id, $terms, $this->taxonomy_cat_name);
             }
         }
         $Prd = new WC_Product($product_id);
@@ -112,6 +133,7 @@ class apiImport
         update_field('date_review', date_i18n('Y-m-d H:i:s'), $article_id);
         update_field('product_id', $product_id, $article_id);
         update_field('total_sales', wc_clean($quantity), $article_id);
+        update_post_meta($article_id, '_fz_quantity', wc_clean($quantity)); // Mettre a jour la quantite
         update_field('user_id', $supplier->ID, $article_id);
         // Ajouter une quantité pour la gestion de stock
         update_post_meta( $article_id, '_fz_quantity', intval(wc_clean($quantity)));
@@ -125,10 +147,12 @@ class apiImport
             update_post_meta($article_id, $data['key'], $data['value']);
         }
         if (!empty($terms)) {
-            wp_set_post_terms($article_id, $terms, $taxonomy_cat_name);
+            wp_set_post_terms($article_id, $terms, $this->taxonomy_cat_name);
         }
         wp_send_json_success("Article ajouté avec succès");
     }
+
+    
 
     // Recuperer un fourniseur par son reference
     protected function get_supplier_by_ref($ref = null) {

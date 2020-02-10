@@ -142,6 +142,27 @@ class fzProduct {
         return $result;
     }
 
+    // Mettre a jour la marge utilisateur final (UF)
+    public function set_marge_uf($value) {
+        if ( ! is_numeric($value) ) return false;
+        $result = update_post_meta( $this->ID, '_fz_marge', $value );
+        return $result;
+    }
+
+    // Mettre a jour la marge revendeur
+    public function set_marge_dealer($value) {
+        if ( ! is_numeric($value) ) return false;
+        $result = update_post_meta( $this->ID, '_fz_marge_dealer', $value );
+        return $result;
+    }
+
+    // Mettre a jour la marge particuler
+    public function set_marge_particular($value) {
+        if ( ! is_numeric($value) ) return false;
+        $result = update_post_meta( $this->ID, '_fz_marge_particular', $value );
+        return $result;
+    }
+
     public function update_date_review() {
         $date_now = date_i18n("Y-m-d H:i:s");
         $result = update_field('date_review', $date_now, $this->ID);
