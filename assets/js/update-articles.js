@@ -17,12 +17,12 @@
                     if (_.isEmpty(args)) return false;
                     args.forEach(arg => {
                         this.articles.push({
-                            id: arg.ID,
-                            designation: arg.name,
+                            id: arg.fzproduct.ID,
+                            designation: arg.fzproduct.name,
                             qty_disp: 0, // args.total_sales
                             qty_ask: arg.quantity,
-                            cost: _.isNaN(parseInt(arg.regular_price)) ? 0 : parseInt(arg.regular_price),
-                            garentee: _.isNaN(parseInt(arg.garentee)) ? '0' : parseInt(arg.garentee), // Nombre de mois de garentie
+                            cost: _.isNaN(parseInt(arg.fzproduct.regular_price)) ? 0 : parseInt(arg.fzproduct.regular_price),
+                            garentee: _.isNaN(parseInt(arg.fzproduct.garentee)) ? '0' : parseInt(arg.fzproduct.garentee), // Nombre de mois de garentie
                             condition: 0,
                             date_review: moment().format('YYYY-MM-DD HH:mm:ss')
                         });
@@ -119,7 +119,6 @@
                                 price: parseInt(article.cost),
                                 total_sales: article.qty_disp,
                                 garentee: _.isNaN(parseInt(article.garentee)) ? 0 : parseInt(article.garentee),
-                                date_review: article.date_review,
                                 condition: parseInt(article.condition),
                             },
                             beforeSend: function (xhr) {
@@ -133,18 +132,35 @@
                     this.loading = true;
                     Swal.fire("", "Chargement en cours. Veuillez ne pas quitter ou fermer cette page.", 'info');
                     $.when.apply($, deferreds).done(function() {
-                        console.log(arguments);
-                        Swal.fire({
-                            title: 'Succes',
-                            html: "Mise a jour effectuer avec succes",
-                            type: 'success',
-                            showCancelButton: false,
-                            width: "20rem"
-                        }).then(result => {
-                            if (result.value) {
-                                window.location.href = rest_api.account_url
+                        // View response: https://pasteboard.co/IUazdBZ.png
+                        var updateResp = arguments; // Array of HTTPResponse
+                        var articleIds = _.map(updateResp, function (article) {
+                            return article[0].ID;
+                        })
+                        console.log(updateResp);
+                        var mailSuccessUpdate = $.ajax({
+                            url: rest_api.ajax_url,
+                            method: "GET",
+                            data: {
+                                action: "mail_succeffuly_update",
+                                ids: JSON.stringify(articleIds)
                             }
                         });
+                        mailSuccessUpdate.done(function() {
+                            console.log(arguments);
+                            Swal.fire({
+                                title: 'Succes',
+                                html: "Mise a jour effectuer avec succes",
+                                type: 'success',
+                                showCancelButton: false,
+                                width: "20rem"
+                            }).then(result => {
+                                if (result.value) {
+                                    window.location.href = rest_api.account_url
+                                }
+                            });
+                        });
+                        
                     }).fail(er => {
                         Swal.fire("Erreur", "Une erreur s'est produit", 'error');
                     }).always(function () {

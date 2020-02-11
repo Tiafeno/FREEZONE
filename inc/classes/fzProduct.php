@@ -51,7 +51,7 @@ class fzProduct {
      * @param  String context - default value 'view', possible value: view and edit
      * @return mixed
      */
-    public function __construct($post_id, $context = 'view') {
+    public function __construct($post_id, $context = 'view', $autoload = true) {
         if ( ! is_numeric($post_id) ) {
             $this->error = new \WP_Error('broke', "Une erreur de parametre s'est produit");
             return false;
@@ -59,6 +59,7 @@ class fzProduct {
         $post_id    = intval($post_id);
         $article    = get_post($post_id);
         $this->ID   = &$post_id;
+        if (!$autoload) return true;
         $this->name = $article->post_title;
         $this->regular_price = get_field('price', $post_id);
         $this->date_add      = get_field('date_add', $post_id);
@@ -84,6 +85,11 @@ class fzProduct {
         }
     }
 
+    public static function getInstance($post_id = 0, $context = "view", $autoload = true) {
+        if (0 === $product_id) return new \WP_Error('params', "Parametre errone (product_id)");
+        return new Self($post_id, $context, $autoload); // Autoload disable
+    }
+
     public function get_id() {
         return $this->ID;
     }
@@ -95,6 +101,10 @@ class fzProduct {
 
     public function get_user_id() {
         return (int) $this->user_id;
+    }
+
+    public function set_id($id = 0) {
+        $this->ID = intval($id);
     }
 
     /**
@@ -118,6 +128,7 @@ class fzProduct {
     public function set_price($price) {
         if ( ! is_numeric($price) ) return false;
         $result = update_field('price', intval($price), $this->ID);
+        $this->regular_price = intval($price);
         return $result;
     }
 
@@ -132,6 +143,7 @@ class fzProduct {
     public function set_garentee($garentee) {
         if (empty($garentee)) return false;
         $result = update_post_meta( $this->ID, "_fz_garentee", $garentee );
+        $this->garentee = $garentee;
         return $result;
     }
 
@@ -145,27 +157,31 @@ class fzProduct {
     // Mettre a jour la marge utilisateur final (UF)
     public function set_marge_uf($value) {
         if ( ! is_numeric($value) ) return false;
-        $result = update_post_meta( $this->ID, '_fz_marge', $value );
-        return $result;
+        $marge_uf = update_post_meta( $this->ID, '_fz_marge', $value );
+        $this->marge_uf = $value;
+        return $marge_uf;
     }
 
     // Mettre a jour la marge revendeur
     public function set_marge_dealer($value) {
         if ( ! is_numeric($value) ) return false;
-        $result = update_post_meta( $this->ID, '_fz_marge_dealer', $value );
-        return $result;
+        $marge_dealer = update_post_meta( $this->ID, '_fz_marge_dealer', $value );
+        $this->marge_dealer = $value;
+        return $marge_dealer;
     }
 
     // Mettre a jour la marge particuler
     public function set_marge_particular($value) {
         if ( ! is_numeric($value) ) return false;
-        $result = update_post_meta( $this->ID, '_fz_marge_particular', $value );
-        return $result;
+        $marge_particular = update_post_meta( $this->ID, '_fz_marge_particular', $value );
+        $this->marge_particular = $value;
+        return $marge_particular;
     }
 
     public function update_date_review() {
         $date_now = date_i18n("Y-m-d H:i:s");
         $result = update_field('date_review', $date_now, $this->ID);
+        $this->date_review = $date_now;
         return $result;
     }
 
@@ -186,45 +202,28 @@ add_action('wp_ajax_update_fz_product', function() {
     if (!$fzProduct->garentee)
         $fzProduct->set_garentee(intval($_REQUEST['garentee']));
     $fzProduct->set_condition(intval($_REQUEST['condition']));
-    $fzProduct->update_date_review();
-
-    wp_send_json_success("Success");
-
+    //$fzProduct->save();
+    wp_send_json($fzProduct);
 });
 
-add_action( 'rest_post_query', 'custom_topic_query', 10, 2 );
-function custom_topic_query( $args, $request ) {
-    if ( isset($request['search']) ) {
-        $pre_meta_query = array(
-            'relation' => 'OR'
-        );
-        $topics = explode( ',', $request['search'] );  // NOTE: Assumes comma separated taxonomies
-        for ( $i = 0; $i < count( $topics ); $i++) {
-            array_push( $pre_meta_query, array(
-                'key' => 'company_name',
-                'value' => $topics[$i],
-                'compare' => "LIKE"
-            ));
-        }
-        $meta_query = array(
-            'relation' => 'AND',
-            $pre_meta_query
-        );
-        $args[ 'meta_query' ] = $meta_query;
-    }
-
-} // end function
+add_action('wp_ajax_mail_succeffuly_update', function() {
+    if (empty($_GET['ids'])) return false;
+    $paramIds = \json_decode($_GET['ids']);
+    // Envoyer un mail
+    do_action("fz_updated_articles_success", $paramIds);
+});
 
 // Recuperer les articles en attente en format JSON
 // Utiliser dans la page de mise a jours pour les fournisseurs
 add_action('wp_ajax_get_review_articles', function() {
     global $wpdb;
-    $fzProducts = [];
+    
+    $current_user_id = get_current_user_id();
     // Recuperer le cookie aui contient les IDS des articles en attente de mise à jours
-    $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
-    if (empty($articles)) wp_send_json_success([]);
-    // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles sont considerer "en attente"
-    // a partir de 06h du matin
+    // $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
+    // if (empty($articles)) wp_send_json_success([]);
+
+    // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles du fournisseur qui sont "en attente"
     $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
     $today_date_time = new \DateTime($now);
     $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
@@ -232,50 +231,58 @@ add_action('wp_ajax_get_review_articles', function() {
 SELECT SQL_CALC_FOUND_ROWS pts.ID
 FROM $wpdb->posts AS pts
 WHERE
-    pts.ID IN ({$articles}) 
-    AND pts.post_type = 'fz_product'
+    pts.post_type = 'fz_product'
     AND pts.post_status = 'publish'
-    AND pts.ID IN (SELECT post_id
-        FROM $wpdb->postmeta
-        WHERE meta_key = 'date_review'
+    AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta
+        WHERE meta_key = 'user_id' AND cast(meta_value AS unsigned) = $current_user_id) 
+    AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'date_review'
             AND CAST(meta_value AS DATETIME) < CAST('{$today_date_time->format("Y-m-d H:i:s")}' AS DATETIME)
-        )
+    )
 SQL;
 
-    $post_products = $wpdb->get_results($sql);
-    // Boucler une a une les articles trouver dans la recherche
-    foreach ( $post_products as $_post ) {
-        $article = new \classes\fzProduct($_post->ID);
-        $product_id = $article->get_product_id();
-        $quantity = [];
-        // Récuperer les quantité demander pour cette article dans les commandes "en attente"
-        $orders = new \WP_Query([
-            'post_type' => wc_get_order_types(),
-            'post_status' => array_keys(wc_get_order_statuses()),
-            "posts_per_page" => -1,
-            'meta_query' => [
-                [
-                    'key' => 'position',
-                    'value' => 0, // Tous les commande en attente
-                    'compare' => '='
-                ]
+    $post_fzproducts = $wpdb->get_results($sql);
+    $orders = new \WP_Query([
+        'post_type' => wc_get_order_types(),
+        'post_status' => array_keys(wc_get_order_statuses()),
+        "posts_per_page" => -1,
+        'meta_query' => [
+            [
+                'key' => 'position',
+                'value' => 0, // Tous les commande en attente
+                'compare' => '='
             ]
-        ]);
-        if (empty($orders->posts)) continue;
-        // Boucler tous le commandes trouver dans la recherche
-        foreach ( $orders->posts as $order ) {
-            $current_order = new \WC_Order($order->ID);
-            $items = $current_order->get_items();
-            foreach ( $items as $item_id => $item ) {
-                $data = $item->get_data();
-                if ($data['product_id'] === $product_id) {
-                    $quantity[] = (int)$data['quantity'];
-                }
-            }
-        }
-        $article->quantity = array_sum($quantity);
-        $fzProducts[] = $article;
+        ]
+    ]);
+    if (empty($orders->posts)) wp_send_json_error("Nothing order");
+
+    // Boucler une a une tous les articles du fournisseur en attente
+    $articles = [];
+    foreach ( $post_fzproducts as $fzpost ) {
+        $fz_product = new \classes\fzProduct((int) $fzpost->ID, 'view', true);
+        $product_id = $fz_product->get_product_id();
+        $my_class = &$articles[ (int)$product_id ]; // Pointage de memoire
+        $my_class = new \stdClass();
+        $my_class->quantity = 0;
+        $my_class->fzproduct = $fz_product;
     }
-    wp_send_json_success($fzProducts);
+
+    // Récuperer les quantité demander pour cette article dans les commandes "en attente"
+    // Boucler tous le commandes trouver dans la recherche
+    foreach ( $orders->posts as $order ) {
+        $current_order = new \WC_Order($order->ID);
+        $items = $current_order->get_items();
+        foreach ( $items as $item_id => $item ) {
+            $data = $item->get_data();
+            $product_id = intval($data['product_id']);
+            $articles[ $product_id ]->quantity += (int)$data['quantity'];
+        }
+    }
+
+    // Verification de quantite s'il est egale a zero (0)
+    foreach ($articles as $product_id => $data) {
+        $data->quantity = $data->quantity === 0 ? 1 : $data->quantity;
+    }
+    $articles = array_filter( array_values($articles), function($article) { return isset($article->fzproduct); });
+    wp_send_json_success($articles);
 });
 ?>

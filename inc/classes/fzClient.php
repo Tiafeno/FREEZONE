@@ -49,6 +49,28 @@ class fzClient
         $commercial_id = get_user_meta(self::$customer_id, "responsible", true);
         return $commercial_id ? intval($commercial_id) : 0;
     }
-
-
 }
+
+// add_action( 'rest_user_query', 'custom_topic_query', 10, 2 );
+// function custom_topic_query( $args, $request ) {
+//     if ( isset($request['search']) ) {
+//         $pre_meta_query = array(
+//             'relation' => 'OR'
+//         );
+//         $topics = explode( ' ', $request['search'] );  // NOTE: Assumes comma separated taxonomies
+//         for ( $i = 0; $i < count( $topics ); $i++) {
+//             array_push( $pre_meta_query, array(
+//                 'key' => 'company_name',
+//                 'value' => $topics[$i],
+//                 'compare' => "LIKE"
+//             ));
+//         }
+//         $meta_query = array(
+//             'relation' => 'AND',
+//             $pre_meta_query
+//         );
+//         $args[ 'meta_query' ] = $meta_query;
+//     }
+//     return $args;
+
+// } 
