@@ -202,7 +202,7 @@ add_action('wp_ajax_update_fz_product', function() {
     if (!$fzProduct->garentee)
         $fzProduct->set_garentee(intval($_REQUEST['garentee']));
     $fzProduct->set_condition(intval($_REQUEST['condition']));
-    //$fzProduct->save();
+    $fzProduct->save();
     wp_send_json($fzProduct);
 });
 
