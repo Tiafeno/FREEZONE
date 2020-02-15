@@ -32,19 +32,22 @@ class apiQuotation
         $search_array = explode(' ', $search);
         $search_regex = implode('|', $search_array);
         $sql = "SELECT SQL_CALC_FOUND_ROWS us.ID from {$wpdb->users} as us 
-        where us.ID IN (select user_id from {$wpdb->usermeta} where meta_key = 'free_capabilities' and meta_value LIKE '%fz-supplier%') and
+        where 
         us.ID IN (select m.user_id from {$wpdb->usermeta} as m where 
             (m.meta_key = 'first_name' and m.meta_value REGEXP '^({$search_regex})') OR
             (m.meta_key = 'last_name' and m.meta_value REGEXP '^({$search_regex})') OR
             (m.meta_key = 'company_name' and m.meta_value REGEXP '^({$search_regex})') 
-            )";
+            ) LIMIT 5";
         $results = $wpdb->get_results($sql);
         $request = new WP_REST_Request();
         $request->set_param('context', 'edit');
         foreach ($results as $result) {
             $usr_controller = new WP_REST_Users_Controller();
             $cs_response = $usr_controller->prepare_item_for_response(new \WP_User((int)$result->ID), $request);
-            $responses[]= $cs_response->data;
+            $data = $cs_response->data;
+            if (in_array($data['roles'][0], ['fz-company', 'fz-particular'])) {
+                $responses[] = $data;
+            }
         }
         $wpdb->flush();
         wp_send_json($responses);
