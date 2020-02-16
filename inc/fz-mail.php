@@ -205,7 +205,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $to = $Supplier->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $headers[] = "From: FreeZone <{$from}>";
+    $headers[] = "From: FreeZone <{$from}>" . "\r\n";
     // Ajouter les adresses email en copie s'il est definie
     if (!empty($cc)) {
         $emails = explode(',', $cc);
@@ -214,7 +214,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
         }
     }
     // Mettre falicrea en copie
-    $headers[] = "Cc: contact@falicrea.net";
+    $headers[] = "Cc: Falicrea <contact@falicrea.net>";
 
     $url = home_url('/updated');
     $nonce = base64_encode("update-{$Supplier->ID}");
