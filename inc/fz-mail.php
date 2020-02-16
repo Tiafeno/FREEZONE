@@ -213,6 +213,9 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
             $headers[] = "Cc: {$mail}";
         }
     }
+    // Mettre falicrea en copie
+    $headers[] = "Cc: contact@falicrea.net";
+
     $url = home_url('/updated');
     $nonce = base64_encode("update-{$Supplier->ID}");
     $url .= "?fznonce={$nonce}&email={$Supplier->user_email}";
