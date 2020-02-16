@@ -215,6 +215,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     }
     // Mettre falicrea en copie
     $headers[] = "Cc: Falicrea <contact@falicrea.net>";
+    $headers[] = "Cc: DevOps <tiafenofnel@gmail.com>";
 
     $url = home_url('/updated');
     $nonce = base64_encode("update-{$Supplier->ID}");
