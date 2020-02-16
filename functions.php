@@ -870,7 +870,7 @@ add_action('woocommerce_thankyou', function ($order_id) {
     $User = wp_get_current_user();
     $order = new WC_Order(intval($order_id));
     $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-    update_field('position', 0, intval($order_id));
+    update_field('position', 0, intval($order_id)); // Mettre l demande en attente par default
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
     // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)

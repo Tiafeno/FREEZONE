@@ -223,6 +223,31 @@ add_action('wp_ajax_get_review_articles', function() {
     // $articles = isset($_GET['articles']) ? $_GET['articles'] : '';
     // if (empty($articles)) wp_send_json_success([]);
 
+    $product_ids = [];
+    $orders = new \WP_Query([
+        'post_type' => "shop_order",
+        'post_status' => array_keys(wc_get_order_statuses()),
+        "posts_per_page" => -1,
+        'meta_query' => [
+            [
+                'key' => 'position',
+                'value' => 0, // Tous les commande en attente
+                'compare' => '=',
+                'type' => "NUMERIC"
+            ]
+        ]
+    ]);
+    if (empty($orders->posts)) wp_send_json_error("Nothing order");
+
+    foreach ( $orders->posts as $order ) {
+        $current_order = new \WC_Order($order->ID);
+        foreach ( $current_order->get_items() as $item_id => $item ) {
+            $data = $item->get_data();
+            $product_ids[] = intval($data['product_id']);
+        }
+    }
+    $product_ids_strings = implode(',', $product_ids);
+
     // Recuperer la date d'aujourd'hui depuis 06h du matin, car tous les articles du fournisseur qui sont "en attente"
     $now = date_i18n('Y-m-d H:i:s'); // Date actuel depuis wordpress
     $today_date_time = new \DateTime($now);
@@ -233,6 +258,7 @@ FROM $wpdb->posts AS pts
 WHERE
     pts.post_type = 'fz_product'
     AND pts.post_status = 'publish'
+    and pts.ID in (select post_id from $wpdb->postmeta where meta_key = "product_id" and cast(meta_value as unsigned) in ($product_ids_strings))
     AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta
         WHERE meta_key = 'user_id' AND cast(meta_value AS unsigned) = $current_user_id) 
     AND pts.ID IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'date_review'
@@ -241,20 +267,6 @@ WHERE
 SQL;
 
     $post_fzproducts = $wpdb->get_results($sql);
-    $orders = new \WP_Query([
-        'post_type' => wc_get_order_types(),
-        'post_status' => array_keys(wc_get_order_statuses()),
-        "posts_per_page" => -1,
-        'meta_query' => [
-            [
-                'key' => 'position',
-                'value' => 0, // Tous les commande en attente
-                'compare' => '='
-            ]
-        ]
-    ]);
-    if (empty($orders->posts)) wp_send_json_error("Nothing order");
-
     // Boucler une a une tous les articles du fournisseur en attente
     $articles = [];
     foreach ( $post_fzproducts as $fzpost ) {
@@ -268,15 +280,15 @@ SQL;
 
     // Récuperer les quantité demander pour cette article dans les commandes "en attente"
     // Boucler tous le commandes trouver dans la recherche
-    foreach ( $orders->posts as $order ) {
-        $current_order = new \WC_Order($order->ID);
-        $items = $current_order->get_items();
-        foreach ( $items as $item_id => $item ) {
-            $data = $item->get_data();
-            $product_id = intval($data['product_id']);
-            $articles[ $product_id ]->quantity += (int)$data['quantity'];
-        }
-    }
+    // foreach ( $orders->posts as $order ) {
+    //     $current_order = new \WC_Order($order->ID);
+    //     $items = $current_order->get_items();
+    //     foreach ( $items as $item_id => $item ) {
+    //         $data = $item->get_data();
+    //         $product_id = intval($data['product_id']);
+    //         $articles[ $product_id ]->quantity += (int)$data['quantity'];
+    //     }
+    // }
 
     // Verification de quantite s'il est egale a zero (0)
     foreach ($articles as $product_id => $data) {
