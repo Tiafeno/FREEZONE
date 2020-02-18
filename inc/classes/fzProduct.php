@@ -224,6 +224,7 @@ add_action('wp_ajax_get_review_articles', function() {
     // if (empty($articles)) wp_send_json_success([]);
 
     $product_ids = [];
+    $allQuantity = [];
     $orders = new \WP_Query([
         'post_type' => "shop_order",
         'post_status' => array_keys(wc_get_order_statuses()),
@@ -243,7 +244,13 @@ add_action('wp_ajax_get_review_articles', function() {
         $current_order = new \WC_Order($order->ID);
         foreach ( $current_order->get_items() as $item_id => $item ) {
             $data = $item->get_data();
-            $product_ids[] = intval($data['product_id']);
+            $product_id = intval($data['product_id']);
+            $product_ids[] = $product_id;
+            if ( ! isset($allQuantity[$product_id]) ) {
+                $allQuantity[$product_id] = (int) $data['quantity'];
+                continue;
+            }
+            $allQuantity[$product_id] += (int) $data['quantity'];
         }
     }
     $product_ids_strings = implode(',', $product_ids);
@@ -271,10 +278,10 @@ SQL;
     $articles = [];
     foreach ( $post_fzproducts as $fzpost ) {
         $fz_product = new \classes\fzProduct((int) $fzpost->ID, 'view', true);
-        $product_id = $fz_product->get_product_id();
-        $my_class = &$articles[ (int)$product_id ]; // Pointage de memoire
+        $product_id = (int) $fz_product->get_product_id();
+        $my_class = &$articles[ $product_id ]; // Pointage de memoire
         $my_class = new \stdClass();
-        $my_class->quantity = 0;
+        $my_class->quantity = $allQuantity[ $product_id ];
         $my_class->fzproduct = $fz_product;
     }
 
