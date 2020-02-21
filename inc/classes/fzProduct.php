@@ -247,10 +247,10 @@ add_action('wp_ajax_get_review_articles', function() {
             $product_id = intval($data['product_id']);
             $product_ids[] = $product_id;
             if ( ! isset($allQuantity[$product_id]) ) {
-                $allQuantity[$product_id] = (int) $data['quantity'];
+                $allQuantity[ $product_id ] = (int) $data['quantity'];
                 continue;
             }
-            $allQuantity[$product_id] += (int) $data['quantity'];
+            $allQuantity[ $product_id ] += (int) $data['quantity'];
         }
     }
     $product_ids_strings = implode(',', $product_ids);

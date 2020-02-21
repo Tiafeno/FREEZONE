@@ -86,6 +86,33 @@ class fzSav
 }
 
 add_action('init', function() {
+    $register_metas = ['has_edit', 'editor_accessorie', 'editor_other_accessorie_desc'];
+    // Reference: https://developer.wordpress.org/reference/functions/register_meta/
+    register_meta('post', "has_edit", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'boolean',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_accessorie", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'number',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_other_accessorie_desc", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_breakdown", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+
     // Envoyer un mail (Nouvelle article SAV)
     add_action('wp_ajax_new_sav', function() {
         $no_reply = _NO_REPLY_;
