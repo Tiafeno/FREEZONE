@@ -148,6 +148,7 @@ $sidebar_configs = yozi_get_blog_layout_configs();
                                                                 <?php foreach ($gd->categorie as $ctg): ?>
                                                                 <a href="<?= get_term_link( $ctg->term_id, 'product_cat' ) ?>" rel="tag"><?= $ctg->name ?></a>
                                                                 <?php endforeach; ?>
+                                                                <?php if (empty($gd->categorie)) echo "Aucun"; ?>
                                                             </span>
                                                         </div>
 
@@ -157,7 +158,7 @@ $sidebar_configs = yozi_get_blog_layout_configs();
                                                     <div class="summary entry-summary">
                                                         <!--  -->
                                                         <p class="price unit-cost" style="color: #e23e1d;"><?= $gd->price ?></p>
-                                                        <p>annonce publier par <?= $author->last_name ?> <?= $author->first_name ?></p>
+                                                        <p>Annonce publier par <?= $author->last_name ?> <?= $author->first_name ?></p>
                                                         <div class="apus-discounts"> 
                                                             <h3 class="title"> <span class="icon"><i class="ti-email"></i></span> Contact</h3> 
                                                             <div class="productinfo-show-discounts">

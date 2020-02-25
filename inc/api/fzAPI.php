@@ -288,6 +288,20 @@ class fzAPI
                 ],
             ]);
 
+            // Mettre a jour l'article
+            register_rest_route('api', '/import/csv/update', [
+                [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => function (\WP_REST_Request $rq) {
+                        $Import = new \apiImport();
+                        $Import->import_update_by_csv();
+                    },
+                    'permission_callback' => function ($data) {
+                        return current_user_can('delete_posts');
+                    }
+                ],
+            ]);
+
             register_rest_route('api', '/export/csv', [
                 [
                     'methods' => \WP_REST_Server::READABLE,

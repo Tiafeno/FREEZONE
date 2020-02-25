@@ -45,7 +45,6 @@ class FZ_Item_Order {
         $discount = wc_get_order_item_meta($item_id, 'discount', true);
         $discount_type = wc_get_order_item_meta($item_id, 'discount_type', true); // 1: Remise, 0: Aucun
         $stock_request = wc_get_order_item_meta($this->item_id, 'stock_request', true);
-
         $this->order_id = intval($order_id);
         $this->item_id = (int)$item_id;
         $order = new \WC_Order($this->order_id);
@@ -84,6 +83,7 @@ class FZ_Item_Order {
         return $lines;
     }
 
+    // Prix pour la remise
     public function discount_percent_fn () {
         return (intval($this->price) * $this->discount) / 100;
     }
@@ -103,7 +103,8 @@ class FZ_Item_Order {
     public function subtotal_net_fn () {
         $qty = 0;
         foreach ($this->meta_supplier_lines_fn() as $line) {
-            switch ($line->condition['key']) {
+            $condition = intval($line->condition['key']);
+            switch ($condition) {
                 case 0: $qty += intval($line->get); break;
                 default: break;
             }
@@ -131,8 +132,6 @@ class FZ_Item_Order {
         $qty = (0 === $qty) ? $this->quantity : $qty;
         return "{$qty} <span style='color: red'>{$ui}</span>";
     }
-
-
 } /* end of class FZ_Item_Order */
 
 ?>

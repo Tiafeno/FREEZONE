@@ -205,7 +205,7 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
     $to = $Supplier->user_email;
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $headers[] = "From: FreeZone <{$from}>";
+    $headers[] = "From: FreeZone <{$from}>" . "\r\n";
     // Ajouter les adresses email en copie s'il est definie
     if (!empty($cc)) {
         $emails = explode(',', $cc);
@@ -213,6 +213,10 @@ add_action('fz_submit_articles_for_validation', function ($supplier_id, $subject
             $headers[] = "Cc: {$mail}";
         }
     }
+    // Mettre falicrea en copie
+    $headers[] = "Cc: Falicrea <contact@falicrea.net>";
+    $headers[] = "Cc: DevOps <tiafenofnel@gmail.com>";
+
     $url = home_url('/updated');
     $nonce = base64_encode("update-{$Supplier->ID}");
     $url .= "?fznonce={$nonce}&email={$Supplier->user_email}";
@@ -300,28 +304,29 @@ add_action('fz_received_order', function ($order_id) {
  */
 add_action('fz_updated_articles_success', function ($_articles, $supplier_id = 0) {
     global $Engine;
-    $article_ids = explode(',', $_articles);
+    $article_ids = is_array($_articles) ? $_articles : explode(',', $_articles);
     $articles = array_map(function ($id) { return new \classes\fzProduct(intval($id)); }, $article_ids);
     $from = "no-reply@freezone.click";
-    $to = implode(',', apply_filters( 'get_responsible', ['administrator'] ));
+    $to = implode(',', apply_filters( 'get_responsible', ['administrator', 'editor'] ));
     $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: FreeZone <{$from}>";
-    $supplier_reference = '';
+    // Verifier si le fournisseur est specifier
     if ( 0 !== $supplier_id && is_numeric($supplier_id)) {
         $supplier = new \classes\fzSupplier($supplier_id);
-        $supplier_reference = $supplier->reference;
     } else {
-        return false;
+        // Recuperer l'utilisateur connecter sur le site car il est le fournisseur
+        $current_user_id = get_current_user_id();
+        $supplier = new \classes\fzSupplier($current_user_id);
     }
     $url = "https://admin.freezone.click";
     $content = $Engine->render('@MAIL/fz_updated_articles_success.html', [
-        'reference' => $supplier_reference,
+        'supplier' => $supplier,
         'articles' => $articles,
         'url' => $url,
         'Phone' => freezone_phone_number
     ]);
-    $subject = "Un fournisseur {$supplier_reference} à mis à jour son catalogue d'article";
+    $subject = "Un fournisseur {$supplier->reference} à mis à jour son catalogue d'article";
     wp_mail($to, $subject, $content, $headers);
 }, 10, 2);
 

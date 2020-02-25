@@ -32,7 +32,7 @@
             {% for gd in gooddeals %}
             <tr class="">
                 <td style="padding-left: 15px" data-title="Commande">
-                    <a href="?edited={{gd.ID}}">{{gd.post_title}}</a>
+                    <a href="?module=edit&id={{gd.ID}}">{{gd.post_title}}</a>
                 </td>
                 <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date">
                     <span class="currency">{{gd.price}}</span>
@@ -41,7 +41,7 @@
                     {{gd.post_status is same as('publish') ? 'Publier' : 'En attente'}}
                 </td>
                 <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status">
-                    <a href="?edited={{gd.ID}}" class="btn-outline-success btn btn-sm">Modifier</a>
+                    <a href="?module=edit&id={{gd.ID}}" class="btn-outline-success btn btn-sm">Modifier</a>
                 </td>
             </tr>
             {% endfor %}

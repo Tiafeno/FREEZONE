@@ -48,8 +48,12 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-    {% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
-    {% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
+    
+    {% set TVA_PRICE = (TVA * order.total_net()) / 100 %}
+    {% set TOTAL_WITH_TAX = order.total_net() + TVA_PRICE %}
+    {% set TOTAL_NET = order.total_net() %}
+    {% set TOTAL = (TOTAL_NET < define.min_cost_with_transport and TOTAL_NET is not same as(0)) ? define.cost_transport + TOTAL_WITH_TAX : TOTAL_WITH_TAX  %}
+    
     <table class="woocommerce-orders-table shop_table_responsive shop_table account-orders-table">
         <thead>
             <tr>
@@ -71,6 +75,7 @@
                 </th>
             </tr>
         </thead>
+
         <tbody>
             {% for line in quote.lines %}
             <tr class="">
@@ -96,18 +101,19 @@
             </tr>
             {% endfor %}
         </tbody>
+
         <tfoot>
-            {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
-            <tr style="background-color: #FFFCE3;">
-                <th colspan="4" class="pl-4" style="text-align: left">
-                    <p style="font-weight: bold">Frais de transport </p>
-                    <div style="margin-top: 15px; font-weight: normal; font-size: 12px;">
-                        - Pour tout achat de moins de 100.000 HT prévoir des frais de transport de l’ordre de 12.600 HT <br>
-                        - Pour les clients basés en province le transport est à leur charge, cependant la livraison chez leur transporteur est gratuit
-                    </div>
-                </th>
-                <th class="currency">{{define.cost_transport}}</th>
-            </tr>
+            {% if TOTAL_NET > 0 and TOTAL_NET < define.min_cost_with_transport %}
+                <tr style="background-color: #FFFCE3;">
+                    <th colspan="4" class="pl-4" style="text-align: left">
+                        <p style="font-weight: bold">Frais de transport </p>
+                        <div style="margin-top: 15px; font-weight: normal; font-size: 12px;">
+                            - Pour tout achat de moins de 100.000 HT prévoir des frais de transport de l’ordre de 12.600 HT <br>
+                            - Pour les clients basés en province le transport est à leur charge, cependant la livraison chez leur transporteur est gratuit
+                        </div>
+                    </th>
+                    <th class="currency">{{define.cost_transport}}</th>
+                </tr>
             {% endif %}
             <tr style="background-color: #ebedee;">
                 <th colspan="4" class="pl-4" style="text-align: left">
@@ -121,29 +127,29 @@
 
     <div style="margin-top: 40px"></div>
 
-    {% if not TOTAL == 0 %}
-    <table class="table table-bordered ">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Total HT Brut</th>
-                <th scope="col">Total Net</th>
-                <th scope="col">TVA {{ TVA }}%</th>
-                <th scope="col">Montant Taxe</th>
-                <th scope="col">NET A PAYER</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="currency">{{order.total_ht()}}</td>
-                <td class="currency">{{order.total_net()}}</td>
-                <td>{{ TVA }}%</td>
-                <td class="currency">{{ TOTAL_NET }}</td>
-                <td>
-                    <span style="font-size: 14px" class="currency">{{ TOTAL }}</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    {% if TOTAL is not same as(0) %}
+        <table class="table table-bordered ">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Total HT Brut</th>
+                    <th scope="col">Total Net</th>
+                    <th scope="col">TVA</th>
+                    <th scope="col">Montant Taxe</th>
+                    <th scope="col">NET A PAYER</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="currency">{{order.total_ht()}}</td>
+                    <td class="currency">{{order.total_net()}}</td>
+                    <td>{{ TVA }}%</td>
+                    <td class="currency">{{ TVA_PRICE }}</td>
+                    <td>
+                        <span style="font-size: 14px" class="currency">{{ TOTAL }}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     {% endif %}
     <div>
         {% if quote.position is not same as(3) and quote.position is not same as(2) %}

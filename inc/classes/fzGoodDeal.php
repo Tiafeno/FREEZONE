@@ -18,13 +18,28 @@ class fzGoodDeal
             $this->$key = $value;
 
         $this->price  = get_post_meta($post_id, 'gd_price', true);
-        $this->gallery = get_post_meta($post_id, 'gd_gallery', true); // return array of ids
+        $this->gallery = get_post_meta($post_id, 'gd_gallery', true); // return string parse by ","
         if (!is_array($this->gallery)) {
             $this->gallery = explode(',', $this->gallery);
         }
         $this->post_author_annonce = (int) get_post_meta($post_id, 'gd_author', true);
         $this->categorie = wp_get_post_terms( $this->ID, 'product_cat', [] );
+    }
 
+    public function set_title($title) {
+        $postarr = ['ID' => $this->ID, 'post_title' => $title];
+        $postupdate = wp_update_post($postarr, true);
+        if (is_wp_error($postupdate) || 0 === $postupdate) return false;
+        return true;
+    }
+
+    public function set_price($price) {
+        return  update_post_meta($this->ID, "gd_price", $price);
+    }
+
+    public function set_gallery($gallery) {
+        if (!is_array($gallery)) return false;
+        return update_post_meta($this->ID, 'gd_gallery', json_encode($gallery));
     }
 
     public function get_author() {
@@ -72,6 +87,7 @@ add_action('init', function () {
         'show_in_rest' => true,
         'query_var'    => true
     ]);
+    // Register taxonomy for this post type in fzPTFreezone.php
 }, 10);
 
 add_action('rest_api_init', function () {

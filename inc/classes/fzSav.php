@@ -64,6 +64,10 @@ class fzSav
             $this->date_add = $post_sav->post_date;
     }
 
+    public static function getInstance($sav_id, $api = false) {
+        return new self((int) $sav_id, $api);
+    }
+
     // Recupéré l'identifiannt du client
     public function get_customer_id() {
         $id = get_field("customer", $this->id);
@@ -86,6 +90,33 @@ class fzSav
 }
 
 add_action('init', function() {
+    $register_metas = ['has_edit', 'editor_accessorie', 'editor_other_accessorie_desc'];
+    // Reference: https://developer.wordpress.org/reference/functions/register_meta/
+    register_meta('post', "has_edit", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'boolean',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_accessorie", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'number',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_other_accessorie_desc", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+    register_meta('post', "editor_breakdown", [
+        'object_subtype' => 'fz_sav',
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+    ]);
+
     // Envoyer un mail (Nouvelle article SAV)
     add_action('wp_ajax_new_sav', function() {
         $no_reply = _NO_REPLY_;
@@ -170,7 +201,7 @@ add_action('rest_api_init', function() {
     foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [
             'update_callback' => function ($value, $object, $field_name) {
-
+                if (!in_array($field_name, fzSav::$fields)) return false;
                 switch ($field_name) {
                     case 'status_sav':
 
@@ -217,10 +248,8 @@ add_action('rest_api_init', function() {
             },
             'get_callback' => function ($object, $field_name) {
                 if ($field_name === 'customer' ) {
-                    $fzSAV = new fzSav($object['id']);
-                    return $fzSAV->customer;
+                    return fzSav::getInstance($object['id'])->customer;
                 }
-
                 return get_field($field_name, $object['id']);
             }
         ]);

@@ -11,8 +11,11 @@ use classes\fzSupplier;
 
 class apiSupplier
 {
-    public function __construct()
-    { }
+    public function __construct() {
+        
+    }
+
+
     public function collect_suppliers(WP_REST_Request $rq)
     {
         $length = (int) $_POST['length'];
@@ -162,7 +165,7 @@ class apiSupplier
                 $today_date_time = new DateTime($today);
                 $today_date_time->setTime(6, 0, 0); // Ajouter 06h du matin
 
-                $sql = <<<SLQ
+                $sql = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->users as users
 WHERE users.ID IN (
     SELECT CAST(pm2.meta_value AS SIGNED) FROM $wpdb->posts as pts
@@ -177,7 +180,7 @@ WHERE users.ID IN (
     GROUP BY pm.meta_value HAVING COUNT(*) > 0
 ) 
 LIMIT $length OFFSET $start
-SLQ;
+SQL;
                 $results = $wpdb->get_results($sql);
                 $count_sql = <<<CPR
 SELECT FOUND_ROWS()
@@ -210,3 +213,4 @@ CPR;
         }
     }
 }
+new apiSupplier();

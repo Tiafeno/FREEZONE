@@ -698,12 +698,21 @@ SQL;
 add_action('woocommerce_account_gd_endpoint', function () {
     global $Engine;
     if ($_GET) {
-        if (isset($_GET['edited'])) {
-            // TODO: Modifier une annonce d'un client
-            echo $Engine->render('@WC/gd/gd-edit.html');
-            return true;
+        if (isset($_GET['module'])) {
+            $module = $_GET['module'];
+            switch ($module) {
+                case 'edit':
+                    do_action('fz_annonce_edit', (int) $_GET['id']);
+                    return;
+                break;
+                case 'update':
+                    do_action('fz_annonce_update', (int) $_GET['id']);
+                break;
+                default: break;
+            }
         }
     }
+
     $user = wp_get_current_user();
     $args = [
         'post_type' => 'good-deal',
@@ -722,6 +731,21 @@ add_action('woocommerce_account_gd_endpoint', function () {
     }, $the_query->posts);
     echo $Engine->render('@WC/gd/gd-lists.html', ['gooddeals' => $good_deals]);
 }, 10);
+
+// Action for annonce
+add_action('fz_annonce_edit', function($id) {
+    if (!is_numeric($id)) return;
+    global $Engine;
+    $good_deal = new \classes\fzGoodDeal($id);
+    echo $Engine->render('@WC/gd/gd-edit.html', ['annonce' => $good_deal]);
+}, 10, 1);
+
+add_action('fz_annonce_update', function($id) {
+    if (!is_numeric($id)) return;
+    // TODO: Update annonce 
+
+    do_action('fz_annonce_edit', $id);
+}, 10, 1);
 
 /**
  * Ajouter un client via le formulaire (form-login.php)
@@ -870,7 +894,7 @@ add_action('woocommerce_thankyou', function ($order_id) {
     $User = wp_get_current_user();
     $order = new WC_Order(intval($order_id));
     $items = $order->get_items(); // https://docs.woocommerce.com/wc-apidocs/class-WC_Order_Item.html (WC_Order_Item_Product)
-    update_field('position', 0, intval($order_id));
+    update_field('position', 0, intval($order_id)); // Mettre l demande en attente par default
     update_field('date_add', date_i18n('Y-m-d H:i:s'), intval($order_id));
     update_field('user_id', $User->ID, intval($order_id));
     // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
