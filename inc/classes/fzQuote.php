@@ -81,8 +81,8 @@ class FZ_Quote extends \WC_Order {
 
     public function total_net() {
         $all_total_net = array_map(function(FZ_Item_Order $item) {
-            $total = $item->subtotal_net_fn();
-            return ($total < $this->min_cost_with_transport && $total !== 0) ? ($this->cost_transport + $total) : $total;
+            return $item->subtotal_net_fn();
+            //return ($total < $this->min_cost_with_transport && $total !== 0) ? ($this->cost_transport + $total) : $total;
         }, $this->fzItems);
         return array_sum($all_total_net);
     }

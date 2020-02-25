@@ -60,7 +60,6 @@ yozi_render_breadcrumbs();
                     methods: {
                         handleFileChange: function (event, index) {
                             const files = event.target.files;
-
                             let result = _.find(this.photos, photo => {
                                 if (_.isObject(photo)) {
                                     return photo.index === index;
@@ -68,7 +67,6 @@ yozi_render_breadcrumbs();
                                     return false;
                                 }
                             });
-
                             if (_.isUndefined(result)) {
                                 this.photos.push({index: index, file: files[0]});
                             } else {
@@ -76,11 +74,9 @@ yozi_render_breadcrumbs();
                                     if (photo.index === index) {
                                         photo.file = files[0];
                                     }
-
                                     return photo;
                                 });
                             }
-
                         },
                         fnAjax: function (data) {
                             return $.ajax({
@@ -110,7 +106,6 @@ yozi_render_breadcrumbs();
                             const self = this;
                             e.preventDefault();
                             this.errors = [];
-
                             if (_.isEmpty(this.title)) {
                                 this.errors.push('Le titre est obligatoire');
                             }
@@ -120,7 +115,6 @@ yozi_render_breadcrumbs();
                             if (_.isEmpty(this.photos)) {
                                 this.errors.push("Veuillez ajouter une image pour votre annonce");
                             }
-
                             if (this.errors.length) {
                                 window.scrollTo(0, 0);
                                 return true;
@@ -128,7 +122,6 @@ yozi_render_breadcrumbs();
 
                             this.loading = true;
                             $('button[type="submit"]').text('Chargement ...');
-
                             let upload = {};
                             for (let item of this.photos) {
                                 let form = new FormData();
@@ -136,17 +129,13 @@ yozi_render_breadcrumbs();
                                 form.append('title', this.title);
                                 upload['f' + item.index] = this.fnAjax(form);
                             }
-
                             $.when(upload).done((results) => {
-
                                 async function createGd(responses) {
                                     var ids = [];
-
                                     for (let key of Object.keys(responses)) {
                                         let gDeal = await responses[key];
                                         ids.push(gDeal.id);
                                     }
-
                                     $.ajax({
                                         method: "POST",
                                         url: rest_api.rest_url + 'wp/v2/good-deal',
@@ -184,9 +173,10 @@ yozi_render_breadcrumbs();
                                         }
                                     });
                                 }
-
                                 createGd(results)
-
+                            })
+                            .fail(resp => {
+                                Swal.fire("Error", "Une erreur c'est produit pendant l'envoie des images", 'warning');
                             });
 
 
@@ -227,7 +217,7 @@ yozi_render_breadcrumbs();
                                                 method="post">
                                             <p>Publiez votre annonce gratuitement en 2 minutes !</p>
 
-                                            <p v-if="errors.length">
+                                            <p v-if="errors.length" style="color: red">
                                                 <b>Veuillez corriger les erreurs suivantes:</b>
                                             <ul style="margin-bottom: 20px;font-size: 12px">
                                                 <li class="error" v-for="error in errors">{{ error }}</li>

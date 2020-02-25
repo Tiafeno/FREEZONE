@@ -48,8 +48,11 @@
         </tbody>
     </table>
     <div style="margin-top: 40px"></div>
-    {% set TOTAL = (TVA * order.total_net()) / 100 + order.total_net() %}
-    {% set TOTAL_NET = (TVA * order.total_net()) / 100 %}
+    {% set TVA_PRICE = (TVA * order.total_net()) / 100 %}
+    {% set TOTAL_WITH_TAX = order.total_net() + TVA_PRICE %}
+    {% set TOTAL_NET = order.total_net() %}
+    {% set TOTAL = (TOTAL_NET < define.min_cost_with_transport and TOTAL_NET is not same as(0)) ? define.cost_transport + TOTAL_WITH_TAX : TOTAL_WITH_TAX  %}
+    
     <table class="woocommerce-orders-table shop_table_responsive shop_table account-orders-table">
         <thead>
             <tr>
@@ -97,7 +100,7 @@
             {% endfor %}
         </tbody>
         <tfoot>
-            {% if TOTAL > 0 and TOTAL < define.min_cost_with_transport%}
+            {% if TOTAL_NET > 0 and TOTAL_NET < define.min_cost_with_transport %}
             <tr style="background-color: #FFFCE3;">
                 <th colspan="4" class="pl-4" style="text-align: left">
                     <p style="font-weight: bold">Frais de transport </p>
@@ -137,7 +140,7 @@
                 <td class="currency">{{order.total_ht()}}</td>
                 <td class="currency">{{order.total_net()}}</td>
                 <td>{{ TVA }}%</td>
-                <td class="currency">{{ TOTAL_NET }}</td>
+                <td class="currency">{{ TVA_PRICE }}</td>
                 <td>
                     <span style="font-size: 14px" class="currency">{{ TOTAL }}</span>
                 </td>

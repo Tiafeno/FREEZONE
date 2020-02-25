@@ -84,6 +84,7 @@ class FZ_Item_Order {
         return $lines;
     }
 
+    // Prix pour la remise
     public function discount_percent_fn () {
         return (intval($this->price) * $this->discount) / 100;
     }
