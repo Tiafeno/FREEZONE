@@ -91,7 +91,6 @@ class FZ_Quote extends \WC_Order {
         $all_total_ht = array_map(function(FZ_Item_Order $item) {
             return $item->price_fn() * $item->quantity;
         }, $this->fzItems);
-
         return array_sum($all_total_ht);
     }
 
