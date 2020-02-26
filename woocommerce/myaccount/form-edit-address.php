@@ -51,7 +51,7 @@ do_action( 'woocommerce_before_edit_account_address_form' ); ?>
                 <div class="col-md-6">
                     <?php if ($role === "fz-company"):
                             $company = \classes\fzClient::initializeClient($customer_id)->get_client();
-                            $services = new fzServices();
+                            $services = new \Services\fzServices();
                             $sector_activity = $services->get_sector_activity(); // Array of sector activity
                         ?>
                     <div id="section-company" >

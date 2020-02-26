@@ -1,4 +1,5 @@
 <?php
+namespace Services;
 /**
  * Created by IntelliJ IDEA.
  * User: you-f
@@ -133,6 +134,14 @@ class fzServices
     public function __construct () { }
     public function get_sector_activity() {
         return $this->sector_activity;
+    }
+    public static function get_categories() {
+        $taxonomies = get_terms( array(
+            'taxonomy' => 'product_cat',
+            'hide_empty' => false,
+            'number' => ''
+        ) );
+        return $taxonomies;
     }
 
 

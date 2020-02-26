@@ -359,8 +359,8 @@ add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     global $Engine;
     $from      = "no-reply@freezone.click"; 
     $to        = implode(',', apply_filters( 'get_responsible', ['author', 'administrator'] ));
-    $user = $user_id === O  ? wp_get_current_user() : new WP_User(intval($user_id));
-    $sav = new classes\fzSav($sav_id);
+    $user = ($user_id === O)  ? wp_get_current_user() : new WP_User(intval($user_id));
+    $sav = new \classes\fzSav($sav_id);
     $message   = "Bonjour, <br><br>Un client <b>{$user->first_name} {$user->last_name}</b> aimerait savoir l'état 
     de son produit <b>«{$sav->product}»</b> d'identification <b>N°{$sav->id}</b> en SAV";
     $message   = html_entity_decode($message);

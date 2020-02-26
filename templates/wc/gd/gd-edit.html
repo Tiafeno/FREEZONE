@@ -1,1 +1,75 @@
-<p>En construction</p>
+
+<form id="form-gd-edit" action="?module=update&id={{annonce.ID}}" method="post">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="mark">Titre <span style="color:red">*</span></label>
+                <input type="text" name="title" value="{{annonce.post_title}}" class="form-control radius-0"
+                    placeholder="Titre de votre annonce">
+            </div>
+            <div class="form-group">
+                <label for="mark">Categorie</label>
+                <select name="categorie" class="form-control radius-0">
+                    <option value="">Selectionner une categorie</option>
+                    {% for categorie in categories %}
+                    <option value="{{categorie.term_id}}"
+                        {{annonce.get_categorie_id() is same as (categorie.term_id) ? "selected='selected': ''"}}>
+                        {{categorie.name}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+                <div class="form-group">
+                    <label for="mark">Prix de vente (AR) </label>
+                    <input min="0" type="number" value="{{annonce.price}}" class="form-control radius-0" name="price"
+                        placeholder="Prix">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description <span style="color:red">*</span></label>
+                    <textarea class="form-control radius-0" rows="8"
+                        name="description">{{annonce.post_content}}</textarea>
+                </div>
+        </div>
+        <div class="col-sm-6">
+            <label>Images</label>
+            <div>
+                {% for url in annonce.get_gallery_thumbnail() %}
+                    <img src="{{url}}" width="125" style="border: 2px solid  #374387; margin: 4px" />
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 hidden request-delete" style="margin-bottom: 5px;">
+            <strong>Voulez-vous vraiment supprimer cette annnonce? <a href="?module=delete&id={{annonce.ID}}" class="btn btn-sm btn-danger">Oui</a></strong>
+        </div>
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary radius-0">
+                Mettre a jour
+            </button>
+            <button type="button" class="btn btn-danger radius-0" id="btn-delete-annonce">
+                Supprimer
+            </button>
+        </div>
+    </div>
+</form>
+
+<style type="text/css">
+    #form-gd-edit input, #form-gd-edit textarea, #form-gd-edit select {
+        border: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+<script type="text/javascript">
+    (function($) {
+        $(document).ready(function() {
+            $("#btn-delete-annonce").on('click', function (ev) {
+                ev.preventDefault();
+                $(".request-delete").removeClass('hidden');
+            });
+        })
+    })(jQuery);
+</script>

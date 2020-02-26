@@ -707,6 +707,10 @@ add_action('woocommerce_account_gd_endpoint', function () {
                 break;
                 case 'update':
                     do_action('fz_annonce_update', (int) $_GET['id']);
+                    return;
+                break;
+                case 'delete':
+                    do_action('fz_annonce_delete', (int) $_GET['id']);
                 break;
                 default: break;
             }
@@ -734,17 +738,53 @@ add_action('woocommerce_account_gd_endpoint', function () {
 
 // Action for annonce
 add_action('fz_annonce_edit', function($id) {
+    wc_print_notices();
+    wc_clear_notices();
     if (!is_numeric($id)) return;
     global $Engine;
     $good_deal = new \classes\fzGoodDeal($id);
-    echo $Engine->render('@WC/gd/gd-edit.html', ['annonce' => $good_deal]);
+    echo $Engine->render('@WC/gd/gd-edit.html', [
+        'annonce' => $good_deal, 
+        'categories' => \Services\fzServices::get_categories()
+    ]);
 }, 10, 1);
 
 add_action('fz_annonce_update', function($id) {
     if (!is_numeric($id)) return;
-    // TODO: Update annonce 
+    // Update annonce
+    $error = false;
+    if ($_POST) {
+        try {
+            $good_deal = new \classes\fzGoodDeal($id);
+            $good_deal->set_title($_POST['title']);
+            $good_deal->set_description($_POST['description']);
+            $good_deal->set_price((int) $_POST['price']);
+            $good_deal->set_categorie(intval($_POST['categorie']));
+        } catch (\Exception $th) {
+            $error = true;
+            wc_add_notice($th->getMessage(), 'error');
+        }
+    }
 
+    if (!$error) {
+         wc_add_notice("Mise a jour effectuer avec succes", 'info');
+    }
+
+    // afficher le formulaire de modification
     do_action('fz_annonce_edit', $id);
+}, 10, 1);
+
+add_action('fz_annonce_delete', function($id) {
+    if (!is_numeric($id)) return;
+    //(WP_Post|false|null) Post data on success, false or null on failure.
+    $response = wp_delete_post($id, true);
+    if (false === $response || is_null($response)) {
+        wc_add_notice("Une erreur c'est produit pendant la suppression de l'annonce", 'error');
+        do_action('fz_annonce_edit', $id);
+        return;
+    }
+    $url = wc_get_account_endpoint_url('gd');
+    wp_redirect(add_query_arg([], $url));
 }, 10, 1);
 
 /**

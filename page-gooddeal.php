@@ -54,7 +54,7 @@ yozi_render_breadcrumbs();
                         photos: [], // [{ index: 1, file: ...}]
                         title: '',
                         categorie: '',
-                        price: null,
+                        price: 0,
                         description: ''
                     },
                     methods: {
@@ -112,9 +112,6 @@ yozi_render_breadcrumbs();
                             if (_.isEmpty(this.description)) {
                                 this.errors.push('Veuillez decrire votre matériel pour plus de chance d\'être vendue');
                             }
-                            if (_.isEmpty(this.photos)) {
-                                this.errors.push("Veuillez ajouter une image pour votre annonce");
-                            }
                             if (this.errors.length) {
                                 window.scrollTo(0, 0);
                                 return true;
@@ -143,7 +140,7 @@ yozi_render_breadcrumbs();
                                             title: self.title,
                                             content: self.description,
                                             status: 'publish',
-                                            featured_media: _.isEmpty(ids) ? null : ids[0].toString(),
+                                            featured_media: _.isEmpty(ids) ? 0 : ids[0].toString(),
                                             categorie: self.categorie,
                                             gd_gallery: ids,
                                             gd_price: self.price,
@@ -228,8 +225,8 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="mark">Titre <span style="color:red">*</span></label>
-                                                        <input type="text" v-model="title" class="form-control" id="mark"
+                                                        <label for="title">Titre <span style="color:red">*</span></label>
+                                                        <input type="text" autocomplete="off" :required="true" v-model="title" class="form-control" id="title"
                                                                placeholder="Titre de votre annonce" >
                                                     </div>
                                                 </div>
@@ -238,8 +235,8 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="mark">Categorie</label>
-                                                        <select name="categorie" v-model="categorie" class="form-control radius-0" >
+                                                        <label for="categorie">Categorie <span style="color:red">*</span></label>
+                                                        <select name="categorie" id="categorie" :required="true" v-model="categorie" class="form-control radius-0" >
                                                             <option value="">Selectionner une categorie</option>
                                                             <option :value="ctg.id" v-for="(ctg, index) in categories">{{ctg.name}}</option>
                                                         </select>
@@ -252,8 +249,8 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
-                                                        <label for="mark">Prix de vente (AR) </label>
-                                                        <input min="0" type="number" v-model="price" class="form-control" id="mark"
+                                                        <label for="price">Prix de vente (AR) <span style="color:red">*</span></label>
+                                                        <input min="0" type="number" autocomplete="off" v-model="price" class="form-control" id="price"
                                                                placeholder="Prix" >
                                                     </div>
                                                 </div>
