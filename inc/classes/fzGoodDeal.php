@@ -130,27 +130,3 @@ add_action('init', function () {
     ]);
     // Register taxonomy for this post type in fzPTFreezone.php
 }, 10);
-
-add_action('rest_api_init', function () {
-    $metas = ['gd_price', 'gd_gallery', 'gd_author'];
-    foreach ( $metas as $meta ) {
-        register_rest_field('good-deal', $meta, [
-            'update_callback' => function ($value, $object, $field_name) {
-                return update_post_meta((int)$object->ID, $field_name, $value);
-            },
-            'get_callback' => function ($object, $field_name) {
-                return get_post_meta((int)$object['id'], $field_name, true);
-            }
-        ]);
-    }
-
-    //categorie
-    register_rest_field('good-deal', 'categorie', [
-        'update_callback' => function ($value, $object, $field_name) {
-            return wp_set_object_terms( (int)$object->ID, intval($value), 'product_cat', false );
-        },
-        'get_callback' => function ($object) {
-            return wp_get_post_terms( (int)$object['id'], 'product_cat', [] );
-        }
-    ]);
-});

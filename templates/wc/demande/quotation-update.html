@@ -117,8 +117,14 @@
             {% endif %}
             <tr style="background-color: #ebedee;">
                 <th colspan="4" class="pl-4" style="text-align: left">
-                    <small>* Cet article est en rupture de stock chez nous, nous vous tiendrons informé</small><br>
-                    <small>** Cet article est épuisé chez nous mais disponible sur commande</small>
+                    {% if order.has_command_item  or order.has_rupture_item %}
+                     {% if order.has_rupture_item %}
+                      <small>* Cet article est en rupture de stock chez nous, nous vous tiendrons informé</small><br>
+                     {% endif %}
+                     {% if order.has_command_item %}
+                      <small>** Cet article est épuisé chez nous mais disponible sur commande</small>
+                     {% endif %}
+                    {% endif %}
                 </th>
                 <th></th>
             </tr>

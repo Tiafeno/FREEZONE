@@ -138,9 +138,9 @@ class fzAPI
                                     ]
                                 ],
                                 'meta_data' => [
-                                    ['key'  => '_fz_marge',        'value' => intval($marge)],
-                                    ['key'  => '_fz_marge_dealer', 'value' => intval($marge_dealer)],
-                                    ['key'  => '_fz_marge_particular', 'value' => intval($marge_particular)]
+                                    ['key'  => '_fz_marge',        'value' => floatval($marge)],
+                                    ['key'  => '_fz_marge_dealer', 'value' => floatval($marge_dealer)],
+                                    ['key'  => '_fz_marge_particular', 'value' => floatval($marge_particular)]
                                 ],
                                 'categories' => $categories,
                                 'images'     => []
@@ -167,7 +167,7 @@ class fzAPI
                             'content' => '',
                             'status' => 'pending',
                             'price'  => intval($price),
-                            'total_sales' => $total_sales,
+                            'total_sales' => intval($total_sales),
                             'user_id'     => $user_id,
                             'product_id'  => $product->get_id(),
                             'garentee'    => $garentee,

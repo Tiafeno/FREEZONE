@@ -71,11 +71,16 @@ class FZ_Item_Order {
         return $this->stock_request;
     }
 
+    /**
+     * Cette fonction permet de recuperer les fournisseurs pour l'item avec les conditions respectives
+     * @return Array
+     */
     public function meta_supplier_lines_fn () {
         if (empty($this->suppliers)) return [];
         $lines = array_map(function ($line) {
+            // Recuperer la condition pour cette article
             $condition = (int)get_post_meta(intval($line->article_id), "_fz_condition", true);
-            $condition_value = is_nan($condition) ? 0 : $condition;
+            $condition_value = is_nan($condition) ? 0 : $condition; // Condition par default est "0" ou disponible
             $search_index = array_search($condition_value, array_column($this->conditions, 'key')); // Return key index
             $line->condition = !$search_index ? $this->conditions[0] : $this->conditions[$search_index]; // Array
             return $line;
@@ -129,7 +134,7 @@ class FZ_Item_Order {
                 default: break;
             }
         }
-        $qty = (0 === $qty) ? $this->quantity : $qty;
+        $qty = (0 === $qty) ? $this->quantity . "*" : $qty;
         return "{$qty} <span style='color: red'>{$ui}</span>";
     }
 } /* end of class FZ_Item_Order */

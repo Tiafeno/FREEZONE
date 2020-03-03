@@ -29,6 +29,8 @@ class FZ_Quote extends \WC_Order {
      * 3: Acceptée
      * 4: Terminée
      */
+    public $has_rupture_item = false;
+    public $has_command_item = false;
     public $position = 0;
     public $date_add = null;
     public $user_id = 0;
@@ -62,9 +64,26 @@ class FZ_Quote extends \WC_Order {
          * +fz-particular
          */
         $this->clientRole = $client_role ? $client_role : null;
-        $this->fzItems = array_map(function(\WC_Order_Item_Product $item) {
-            return new FZ_Item_Order($item->get_id(), $this->ID);
+        $this->fzItems = array_map(function() {
+           
         }, $this->get_items());
+
+        foreach ($this->get_items() as $key => $item) {
+            $item_order = new FZ_Item_Order($item->get_id(), $this->ID);
+            $lines = $item_order->meta_supplier_lines_fn();
+            // @return [{key:..., value:..}, ..]
+            $condition_lines = array_map(function($line) { return isset($line->condition) ? $line->condition : null; }, $lines);
+            foreach ($condition_lines as $condition) {
+                if (!isset($condition['key'])) continue;
+                if (\in_array((int)$condition['key'], [1, 2])) {
+                    $this->has_rupture_item = true;
+                }
+                if (\in_array((int)$condition['key'], [3])) {
+                    $this->has_command_item = true;
+                }
+            }
+            $this->fzItems[] = $item_order;
+        }
         $this->fzItemsZero = get_post_meta( $this->ID, 'line_items_zero', true );
     }
 
