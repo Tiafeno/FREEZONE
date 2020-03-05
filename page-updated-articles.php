@@ -150,7 +150,7 @@ yozi_render_breadcrumbs();
                                                 </th>
                                                 <td width="10%">
                                                     <div class="stock">
-                                                        <input type="number" v-on:blur="onChangeQty($event, index)" v-model="article.qty_disp"
+                                                        <input type="number" v-on:blur="onChangeQty($event, index)" required v-model="article.qty_disp"
                                                         v-bind:disabled="article.condition == 1 || article.condition == 2" style="width: 100%;" min="0"
                                                             class="form-control radius-0 input-qty-disp"/>
                                                     </div>
@@ -171,7 +171,7 @@ yozi_render_breadcrumbs();
                                                 </td>
                                                 <td width="15%">
                                                     <div class="price">
-                                                        <input type="number" v-model="article.cost" step="1" style="width: 100%;" min="0" class="form-control radius-0" />
+                                                        <input type="number" v-model="article.cost" step="1" style="width: 100%;" min="0" class="form-control radius-0" required />
                                                     </div>
                                                 </td>
                                                 <td width="10%">

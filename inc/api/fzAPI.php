@@ -489,7 +489,7 @@ SQL;
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
-                        // nif, stat, rc, & cif
+                        // nif, stat, rc, cif & freezone_phones (stringify)
                         foreach ($_REQUEST as $option => $value)
                             update_option($option, sanitize_text_field($value));
                         wp_send_json_success("Donnee mise a jour avec succes");
@@ -505,6 +505,14 @@ SQL;
                         $results = [];
                         foreach ($option_fields as $field) {
                             $results[ $field ] = get_option($field, null);
+                        }
+
+                        // Recuperer les numeros de telephone
+                        if (!get_option('phones')) {
+                            $results['phones'] = [];
+                        } else {
+                            $phones = get_option('phones'); // json return
+                            $results['phones'] = stripslashes($phones);
                         }
                         wp_send_json($results);
                     }

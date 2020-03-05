@@ -5,11 +5,22 @@
             data: {
                 loading: false,
                 articles: [],
-                condition_product: [
-                    { key: 0, value: "Disponible" },
-                    { key: 1, value: "Rupture" },
-                    { key: 2, value: "Obsolète" },
-                    { key: 3, value: "Commande" }
+                condition_product: [{
+                        key: 0,
+                        value: "Disponible"
+                    },
+                    {
+                        key: 1,
+                        value: "Rupture"
+                    },
+                    {
+                        key: 2,
+                        value: "Obsolète"
+                    },
+                    {
+                        key: 3,
+                        value: "Commande"
+                    }
                 ]
             },
             methods: {
@@ -28,11 +39,11 @@
                         });
                     });
                 },
-                getCookie: function(cname) {
+                getCookie: function (cname) {
                     var name = cname + "=";
                     var decodedCookie = decodeURIComponent(document.cookie);
                     var ca = decodedCookie.split(';');
-                    for(var i = 0; i <ca.length; i++) {
+                    for (var i = 0; i < ca.length; i++) {
                         var c = ca[i];
                         while (c.charAt(0) == ' ') {
                             c = c.substring(1);
@@ -43,7 +54,7 @@
                     }
                     return "";
                 },
-                verifyQtyValue: function(index) {
+                verifyQtyValue: function (index) {
                     Swal.fire({
                         title: 'confirmation',
                         html: "Cet article est en rupture de stock chez vous ?",
@@ -60,21 +71,21 @@
                         }
                     });
                 },
-                onChangeQty: function(e, index) {
+                onChangeQty: function (e, index) {
                     e.preventDefault();
                     var element = e.currentTarget;
                     if (0 === parseInt(element.value)) {
                         this.verifyQtyValue(index);
                     }
                 },
-                onChangeCondition: function(e, index) {
+                onChangeCondition: function (e, index) {
                     var el = e.currentTarget;
                     if (el.value == 1 || el.value == 2) {
                         // On remet le quantité egale 0 si la condition est en rupture ou obsolete
                         this.articles[index].qty_disp = 0;
                     }
                 },
-                submitForm: function(e) {
+                submitForm: function (e) {
                     e.preventDefault();
                     for (let [index, article] of this.articles.entries()) {
                         if (0 === parseInt(article.qty_disp) && !_.contains([1, 2], parseInt(article.condition))) {
@@ -99,7 +110,7 @@
                     }
                     this.updatePost();
                 },
-                updatePost: function() {
+                updatePost: function () {
                     var self = this;
                     var btnSubmit = document.querySelector('#submit-update-form');
                     var deferreds = [];
@@ -131,7 +142,7 @@
                     btnSubmit.setAttribute('disabled', 'disabled');
                     this.loading = true;
                     Swal.fire("", "Chargement en cours. Veuillez ne pas quitter ou fermer cette page.", 'info');
-                    $.when.apply($, deferreds).done(function() {
+                    $.when.apply($, deferreds).done(function () {
                         // View response: https://pasteboard.co/IUazdBZ.png
                         var updateResp = arguments; // Array of HTTPResponse
                         var articleIds = _.map(updateResp, function (article) {
@@ -146,7 +157,7 @@
                                 ids: JSON.stringify(articleIds)
                             }
                         });
-                        mailSuccessUpdate.done(function() {
+                        mailSuccessUpdate.done(function () {
                             console.log(arguments);
                             Swal.fire({
                                 title: 'Succes',
@@ -160,7 +171,7 @@
                                 }
                             });
                         });
-                        
+
                     }).fail(er => {
                         Swal.fire("Erreur", "Une erreur s'est produit", 'error');
                     }).always(function () {
@@ -180,7 +191,10 @@
                     $.ajax({
                         method: "GET",
                         url: rest_api.ajax_url,
-                        data: { 'action': 'get_review_articles', articles: articleIds },
+                        data: {
+                            'action': 'get_review_articles',
+                            articles: articleIds
+                        },
                         success: (resp, status, xhr) => {
                             var articles = resp.data;
                             if (_.isEmpty(articles)) {
