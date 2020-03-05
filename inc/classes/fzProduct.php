@@ -157,7 +157,7 @@ class fzProduct {
     // Mettre a jour la marge utilisateur final (UF)
     public function set_marge_uf($value) {
         if ( ! is_numeric($value) ) return false;
-        $marge_uf = update_post_meta( $this->ID, '_fz_marge', $value );
+        $marge_uf = update_post_meta( $this->ID, '_fz_marge', floatval($value) );
         $this->marge_uf = $value;
         return $marge_uf;
     }
@@ -165,7 +165,7 @@ class fzProduct {
     // Mettre a jour la marge revendeur
     public function set_marge_dealer($value) {
         if ( ! is_numeric($value) ) return false;
-        $marge_dealer = update_post_meta( $this->ID, '_fz_marge_dealer', $value );
+        $marge_dealer = update_post_meta( $this->ID, '_fz_marge_dealer', floatval($value) );
         $this->marge_dealer = $value;
         return $marge_dealer;
     }
@@ -173,7 +173,7 @@ class fzProduct {
     // Mettre a jour la marge particuler
     public function set_marge_particular($value) {
         if ( ! is_numeric($value) ) return false;
-        $marge_particular = update_post_meta( $this->ID, '_fz_marge_particular', $value );
+        $marge_particular = update_post_meta( $this->ID, '_fz_marge_particular', floatval($value) );
         $this->marge_particular = $value;
         return $marge_particular;
     }

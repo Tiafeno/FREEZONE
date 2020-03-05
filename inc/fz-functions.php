@@ -157,8 +157,9 @@ add_action('admin_init', function () {
 }, 100);
 
 // https://developer.wordpress.org/block-editor/tutorials/metabox/meta-block-2-register-meta/
+// Note: Marge meta is number or not integer because it is float
 $meta_args = array(
-    'type'         => 'integer',
+    'type'         => 'number',
     'description'  => 'A meta key associated with a string meta value.',
     'single'       => true,
     'show_in_rest' => true,
