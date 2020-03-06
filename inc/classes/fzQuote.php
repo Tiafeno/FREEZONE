@@ -64,10 +64,6 @@ class FZ_Quote extends \WC_Order {
          * +fz-particular
          */
         $this->clientRole = $client_role ? $client_role : null;
-        $this->fzItems = array_map(function() {
-           
-        }, $this->get_items());
-
         foreach ($this->get_items() as $key => $item) {
             $item_order = new FZ_Item_Order($item->get_id(), $this->ID);
             $lines = $item_order->meta_supplier_lines_fn();
