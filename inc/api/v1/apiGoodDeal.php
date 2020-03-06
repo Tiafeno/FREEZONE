@@ -67,6 +67,7 @@ class apiGoodDeal {
             'limit' => $length,
             'offset' => $start,
             'paginate' => true,
+            'post_status' => 'any',
             'post_type' => 'good-deal'
         ];
 
