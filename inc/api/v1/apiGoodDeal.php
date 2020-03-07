@@ -5,23 +5,27 @@ add_action('api_get_good_deal', function (WP_REST_Request $rq) {
 });
 
 class apiGoodDeal {
+    public $post_type = "good-deal";
     public function __construct() {
         add_action('init', function() {
              // Ajouter des champs dans rest response pour l'API
             register_meta('post', "gd_price", [
-                'object_subtype' => 'good-deal',
+                'object_subtype' => $this->post_type,
                 'type' => 'number',
                 'single' => true,
                 'show_in_rest' => true,
             ]);
             register_meta('post', "gd_gallery", [
-                'object_subtype' => 'good-deal',
-                'type' => 'string',
+                'object_subtype' => $this->post_type,
+                'type' => 'array',
+                'sanitize_callback' => function($value) {
+                    return [];
+                },
                 'single' => true,
                 'show_in_rest' => true,
             ]);
             register_meta('post', "gd_author", [
-                'object_subtype' => 'good-deal',
+                'object_subtype' => $this->post_type,
                 'type' => 'number',
                 'single' => true,
                 'show_in_rest' => true,
@@ -54,7 +58,19 @@ class apiGoodDeal {
                     return wp_set_object_terms( (int)$object->ID, intval($value), 'product_cat', false );
                 },
                 'get_callback' => function ($object) {
-                    return wp_get_post_terms( (int)$object['id'], 'product_cat', [] );
+                    return  wp_get_post_terms( (int)$object['id'], 'product_cat', [] );
+                }
+            ]);
+
+            register_rest_field('good-deal', 'gallery_thumbnails', [
+                'get_callback' => function ($object) {
+                    $gallery = [];
+                    $attachment_ids = get_post_meta((int)$object['id'], 'gd_gallery', true);
+                    if (is_array($attachment_ids)) {
+                        foreach ($attachment_ids as $attachment_id)
+                            $gallery[] = ['id' => (int) $attachment_id, 'src' => wp_get_attachment_image_url($attachment_id, 'medium')];
+                    }
+                    return $gallery;
                 }
             ]);
         });
