@@ -508,12 +508,8 @@ SQL;
                         }
 
                         // Recuperer les numeros de telephone
-                        if (!get_option('phones')) {
-                            $results['phones'] = [];
-                        } else {
-                            $phones = get_option('phones'); // json return
-                            $results['phones'] = stripslashes($phones);
-                        }
+                        $phones = get_option('phones'); // json return
+                        $results['phones'] = !$phones ? [] : stripslashes($phones);
                         wp_send_json($results);
                     }
                 ]

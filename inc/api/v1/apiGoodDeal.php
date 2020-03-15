@@ -17,18 +17,23 @@ class apiGoodDeal {
             ]);
             register_meta('post', "gd_gallery", [
                 'object_subtype' => $this->post_type,
-                'type' => 'array',
-                'sanitize_callback' => function($value) {
-                    return [];
-                },
+                'type' => 'string',
                 'single' => true,
                 'show_in_rest' => true,
+                // 'show_in_rest' => array(
+                //     'schema' => array(
+                //         'type'  => 'array',
+                //         'items' => array(
+                //             'type' => 'number',
+                //         ),
+                //     ),
+                // ),
             ]);
             register_meta('post', "gd_author", [
                 'object_subtype' => $this->post_type,
                 'type' => 'number',
                 'single' => true,
-                'show_in_rest' => true,
+                'show_in_rest' => true
             ]);
         });
         add_action('rest_api_init', function (){
@@ -62,7 +67,7 @@ class apiGoodDeal {
                 }
             ]);
 
-            register_rest_field('good-deal', 'gallery_thumbnails', [
+            register_rest_field('good-deal', '_gallery_thumbnails', [
                 'get_callback' => function ($object) {
                     $gallery = [];
                     $attachment_ids = get_post_meta((int)$object['id'], 'gd_gallery', true);

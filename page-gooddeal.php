@@ -139,12 +139,14 @@ yozi_render_breadcrumbs();
                                         data: {
                                             title: self.title,
                                             content: self.description,
-                                            status: 'publish',
+                                            status: 'pending', // Mettre l'annonce en attente par default
                                             featured_media: _.isEmpty(ids) ? 0 : ids[0].toString(),
                                             categorie: self.categorie,
-                                            gd_gallery: ids,
-                                            gd_price: self.price,
-                                            gd_author: rest_api.user_id
+                                            meta: {
+                                                gd_gallery: JSON.stringify(ids),
+                                                gd_price: self.price,
+                                                gd_author: rest_api.user_id
+                                            }
                                         },
                                         beforeSend: function (xhr) {
                                             xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
