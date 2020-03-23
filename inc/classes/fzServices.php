@@ -143,6 +143,4 @@ class fzServices
         ) );
         return $taxonomies;
     }
-
-
 }

@@ -68,7 +68,7 @@ class fzSav
         return new self((int) $sav_id, $api);
     }
 
-    // Recupéré l'identifiannt du client
+    // Recupéré l'identifiant du client
     public function get_customer_id() {
         $id = get_field("customer", $this->id);
         return $id ? intval($id) : 0;
@@ -92,12 +92,17 @@ class fzSav
 add_action('init', function() {
     $register_metas = ['has_edit', 'editor_accessorie', 'editor_other_accessorie_desc'];
     // Reference: https://developer.wordpress.org/reference/functions/register_meta/
+    /**
+     * Cette parametre est utiliser pour savoir si l'annonce a deja ete 
+     * modifier par le commercial ou le technicien
+     */
     register_meta('post', "has_edit", [
         'object_subtype' => 'fz_sav',
         'type' => 'boolean',
         'single' => true,
         'show_in_rest' => true,
     ]);
+    // Champ pour le technicien SAV, pendant la diagnstique
     register_meta('post', "editor_accessorie", [
         'object_subtype' => 'fz_sav',
         'type' => 'number',
@@ -197,6 +202,7 @@ add_action('rest_api_init', function() {
         return $args;
     }, 99, 2);
 
+    // Enregistrer les champs dans le REST API
     $fields = array_merge(fzSav::$fields, ['customer']);
     foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [
@@ -223,13 +229,13 @@ add_action('rest_api_init', function() {
                             case 5:  'Produit récupéré par le client'
                         */
 
-                        /**
-                         * Le status du SAV est sur <Produit récupéré par le client>
-                         *
-                         * Veuillez envoyer une facture au client VVB pour la réparation de la machine XYZ
-                         */
-                        if (intval($value) === 5) {
-                            do_action('sav_status_release', $object->ID);
+                        if (intval($value) === 1) {
+                            //do_action("sav_status_diagnostic_en_cours", $object->ID);
+                        }
+
+                        if (intval($value) === 3) {
+                            // Diagnostic accordee
+                            //do_action("sav_status_repair_accepted", $object->ID);
                         }
 
                         /**
@@ -238,7 +244,16 @@ add_action('rest_api_init', function() {
                          * Veuillez envoyer une facture pour le diagnostic au client VVB pour la machine XYZ.
                          */
                         if (intval($value) === 4) {
-                            do_action('sav_status_do_not_repair', $object->ID);
+                            do_action('sav_status_repair_refused', $object->ID);
+                        }
+
+                        /**
+                         * Le status du SAV est sur <Produit récupéré par le client>
+                         *
+                         * Veuillez envoyer une facture au client VVB pour la réparation de la machine XYZ
+                         */
+                        if (intval($value) === 5) {
+                            do_action('sav_status_release', $object->ID);
                         }
 
                         break;
@@ -278,14 +293,14 @@ add_action('sav_status_release', function ($post_id) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
 
 }, 10, 1);
 
-add_action('sav_status_do_not_repair', function ($post_id) {
+add_action('sav_status_repair_refused', function ($post_id) {
     global $Engine;
 
     $client_id = get_post_meta($post_id, 'customer', true);
@@ -306,9 +321,17 @@ add_action('sav_status_do_not_repair', function ($post_id) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
+}, 10, 1);
+
+add_action("sav_status_diagnostic_en_cours", function ($post_id) {
+
+}, 10, 1);
+
+add_action("sav_status_repair_accepted", function ($post_id) {
+
 }, 10, 1);
 

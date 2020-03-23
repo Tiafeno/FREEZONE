@@ -368,8 +368,28 @@ add_action('fz_sav_revival_mail', function ($sav_id, $user_id = 0) {
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$from>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
+    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number ]);
 
     // Envoyer le mail
     wp_mail( $to, $subject, $content, $headers );
 }, 10, 1);
+
+
+add_action("fz_sav_cron_mail", function ($object_sav, $commercial_data, $admins) {
+    $to = $commerical_data->user_email;
+    $message =  "Bonjour, <br><br>";
+    $message .= "Nous vous rappelons que le matériel <b>{$object_sav->product}</b> pour ID: {$Sav->ID} est encore en <b>{$object_sav->get_status_string}</b>";
+    $message = html_entity_decode($message);
+
+    $subject = "{$object_sav->reference} - Materiel en «{$object_sav->get_status_string}» - Freezone";
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: Freezone <$no_reply>";
+    foreach ($admins as $admin) {
+        $headers[] = "Cc: {$admin->user_login} <{$admin->user_email}>";
+    }
+    
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date('Y'), 'Phone' => freezone_phone_number]);
+    // Envoyer le mail
+    wp_mail($to, $subject, $content, $headers);
+}, 10, 3);

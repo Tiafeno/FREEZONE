@@ -43,6 +43,18 @@ function fn_query_expired_order($day, $position = 1) {
     return $args;
 }
 
+// Recuperer les posts de type: fz_sav par statut
+add_filter("get_db_savby_status", function($status) {
+    global $wpdb;
+    $status =  is_array($status) ? implode(',', $status) : intval($status);
+    $sql = <<<SQL
+SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
+JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
+WHERE pst.post_type = 'fz_sav' AND pm.meta_key = 'status_sav' AND CAST(pm.meta_value AS UNSIGNED) IN ($status)
+SQL;
+    return $wpdb->get_results($sql);
+});
+
 add_action('schedule_order_expired', function() {
     // Commande en attente plus de 7 jours ou une semaine
     $args = fn_query_expired_order('-7 day', 1);
@@ -110,6 +122,7 @@ SQL;
         do_action('fz_cron_intervention_client_1', $customer, $order);
     }
 });
+
 
 // @SAV
 add_action('ask_product_repair', function ($admin_emails) {

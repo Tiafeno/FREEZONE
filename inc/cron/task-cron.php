@@ -31,6 +31,19 @@ add_action('everyday', function () {
 
 add_action('every_3_days', function(){
     // TODO: Mail de notification pour `La réparation accordée` et `La réparation refusée`
+    // Pour les servcies " diagnostique en cours"
+    // envoyer seulement au commercial du client et a l'administrateur
+    $savs_diagnostic_inProgress = apply_filter("get_db_savby_status", [1, 3]); // return wpdb results posts
+    foreach ($savs_diagnostic_inProgress as $sav) {
+        if (!is_object($sav) || !isset($sav->ID)) continue;
+        $object_sav = new \classes\fzSav( intval($Sav->ID));
+        $customer_id = $object_sav->get_customer_id();
+        $commercial_id = \classes\fzClient::initializeClient($customer_id, false)->get_responsible(); // return 0 or user id
+        $commerical_data = get_userdata($commercial_id); // to
+        $admins = new \WP_User_Query(['role' => ['Administrator']]); // cc
+        // Envoyer un mail au commercial
+        do_action("fz_sav_cron_mail", $object_sav, $commerical_data, $admins);
+    }
 }, 10);
 
 add_action('every_2_days', function () {
