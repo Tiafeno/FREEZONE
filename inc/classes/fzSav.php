@@ -207,7 +207,8 @@ add_action('rest_api_init', function() {
     foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [
             'update_callback' => function ($value, $object, $field_name) {
-                if (!in_array($field_name, fzSav::$fields)) return false;
+                // Recuperer les anciens et les nouveaux champ à recuperer
+                if (!in_array($field_name, $fields)) return false;
                 switch ($field_name) {
                     case 'status_sav':
 

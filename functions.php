@@ -432,6 +432,7 @@ add_action('woocommerce_account_savs_endpoint', function () {
             // Récuperer tous les demandes SAV effectuer par le client 
             $args = [
                 'post_type' => 'fz_sav',
+                'post_status' => "any",
                 'posts_per_page' => -1,
                 'meta_query' => [
                     [
