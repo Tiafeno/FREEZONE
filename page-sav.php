@@ -83,7 +83,7 @@ yozi_render_breadcrumbs();
                         serial_number: '', // Numéro de serie,
                         description: '', // Identification de la demande
                         delais_garentee: 1, // Delais de la garantie (1 mois par default)
-                        accessorie: 0,
+                        accessorie: [0],
                         other_accessories_desc: '',
                     },
                     methods: {
@@ -330,38 +330,37 @@ yozi_render_breadcrumbs();
                                                class="form-control" id="bill" placeholder="Veuillez saisir le numéro de la facture">
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="row">
                                 <div class="col-sm-8">
                                     <p style="font-size: 14px; font-weight: 700; margin-bottom: 2px;">Accessoires:</p>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="1" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="1" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Câble d'alimentation</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="2" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="2" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Câble USB</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="3" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="3" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Toner réf</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="4" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="4" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Cartouche réf</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="5" name="accessorie">
-                                        <span class="form-check-label" for="inlineCheckbox2">Adapteur</span>
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="5" name="accessorie">
+                                        <span class="form-check-label" for="inlineCheckbox2">Adapter</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" v-model="accessorie" v-bind:value="0" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="0" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Autres accessoires</span>
                                     </div>
                                 </div>
-                                <div class="col-sm-6" v-if="accessorie == 0">
+                                <div class="col-sm-6" v-if="_.indexOf(accessorie, 0) > -1">
                                     <div class="form-group">
                                         <label>Autres accessoires:</label>
                                         <textarea v-model="other_accessories_desc" v-bind:required="accessorie == 0" class="form-control"></textarea>

@@ -33,7 +33,7 @@ class fzSav
         //'approximate_time',
         'quotation_ref', // Reference du devis (SAGE)
         'reference', // Reference de l'article (fz_sav)
-        'accessorie', // number
+        'accessorie', // Array of number
         'other_accessories_desc'// Si l'accessoire est definie sur autre, ce champ contient la valer pour autre
     ];
 
@@ -207,8 +207,6 @@ add_action('rest_api_init', function() {
     foreach ( $fields as $field ) {
         register_rest_field('fz_sav', $field, [
             'update_callback' => function ($value, $object, $field_name) {
-                // Recuperer les anciens et les nouveaux champ à recuperer
-                if (!in_array($field_name, $fields)) return false;
                 switch ($field_name) {
                     case 'status_sav':
 
@@ -257,7 +255,7 @@ add_action('rest_api_init', function() {
                             do_action('sav_status_release', $object->ID);
                         }
 
-                        break;
+                    break;
                 }
                 return update_field($field_name, $value, $object->ID);
 
