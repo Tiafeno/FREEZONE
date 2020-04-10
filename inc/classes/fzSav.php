@@ -105,7 +105,7 @@ add_action('init', function() {
     // Champ pour le technicien SAV, pendant la diagnstique
     register_meta('post', "editor_accessorie", [
         'object_subtype' => 'fz_sav',
-        'type' => 'number',
+        'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
     ]);
