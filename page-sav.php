@@ -296,7 +296,6 @@ yozi_render_breadcrumbs();
                                         <label for="guarentee_product">Garantie du produit</label>
                                         <select name="guarentee_product" v-model="guarentee_product"
                                                 id="guarentee_product" v-on:change="statusHandler" class="">
-                                            <option value="">Aucun</option>
                                             <option value="1">Sous garantie</option>
                                             <option value="2">Hors garantie</option>
                                         </select>
