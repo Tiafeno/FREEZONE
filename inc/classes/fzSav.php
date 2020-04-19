@@ -7,7 +7,7 @@
  */
 
 namespace classes;
-define('_NO_REPLY_', 'no-reply@freezone.clik');
+define('_NO_REPLY_', 'no-reply@freezone.click');
 
 class fzSav
 {
@@ -84,7 +84,7 @@ class fzSav
             case 3: return 'Réparation accordée'; break;
             case 4: return 'Réparation refusée'; break;
             case 5: return 'Produit récupéré par le client'; break;
-            default: return 'Aucun'; break;
+            default: return 'En cours de traitement'; break;
         }
     }
 }
@@ -125,7 +125,7 @@ add_action('init', function() {
     // Envoyer un mail (Nouvelle article SAV)
     add_action('wp_ajax_new_sav', function() {
         $no_reply = _NO_REPLY_;
-        if (empty($_POST['post_id'])) wp_send_json_error("Parametre manquant (post_id)");
+        if (!isset($_POST['post_id']) || empty($_POST['post_id'])) wp_send_json_error("Parametre manquant (post_id)");
         $post_id = intval($_POST['post_id']);
         if (get_post_type($post_id) === 'fz_sav') {
             global $Engine;
@@ -170,7 +170,7 @@ add_action('init', function() {
             }
             // Ne pas envoyer si le message à envoyer est vide
             if (empty($message)) return wp_send_json_error( "Email non envoyer. Aucun messsage n'est formulé pour cette demande" );
-
+            // Envoyer un message au client
             $message   = html_entity_decode($message);
             $to        = $customer->user_email;
             $subject   = "Cher client - Freezone";
@@ -184,6 +184,20 @@ add_action('init', function() {
             ]);
             $result = wp_mail( $to, $subject, $content, $headers );
             if ($result) {
+
+                // Envoyer un mail au administrateur
+                $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
+                $admin_emails = [];
+                foreach ($admins->get_results() as $admin) $admin_emails[] = $admin->user_email;
+                $message = "Bonjour, <br> un(e) client ${$customer->first_name} ${$customer->last_name} à demander une assistance technique " . 
+                "pour le matériel <b>${$Sav->product}</b> d'identifiction Nº${$Sav->id}.<br><br> Equipe <span style='text-transform: uppercase;'>${__SITENAME__}</span>";
+                $message   = html_entity_decode($message);
+                $to        = implode(',', $admin_emails);
+                $subject   = "Nº{$post_id} - Nouvelle demande d'assistance technique";
+                $headers   = [];
+                $headers[] = 'Content-Type: text/html; charset=UTF-8';
+                $headers[] = "From: Freezone <$no_reply>";
+                wp_mail( $to, $subject, $message, $headers );
                 wp_send_json_success("Email envoyer avec succès");
             } else {
                 wp_send_json_error("Une erreur s'est produit: {$message}");

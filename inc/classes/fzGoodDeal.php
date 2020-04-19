@@ -65,7 +65,7 @@ class fzGoodDeal
 
     public function set_gallery($gallery) {
         if (!is_array($gallery)) {
-            throw new \Exceptio("Le parametre est de type tableau.");
+            throw new \Exception("Le parametre est de type tableau.");
             return false;
         }
         return update_post_meta($this->ID, 'gd_gallery', json_encode($gallery));
