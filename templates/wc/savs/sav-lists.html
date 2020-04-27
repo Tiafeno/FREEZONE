@@ -14,8 +14,8 @@
 
     <div class="row" style="margin-bottom: 40px">
         <div class="col-sm-4">
-            <a class="btn btn-theme radius-0" href="{{sav_url}}">S.A.V</a>
-            <a class="btn btn-theme radius-0" style="margin-left: 5px" href="{{prestations_url}}">Prestations</a>
+            <a class="btn btn-primary btn-sm radius-0" href="{{sav_url}}">S.A.V</a>
+            <a class="btn btn-primary btn-sm radius-0" style="margin-left: 5px" href="{{prestations_url}}">Prestations</a>
         </div>
     </div>
 
@@ -49,6 +49,8 @@
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" >
                 <a class="btn btn-theme btn-sm radius-0"
                     href="{{sav_endpoint_url}}?componnent=revival&id={{sav.id}}">RELANCER</a>
+                <a class="btn btn-primary btn-sm radius-0"
+                    href="{{sav_endpoint_url}}?componnent=print&module=print&id={{sav.id}}">AFFICHER</a>
             </td>
         </tr>
         {% endfor %}

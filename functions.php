@@ -46,6 +46,7 @@ add_action('init', function () {
     }, 0);
 
     add_rewrite_tag('%componnent%', '([^&]+)');
+    add_rewrite_tag('%module%', '([^&]+)');
     add_rewrite_tag('%id%', '([^&]+)');
     add_rewrite_tag('%conf%', '([^&]+)');
     add_rewrite_tag('%pa_%', '([^&]+)'); // paged
@@ -401,10 +402,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 // Service après vente - S.A.V
 add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine, $wp_query;
-    $route = 'index';
+    // index: is default module
+    $current_module = isset($wp_query->query_vars['module']) ? $wp_query->query_vars['module'] : 'index';
     $sav_url = '/sav'; // Cette url est réservé pour la publication des services àpres vente
     $user_id = get_current_user_id();
+    $sav_id = null;
 
+
+    // same as middleware
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
         $sav_id = (int) sanitize_text_field($wp_query->query_vars['id']);
@@ -420,13 +425,32 @@ add_action('woocommerce_account_savs_endpoint', function () {
                 }
                 break;
 
+            case 'print':
+                break;
+
             default:
                 wc_add_notice("Parametre composant inconnue '{$componnent}'", 'error');
                 break;
         }
     }
 
-    switch ($route) {
+    // Gere les views template
+    switch ($current_module) {
+        case 'print':
+            if (is_null($sav_id)) continue;
+            $fzSav = new \classes\fzSav($sav_id, true);
+            wc_print_notices();
+            echo $Engine->render(
+                '@WC/savs/sav-print.html',
+                [
+                    'content' => $fzSav,
+                    'sav_url' => $sav_url,
+                    'prestations_url' => wc_get_account_endpoint_url('catalogue'),
+                    'sav_endpoint_url' => wc_get_account_endpoint_url('savs'),
+                ]
+            );
+            wc_clear_notices();
+            break;
         case 'index':
         default:
             // Récuperer tous les demandes SAV effectuer par le client 

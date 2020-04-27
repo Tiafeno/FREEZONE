@@ -1,0 +1,45 @@
+<table class="table">
+    <tbody>
+        <tr>
+            <th scope="row">Nom du produit</th>
+            <td>{{content.product}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Numéro de série (S/N)</th>
+            <td>{{content.serial_number}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Marque et Modele</th>
+            <td>{{content.mark}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Fournisseur du produit</th>
+            <td>{{content.product_provider['value'] == 1 ? "Freezone" : "Autre fournisseur"}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Garantie du produit</th>
+            <td>{{content.guarentee_product['value'] == 1 ? "Sous garantie" : "Hors garantie"}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Délais de garantie</th>
+            <td>{% if content.garentee %} {{ content.garentee }} mois {% else %} Aucun {% endif %} </td>
+        </tr>
+        <tr>
+            <th scope="row">Date d'achat</th>
+            <td>{{content.date_purchase}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Numéro de la facture</th>
+            <td>{{content.bill}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Probème rencontré ou panne</th>
+            <td>{{content.description | raw}}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="row" style="margin-bottom: 40px">
+    <div class="col-sm-4">
+        <a class="btn btn-theme radius-0" href="{{sav_endpoint_url}}">retour</a>
+    </div>
+</div>
