@@ -9,7 +9,7 @@ add_action('everyday', function () {
     foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
-    // Vérifier si la date du delais approximatif est atteinte, s'il est atteinte on envoie un mail
+    // Vérifier si le technicien a diagnostiquer la demande du client
     // La réparation du matériel XYV du client VVB est elle achevée ?
     do_action( 'ask_product_repair', $admin_emails );
 
