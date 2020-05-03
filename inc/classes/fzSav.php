@@ -184,13 +184,14 @@ add_action('init', function() {
             ]);
             $result = wp_mail( $to, $subject, $content, $headers );
             if ($result) {
-
                 // Envoyer un mail au administrateur
                 $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
                 $admin_emails = [];
                 foreach ($admins->get_results() as $admin) $admin_emails[] = $admin->user_email;
-                $message = "Bonjour, <br> un(e) client ${$customer->first_name} ${$customer->last_name} à demander une assistance technique " . 
-                "pour le matériel <b>${$Sav->product}</b> d'identifiction Nº${$Sav->id}.<br><br> Equipe <span style='text-transform: uppercase;'>${__SITENAME__}</span>";
+
+                $message = "Bonjour, <br> un(e) client {$customer->first_name} {$customer->last_name} à demander une assistance technique " .
+                "pour le matériel <b>{$Sav->product}</b> d'identifiction Nº{$Sav->id}.<br><br> Equipe " .
+                    "<span style='text-transform: uppercase;'>{__SITENAME__}</span>";
                 $message   = html_entity_decode($message);
                 $to        = implode(',', $admin_emails);
                 $subject   = "Nº{$post_id} - Nouvelle demande d'assistance technique";
@@ -330,7 +331,7 @@ add_action('sav_status_repair_refused', function ($post_id) {
     $message   = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la machine {$Sav->product}";
     $message   = html_entity_decode($message);
     $to        = implode(',', $admin_emails);
-    $subject   = "SAV{$post_id} Facture pour le diagnostic  - Freezone";
+    $subject   = "SAV{$post_id} Facture pour le diagnostic - Freezone";
     $headers   = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";

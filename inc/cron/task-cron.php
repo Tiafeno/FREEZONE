@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__ . '/function-cron.php';
+$no_reply = _NO_REPLY_;
 
 // Tous les jours
 add_action('everyday', function () {
@@ -32,7 +33,7 @@ add_action('every_3_days', function(){
     $savs_diagnostic_inProgress = apply_filter("get_db_savby_status", [3, 4]); // return wpdb results posts
     foreach ($savs_diagnostic_inProgress as $sav) {
         if (!is_object($sav) || !isset($sav->ID)) continue;
-        $object_sav = new \classes\fzSav( intval($Sav->ID));
+        $object_sav = new \classes\fzSav( intval($sav->ID));
         $customer_id = $object_sav->get_customer_id();
         $commercial_id = \classes\fzClient::initializeClient($customer_id, false)->get_responsible(); // return 0 or user id
         $commerical_data = get_userdata($commercial_id); // to
@@ -43,7 +44,7 @@ add_action('every_3_days', function(){
 }, 10);
 
 // <En cours de traitement>
-add_action('every_2_days', function () {
+add_action('every_2_days', function () use ($no_reply) {
     global $wpdb, $Engine;
     $date_now = new DateTime("now");
     $data_now_string = $date_now->format('Y-m-d H:i:s');
@@ -86,7 +87,8 @@ SQL;
 }, 10);
 
 // <Le diagnostique en cours >
-add_action('every_2_days', function () {
+add_action('every_2_days', function () use ($no_reply) {
+    global $wpdb, $Engine;
     $date_now = new DateTime("now");
     $data_now_string = $date_now->format('Y-m-d H:i:s');
     /**
@@ -99,12 +101,13 @@ WHERE pst.post_type = 'fz_sav'
     AND (SELECT * FROM $wpdb->postmeta pm WHERE pm.meta_key = 'status_sav' AND cast(pm.meta_value AS UNSIGNED) = 1)
     AND cast(DATE_ADD(pst.post_date, INTERVAL 1 DAY) AS DATE) < cast('{$data_now_string}' AS DATE)
 SQL;
-    // TODO Envoyer le mail
     $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor']]); // cc
     $to = implode(',', $admins);
     $message =  "Bonjour, <br><br>";
     $message .= "Nous vous rappelons que le(s) matériel(s) suivant(s) est/sont en cours de diagnostique : <br>";
     $message .= "<ul>";
+    $savs = $wpdb->get_results($sql_nothing_status);
+    if (empty($savs)) return;
     foreach ($savs as $sav) {
         $fz_sav = new \classes\fzSav($sav->ID);
         $message .= "<li><b>{$fz_sav->product}</b> de reference <b>{$fz_sav->reference}</b></li>";
@@ -123,9 +126,8 @@ SQL;
 }, 10);
 
 // <Diagnostique fini>
-add_action('every_2_days', function () {
+add_action('every_2_days', function () use ($no_reply) {
     global $wpdb, $Engine;
-    $no_reply = _NO_REPLY_;
 
     /**
      * Envoyer un mail si le status du SAV est sur <Diagnostique fini>
