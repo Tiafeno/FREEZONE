@@ -9,9 +9,6 @@ add_action('everyday', function () {
     foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
-    // Vérifier si le technicien a diagnostiquer la demande du client
-    // La réparation du matériel XYV du client VVB est elle achevée ?
-    do_action( 'ask_product_repair', $admin_emails );
 
     // Envoyer un mail au téchnicien si le status du SAV est sur <à réparer>
     // Pouvez-vous rentrer le délais, approximatif de réparation du matériel XYV du client VVB »
@@ -29,11 +26,10 @@ add_action('everyday', function () {
     do_action("schedule_order_reject_expired");
 }, 10);
 
+// <`La réparation accordée`> et <`La réparation refusée`>
 add_action('every_3_days', function(){
-    // TODO: Mail de notification pour `La réparation accordée` et `La réparation refusée`
-    // Pour les servcies " diagnostique en cours"
-    // envoyer seulement au commercial du client et a l'administrateur
-    $savs_diagnostic_inProgress = apply_filter("get_db_savby_status", [1, 3]); // return wpdb results posts
+    // Mail de notification pour `La réparation accordée` et `La réparation refusée` envoyer seulement au commercial du client et a l'administrateur
+    $savs_diagnostic_inProgress = apply_filter("get_db_savby_status", [3, 4]); // return wpdb results posts
     foreach ($savs_diagnostic_inProgress as $sav) {
         if (!is_object($sav) || !isset($sav->ID)) continue;
         $object_sav = new \classes\fzSav( intval($Sav->ID));
@@ -46,11 +42,13 @@ add_action('every_3_days', function(){
     }
 }, 10);
 
+// <En cours de traitement>
 add_action('every_2_days', function () {
+    global $wpdb, $Engine;
     $date_now = new DateTime("now");
     $data_now_string = $date_now->format('Y-m-d H:i:s');
     /**
-     * Envoyer un mail si le status du SAV est non definie
+     * Envoyer un mail si le status du SAV est non definie ou En cours de traitement
      *
      * Nous vous rappelons que le matériel XYV du client VVB est encore dans l’atelier aussi nous
      * vous demandons de relancer le client à propos du devis Réf TTTT
@@ -62,10 +60,69 @@ WHERE pst.post_type = 'fz_sav'
     AND NOT EXISTS (SELECT * FROM $wpdb->postmeta pm WHERE pm.meta_key = 'status_sav' AND pst.ID = pm.post_id)
     AND cast(DATE_ADD(pst.post_date, INTERVAL 1 DAY) AS DATE) < cast('{$data_now_string}' AS DATE)
 SQL;
-    // TODO: Envoyer un mail si le SAV a une status 'Non definie'
+    //Envoyer un mail si le SAV a une status 'Non definie' ou 'En cours de traitement'
+    $savs = $wpdb->get_results($sql_nothing_status);
+    // Ajouter l'adresse email du commercial responsable
+    $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor']]); // cc
+    $to = implode(',', $admins);
+    $message =  "Bonjour, <br><br>";
+    $message .= "Nous vous rappelons que le(s) matériel(s) suivant(s) est/sont en cours de traitement: <br>";
+    $message .= "<ul>";
+    foreach ($savs as $sav) {
+        $fz_sav = new \classes\fzSav($sav->ID);
+        $message .= "<li><b>{$fz_sav->product}</b> de reference <b>{$fz_sav->reference}</b></li>";
+    }
+    $message .= "</ul>";
+    $message .= "Nous vous demandons de relancer le(s) client(s).<br> Equipe " . __SITENAME__;
+    $message = html_entity_decode($message);
+
+    $subject = "Notification sur les S.A.V en cours de traitement du {$date_now->format('d l')} - Freezone";
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: Freezone <$no_reply>";
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date('Y'), 'Phone' => freezone_phone_number]);
+    // Envoyer le mail
+    wp_mail($to, $subject, $content, $headers);
 }, 10);
 
-// Tous les 2 jours
+// <Le diagnostique en cours >
+add_action('every_2_days', function () {
+    $date_now = new DateTime("now");
+    $data_now_string = $date_now->format('Y-m-d H:i:s');
+    /**
+     * Envoyer un mail si le status du SAV est en diagnostique en cours
+     */
+    $sql_nothing_status = <<<SQL
+SELECT SQL_CALC_FOUND_ROWS pst.ID FROM $wpdb->posts as pst
+WHERE pst.post_type = 'fz_sav' 
+    AND pst.post_status = 'publish'
+    AND (SELECT * FROM $wpdb->postmeta pm WHERE pm.meta_key = 'status_sav' AND cast(pm.meta_value AS UNSIGNED) = 1)
+    AND cast(DATE_ADD(pst.post_date, INTERVAL 1 DAY) AS DATE) < cast('{$data_now_string}' AS DATE)
+SQL;
+    // TODO Envoyer le mail
+    $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor']]); // cc
+    $to = implode(',', $admins);
+    $message =  "Bonjour, <br><br>";
+    $message .= "Nous vous rappelons que le(s) matériel(s) suivant(s) est/sont en cours de diagnostique : <br>";
+    $message .= "<ul>";
+    foreach ($savs as $sav) {
+        $fz_sav = new \classes\fzSav($sav->ID);
+        $message .= "<li><b>{$fz_sav->product}</b> de reference <b>{$fz_sav->reference}</b></li>";
+    }
+    $message .= "</ul>";
+    $message .= "Nous vous demandons de relancer le(s) client(s).<br> Equipe " . __SITENAME__;
+    $message = html_entity_decode($message);
+
+    $subject = "Notification(s) sur le(s) S.A.V est/sont en cours de diagnostique au {$date_now->format('d l')} - Freezone";
+    $headers = [];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $headers[] = "From: Freezone <$no_reply>";
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date('Y'), 'Phone' => freezone_phone_number]);
+    // Envoyer le mail
+    wp_mail($to, $subject, $content, $headers);
+}, 10);
+
+// <Diagnostique fini>
 add_action('every_2_days', function () {
     global $wpdb, $Engine;
     $no_reply = _NO_REPLY_;
@@ -107,11 +164,11 @@ SQL;
             "demandons de relancer le client à propos du devis Réf $devis_ref";
         $message = html_entity_decode($message);
 
-        $subject = "SAV{$sav_id} - Notification su le diagnostique en cours - Freezone";
+        $subject = "SAV{$sav_id} - Notification sur le diagnostique fini - Freezone";
         $headers = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <$no_reply>";
-        $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
+        $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
         // Envoyer le mail
         wp_mail($to, $subject, $content, $headers);
     }

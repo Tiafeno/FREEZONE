@@ -124,37 +124,7 @@ SQL;
 });
 
 
-// @SAV
-add_action('ask_product_repair', function ($admin_emails) {
-    global $wpdb, $Engine;
-    $to = implode(',', $admin_emails);
-    $no_reply = _NO_REPLY_;
-    $headers = [];
-    $headers[] = 'Content-Type: text/html; charset=UTF-8';
-    $headers[] = "From: Freezone <$no_reply>";
-    $date_now = date_i18n('Y-m-d');
-    $sql = <<<SQL
-SELECT SQL_CALC_FOUND_ROWS pst.ID, pm.meta_value as approximate_time FROM $wpdb->posts as pst
-JOIN $wpdb->postmeta as pm ON (pm.post_id = pst.ID) 
-WHERE pst.post_type = 'fz_sav' AND pst.post_status = 'publish'
-    AND pm.meta_key = 'approximate_time' AND CAST(pm.meta_value AS DATETIME) < CAST('$date_now' AS DATETIME) 
-SQL;
-    $results = $wpdb->get_results($sql);
-    if (empty($results)) return;
-    $savs = get_hardwards($results);
-    $message = "Bonjour, <br><br>";
-    $message .= "La réparation des matériels suivant sont elles achevée?: <br>";
-    $message .= "<ul>";
-    foreach ( $savs as $sav ) {
-        $message .= "<li>Le matériel <b>{$sav['name']}</b> du client <b>{$sav['reference']}</b></li>";
-    }
-    $message .= "</ul>";
-    $message = html_entity_decode($message);
-    $subject = "Notification de réparation des matériels - Freezone";
-    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => 2019, 'Phone' => freezone_phone_number]);
-    // Envoyer le mail
-    wp_mail($to, $subject, $content, $headers);
-}, 10, 1);
+
 
 add_action('ask_approximate_date_product', function ($admin_emails) {
     global $wpdb, $Engine;
