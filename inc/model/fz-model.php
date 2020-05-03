@@ -1,15 +1,19 @@
 <?php
+
 namespace model;
 
-class fzModel {
-    public function __construct ($instance = false) {
-        if ( ! $instance )
+class fzModel
+{
+    public function __construct ($instance = false)
+    {
+        if (!$instance)
             add_action('fz_activate_theme', function () {
 
             });
     }
 
-    public static function getInstance() {
+    public static function getInstance ()
+    {
         return new self(true);
     }
 
@@ -17,7 +21,8 @@ class fzModel {
      * Cette fonction permet de recuperer tous les produits sans limit de nombre
      * @return array|null|object
      */
-    public function get_products() {
+    public function get_products ()
+    {
         global $wpdb;
         $sql = <<<SQL
 SELECT pts.ID, pts.post_title FROM $wpdb->posts as pts 
@@ -29,7 +34,9 @@ SQL;
         return $results;
 
     }
-    public function set_sav($args = []) {
+
+    public function set_sav ($args = [])
+    {
         global $wpdb;
         if (!is_user_logged_in()) return false;
         $User = wp_get_current_user();
@@ -49,7 +56,8 @@ SQL;
         return $request;
     }
 
-    public function get_sav($sav_id) {
+    public function get_sav ($sav_id)
+    {
 
 
     }

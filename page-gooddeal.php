@@ -172,11 +172,12 @@ yozi_render_breadcrumbs();
                                         }
                                     });
                                 }
+
                                 createGd(results)
                             })
-                            .fail(resp => {
-                                Swal.fire("Error", "Une erreur c'est produit pendant l'envoie des images", 'warning');
-                            });
+                                .fail(resp => {
+                                    Swal.fire("Error", "Une erreur c'est produit pendant l'envoie des images", 'warning');
+                                });
 
 
                         }
@@ -205,7 +206,7 @@ yozi_render_breadcrumbs();
                         wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
                         ?>
-                        <div style="display: flex;" >
+                        <div style="display: flex;">
                             <div style="margin: auto; min-width: 650px">
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -227,9 +228,11 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="title">Titre <span style="color:red">*</span></label>
-                                                        <input type="text" autocomplete="off" :required="true" v-model="title" class="form-control" id="title"
-                                                               placeholder="Titre de votre annonce" >
+                                                        <label for="title">Titre <span
+                                                                    style="color:red">*</span></label>
+                                                        <input type="text" autocomplete="off" :required="true"
+                                                               v-model="title" class="form-control" id="title"
+                                                               placeholder="Titre de votre annonce">
                                                     </div>
                                                 </div>
                                             </div>
@@ -237,23 +240,28 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="categorie">Categorie <span style="color:red">*</span></label>
-                                                        <select name="categorie" id="categorie" :required="true" v-model="categorie" class="form-control radius-0" >
+                                                        <label for="categorie">Categorie <span
+                                                                    style="color:red">*</span></label>
+                                                        <select name="categorie" id="categorie" :required="true"
+                                                                v-model="categorie" class="form-control radius-0">
                                                             <option value="">Selectionner une categorie</option>
-                                                            <option :value="ctg.id" v-for="(ctg, index) in categories">{{ctg.name}}</option>
+                                                            <option :value="ctg.id" v-for="(ctg, index) in categories">
+                                                                {{ctg.name}}
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
 
-
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
-                                                        <label for="price">Prix de vente (AR) <span style="color:red">*</span></label>
-                                                        <input min="0" type="number" autocomplete="off" v-model="price" class="form-control" id="price"
-                                                               placeholder="Prix" >
+                                                        <label for="price">Prix de vente (AR) <span
+                                                                    style="color:red">*</span></label>
+                                                        <input min="0" type="number" autocomplete="off" v-model="price"
+                                                               class="form-control" id="price"
+                                                               placeholder="Prix">
                                                     </div>
                                                 </div>
                                             </div>
@@ -268,8 +276,8 @@ yozi_render_breadcrumbs();
                                                     </div>
 
                                                     <div class="form-group">
-                                                        <input  type="file"
-                                                                @change="handleFileChange($event, 2)">
+                                                        <input type="file"
+                                                               @change="handleFileChange($event, 2)">
                                                     </div>
 
                                                     <div class="form-group">
@@ -283,7 +291,8 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="description">Description <span style="color:red">*</span></label>
+                                                        <label for="description">Description <span
+                                                                    style="color:red">*</span></label>
                                                         <textarea v-model="description" class="form-control" rows="8"
                                                                   id="description"></textarea>
                                                     </div>

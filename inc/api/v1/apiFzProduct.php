@@ -2,20 +2,22 @@
 
 class apiFzProduct
 {
-    public function __construct () {
+    public function __construct ()
+    {
         add_action('rest_api_init', function () {
-            add_filter('rest_fz_product_query', function($args, $request) {
-                $args += array(
-                    'meta_key'   => $request['meta_key'],
+            add_filter('rest_fz_product_query', function ($args, $request) {
+                $args += [
+                    'meta_key' => $request['meta_key'],
                     'meta_value' => $request['meta_value'],
                     'meta_query' => $request['meta_query'],
-                );
+                ];
                 return $args;
             }, 99, 2);
         });
     }
 
-    public function action_collect_articles(WP_REST_Request $request) {
+    public function action_collect_articles (WP_REST_Request $request)
+    {
         global $wpdb;
 
         $action = $request['action'];
@@ -44,8 +46,8 @@ SELECT FOUND_ROWS()
 CPR;
                 $total = $wpdb->get_var($count_sql);
                 $Suppliers = [];
-                foreach ($results as $result) {
-                    $Suppliers[] = new \classes\fzProduct((int) $result->post_id, 'edit');
+                foreach ( $results as $result ) {
+                    $Suppliers[] = new \classes\fzProduct((int)$result->post_id, 'edit');
                 }
 
                 return [
@@ -56,14 +58,14 @@ CPR;
 
                 break;
 
-                // Affiche les articles d'un fournisseur en attente de mise à jours
+            // Affiche les articles d'un fournisseur en attente de mise à jours
             case 'review_articles':
                 $supplier_id = $request['supplierid'];
                 $supplier_id = intval($supplier_id);
                 // Récuperer tous les demandes en attente
                 $orders = new WP_Query([
                     'post_type' => wc_get_order_types(),
-                    'post_status' => array_keys( wc_get_order_statuses() ),
+                    'post_status' => array_keys(wc_get_order_statuses()),
                     "posts_per_page" => -1,
                     'meta_query' => [
                         [
@@ -75,16 +77,16 @@ CPR;
                 ]);
 
                 $product_ids = [];
-                foreach ($orders->posts as $order) {
+                foreach ( $orders->posts as $order ) {
                     $current_order = new WC_Order($order->ID);
                     $items = $current_order->get_items();
-                    foreach ($items as $item_id => $item) {
+                    foreach ( $items as $item_id => $item ) {
                         $data = $item->get_data();
                         // Recuperer tous les produits dans les demandes en attente
-                        array_push($product_ids, (int) $data['product_id']);
+                        array_push($product_ids, (int)$data['product_id']);
                     }
                 }
-                $product_ids = array_unique($product_ids, SORT_NUMERIC );
+                $product_ids = array_unique($product_ids, SORT_NUMERIC);
                 $join_product_ids = implode(',', $product_ids);
                 if (empty($join_product_ids)) {
                     return [
@@ -114,14 +116,14 @@ SQL;
                 $total = $wpdb->get_var($count_sql);
                 $articles = [];
 
-                foreach ($results as $result) {
+                foreach ( $results as $result ) {
                     $article_controller = new WP_REST_Posts_Controller('fz_product');
-                    $post = get_post((int) $result->ID);
+                    $post = get_post((int)$result->ID);
                     $response = $article_controller->prepare_item_for_response($post, new WP_REST_Request());
                     // Récuperer les données
-                    $data =  $response->get_data();
+                    $data = $response->get_data();
 
-                    $product_id = (int) $data['product_id'];
+                    $product_id = (int)$data['product_id'];
                     $quantity = [];
                     /**
                      * Récuperer tous les commandes en attente

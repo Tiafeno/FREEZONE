@@ -1,4 +1,5 @@
 <?php
+
 namespace Services;
 /**
  * Created by IntelliJ IDEA.
@@ -131,16 +132,21 @@ class fzServices
             'name' => "Droit / Juriste"
         ]
     ];
+
     public function __construct () { }
-    public function get_sector_activity() {
+
+    public function get_sector_activity ()
+    {
         return $this->sector_activity;
     }
-    public static function get_categories() {
-        $taxonomies = get_terms( array(
+
+    public static function get_categories ()
+    {
+        $taxonomies = get_terms([
             'taxonomy' => 'product_cat',
             'hide_empty' => false,
             'number' => ''
-        ) );
+        ]);
         return $taxonomies;
     }
 }

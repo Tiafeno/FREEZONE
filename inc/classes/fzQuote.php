@@ -1,4 +1,5 @@
 <?php
+
 namespace classes;
 
 /**
@@ -19,7 +20,8 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  * @access public
  * @reference https://docs.woocommerce.com/wp-content/images/wc-apidocs/class-WC_Abstract_Order.html
  */
-class FZ_Quote extends \WC_Order {
+class FZ_Quote extends \WC_Order
+{
 
     public $ID = 0;
     /**
@@ -40,23 +42,25 @@ class FZ_Quote extends \WC_Order {
     private $min_cost_with_transport = 100000;
     private $cost_transport = 12600;
 
-    public function __construct ($order = 0) {
+    public function __construct ($order = 0)
+    {
         parent::__construct($order);
         $this->Initialize();
     }
 
-    private function Initialize() {
+    private function Initialize ()
+    {
         $this->ID = $this->get_id();
-        $this->position = (int) get_field('position', $this->get_id());
+        $this->position = (int)get_field('position', $this->get_id());
         $this->date_add = $this->get_date_created();
-        $this->user_id = (int) get_field('user_id', $this->get_id());
+        $this->user_id = (int)get_field('user_id', $this->get_id());
         // Verifier si le meta 'client_role' n'est pas definie ou vide
-        $client_role = get_post_meta( $this->ID, 'client_role', true );
+        $client_role = get_post_meta($this->ID, 'client_role', true);
         if (!$client_role || empty($client_role)) {
             $customer_id = $this->get_customer_id();
-            $customer_user = new \WP_User( (int) $customer_id);
+            $customer_user = new \WP_User((int)$customer_id);
             $role = is_array($customer_user->roles) && !empty($customer_user->roles) ? $customer_user->roles[0] : null;
-            update_post_meta( $this->ID, 'client_role', $role);
+            update_post_meta($this->ID, 'client_role', $role);
         }
         /**
          * Les roles des clients:
@@ -64,12 +68,12 @@ class FZ_Quote extends \WC_Order {
          * +fz-particular
          */
         $this->clientRole = $client_role ? $client_role : null;
-        foreach ($this->get_items() as $key => $item) {
+        foreach ( $this->get_items() as $key => $item ) {
             $item_order = new FZ_Item_Order($item->get_id(), $this->ID);
             $lines = $item_order->meta_supplier_lines_fn();
             // @return [{key:..., value:..}, ..]
-            $condition_lines = array_map(function($line) { return isset($line->condition) ? $line->condition : null; }, $lines);
-            foreach ($condition_lines as $condition) {
+            $condition_lines = array_map(function ($line) { return isset($line->condition) ? $line->condition : null; }, $lines);
+            foreach ( $condition_lines as $condition ) {
                 if (!isset($condition['key'])) continue;
                 if (\in_array((int)$condition['key'], [1, 2])) {
                     $this->has_rupture_item = true;
@@ -80,65 +84,76 @@ class FZ_Quote extends \WC_Order {
             }
             $this->fzItems[] = $item_order;
         }
-        $this->fzItemsZero = get_post_meta( $this->ID, 'line_items_zero', true );
+        $this->fzItemsZero = get_post_meta($this->ID, 'line_items_zero', true);
     }
 
-    public function fz_items() {
+    public function fz_items ()
+    {
         return $this->fzItems;
     }
 
     /**
      * Recuperer les items non disponible
      */
-    public function fz_items_zero() {
+    public function fz_items_zero ()
+    {
         return is_array($this->fzItemsZero) ? $this->fzItemsZero : [];
     }
 
-    public function total_net() {
-        $all_total_net = array_map(function(FZ_Item_Order $item) {
+    public function total_net ()
+    {
+        $all_total_net = array_map(function (FZ_Item_Order $item) {
             return $item->subtotal_net_fn();
             //return ($total < $this->min_cost_with_transport && $total !== 0) ? ($this->cost_transport + $total) : $total;
         }, $this->fzItems);
         return array_sum($all_total_net);
     }
 
-    public function total_ht() {
-        $all_total_ht = array_map(function(FZ_Item_Order $item) {
+    public function total_ht ()
+    {
+        $all_total_ht = array_map(function (FZ_Item_Order $item) {
             return $item->price_fn() * $item->quantity;
         }, $this->fzItems);
         return array_sum($all_total_ht);
     }
 
-    public function date_add() {
+    public function date_add ()
+    {
         return $this->date_add;
     }
 
-    public function get_min_cost_with_transport() {
+    public function get_min_cost_with_transport ()
+    {
         return $this->min_cost_with_transport;
     }
 
-    public function get_cost_transport() {
+    public function get_cost_transport ()
+    {
         return $this->cost_transport;
     }
 
-    public function get_position() {
+    public function get_position ()
+    {
         return $this->position;
     }
 
-    public function get_userid() {
+    public function get_userid ()
+    {
         return $this->user_id;
     }
 
-    public function get_author() {
+    public function get_author ()
+    {
         if ($this->clientRole === "fz-particular") {
             return new fzParticular($this->user_id);
         } else {
             return new fzCompany($this->user_id);
         }
-        
+
     }
 
-    public function update_position( $status = 0) {
+    public function update_position ($status = 0)
+    {
         $result = update_field('position', $status, $this->get_id());
         return $result;
     }

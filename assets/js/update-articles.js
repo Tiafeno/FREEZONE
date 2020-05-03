@@ -6,9 +6,9 @@
                 loading: false,
                 articles: [],
                 condition_product: [{
-                        key: 0,
-                        value: "Disponible"
-                    },
+                    key: 0,
+                    value: "Disponible"
+                },
                     {
                         key: 1,
                         value: "Rupture"

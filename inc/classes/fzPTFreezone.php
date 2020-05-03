@@ -7,9 +7,10 @@ namespace classes;
  */
 class fzPTFreezone
 {
-    public function __construct () {
+    public function __construct ()
+    {
         add_action('init', function () {
-           $this->register_post_type();
+            $this->register_post_type();
         });
 
         add_action('init', function () {
@@ -25,21 +26,21 @@ class fzPTFreezone
 
         add_action('admin_init', function () {
             $caps = [
-              ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
-              ['read_private_article' => ['administrator', 'editor', 'author']],
-              ['edit_article' => ['administrator', 'fz-supplier', 'editor', 'author']],
-              ['edit_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
-              ['edit_others_articles' => ['administrator', 'editor', 'author']],
-              ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
-              ['edit_private_articles' => ['administrator', 'editor', 'author']],
-              ['delete_article'  => ['administrator', 'fz-supplier']],
-              ['delete_articles' => ['administrator', 'fz-supplier']],
-              ['delete_others_articles' => ['administrator']],
-              ['delete_published_articles' => ['administrator', 'fz-supplier']],
-              ['delete_private_articles' => ['administrator']],
-              ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
-              ['upload_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
-              ['edit_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
+                ['read_article' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
+                ['read_private_article' => ['administrator', 'editor', 'author']],
+                ['edit_article' => ['administrator', 'fz-supplier', 'editor', 'author']],
+                ['edit_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+                ['edit_others_articles' => ['administrator', 'editor', 'author']],
+                ['edit_published_articles' => ['administrator', 'fz-supplier', 'editor', 'author']],
+                ['edit_private_articles' => ['administrator', 'editor', 'author']],
+                ['delete_article' => ['administrator', 'fz-supplier']],
+                ['delete_articles' => ['administrator', 'fz-supplier']],
+                ['delete_others_articles' => ['administrator']],
+                ['delete_published_articles' => ['administrator', 'fz-supplier']],
+                ['delete_private_articles' => ['administrator']],
+                ['publish_articles' => ['administrator', 'fz-supplier', 'editor']],
+                ['upload_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
+                ['edit_files' => ['fz-particular', 'fz-company', 'fz-supplier']],
             ];
             $caps = array_merge($caps, [
                 ['read_sav' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company', 'editor', 'author']],
@@ -49,21 +50,21 @@ class fzPTFreezone
                 ['edit_others_savs' => ['administrator', 'fz-particular', 'fz-company', 'fz-supplier']],
                 ['edit_published_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
                 ['edit_private_savs' => ['administrator']],
-                ['delete_sav'  => ['administrator']],
+                ['delete_sav' => ['administrator']],
                 ['delete_savs' => ['administrator']],
                 ['delete_others_savs' => ['administrator']],
                 ['delete_published_savs' => ['administrator']],
                 ['delete_private_savs' => ['administrator']],
                 ['publish_savs' => ['administrator', 'fz-supplier', 'fz-particular', 'fz-company']],
             ]);
-            foreach ($caps as $cap):
+            foreach ( $caps as $cap ):
                 if (is_array($cap)) {
-                    foreach ($cap as $capabilitie => $roles) {
+                    foreach ( $cap as $capabilitie => $roles ) {
                         if (is_array($roles)) {
-                            foreach ($roles as $role):
+                            foreach ( $roles as $role ):
                                 $user_role = get_role($role);
                                 if (is_null($user_role)) continue;
-                                if ( ! $user_role->has_cap($capabilitie) ):
+                                if (!$user_role->has_cap($capabilitie)):
                                     $user_role->add_cap($capabilitie);
                                 endif;
 
@@ -75,10 +76,10 @@ class fzPTFreezone
 
             // for admin access
             $caps = ['list_users', 'upload_files', 'edit_users', 'add_users', 'create_users'];
-            foreach ($caps as $cap) {
-                foreach (['editor', 'author'] as $role):
+            foreach ( $caps as $cap ) {
+                foreach ( ['editor', 'author'] as $role ):
                     $user_role = get_role($role);
-                    if ( ! $user_role->has_cap($cap) ):
+                    if (!$user_role->has_cap($cap)):
                         $user_role->add_cap($cap);
                     endif;
 

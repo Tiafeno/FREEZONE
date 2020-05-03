@@ -24,27 +24,27 @@ class fzAPI
         add_action('rest_api_init', [&$this, 'register_rest_faq_client']);
         add_action('rest_api_init', function () {
             // https://wordpress.stackexchange.com/questions/271877/how-to-do-a-meta-query-using-rest-api-in-wordpress-4-7
-            add_filter('rest_catalog_query', function($args, $request) {
-                $args += array(
-                    'meta_key'   => $request['meta_key'],
+            add_filter('rest_catalog_query', function ($args, $request) {
+                $args += [
+                    'meta_key' => $request['meta_key'],
                     'meta_value' => $request['meta_value'],
                     'meta_compare' => $request['meta_compare'],
                     'meta_query' => $request['meta_query'],
-                );
+                ];
                 return $args;
             }, 99, 2);
 
             // Cette filtre permet de faire une recherche sur le nom de l'entreprise
-            add_filter('rest_users_query', function ( $args, $request ) {
+            add_filter('rest_users_query', function ($args, $request) {
                 $search = $request->get_param('search');
                 if (!empty($search)) {
-                    $args[ 'meta_query' ] = array(
-                        'company_name' => array(
+                    $args['meta_query'] = [
+                        'company_name' => [
                             'key' => 'company_name',
                             'value' => $search,
                             'compare' => 'LIKE',
-                        )
-                    );
+                        ]
+                    ];
                 }
                 return $args;
             }, 10, 2);
@@ -76,7 +76,7 @@ class fzAPI
                     'args' => []
                 ],
             ]);
-            
+
             /**
              * Permet de crée une article depuis la B.O
              */
@@ -103,7 +103,7 @@ class fzAPI
                         $result = $wpdb->get_row($request_product_exist_sql, OBJECT);
 
                         $p_cat = [];
-                        if ( ! is_array($product_cat)) {
+                        if (!is_array($product_cat)) {
                             $p_cat = explode(',', $product_cat);
                         }
                         $p_cat = array_filter($p_cat, function ($cat) { return !empty($cat); });
@@ -118,38 +118,38 @@ class fzAPI
                             //$current_term = array_filter($terms, function ($term) use ($mark) { return $term->name === $mark ;});
                             //$current_term = is_array($current_term) && !empty($current_term) ? $current_term[0] : '';
 
-                            $term_id = get_term_by( 'name', $mark, $taxonomy )->term_id;
+                            $term_id = get_term_by('name', $mark, $taxonomy)->term_id;
                             $categories = array_map(function ($cat) { return ['id' => intval($cat)]; }, $p_cat);
                             $rest_request = new \WP_REST_Request();
                             $rest_request->set_query_params([
-                                'type'   => 'simple',
+                                'type' => 'simple',
                                 'status' => 'pending',
-                                'name'   => $name,
+                                'name' => $name,
                                 'regular_price' => '0',
-                                'description'   => ' ',
+                                'description' => ' ',
                                 'short_description' => ' ',
                                 'attributes' => [
                                     [
                                         'id' => $attr_id,
-                                        'position'  => 0,
-                                        'visible'   => true,
+                                        'position' => 0,
+                                        'visible' => true,
                                         'variation' => false, // for variative products in case you would like to use it for variations
-                                        'options'   => array($mark) // if the attribute term doesn't exist, it will be created
+                                        'options' => [$mark] // if the attribute term doesn't exist, it will be created
                                     ]
                                 ],
                                 'meta_data' => [
-                                    ['key'  => '_fz_marge',        'value' => floatval($marge)],
-                                    ['key'  => '_fz_marge_dealer', 'value' => floatval($marge_dealer)],
-                                    ['key'  => '_fz_marge_particular', 'value' => floatval($marge_particular)]
+                                    ['key' => '_fz_marge', 'value' => floatval($marge)],
+                                    ['key' => '_fz_marge_dealer', 'value' => floatval($marge_dealer)],
+                                    ['key' => '_fz_marge_particular', 'value' => floatval($marge_particular)]
                                 ],
                                 'categories' => $categories,
-                                'images'     => []
+                                'images' => []
                             ]);
                             $product_controller = new \WC_REST_Products_V2_Controller();
                             $response = $product_controller->create_item($rest_request);
                             if ($response instanceof \WP_REST_Response) {
                                 $data = $response->get_data();
-                                $product = new \WC_Product((int) $data['id']);
+                                $product = new \WC_Product((int)$data['id']);
                             }
                         }
 
@@ -163,15 +163,15 @@ class fzAPI
                         $date_now = date_i18n('Y-m-d H:i:s');
                         $rest_request = new \WP_REST_Request();
                         $rest_request->set_query_params([
-                            'title'   => $name,
+                            'title' => $name,
                             'content' => '',
                             'status' => 'pending',
-                            'price'  => intval($price),
+                            'price' => intval($price),
                             'total_sales' => intval($total_sales),
-                            'user_id'     => $user_id,
-                            'product_id'  => $product->get_id(),
-                            'garentee'    => $garentee,
-                            'date_add'    => $date_now,
+                            'user_id' => $user_id,
+                            'product_id' => $product->get_id(),
+                            'garentee' => $garentee,
+                            'date_add' => $date_now,
                             'date_review' => $date_now
 
                         ]);
@@ -180,7 +180,7 @@ class fzAPI
                         $terms = array_filter($p_cat, function ($cat) { return intval($cat); });
                         if ($response instanceof \WP_REST_Response) {
                             $data = $response->get_data();
-                            wp_set_post_terms( (int) $data['id'], $terms, 'product_cat' );
+                            wp_set_post_terms((int)$data['id'], $terms, 'product_cat');
                         }
                         return $response;
                     },
@@ -226,11 +226,11 @@ class fzAPI
             register_rest_route('api', '/product/(?P<action>\w+)/(?P<product_id>\d+)', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
-                    'callback' => function(\WP_REST_Request $request) {
+                    'callback' => function (\WP_REST_Request $request) {
                         global $wpdb;
                         $action = $request['action'];
-                        $product_id = (int) $request['product_id'];
-                        if (is_nan($product_id)) wp_send_json_error( "L'identifiant du produit indefinie" );
+                        $product_id = (int)$request['product_id'];
+                        if (is_nan($product_id)) wp_send_json_error("L'identifiant du produit indefinie");
                         // Récuperer tous les articles des fournisseurs qui posséde le produit
                         $sql = "SELECT SQL_CALC_FOUND_ROWS pts.ID FROM $wpdb->posts as pts
                                 WHERE pts.post_type = 'fz_product'
@@ -242,27 +242,27 @@ class fzAPI
                         if ($action === 'update'):
                             $title = stripslashes($_REQUEST['title']);
                             $description = stripslashes($_REQUEST['description']);
-                            foreach ($posts as $post) {
+                            foreach ( $posts as $post ) {
                                 $response = wp_update_post([
-                                    'ID'           => (int) $post->ID,
-                                    'post_title'   => $title,
+                                    'ID' => (int)$post->ID,
+                                    'post_title' => $title,
                                     'post_content' => $description,
                                 ], true);
 
-                                if (is_wp_error( $response )) wp_send_json_error( "{$response->get_error_message()}" );
+                                if (is_wp_error($response)) wp_send_json_error("{$response->get_error_message()}");
                             }
-                            wp_send_json_success( "Mise à jours effectuer avec succès" );
+                            wp_send_json_success("Mise à jours effectuer avec succès");
                         endif;
 
                         // Si le produit WC on supprime aussi tous les article de type "fz_product" en liaison avec celui-ci
                         if ($action === 'remove') :
-                            foreach ($posts as $post) {
+                            foreach ( $posts as $post ) {
                                 // @return (WP_Post|false|null) Post data on success, false or null on failure.
-                                $response = wp_delete_post((int) $post->ID, true);
-                                if (is_null( $response ) || !$response) wp_send_json_error("Une erreur s'est produit pendant la suppression de l'article");
+                                $response = wp_delete_post((int)$post->ID, true);
+                                if (is_null($response) || !$response) wp_send_json_error("Une erreur s'est produit pendant la suppression de l'article");
                             }
 
-                            wp_send_json_success( "Action successfully complete" );
+                            wp_send_json_success("Action successfully complete");
                         endif;
 
                     },
@@ -322,7 +322,7 @@ class fzAPI
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
                         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
-                        $start  = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
+                        $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 0;
                         $args = [
                             'number' => $length,
                             'offset' => $start,
@@ -330,7 +330,7 @@ class fzAPI
                             'role__in' => ['fz-particular', 'fz-company'],
                             'order' => 'DESC'
                         ];
-                        $user = wp_get_current_user(  );
+                        $user = wp_get_current_user();
                         if (\in_array('administrator', $user->roles)) {
                             if (!empty($_REQUEST['responsible'])) {
                                 $args = array_merge($args, [
@@ -395,7 +395,7 @@ class fzAPI
                         $length = isset($_REQUEST['length']) ? (int)$_REQUEST['length'] : 10;
                         $start = isset($_REQUEST['length']) ? (int)$_REQUEST['start'] : 1;
 
-                $your_articles_request = <<<SQL
+                        $your_articles_request = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts as pts
 WHERE pts.post_type = "fz_faq_client" AND pts.post_status = "publish" 
 LIMIT $length OFFSET $start
@@ -404,9 +404,9 @@ SQL;
                         $count_sql = "SELECT FOUND_ROWS()";
                         $total = $wpdb->get_var($count_sql);
                         $articles = [];
-                        foreach ($results as $result) {
+                        foreach ( $results as $result ) {
                             $article_controller = new \WP_REST_Posts_Controller('fz_faq_client');
-                            $post = get_post((int) $result->ID);
+                            $post = get_post((int)$result->ID);
                             $response = $article_controller->prepare_item_for_response($post, new \WP_REST_Request());
                             $articles[] = $response->get_data();
                         }
@@ -477,7 +477,7 @@ SQL;
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
-                        $user_id = (int) $rq['user_id'];
+                        $user_id = (int)$rq['user_id'];
                         if (\is_nan($user_id)) wp_send_json_error("Identifiant introuvable");
                         $password = sanitize_text_field($_REQUEST['pwd']);
                         do_action("fz_mail_api_insert_user", $user_id, $password);
@@ -490,7 +490,7 @@ SQL;
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => function (\WP_REST_Request $rq) {
                         // nif, stat, rc, cif & freezone_phones (stringify)
-                        foreach ($_REQUEST as $option => $value)
+                        foreach ( $_REQUEST as $option => $value )
                             update_option($option, sanitize_text_field($value));
                         wp_send_json_success("Donnee mise a jour avec succes");
                     },
@@ -503,7 +503,7 @@ SQL;
                     'callback' => function () {
                         $option_fields = ['nif', 'stat', 'rc', 'cif', 'bmoi'];
                         $results = [];
-                        foreach ($option_fields as $field) {
+                        foreach ( $option_fields as $field ) {
                             $results[ $field ] = get_option($field, null);
                         }
 
@@ -519,7 +519,8 @@ SQL;
 
     }
 
-    public function register_rest_user () {
+    public function register_rest_user ()
+    {
         $metas = [
             'company_name',
             'address',
@@ -552,7 +553,7 @@ SQL;
 
                 },
                 'get_callback' => function ($object, $field_name) use ($admin) {
-                    $client_id = (int) $object['id'];
+                    $client_id = (int)$object['id'];
                     $current_client_id = get_current_user_id();
                     if ($current_client_id === 0) return null;
                     $field_value = get_field($field_name, 'user_' . $client_id);
@@ -572,7 +573,7 @@ SQL;
          */
         register_rest_field('user', 'send_mail_review_date', [
             'update_callback' => function ($value, $object, $field_name) use ($admin) {
-            return update_user_meta($object->ID, $field_name, $value);
+                return update_user_meta($object->ID, $field_name, $value);
 
             },
             'get_callback' => function ($object, $field_name) use ($admin) {
@@ -604,7 +605,7 @@ SQL;
             },
             'get_callback' => function ($object) use ($disable_field_name) {
                 $responsible = get_user_meta($object['id'], $disable_field_name, true);
-                return (int) $responsible;
+                return (int)$responsible;
             }
         ]);
 
@@ -628,7 +629,8 @@ SQL;
 
     }
 
-    public function register_rest_fz_product () {
+    public function register_rest_fz_product ()
+    {
         $current_post_type = "fz_product";
         $metas = ['price', 'date_add', 'date_review', 'product_id', 'total_sales', 'user_id'];
         $current_client_id = get_current_user_id();
@@ -647,22 +649,22 @@ SQL;
         }
 
         $article_metas = [
-            ['name' => 'marge', 'key'        => '_fz_marge'], // (int)
+            ['name' => 'marge', 'key' => '_fz_marge'], // (int)
             ['name' => 'marge_dealer', 'key' => '_fz_marge_dealer'], // (int)
             ['name' => 'marge_particular', 'key' => '_fz_marge_particular'], // (int)
         ];
 
-        foreach ($article_metas as $meta) {
+        foreach ( $article_metas as $meta ) {
             register_rest_field($current_post_type, $meta['name'], [
                 'update_callback' => function ($value, $object) use ($meta) {
                     // $product_id = get_field('product_id', (int)$object->ID);
                     // $product = new \WC_Product((int)$product_id);
                     // $product->update_meta_data($meta['key'], $value);
-                    return update_post_meta((int) $object->ID, $meta['key'], $value);
+                    return update_post_meta((int)$object->ID, $meta['key'], $value);
                 },
                 'get_callback' => function ($object) use ($meta) {
-                    $meta_value = get_post_meta((int) $object['id'], $meta['key'], true);
-                    
+                    $meta_value = get_post_meta((int)$object['id'], $meta['key'], true);
+
                     if (!$meta_value || is_null($meta_value)) {
                         // BUG FIX: Ici on corrige le bug que les marges doivent se trouver dans l'article mais pas dans les produits
                         $product_id = get_field('product_id', (int)$object['id']);
@@ -670,7 +672,7 @@ SQL;
                         $marge = $product->get_meta($meta['key']);
 
                         // Update post meta
-                        update_post_meta((int) $object['id'], $meta['key'], $marge);
+                        update_post_meta((int)$object['id'], $meta['key'], $marge);
                         $meta_value = $marge;
                     }
                     return $meta_value;
@@ -681,10 +683,10 @@ SQL;
         // @type string Out/In
         register_rest_field($current_post_type, 'garentee', [
             'update_callback' => function ($value, $object) {
-                return update_post_meta( (int)$object->ID, '_fz_garentee', $value );
+                return update_post_meta((int)$object->ID, '_fz_garentee', $value);
             },
             'get_callback' => function ($object, $field_name) {
-                $garentee = get_post_meta( (int) $object['id'], '_fz_garentee', true );
+                $garentee = get_post_meta((int)$object['id'], '_fz_garentee', true);
                 return $garentee;
             }
         ]);
@@ -709,11 +711,11 @@ SQL;
          */
         register_rest_field('fz_product', 'condition', [
             'update_callback' => function ($value, $object) {
-                return update_post_meta( (int)$object->ID, '_fz_condition', $value );
+                return update_post_meta((int)$object->ID, '_fz_condition', $value);
             },
             'get_callback' => function ($object, $field_name) {
-                $condition = get_post_meta( (int) $object['id'], '_fz_condition', true );
-                return (int) $condition;
+                $condition = get_post_meta((int)$object['id'], '_fz_condition', true);
+                return (int)$condition;
             }
         ]);
 
@@ -724,10 +726,10 @@ SQL;
          */
         register_rest_field($current_post_type, '_quantity', [
             'update_callback' => function ($value, $object) {
-                return update_post_meta( (int) $object->ID, '_fz_quantity', $value);
-            },  
-            'get_callback' => function($object) {
-                $qty = get_post_meta( (int)$object['id'], '_fz_quantity', true );
+                return update_post_meta((int)$object->ID, '_fz_quantity', $value);
+            },
+            'get_callback' => function ($object) {
+                $qty = get_post_meta((int)$object['id'], '_fz_quantity', true);
                 if (!$qty || is_null($qty)) return 0;
                 return intval($qty);
             }
@@ -756,24 +758,26 @@ SQL;
         }
     }
 
-    public function register_rest_faq_client() {
+    public function register_rest_faq_client ()
+    {
         $post_type = 'fz_faq_client';
         $metas = ['faq_category']; // 1: Profesional, 2: Particular
-        foreach ($metas as $meta) {
+        foreach ( $metas as $meta ) {
             register_rest_field($post_type, $meta, [
                 'update_callback' => function ($value, $object, $field_name) {
                     return update_post_meta($object->ID, $field_name, $value);
-        
+
                 },
                 'get_callback' => function ($object, $field_name) {
-                    $ctg = get_post_meta( (int) $object['id'], $field_name, true);
+                    $ctg = get_post_meta((int)$object['id'], $field_name, true);
                     return $ctg ? $ctg : null;
                 }
             ]);
         }
     }
 
-    public function register_rest_order () {
+    public function register_rest_order ()
+    {
         $post_types = wc_get_order_types();
         foreach ( $post_types as $type ) {
             // ACF field
@@ -793,13 +797,13 @@ SQL;
             if (isset($params['context']) && $params['context'] === "edit") {
                 register_rest_field($type, 'customer_data', [
                     'get_callback' => function ($object, $field_name) {
-                        $order =  new \WC_Order( (int)$object['id'] );
+                        $order = new \WC_Order((int)$object['id']);
 
                         $usr_controller = new \WP_REST_Users_Controller();
                         $request = new \WP_REST_Request();
                         $request->set_param('context', 'edit');
                         $cs_response = $usr_controller->prepare_item_for_response(new \WP_User($order->get_customer_id()), $request);
-                        
+
                         return $cs_response->data;
                     }
                 ]);
@@ -807,13 +811,13 @@ SQL;
 
             // post meta field
             // @var date_send: Format YYYY-MM-DD HH:mm:ss
-            foreach (['client_role', 'date_send', 'line_items_zero'] as $meta) {
+            foreach ( ['client_role', 'date_send', 'line_items_zero'] as $meta ) {
                 register_rest_field($type, $meta, [
                     'update_callback' => function ($value, $object, $field_name) {
-                        return update_post_meta( (int)$object->ID, $field_name, $value );
+                        return update_post_meta((int)$object->ID, $field_name, $value);
                     },
                     'get_callback' => function ($object, $field_name) {
-                        $value = get_post_meta( (int) $object['id'], $field_name, true );
+                        $value = get_post_meta((int)$object['id'], $field_name, true);
                         if ('line_items_zero' === $field_name) {
                             if (!$value) return [];
                             return $value;
@@ -823,7 +827,7 @@ SQL;
                     }
                 ]);
             }
-            
+
 
         }
     }

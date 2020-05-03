@@ -33,7 +33,7 @@ class fzCompany extends \WP_User
      * @property string $user_registered
      * @property string $user_activation_key
      * @property string $user_status
-     * @property int    $user_level
+     * @property int $user_level
      * @property string $display_name
      * @property string $spam
      * @property string $deleted
@@ -48,7 +48,7 @@ class fzCompany extends \WP_User
     /**
      * @var integer
      * 0: En attente
-     * 
+     *
      * 1: Professionel
      * 2: Revendeur
      */
@@ -61,21 +61,21 @@ class fzCompany extends \WP_User
     public $sector_activity = null;
 
 
-    public function __construct ($id = 0, $name = '', $site_id = '') {
+    public function __construct ($id = 0, $name = '', $site_id = '')
+    {
         parent::__construct($id, $name, $site_id);
 
-        $this->address = get_field('address', 'user_'.$this->ID);
-        $this->phone = get_field('phone', 'user_'.$this->ID);
-        $this->reference = get_field('client_reference', 'user_'.$this->ID);
-        $this->type = get_field('role_office', 'user_'.$this->ID);
-        $this->company_name = get_field('company_name', 'user_'.$this->ID);
-        $this->sector_activity = (int) get_user_meta($this->ID, 'sector_activity', true);
-        $this->stat = get_field('stat', 'user_'.$this->ID);
-        $this->nif = get_field('nif', 'user_'.$this->ID);
-        $this->rc = get_field('rc', 'user_'.$this->ID);
-        $this->cif = get_field('cif', 'user_'.$this->ID);
+        $this->address = get_field('address', 'user_' . $this->ID);
+        $this->phone = get_field('phone', 'user_' . $this->ID);
+        $this->reference = get_field('client_reference', 'user_' . $this->ID);
+        $this->type = get_field('role_office', 'user_' . $this->ID);
+        $this->company_name = get_field('company_name', 'user_' . $this->ID);
+        $this->sector_activity = (int)get_user_meta($this->ID, 'sector_activity', true);
+        $this->stat = get_field('stat', 'user_' . $this->ID);
+        $this->nif = get_field('nif', 'user_' . $this->ID);
+        $this->rc = get_field('rc', 'user_' . $this->ID);
+        $this->cif = get_field('cif', 'user_' . $this->ID);
     }
-
 
 
 }

@@ -9,9 +9,11 @@
 class apiImport
 {
     public $taxonomy_cat_name = "product_cat";
+
     public function __construct () { }
 
-    public function import_update_by_csv() {
+    public function import_update_by_csv ()
+    {
         // Extraire les variables envoyer depuis la B.O
         extract($_POST, EXTR_PREFIX_SAME, 'WC');
         /** @var int $id */
@@ -37,14 +39,15 @@ class apiImport
      * @param WP_REST_Request $request
      * @return bool
      */
-    public function import_article_csv() {
+    public function import_article_csv ()
+    {
         // Extraire les variables envoyer depuis la B.O
         extract($_POST, EXTR_PREFIX_SAME, 'WC');
         // Insert product cat or get it if exist
         $terms = [];
         /** @var string $categories */
         $ctg_names = explode(',', $categories);
-        foreach ($ctg_names as $item) {
+        foreach ( $ctg_names as $item ) {
             $item = trim(stripslashes($item));
             $item = ucfirst($item);
             $term = term_exists($item, $this->taxonomy_cat_name);
@@ -55,7 +58,7 @@ class apiImport
                 }
             }
             if (!isset($term['term_id'])) continue;
-            $terms[] = (int) $term['term_id'];
+            $terms[] = (int)$term['term_id'];
         }
         // Create woocommerce product
         $options = get_field('wc', 'option');
@@ -66,7 +69,7 @@ class apiImport
             ]
         );
 
-        $categorie_terms = array_map(function($ctg) { return ['id' => (int) $ctg]; }, $terms);
+        $categorie_terms = array_map(function ($ctg) { return ['id' => (int)$ctg]; }, $terms);
 
         /** @var string $name */
         /** @var string $regular_price */
@@ -86,21 +89,21 @@ class apiImport
                 'name' => $name,
                 'type' => 'simple',
                 'regular_price' => $regular_price,
-                'description'   => !empty($description) ? stripslashes($description) : '',
+                'description' => !empty($description) ? stripslashes($description) : '',
                 'short_description' => !empty($short_description) ? stripslashes($short_description) : '',
                 'categories' => $categorie_terms,
                 'images' => []
             ];
-            if ( ! empty($mark) && !is_null($mark)) {
+            if (!empty($mark) && !is_null($mark)) {
                 // Get attribute by identification
                 $attr_id = wc_attribute_taxonomy_id_by_name('brands'); // @return int
                 $data = array_merge($data, ['attributes' => [
                     [
                         'id' => $attr_id,
-                        'position'  => 0,
-                        'visible'   => true,
+                        'position' => 0,
+                        'visible' => true,
                         'variation' => false, // for variative products in case you would like to use it for variations
-                        'options'   => array($mark) // if the attribute term doesn't exist, it will be created
+                        'options' => [$mark] // if the attribute term doesn't exist, it will be created
                     ]
                 ]]);
             }
@@ -117,10 +120,10 @@ class apiImport
         $Prd->set_sku("PRD{$product_id}");
         $Prd->save();
         $article_data = [
-            'post_title'   => $name,
+            'post_title' => $name,
             'post_content' => $description,
-            'post_status'  => 'publish',
-            'post_type'    => 'fz_product'
+            'post_status' => 'publish',
+            'post_type' => 'fz_product'
         ];
         $supplier = $this->get_supplier_by_ref($reference); // WP_User
         if (!$supplier) wp_send_json_error("Fournisseur introuvable ou n'existe pas ({$reference})");
@@ -136,14 +139,14 @@ class apiImport
         update_post_meta($article_id, '_fz_quantity', wc_clean($quantity)); // Mettre a jour la quantite
         update_field('user_id', $supplier->ID, $article_id);
         // Ajouter une quantité pour la gestion de stock
-        update_post_meta( $article_id, '_fz_quantity', intval(wc_clean($quantity)));
+        update_post_meta($article_id, '_fz_quantity', intval(wc_clean($quantity)));
         // Ajouter les meta dans l'article
         $meta_data = [
-            [ 'key' => '_fz_marge', 'value' => trim($marge) ],
-            [ 'key' => '_fz_marge_dealer', 'value' => trim($marge_dealer) ],
-            [ 'key' => '_fz_marge_particular', 'value' => trim($marge_particular) ],
+            ['key' => '_fz_marge', 'value' => trim($marge)],
+            ['key' => '_fz_marge_dealer', 'value' => trim($marge_dealer)],
+            ['key' => '_fz_marge_particular', 'value' => trim($marge_particular)],
         ];
-        foreach ($meta_data as $data) {
+        foreach ( $meta_data as $data ) {
             update_post_meta($article_id, $data['key'], $data['value']);
         }
         if (!empty($terms)) {
@@ -152,10 +155,10 @@ class apiImport
         wp_send_json_success("Article ajouté avec succès");
     }
 
-    
 
     // Recuperer un fourniseur par son reference
-    protected function get_supplier_by_ref($ref = null) {
+    protected function get_supplier_by_ref ($ref = null)
+    {
         global $wpdb;
         $sql = <<<SQL
 SELECT user_id FROM $wpdb->usermeta WHERE CONVERT(LOWER(`meta_key`) USING utf8mb4) = 'reference' 
@@ -164,12 +167,13 @@ SQL;
         $result = $wpdb->get_row($sql);
         if (empty($result)) return false;
 
-        $user_id = (int) $result->user_id;
+        $user_id = (int)$result->user_id;
         return new WP_User($user_id);
     }
 
     // Verifier si le produit existe
-    protected function product_exist($title = '') {
+    protected function product_exist ($title = '')
+    {
         global $wpdb;
 
         if (empty($title)) return false;

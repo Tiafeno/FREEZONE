@@ -22,7 +22,7 @@ wp_localize_script('vue', 'rest_api', [
     'rest_url' => esc_url_raw(rest_url()),
     'nonce' => wp_create_nonce('wp_rest'),
     'user_id' => $User->ID,
-    'admin_url' =>  admin_url('admin-ajax.php'),
+    'admin_url' => admin_url('admin-ajax.php'),
     'redirect_url' => wc_get_page_permalink('myaccount')
 ]);
 acf_form_head();
@@ -88,7 +88,9 @@ yozi_render_breadcrumbs();
                     },
                     methods: {
                         statusHandler: function (evt) {
-                            if (this.guarentee_product == 1) { this.delais_garentee = 1; }
+                            if (this.guarentee_product == 1) {
+                                this.delais_garentee = 1;
+                            }
                             // Hors garantie
                             if (this.guarentee_product == 2) {
                                 this.message = "Votre demande sera étudiée sous 24 heures jours ouvrables, " +
@@ -118,7 +120,7 @@ yozi_render_breadcrumbs();
                                     " du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
                             }
                         },
-                        checkForm: function(e) {
+                        checkForm: function (e) {
                             e.preventDefault();
                             var self = this;
                             this.errors = [];
@@ -181,16 +183,16 @@ yozi_render_breadcrumbs();
                                 beforeSend: function (xhr) {
                                     xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
                                 },
-                                success: function(newSav) {
+                                success: function (newSav) {
                                     var savId = newSav.id;
                                     $.ajax({
                                         method: "POST",
-                                        url: rest_api.admin_url ,
+                                        url: rest_api.admin_url,
                                         data: {
                                             action: 'new_sav',
                                             post_id: savId
                                         },
-                                        success: function(resp) {
+                                        success: function (resp) {
                                             $('button[type="submit"]').text('Validé');
                                             self.loading = false;
                                             Swal.fire({
@@ -205,7 +207,7 @@ yozi_render_breadcrumbs();
                                                 }
                                             });
                                         },
-                                        error : function(jqXHR, status, errorThrown) {
+                                        error: function (jqXHR, status, errorThrown) {
                                             $('button[type="submit"]').text('Validé');
                                         }
                                     });
@@ -236,9 +238,9 @@ yozi_render_breadcrumbs();
                     } else {
                         ?>
                         <form id="app-form-sav"
-                                @submit="checkForm"
-                                action=""
-                                method="post">
+                              @submit="checkForm"
+                              action=""
+                              method="post">
 
                             <p v-if="errors.length">
                                 <b>Veuillez corriger les erreurs suivantes:</b>
@@ -318,15 +320,18 @@ yozi_render_breadcrumbs();
                                 <div class="col-sm-4" v-if="guarentee_product == 1 && product_provider == 1">
                                     <div class="form-group">
                                         <label for="date_purchase">Date d'achat</label>
-                                        <input type="date" v-model="date_purchase" v-bind:required="product_provider == 1"
-                                               id="date_purchase" style="display: block; line-height: 1.85; padding: 4px; width: 100%">
+                                        <input type="date" v-model="date_purchase"
+                                               v-bind:required="product_provider == 1"
+                                               id="date_purchase"
+                                               style="display: block; line-height: 1.85; padding: 4px; width: 100%">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" v-if="guarentee_product == 1 && product_provider == 1">
                                     <div class="form-group">
                                         <label for="bill">Numéro de la facture</label>
                                         <input type="text" v-model="bill" v-bind:required="product_provider == 1"
-                                               class="form-control" id="bill" placeholder="Veuillez saisir le numéro de la facture">
+                                               class="form-control" id="bill"
+                                               placeholder="Veuillez saisir le numéro de la facture">
                                     </div>
                                 </div>
                             </div>
@@ -335,34 +340,41 @@ yozi_render_breadcrumbs();
                                 <div class="col-sm-8">
                                     <p style="font-size: 14px; font-weight: 700; margin-bottom: 2px;">Accessoires:</p>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="1" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="1" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Câble d'alimentation</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="2" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="2" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Câble USB</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="3" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="3" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Toner réf</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="4" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="4" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Cartouche réf</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="5" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="5" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Adapter</span>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="accessorie" v-bind:value="0" name="accessorie">
+                                        <input class="form-check-input" type="checkbox" v-model="accessorie"
+                                               v-bind:value="0" name="accessorie">
                                         <span class="form-check-label" for="inlineCheckbox2">Autres accessoires</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6" v-if="_.indexOf(accessorie, 0) > -1">
                                     <div class="form-group">
                                         <label>Autres accessoires:</label>
-                                        <textarea v-model="other_accessories_desc" v-bind:required="accessorie == 0" class="form-control"></textarea>
+                                        <textarea v-model="other_accessories_desc" v-bind:required="accessorie == 0"
+                                                  class="form-control"></textarea>
                                     </div>
                                 </div>
                             </div>

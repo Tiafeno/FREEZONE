@@ -4,7 +4,7 @@
         new Vue({
             el: '#app-prestations',
             data: {
-                loading : false,
+                loading: false,
                 pageIndex: 0, // 0 default page. https://mail.google.com/mail/u/0/#inbox/FMfcgxwDrHspMhGPsmTbwtrqRXFsLpst?projector=1&messagePartId=0.2
                 platformes: [
                     {
@@ -52,7 +52,7 @@
                         }
                     });
                 },
-                onChangePlatform: function($event) {
+                onChangePlatform: function ($event) {
                     $event.preventDefault();
                     var self = this;
                     var data = {};
@@ -62,9 +62,9 @@
                         data.meta_value = this.platform != 3 ? [this.platform, 3] : this.platform;
                         data.meta_compare = 'IN';
                     }
-                    
+
                     this.changeStatus('Chargement en cours...');
-                    this.queryCatalogues(data).then(function(response) {
+                    this.queryCatalogues(data).then(function (response) {
                         self.changeStatus('');
                         self.catalogues = _.clone(response);
                     });
@@ -81,7 +81,7 @@
                             success: (catalogs, status, xhr) => {
                                 resolve(catalogs);
                             },
-                            error: function() {
+                            error: function () {
                                 reject("Une erreur s'est produit");
                             }
                         })
@@ -127,7 +127,7 @@
                             self.catalogues = _.clone(catalogs);
                             resolve(true);
                         },
-                        complete: function() {
+                        complete: function () {
                             self.changeStatus('');
                         }
                     });

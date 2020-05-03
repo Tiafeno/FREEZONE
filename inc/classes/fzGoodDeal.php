@@ -1,4 +1,5 @@
 <?php
+
 namespace classes;
 
 if (0 > version_compare(PHP_VERSION, '5')) {
@@ -13,21 +14,23 @@ class fzGoodDeal
     public $post_author_annonce = 0; // post meta: gd_author
     public $categorie = null;
 
-    public function __construct ($post_id) {
+    public function __construct ($post_id)
+    {
         $post = \WP_Post::get_instance($post_id);
-        foreach (get_object_vars($post) as $key => $value)
+        foreach ( get_object_vars($post) as $key => $value )
             $this->$key = $value;
 
-        $this->price  = get_post_meta($post_id, 'gd_price', true);
+        $this->price = get_post_meta($post_id, 'gd_price', true);
         $this->gallery = get_post_meta($post_id, 'gd_gallery', true); // return string
         if (!is_array($this->gallery)) {
             $this->gallery = json_decode($this->gallery);
         }
-        $this->post_author_annonce = (int) get_post_meta($post_id, 'gd_author', true);
-        $this->categorie = wp_get_post_terms( $this->ID, 'product_cat', [] );
+        $this->post_author_annonce = (int)get_post_meta($post_id, 'gd_author', true);
+        $this->categorie = wp_get_post_terms($this->ID, 'product_cat', []);
     }
 
-    public function set_title($title) {
+    public function set_title ($title)
+    {
         if (empty($title)) {
             throw new \Exception("Le champ 'Titre' ne peut pas etre vide");
             return false;
@@ -41,7 +44,8 @@ class fzGoodDeal
         return true;
     }
 
-    public function set_description($text) {
+    public function set_description ($text)
+    {
         $postarr = ['ID' => $this->ID, 'post_content' => $text];
         $postupdate = wp_update_post($postarr, true);
         if (is_wp_error($postupdate) || 0 === $postupdate) {
@@ -51,11 +55,13 @@ class fzGoodDeal
         return true;
     }
 
-    public function set_price($price) {
+    public function set_price ($price)
+    {
         return update_post_meta($this->ID, "gd_price", $price);
     }
 
-    public function set_categorie($ctg_id) {
+    public function set_categorie ($ctg_id)
+    {
         if (!is_numeric($ctg_id)) {
             throw new \Exception("La categorie est de type numeric");
             return false;
@@ -63,7 +69,8 @@ class fzGoodDeal
         return wp_set_post_terms($this->ID, [$ctg_id], 'product_cat');
     }
 
-    public function set_gallery($gallery) {
+    public function set_gallery ($gallery)
+    {
         if (!is_array($gallery)) {
             throw new \Exception("Le parametre est de type tableau.");
             return false;
@@ -71,27 +78,31 @@ class fzGoodDeal
         return update_post_meta($this->ID, 'gd_gallery', json_encode($gallery));
     }
 
-    public function get_author() {
+    public function get_author ()
+    {
         return new \WP_User($this->post_author_annonce);
     }
 
-    public function get_categorie () {
+    public function get_categorie ()
+    {
         if (isset($this->categorie)) {
             return is_array($this->categorie) ? $this->categorie[0] : null;
         }
         return null;
     }
 
-    public function get_categorie_id() {
+    public function get_categorie_id ()
+    {
         $categorie = $this->get_categorie();
         return is_null($categorie) ? 0 : $categorie->term_id;
     }
 
-    public function get_gallery_thumbnail() {
+    public function get_gallery_thumbnail ()
+    {
         $attachment = [];
         if (!is_array($this->gallery)) return [];
-        foreach ($this->gallery as $gallery)
-            $attachment[] = wp_get_attachment_url( intval($gallery) );
+        foreach ( $this->gallery as $gallery )
+            $attachment[] = wp_get_attachment_url(intval($gallery));
         return $attachment;
     }
 
@@ -113,17 +124,17 @@ add_action('init', function () {
             'not_found_in_trash' => "La corbeille est vide"
         ],
         'public' => true,
-        'hierarchical'  => false,
+        'hierarchical' => false,
         'menu_position' => null,
         'show_ui' => true,
         'has_archive' => true,
         'rewrite' => ['slug' => 'bonne-affaires'],
         'capability_type' => 'post',
-        'map_meta_cap'    => true,
+        'map_meta_cap' => true,
         'menu_icon' => 'dashicons-archive',
-        'supports'  => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
+        'supports' => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
         'show_in_rest' => true,
-        'query_var'    => true
+        'query_var' => true
     ]);
     // Register taxonomy for this post type in fzPTFreezone.php
 }, 10);

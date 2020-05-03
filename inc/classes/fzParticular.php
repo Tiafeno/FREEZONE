@@ -29,7 +29,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  * @property string $user_registered
  * @property string $user_activation_key
  * @property string $user_status
- * @property int    $user_level
+ * @property int $user_level
  * @property string $display_name
  * @property string $spam
  * @property string $deleted
@@ -44,14 +44,15 @@ class fzParticular extends \WP_User
     public $firstname;
     public $lastname;
 
-    public function __construct ($id = 0, $name = '', $site_id = '') {
+    public function __construct ($id = 0, $name = '', $site_id = '')
+    {
         parent::__construct($id, $name, $site_id);
         $this->firstname = $this->first_name;
         $this->lastname = $this->last_name;
-        $this->address = get_field('address', 'user_'.$this->ID);
-        $this->phone = get_field('phone', 'user_'.$this->ID);
-        $this->cin = get_field('cin', 'user_'.$this->ID);
-        $this->date_cin = get_field('date_cin', 'user_'.$this->ID);
+        $this->address = get_field('address', 'user_' . $this->ID);
+        $this->phone = get_field('phone', 'user_' . $this->ID);
+        $this->cin = get_field('cin', 'user_' . $this->ID);
+        $this->date_cin = get_field('date_cin', 'user_' . $this->ID);
     }
 
 }

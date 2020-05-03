@@ -28,7 +28,7 @@
                 $favicon_image_img = $favicon['url'];
             }
             ?>
-            <link rel="shortcut icon" href="<?php echo esc_url($favicon_image_img); ?>" />
+            <link rel="shortcut icon" href="<?php echo esc_url($favicon_image_img); ?>"/>
         <?php } ?>
     <?php } ?>
 
@@ -42,11 +42,12 @@
         function gtag() {
             dataLayer.push(arguments);
         }
+
         gtag('js', new Date());
         gtag('config', 'AW-862756431');
 
-        (function($) {
-            $(document).ready(function() {
+        (function ($) {
+            $(document).ready(function () {
                 var formatter = new Intl.NumberFormat('de-DE', {
                     style: 'currency',
                     currency: 'MGA',
@@ -73,30 +74,31 @@
 </head>
 
 <body <?php body_class(); ?>>
-    <?php if (yozi_get_config('preload', true)) {
-        $preload_icon = yozi_get_config('media-preload-icon');
-        $preload_icon_image_img = '';
-        if ((isset($preload_icon['url'])) && (trim($preload_icon['url']) != "")) {
-            if (is_ssl()) {
-                $preload_icon_image_img = str_replace("http://", "https://", $preload_icon['url']);
-            } else {
-                $preload_icon_image_img = $preload_icon['url'];
-            }
+<?php if (yozi_get_config('preload', true)) {
+    $preload_icon = yozi_get_config('media-preload-icon');
+    $preload_icon_image_img = '';
+    if ((isset($preload_icon['url'])) && (trim($preload_icon['url']) != "")) {
+        if (is_ssl()) {
+            $preload_icon_image_img = str_replace("http://", "https://", $preload_icon['url']);
+        } else {
+            $preload_icon_image_img = $preload_icon['url'];
         }
-        ?>
-        <div class="apus-page-loading">
-            <div class="apus-loader-inner" style="<?php echo esc_attr($preload_icon_image_img ? 'background-image: url(\'' . $preload_icon_image_img . '\')' : ''); ?>"></div>
-        </div>
-    <?php } ?>
-    <div id="wrapper-container" class="wrapper-container">
+    }
+    ?>
+    <div class="apus-page-loading">
+        <div class="apus-loader-inner"
+             style="<?php echo esc_attr($preload_icon_image_img ? 'background-image: url(\'' . $preload_icon_image_img . '\')' : ''); ?>"></div>
+    </div>
+<?php } ?>
+<div id="wrapper-container" class="wrapper-container">
 
-        <?php get_template_part('headers/mobile/offcanvas-menu'); ?>
-        <?php get_template_part('headers/mobile/header-mobile'); ?>
+    <?php get_template_part('headers/mobile/offcanvas-menu'); ?>
+    <?php get_template_part('headers/mobile/header-mobile'); ?>
 
-        <?php $header = apply_filters('yozi_get_header_layout', yozi_get_config('header_type'));
-        if (empty($header)) {
-            $header = 'v1';
-        }
-        ?>
-        <?php get_template_part('headers/' . $header); ?>
-        <div id="apus-main-content">
+    <?php $header = apply_filters('yozi_get_header_layout', yozi_get_config('header_type'));
+    if (empty($header)) {
+        $header = 'v1';
+    }
+    ?>
+    <?php get_template_part('headers/' . $header); ?>
+    <div id="apus-main-content">

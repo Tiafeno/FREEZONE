@@ -37,7 +37,8 @@ class fzSav
         'other_accessories_desc'// Si l'accessoire est definie sur autre, ce champ contient la valer pour autre
     ];
 
-    public function __get ($name) {
+    public function __get ($name)
+    {
         if ($name === 'customer') {
             $user_controller = new \WP_REST_Users_Controller();
             $request = new \WP_REST_Request();
@@ -53,7 +54,8 @@ class fzSav
         }
     }
 
-    public function __construct ($sav_id, $api = false) {
+    public function __construct ($sav_id, $api = false)
+    {
         $this->id = $sav_id;
         foreach ( self::$fields as $key ) {
             $field_value = get_field($key, $sav_id);
@@ -64,36 +66,51 @@ class fzSav
             $this->date_add = $post_sav->post_date;
     }
 
-    public static function getInstance($sav_id, $api = false) {
-        return new self((int) $sav_id, $api);
+    public static function getInstance ($sav_id, $api = false)
+    {
+        return new self((int)$sav_id, $api);
     }
 
     // Recupéré l'identifiant du client
-    public function get_customer_id() {
+    public function get_customer_id ()
+    {
         $id = get_field("customer", $this->id);
         return $id ? intval($id) : 0;
     }
 
     // Retourne la description exacte sur le status actuelle de l'SAV
-    public function get_status_string() {
+    public function get_status_string ()
+    {
         $status = intval($this->status_sav);
         if (is_nan($status)) return 'Non definie';
         switch ($status) {
-            case 1: return 'Diagnostique en cours'; break;
-            case 2: return 'Diagnostique fini'; break;
-            case 3: return 'Réparation accordée'; break;
-            case 4: return 'Réparation refusée'; break;
-            case 5: return 'Produit récupéré par le client'; break;
-            default: return 'En cours de traitement'; break;
+            case 1:
+                return 'Diagnostique en cours';
+                break;
+            case 2:
+                return 'Diagnostique fini';
+                break;
+            case 3:
+                return 'Réparation accordée';
+                break;
+            case 4:
+                return 'Réparation refusée';
+                break;
+            case 5:
+                return 'Produit récupéré par le client';
+                break;
+            default:
+                return 'En cours de traitement';
+                break;
         }
     }
 }
 
-add_action('init', function() {
+add_action('init', function () {
     $register_metas = ['has_edit', 'editor_accessorie', 'editor_other_accessorie_desc'];
     // Reference: https://developer.wordpress.org/reference/functions/register_meta/
     /**
-     * Cette parametre est utiliser pour savoir si l'annonce a deja ete 
+     * Cette parametre est utiliser pour savoir si l'annonce a deja ete
      * modifier par le commercial ou le technicien
      */
     register_meta('post', "has_edit", [
@@ -123,7 +140,7 @@ add_action('init', function() {
     ]);
 
     // Envoyer un mail (Nouvelle article SAV)
-    add_action('wp_ajax_new_sav', function() {
+    add_action('wp_ajax_new_sav', function () {
         $no_reply = _NO_REPLY_;
         if (!isset($_POST['post_id']) || empty($_POST['post_id'])) wp_send_json_error("Parametre manquant (post_id)");
         $post_id = intval($_POST['post_id']);
@@ -136,7 +153,7 @@ add_action('init', function() {
 
             $Sav = new fzSav($post_id);
             $customer_id = $Sav->get_customer_id();
-            $customer = get_userdata( $customer_id );
+            $customer = get_userdata($customer_id);
             $message = '';
             $guarentee_product = is_array($Sav->guarentee_product) ? (int)$Sav->guarentee_product['value'] : (int)$Sav->guarentee_product;
             $product_provider = is_array($Sav->product_provider) ? (int)$Sav->product_provider['value'] : (int)$Sav->product_provider;
@@ -169,36 +186,36 @@ add_action('init', function() {
                     " du cout du diagnostic qui varie entre 30.000 et 50.000 HT ";
             }
             // Ne pas envoyer si le message à envoyer est vide
-            if (empty($message)) return wp_send_json_error( "Email non envoyer. Aucun messsage n'est formulé pour cette demande" );
+            if (empty($message)) return wp_send_json_error("Email non envoyer. Aucun messsage n'est formulé pour cette demande");
             // Envoyer un message au client
-            $message   = html_entity_decode($message);
-            $to        = $customer->user_email;
-            $subject   = "Cher client - Freezone";
-            $headers   = [];
+            $message = html_entity_decode($message);
+            $to = $customer->user_email;
+            $subject = "Cher client - Freezone";
+            $headers = [];
             $headers[] = 'Content-Type: text/html; charset=UTF-8';
             $headers[] = "From: Freezone <$no_reply>";
-            $content   = $Engine->render('@MAIL/default.html', [
+            $content = $Engine->render('@MAIL/default.html', [
                 'message' => $message,
-                'Year'  => date('Y'),
+                'Year' => date('Y'),
                 'Phone' => freezone_phone_number
             ]);
-            $result = wp_mail( $to, $subject, $content, $headers );
+            $result = wp_mail($to, $subject, $content, $headers);
             if ($result) {
                 // Envoyer un mail au administrateur
-                $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
+                $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
                 $admin_emails = [];
-                foreach ($admins->get_results() as $admin) $admin_emails[] = $admin->user_email;
+                foreach ( $admins->get_results() as $admin ) $admin_emails[] = $admin->user_email;
 
                 $message = "Bonjour, <br> un(e) client {$customer->first_name} {$customer->last_name} à demander une assistance technique " .
-                "pour le matériel <b>{$Sav->product}</b> d'identifiction Nº{$Sav->id}.<br><br> Equipe " .
+                    "pour le matériel <b>{$Sav->product}</b> d'identifiction Nº{$Sav->id}.<br><br> Equipe " .
                     "<span style='text-transform: uppercase;'>{__SITENAME__}</span>";
-                $message   = html_entity_decode($message);
-                $to        = implode(',', $admin_emails);
-                $subject   = "Nº{$post_id} - Nouvelle demande d'assistance technique";
-                $headers   = [];
+                $message = html_entity_decode($message);
+                $to = implode(',', $admin_emails);
+                $subject = "Nº{$post_id} - Nouvelle demande d'assistance technique";
+                $headers = [];
                 $headers[] = 'Content-Type: text/html; charset=UTF-8';
                 $headers[] = "From: Freezone <$no_reply>";
-                wp_mail( $to, $subject, $message, $headers );
+                wp_mail($to, $subject, $message, $headers);
                 wp_send_json_success("Email envoyer avec succès");
             } else {
                 wp_send_json_error("Une erreur s'est produit: {$message}");
@@ -207,13 +224,13 @@ add_action('init', function() {
     });
 });
 
-add_action('rest_api_init', function() {
-    add_filter('rest_fz_sav_query', function($args, $request) {
-        $args += array(
-            'meta_key'   => $request['meta_key'],
+add_action('rest_api_init', function () {
+    add_filter('rest_fz_sav_query', function ($args, $request) {
+        $args += [
+            'meta_key' => $request['meta_key'],
             'meta_value' => $request['meta_value'],
             'meta_query' => $request['meta_query'],
-        );
+        ];
         return $args;
     }, 99, 2);
 
@@ -236,12 +253,12 @@ add_action('rest_api_init', function() {
                          */
 
                         /**
-                            case 1:  'Diagnostique en cours'
-                            case 2:  'Diagnostique fini'
-                            case 3:  'Réparation accordée'
-                            case 4:  'Réparation refusée'
-                            case 5:  'Produit récupéré par le client'
-                        */
+                         * case 1:  'Diagnostique en cours'
+                         * case 2:  'Diagnostique fini'
+                         * case 3:  'Réparation accordée'
+                         * case 4:  'Réparation refusée'
+                         * case 5:  'Produit récupéré par le client'
+                         */
 
                         if (intval($value) === 1) {
                             //do_action("sav_status_diagnostic_en_cours", $object->ID);
@@ -270,13 +287,13 @@ add_action('rest_api_init', function() {
                             do_action('sav_status_release', $object->ID);
                         }
 
-                    break;
+                        break;
                 }
                 return update_field($field_name, $value, $object->ID);
 
             },
             'get_callback' => function ($object, $field_name) {
-                if ($field_name === 'customer' ) {
+                if ($field_name === 'customer') {
                     return fzSav::getInstance($object['id'])->customer;
                 }
                 return get_field($field_name, $object['id']);
@@ -294,23 +311,23 @@ add_action('sav_status_release', function ($post_id) {
     $client = get_userdata($client_id);
     $no_reply = _NO_REPLY_;
 
-    $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
+    $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
     $admin_emails = [];
-    foreach ($admins->get_results() as $admin) {
+    foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
     $Sav = new fzSav($post_id);
-    $message   = "Bonjour, <br><br>Veuillez envoyer une facture au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la réparation de la machine {$Sav->product}";
-    $message   = html_entity_decode($message);
-    $to        = implode(',', $admin_emails);
-    $subject   = "SAV{$post_id} Facture pour la réparation - Freezone";
-    $headers   = [];
+    $message = "Bonjour, <br><br>Veuillez envoyer une facture au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la réparation de la machine {$Sav->product}";
+    $message = html_entity_decode($message);
+    $to = implode(',', $admin_emails);
+    $subject = "SAV{$post_id} Facture pour la réparation - Freezone";
+    $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
-    wp_mail( $to, $subject, $content, $headers );
+    wp_mail($to, $subject, $content, $headers);
 
 }, 10, 1);
 
@@ -322,23 +339,23 @@ add_action('sav_status_repair_refused', function ($post_id) {
     $client = get_userdata($client_id);
     $no_reply = _NO_REPLY_;
 
-    $admins    = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author'] ]);
+    $admins = new \WP_User_Query(['role' => ['Administrator', 'Editor', 'Author']]);
     $admin_emails = [];
-    foreach ($admins->get_results() as $admin) {
+    foreach ( $admins->get_results() as $admin ) {
         $admin_emails[] = $admin->user_email;
     }
     $Sav = new fzSav($post_id);
-    $message   = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la machine {$Sav->product}";
-    $message   = html_entity_decode($message);
-    $to        = implode(',', $admin_emails);
-    $subject   = "SAV{$post_id} Facture pour le diagnostic - Freezone";
-    $headers   = [];
+    $message = "Bonjour, <br><br>Veuillez envoyer une facture pour le diagnostic au client id <b>{$client->ID}</b> ({$client->first_name} {$client->last_name}) pour la machine {$Sav->product}";
+    $message = html_entity_decode($message);
+    $to = implode(',', $admin_emails);
+    $subject = "SAV{$post_id} Facture pour le diagnostic - Freezone";
+    $headers = [];
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $headers[] = "From: Freezone <$no_reply>";
-    $content   = $Engine->render('@MAIL/default.html', [ 'message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
+    $content = $Engine->render('@MAIL/default.html', ['message' => $message, 'Year' => date("Y"), 'Phone' => freezone_phone_number]);
 
     // Envoyer le mail
-    wp_mail( $to, $subject, $content, $headers );
+    wp_mail($to, $subject, $content, $headers);
 }, 10, 1);
 
 add_action("sav_status_diagnostic_en_cours", function ($post_id) {
