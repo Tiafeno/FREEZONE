@@ -33,7 +33,9 @@ do_action('yozi_woo_template_main_before');
                                         </div>
                                     </div>
                                     <div class="block-title">
-                                        <div class="product-cats uppercase"><?= implode(', ', $categories) ?> </div>
+                                        <div class="uppercase" style="display: inline-block">
+                                        <?php if (empty($categories)) { echo 'Aucun'; } else  echo implode(', ', $categories); ?> 
+                                        </div>
                                         <h3 class="name"><a href="<?= get_the_permalink() ?>"><?= the_title() ?></a></h3>
                                     </div>
                                     <div class="metas clearfix">
