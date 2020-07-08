@@ -8,7 +8,7 @@ do_action('yozi_woo_template_main_before');
     <section id="main-container" class="main-container container-fluid">
         <div class="products products-grid">
             <style type="text/css">
-            .metas .meta-meta-price > span {
+            .metas .meta-price > span {
                 color: #b11339;
                 font-size: 20px;
             }
