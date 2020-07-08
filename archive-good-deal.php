@@ -45,7 +45,7 @@ do_action('yozi_woo_template_main_before');
                                     <div class="metas clearfix" style="padding-top: 0">
                                         <!-- Afficher ici les prix -->
                                         <div class="meta-price">
-                                            <span class="price" style="padding-right: 5px"><?= $price ?></span>
+                                            <span class="price currency" style="padding-right: 5px"><?= $price ?></span>
                                             <span class="currency-country">MGA</span>
                                         </div>
                                         
