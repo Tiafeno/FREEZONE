@@ -46,7 +46,6 @@ do_action('yozi_woo_template_main_before');
                                         <!-- Afficher ici les prix -->
                                         <div class="meta-price">
                                             <span class="price currency" style="padding-right: 5px"><?= $price ?></span>
-                                            <span class="currency-country">MGA</span>
                                         </div>
                                         
                                     </div>
