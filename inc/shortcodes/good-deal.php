@@ -10,6 +10,7 @@ add_action('init', function () {
     add_shortcode('fz_good_deal', 'fn_good_deal');
 });
 
-function fn_good_deal($attr, $content = '') {
+function fn_good_deal ($attr, $content = '')
+{
 
 }

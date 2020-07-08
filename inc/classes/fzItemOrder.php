@@ -15,7 +15,8 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  *
  * @access public
  */
-class FZ_Item_Order {
+class FZ_Item_Order
+{
     public $name = "";
     public $item_id = 0;
     public $status;
@@ -39,7 +40,8 @@ class FZ_Item_Order {
         ["key" => 3, "value" => "Commande"],
     ];
 
-    public function __construct ($item_id, $order_id) {
+    public function __construct ($item_id, $order_id)
+    {
         $suppliers = wc_get_order_item_meta($item_id, 'suppliers', true);
         $status = wc_get_order_item_meta($item_id, 'status', true);
         $discount = wc_get_order_item_meta($item_id, 'discount', true);
@@ -48,7 +50,7 @@ class FZ_Item_Order {
         $this->order_id = intval($order_id);
         $this->item_id = (int)$item_id;
         $order = new \WC_Order($this->order_id);
-        $_item  = $order->get_item($item_id); // Recuperer l'item de la commande
+        $_item = $order->get_item($item_id); // Recuperer l'item de la commande
         $this->name = $_item->get_name();
         $this->quantity = intval($_item->get_quantity());
         $this->total = intval($_item->get_total());
@@ -61,75 +63,102 @@ class FZ_Item_Order {
         $this->discount_type = $discount_type ? intval($discount_type) : 0;
     }
 
-    public function has_stock_request () {
+    public function has_stock_request ()
+    {
         $stock_request = wc_get_order_item_meta($this->item_id, 'stock_request', true);
         if (!$stock_request) return false;
         return (0 === (int)$stock_request) ? false : true;
     }
 
-    public function stock_request_fn () {
+    public function stock_request_fn ()
+    {
         return $this->stock_request;
     }
 
-    public function meta_supplier_lines_fn () {
+    /**
+     * Cette fonction permet de recuperer les fournisseurs pour l'item avec les conditions respectives
+     * @return Array
+     */
+    public function meta_supplier_lines_fn ()
+    {
         if (empty($this->suppliers)) return [];
         $lines = array_map(function ($line) {
+            // Recuperer la condition pour cette article
             $condition = (int)get_post_meta(intval($line->article_id), "_fz_condition", true);
-            $condition_value = is_nan($condition) ? 0 : $condition;
+            $condition_value = is_nan($condition) ? 0 : $condition; // Condition par default est "0" ou disponible
             $search_index = array_search($condition_value, array_column($this->conditions, 'key')); // Return key index
-            $line->condition = !$search_index ? $this->conditions[0] : $this->conditions[$search_index]; // Array
+            $line->condition = !$search_index ? $this->conditions[0] : $this->conditions[ $search_index ]; // Array
             return $line;
         }, $this->suppliers);
         return $lines;
     }
 
     // Prix pour la remise
-    public function discount_percent_fn () {
+    public function discount_percent_fn ()
+    {
         return (intval($this->price) * $this->discount) / 100;
     }
 
-    public function is_qty_override_fn () {
+    public function is_qty_override_fn ()
+    {
         return $this->has_stock_request();
     }
 
-    public function price_fn () {
+    public function price_fn ()
+    {
         $price = $this->price;
         switch ($this->discount_type) {
             //case 2: return $price + $this->discount_percent(); // Rajout
-            default: return $price;
+            default:
+                return $price;
         }
     }
 
-    public function subtotal_net_fn () {
+    public function subtotal_net_fn ()
+    {
         $qty = 0;
-        foreach ($this->meta_supplier_lines_fn() as $line) {
+        foreach ( $this->meta_supplier_lines_fn() as $line ) {
             $condition = intval($line->condition['key']);
             switch ($condition) {
-                case 0: $qty += intval($line->get); break;
-                default: break;
+                case 0:
+                    $qty += intval($line->get);
+                    break;
+                default:
+                    break;
             }
         }
         $qty = (0 === $qty) ? $this->quantity : $qty;
         switch ($this->discount_type) {
-            case 1: return ($this->price - $this->discount_percent_fn()) * $qty;
+            case 1:
+                return ($this->price - $this->discount_percent_fn()) * $qty;
             case 0:
             default:
                 return $qty * $this->price;
         }
     }
+
     public function get_order_id () { return $this->order_id; }
-    public function qty_UI () {
+
+    public function qty_UI ()
+    {
         $qty = 0;
         $ui = "";
-        foreach ($this->meta_supplier_lines_fn() as $line) {
+        foreach ( $this->meta_supplier_lines_fn() as $line ) {
             switch ($line->condition['key']) {
-                case 0: $qty += intval($line->get); break;
-                case 1: $ui .= "*"; break;
-                case 3: $ui .= "**"; break;
-                default: break;
+                case 0:
+                    $qty += intval($line->get);
+                    break;
+                case 1:
+                    $ui .= "*";
+                    break;
+                case 3:
+                    $ui .= "**";
+                    break;
+                default:
+                    break;
             }
         }
-        $qty = (0 === $qty) ? $this->quantity : $qty;
+        $qty = (0 === $qty) ? $this->quantity . "*" : $qty;
         return "{$qty} <span style='color: red'>{$ui}</span>";
     }
 } /* end of class FZ_Item_Order */

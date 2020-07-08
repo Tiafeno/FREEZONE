@@ -23,7 +23,8 @@ add_action('wp_enqueue_scripts', function () {
 add_filter('woocommerce_variable_sale_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_variable_price_html', 'remove_prices', 10, 2);
 add_filter('woocommerce_get_price_html', 'remove_prices', 10, 2);
-function remove_prices($price, $product) {
+function remove_prices ($price, $product)
+{
     if (!is_admin()) $price = '';
     return $price;
 }
@@ -46,6 +47,7 @@ add_action('init', function () {
     }, 0);
 
     add_rewrite_tag('%componnent%', '([^&]+)');
+    add_rewrite_tag('%module%', '([^&]+)');
     add_rewrite_tag('%id%', '([^&]+)');
     add_rewrite_tag('%conf%', '([^&]+)');
     add_rewrite_tag('%pa_%', '([^&]+)'); // paged
@@ -64,7 +66,7 @@ SELECT ID FROM {$wpdb->posts} WHERE post_type = 'fz_product'
     AND meta_value = $post_id)
 SQL;
             $results = $wpdb->get_results($get_articles_sql);
-            foreach ($results as $post) {
+            foreach ( $results as $post ) {
                 wp_delete_post(intval($post->ID), true);
             }
 
@@ -94,10 +96,10 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 }, 999);
 
 // enlever l'etat/Comite dans le formulaire de livraison
-add_filter( 'woocommerce_default_address_fields', function($fields) {
-    unset( $fields['state'] );
-	return $fields;
-}, 999 );
+add_filter('woocommerce_default_address_fields', function ($fields) {
+    unset($fields['state']);
+    return $fields;
+}, 999);
 
 // Filtre pour le formulaire de commande ou demande
 add_filter('woocommerce_checkout_fields', function ($fields) {
@@ -163,7 +165,8 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 }, 9999);
 
 add_filter('woocommerce_default_address_fields', 'disable_address_fields_validation', 999);
-function disable_address_fields_validation($address_fields_array) {
+function disable_address_fields_validation ($address_fields_array)
+{
     return $address_fields_array;
 }
 
@@ -188,14 +191,14 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                 $article_id = isset($wp_query->query_vars['id']) ? $wp_query->query_vars['id'] : 0;
                 if (!$article_id) return false;
                 $article_id = intval($article_id);
-                $fz_product = new \classes\fzProduct((int) $article_id);
+                $fz_product = new \classes\fzProduct((int)$article_id);
                 $parent_categories = get_terms('product_cat', [
                     'hide_empty' => false, 'parent' => 0
                 ]);
                 $categories = [];
-                foreach ($parent_categories as $ctg) {
+                foreach ( $parent_categories as $ctg ) {
                     $terms = get_terms('product_cat', ['parent' => $ctg->term_id, 'hide_empty' => false]);
-                    foreach ($terms as $term) {
+                    foreach ( $terms as $term ) {
                         $categories[] = $term;
                     }
                 }
@@ -206,7 +209,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                         $stock = sanitize_text_field($_POST['stock']);
                         update_field('price', intval($regular_price), $article_id);
                         update_field('total_sales', intval($stock), $article_id);
-                        update_post_meta( $article_id, '_fz_quantity', intval($stock));
+                        update_post_meta($article_id, '_fz_quantity', intval($stock));
                         update_field('date_review', date_i18n('Y-m-d H:m:s'), $article_id);
                         wc_add_notice("Article mis à jour avec succès", 'success');
                     }
@@ -255,8 +258,8 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                     ];
                     $product_exists = get_posts($verify_product_exist_args);
                     if (!$product_exists) {
-                        $product = get_post((int) $product_id);
-                        $product_cat = wp_get_post_terms((int) $product_id, 'product_cat', ['fields' => 'ids']);
+                        $product = get_post((int)$product_id);
+                        $product_cat = wp_get_post_terms((int)$product_id, 'product_cat', ['fields' => 'ids']);
                         if ($price && $stock && $product_id) {
                             $result = wp_insert_post([
                                 'post_type' => 'fz_product',
@@ -270,7 +273,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
                                 update_field('price', intval($price), $result);
                                 update_field('total_sales', intval($stock), $result);
                                 update_field('user_id', intval($User->ID), $result);
-                                update_field('product_id', (int) $product_id, $result);
+                                update_field('product_id', (int)$product_id, $result);
                                 update_field('date_review', date_i18n('Y-m-d H:i:s'), $result);
                                 update_field('date_add', date_i18n('Y-m-d H:i:s'), $result);
                                 update_post_meta($result, '_fz_garentee', $garentee);
@@ -384,7 +387,7 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
         ]);
         $pagination .= '</ul></div>';
         $articles = [];
-        foreach ($query->posts as $post) {
+        foreach ( $query->posts as $post ) {
             $articles[] = new \classes\fzProduct($post->ID);
         }
 
@@ -401,23 +404,30 @@ add_action('woocommerce_account_stock-management_endpoint', function () {
 // Service après vente - S.A.V
 add_action('woocommerce_account_savs_endpoint', function () {
     global $Engine, $wp_query;
-    $route = 'index';
+    // index: is default module
+    $current_module = isset($wp_query->query_vars['module']) ? $wp_query->query_vars['module'] : 'index';
     $sav_url = '/sav'; // Cette url est réservé pour la publication des services àpres vente
     $user_id = get_current_user_id();
+    $sav_id = null;
 
+
+    // same as middleware
     if (isset($wp_query->query_vars['componnent'])) {
         $componnent = sanitize_text_field($wp_query->query_vars['componnent']);
-        $sav_id = (int) sanitize_text_field($wp_query->query_vars['id']);
+        $sav_id = (int)sanitize_text_field($wp_query->query_vars['id']);
         switch ($componnent) {
             case 'revival':
                 // Envoyer un email au responsable (David & Nant.)
-                if ( ! isset($_COOKIE['freezone_revival-' . $sav_id]) ) {
+                if (!isset($_COOKIE[ 'freezone_revival-' . $sav_id ])) {
                     do_action('fz_sav_revival_mail', $sav_id);
-                    setcookie('freezone_revival-' . $sav_id, true,  time() + 86400); // 1 day
+                    setcookie('freezone_revival-' . $sav_id, true, time() + 86400); // 1 day
                     wc_add_notice("Rappel anvoyer avec succès au responsables", 'success');
                 } else {
                     wc_add_notice("Vous avez déja envoyer une rappel", 'notice');
                 }
+                break;
+
+            case 'print':
                 break;
 
             default:
@@ -426,12 +436,29 @@ add_action('woocommerce_account_savs_endpoint', function () {
         }
     }
 
-    switch ($route) {
+    // Gere les views template
+    switch ($current_module) {
+        case 'print':
+            if (is_null($sav_id)) continue;
+            $fzSav = new \classes\fzSav($sav_id, true);
+            wc_print_notices();
+            echo $Engine->render(
+                '@WC/savs/sav-print.html',
+                [
+                    'content' => $fzSav,
+                    'sav_url' => $sav_url,
+                    'prestations_url' => wc_get_account_endpoint_url('catalogue'),
+                    'sav_endpoint_url' => wc_get_account_endpoint_url('savs'),
+                ]
+            );
+            wc_clear_notices();
+            break;
         case 'index':
         default:
             // Récuperer tous les demandes SAV effectuer par le client 
             $args = [
                 'post_type' => 'fz_sav',
+                'post_status' => "any",
                 'posts_per_page' => -1,
                 'meta_query' => [
                     [
@@ -466,11 +493,11 @@ add_action('woocommerce_account_catalogue_endpoint', function () {
     wp_enqueue_script('sweetalert2@8', "https://cdn.jsdelivr.net/npm/sweetalert2@8", ['jquery']);
     // https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js
     wp_enqueue_script('vue', "https://cdn.jsdelivr.net/npm/vue/dist/vue.js", ['jquery']);
-    wp_enqueue_script('account-prestation',  get_stylesheet_directory_uri() . '/assets/js/account-prestations.js', ['vue', 'jquery'], rand(45, 90));
+    wp_enqueue_script('account-prestation', get_stylesheet_directory_uri() . '/assets/js/account-prestations.js', ['vue', 'jquery'], rand(45, 90));
     wp_localize_script('account-prestation', 'account_opt', [
         'rest_url' => esc_url_raw(rest_url()),
         'nonce' => wp_create_nonce('wp_rest'),
-        'ajax_url' =>  admin_url('admin-ajax.php'),
+        'ajax_url' => admin_url('admin-ajax.php'),
     ]);
 
     // Render template
@@ -485,10 +512,10 @@ add_action('woocommerce_account_demandes_endpoint', function () {
     $shop_url = get_permalink(wc_get_page_id('shop'));
     $user_id = get_current_user_id();
     // Executer ici la mise a jours du formulaire, si un formulaire est envoyer
-    do_action( "woocommerce_before_edit_address_form_billing" );
+    do_action("woocommerce_before_edit_address_form_billing");
     $clientInstance = \classes\fzClient::initializeClient($user_id);
     // Verification de securite
-    if (!in_array($clientInstance->get_role(), ["fz-particular", "fz-company"]) ) {
+    if (!in_array($clientInstance->get_role(), ["fz-particular", "fz-company"])) {
         wc_add_notice("Vous n'avez pas l'autorisation nécessaire pour voir les contenues de cette page", "error");
         wc_print_notices();
         wc_clear_notices();
@@ -545,7 +572,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 // Formulaire dans quotation-update.html
                 $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : null;
                 if (wp_verify_nonce($nonce, 'confirmaction')) {
-                    $value =  stripslashes($_REQUEST['value']);
+                    $value = stripslashes($_REQUEST['value']);
                     $value = intval($value);
                     $order = wc_get_order(intval($order_id));
                     $position = get_field('position', $order->get_id());
@@ -574,7 +601,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
                 //Corriger la valeur de la 'position' pendant la modification (Refuser et Rejeter)
                 $quotation = new \classes\FZ_Quote(intval($order_id));
                 $quotation_params = [
-                    'order_id' => (int) $order_id,
+                    'order_id' => (int)$order_id,
                     'lines' => $quotation->fz_items(),
                     'lines_zero' => $quotation->fz_items_zero(),
                     'position' => intval($quotation->get_position()),
@@ -597,7 +624,7 @@ add_action('woocommerce_account_demandes_endpoint', function () {
         // Effacer les notices
     } else {
         $quotations = [];
-        foreach ($user_quotations as $order) {
+        foreach ( $user_quotations as $order ) {
             $quotation = new \classes\FZ_Quote($order->get_id());
             $quotations[] = [
                 'order_id' => $quotation->get_id(),
@@ -639,7 +666,7 @@ add_action('woocommerce_account_pdf_endpoint', function () {
     wp_localize_script('download-pdf', 'Generator', [
         'order_id' => $order_id
     ]);
-    $customer =  new WC_Customer($order->get_customer_id());
+    $customer = new WC_Customer($order->get_customer_id());
     // Get responsible if exist
     $responsible = $customer->meta_exists('responsible') ? $customer->get_meta('responsible', true) : null;
     $responsible = is_null($responsible) ? null : new WP_User(intval($responsible));
@@ -686,7 +713,7 @@ SELECT * FROM $wpdb->posts WHERE post_status = "publish"
 SQL;
     $results = $wpdb->get_results($sql);
     $shortcode = "[vc_row][vc_column][vc_tta_accordion]";
-    foreach ($results as $result) {
+    foreach ( $results as $result ) {
         $title = apply_filters('the_title', $result->post_title, $result->ID);
         $shortcode .= "[vc_tta_section title=\"{$title}\" tab_id='faq-{$result->ID}'][vc_column_text] {$result->post_content} [/vc_column_text]
             [/vc_tta_section]";
@@ -702,13 +729,18 @@ add_action('woocommerce_account_gd_endpoint', function () {
             $module = $_GET['module'];
             switch ($module) {
                 case 'edit':
-                    do_action('fz_annonce_edit', (int) $_GET['id']);
+                    do_action('fz_annonce_edit', (int)$_GET['id']);
                     return;
-                break;
+                    break;
                 case 'update':
-                    do_action('fz_annonce_update', (int) $_GET['id']);
-                break;
-                default: break;
+                    do_action('fz_annonce_update', (int)$_GET['id']);
+                    return;
+                    break;
+                case 'delete':
+                    do_action('fz_annonce_delete', (int)$_GET['id']);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -733,18 +765,54 @@ add_action('woocommerce_account_gd_endpoint', function () {
 }, 10);
 
 // Action for annonce
-add_action('fz_annonce_edit', function($id) {
+add_action('fz_annonce_edit', function ($id) {
+    wc_print_notices();
+    wc_clear_notices();
     if (!is_numeric($id)) return;
     global $Engine;
     $good_deal = new \classes\fzGoodDeal($id);
-    echo $Engine->render('@WC/gd/gd-edit.html', ['annonce' => $good_deal]);
+    echo $Engine->render('@WC/gd/gd-edit.html', [
+        'annonce' => $good_deal,
+        'categories' => \Services\fzServices::get_categories()
+    ]);
 }, 10, 1);
 
-add_action('fz_annonce_update', function($id) {
+add_action('fz_annonce_update', function ($id) {
     if (!is_numeric($id)) return;
-    // TODO: Update annonce 
+    // Update annonce
+    $error = false;
+    if ($_POST) {
+        try {
+            $good_deal = new \classes\fzGoodDeal($id);
+            $good_deal->set_title($_POST['title']);
+            $good_deal->set_description($_POST['description']);
+            $good_deal->set_price((int)$_POST['price']);
+            $good_deal->set_categorie(intval($_POST['categorie']));
+        } catch (\Exception $th) {
+            $error = true;
+            wc_add_notice($th->getMessage(), 'error');
+        }
+    }
 
+    if (!$error) {
+        wc_add_notice("Mise a jour effectuer avec succes", 'info');
+    }
+
+    // afficher le formulaire de modification
     do_action('fz_annonce_edit', $id);
+}, 10, 1);
+
+add_action('fz_annonce_delete', function ($id) {
+    if (!is_numeric($id)) return;
+    //(WP_Post|false|null) Post data on success, false or null on failure.
+    $response = wp_delete_post($id, true);
+    if (false === $response || is_null($response)) {
+        wc_add_notice("Une erreur c'est produit pendant la suppression de l'annonce", 'error');
+        do_action('fz_annonce_edit', $id);
+        return;
+    }
+    $url = wc_get_account_endpoint_url('gd');
+    wp_redirect(add_query_arg([], $url));
 }, 10, 1);
 
 /**
@@ -753,21 +821,21 @@ add_action('fz_annonce_update', function($id) {
 add_action('user_register', function ($user_id) {
     if (is_user_logged_in()) return false;
     $user_data = get_userdata(intval($user_id));
-     /**
+    /**
      * Role de l'utilisateur
      * Particulier ou entreprise
      */
     $role = sanitize_text_field($_REQUEST['role']);
-    $company_name    = isset($_REQUEST['company_name']) ? $_REQUEST['company_name'] : '';
+    $company_name = isset($_REQUEST['company_name']) ? $_REQUEST['company_name'] : '';
     if (!empty($_REQUEST['lastname'])) {
         $firstname = sanitize_text_field($_REQUEST['firstname']);
-        $lastname  = sanitize_text_field($_REQUEST['lastname']);
-        $nickname = $role === 'company' ? 'CL' . sanitize_title( $company_name, '') . '-' . $user_id: 'CL' . $user_id;
+        $lastname = sanitize_text_field($_REQUEST['lastname']);
+        $nickname = $role === 'company' ? 'CL' . sanitize_title($company_name, '') . '-' . $user_id : 'CL' . $user_id;
         $result = wp_update_user([
             'ID' => intval($user_id),
             'first_name' => $firstname ? $firstname : '',
-            'last_name'  => $lastname,
-            'nickname'   => $nickname,
+            'last_name' => $lastname,
+            'nickname' => $nickname,
             'user_login' => $nickname
         ]);
         if (is_wp_error($result)) {
@@ -779,8 +847,8 @@ add_action('user_register', function ($user_id) {
         return false;
     }
     $address = isset($_POST['address']) ? $_POST['address'] : '';
-    $phone   = isset($_POST['phone']) ? $_POST['phone'] : '';
-    $postal_code  = isset($_POST['postal_code']) ? $_POST['postal_code'] : '';
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $postal_code = isset($_POST['postal_code']) ? $_POST['postal_code'] : '';
     $sector_activity = isset($_POST['sector_activity']) ? $_POST['sector_activity'] : '';
     update_field('address', sanitize_text_field($address), 'user_' . $user_id);
     update_field('phone', sanitize_text_field($phone), 'user_' . $user_id);
@@ -789,8 +857,8 @@ add_action('user_register', function ($user_id) {
     // Si le compte est une entreprise
     if ($role === 'company') {
         $fields = ['stat', 'nif', 'rc', 'cif'];
-        foreach ($fields as $field) {
-            $val = sanitize_text_field($_REQUEST[$field]);
+        foreach ( $fields as $field ) {
+            $val = sanitize_text_field($_REQUEST[ $field ]);
             update_field($field, $val, 'user_' . $user_id);
         }
         update_field('company_name', $company_name, 'user_' . $user_id);
@@ -803,8 +871,8 @@ add_action('user_register', function ($user_id) {
     // Si le compte est particulier
     if ($role === 'particular') {
         $fields = ['cin', 'date_cin'];
-        foreach ($fields as $field) {
-            $val = sanitize_text_field($_REQUEST[$field]);
+        foreach ( $fields as $field ) {
+            $val = sanitize_text_field($_REQUEST[ $field ]);
             update_field($field, $val, 'user_' . $user_id);
         }
         // Compte ni Professionnel, ni Revendeur
@@ -848,20 +916,22 @@ add_action('user_register', function ($user_id) {
 add_action('wp_loaded', function () {
     //update_field('position', 1, 1431);
     add_action('wp_logout', 'auto_redirect_after_logout');
-    function auto_redirect_after_logout() {
+    function auto_redirect_after_logout ()
+    {
         wp_redirect(home_url());
         exit();
     }
-    add_filter('wp_nav_menu_items', function($items, $args) {
+
+    add_filter('wp_nav_menu_items', function ($items, $args) {
         // Ajouter un lien de déconnection ou connexion dans le menu
         if ($args->theme_location == 'top-menu') {
             if (is_user_logged_in()) {
-               $items .= '<li class="right"><a href="'. wp_logout_url() .'">'. __("Log Out") .'</a></li>';
+                $items .= '<li class="right"><a href="' . wp_logout_url() . '">' . __("Log Out") . '</a></li>';
             } else {
-               $items .= '<li class="right"><a href="'. wp_login_url(get_permalink()) .'">'. __("Log In") .'</a></li>';
+                $items .= '<li class="right"><a href="' . wp_login_url(get_permalink()) . '">' . __("Log In") . '</a></li>';
             }
-         }
-         return $items;
+        }
+        return $items;
     }, 10, 2);
 });
 
@@ -882,7 +952,7 @@ add_action('delete_user', function ($user_id) {
             ]
         ];
         $post_articles = get_posts($args);
-        foreach ($post_articles as $post) {
+        foreach ( $post_articles as $post ) {
             wp_delete_post($post->ID, true);
         }
         // Ne pas effacer les demandes ou les commandes
@@ -899,7 +969,7 @@ add_action('woocommerce_thankyou', function ($order_id) {
     update_field('user_id', $User->ID, intval($order_id));
     // Utiliser cette valeur pour classifier les commandes des clients (Entreprise ou Particulier)
     update_post_meta(intval($order_id), 'client_role', $User->roles[0]);
-    foreach ($items as $item_id => $item) {
+    foreach ( $items as $item_id => $item ) {
         wc_add_order_item_meta(intval($item_id), 'status', 0);
         wc_add_order_item_meta(intval($item_id), 'suppliers', json_encode([]));
     }
@@ -912,9 +982,9 @@ add_action('woocommerce_thankyou', function ($order_id) {
     $results = $apiSupplier->action_collect_suppliers($request);
     $data = $results['data'];
     if (!empty($data) && is_array($data)) {
-        foreach ($data as $item) {
+        foreach ( $data as $item ) {
             // TODO: Verifier si le produit de cette fournisseurs est déja à jour
-            update_user_meta((int) $item['id'], 'send_mail_review_date', null);
+            update_user_meta((int)$item['id'], 'send_mail_review_date', null);
         }
     }
 }, 10, 1);
@@ -929,7 +999,7 @@ add_action('acf/save_post', function ($post_id) {
     $product_mark = get_field('mark', $post_id);
     wp_update_post(
         [
-            'ID' => $post_id, 
+            'ID' => $post_id,
             'post_title' => "#{$post_id} - {$product_name} - {$product_mark}"
         ]
     );

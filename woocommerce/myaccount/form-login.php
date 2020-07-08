@@ -26,7 +26,7 @@ wp_enqueue_script('register-fz', get_stylesheet_directory_uri() . '/assets/js/re
 $args = array('#customer_login', '#customer_register');
 $action = isset($_COOKIE['yozi_login_register']) && in_array($_COOKIE['yozi_login_register'], $args) ? $_COOKIE['yozi_login_register'] : '#customer_login';
 
-$services = new fzServices();
+$services = new \Services\fzServices();
 $sector_activity = $services->get_sector_activity(); // Array of sector activity
 
 ?>

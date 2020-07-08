@@ -19,8 +19,8 @@ wp_enqueue_script('update-articles', get_stylesheet_directory_uri() . '/assets/j
 wp_localize_script('update-articles', 'rest_api', [
     //'root' => esc_url_raw(rest_url()),
     //'nonce' => wp_create_nonce('wp_rest'),
-    'ajax_url' =>  admin_url('admin-ajax.php'),
-    'account_url' => get_permalink( wc_get_page_id( 'myaccount' ) )
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'account_url' => get_permalink(wc_get_page_id('myaccount'))
 ]);
 
 /**
@@ -75,7 +75,8 @@ if (!empty($_GET)) {
     }
 }
 
-function fz_reload_header () {
+function fz_reload_header ()
+{
     $url = get_the_permalink();
     setcookie('freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
     setcookie('__freezone_ua', isset($_GET['articles']) ? $_GET['articles'] : '', time() + (60 * 30));
@@ -87,7 +88,6 @@ function fz_reload_header () {
     ], $url));
     exit;
 }
-
 
 
 get_header();
@@ -116,8 +116,8 @@ yozi_render_breadcrumbs();
                 <main id="main" class="site-main clearfix" role="main" style="margin-bottom: 40px">
                     <?php
                     wc_print_notices();
-                    if ( ! is_user_logged_in() ) {
-                       wc_get_template('woocommerce/myaccount/form-login.php');
+                    if (!is_user_logged_in()) {
+                        wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
                         ?>
                         <div style="margin-bottom: 14px">
@@ -128,67 +128,83 @@ yozi_render_breadcrumbs();
                             ?>
                         </div>
                         <div id="app-update-articles">
-                            <form method="POST" name="form_update" class="updated-form" @submit="submitForm" action="" >
+                            <form method="POST" name="form_update" class="updated-form" @submit="submitForm" action="">
                                 <div class="table-responsive">
                                     <table class="table" style="margin-bottom: 0px !important">
                                         <thead style="background: #2584cf;color: white;" v-if="articles.length > 0">
-                                            <tr>
-                                                <th scope="col">Designation</th>
-                                                <th scope="col">Qté disponible</th>
-                                                <th scope="col">Qté demandée</th>
-                                                <th scope="col">Statut de produit</th>
-                                                <th scope="col">Prix en ariary</th>
-                                                <th scope="col">Garantie</th>
-                                            </tr>
+                                        <tr>
+                                            <th scope="col">Designation</th>
+                                            <th scope="col">Qté disponible</th>
+                                            <th scope="col">Qté demandée</th>
+                                            <th scope="col">Statut de produit</th>
+                                            <th scope="col">Prix en ariary</th>
+                                            <th scope="col">Garantie</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(article, index) in articles">
-                                                <th scope="row">
-                                                    <div class="form-row form-row-wide designation" style="font-weight: lighter">
+                                        <tr v-for="(article, index) in articles">
+                                            <th scope="row">
+                                                <div class="form-row form-row-wide designation"
+                                                     style="font-weight: lighter">
                                                     {{ article.designation }}
-                                                    </div>
-                                                </th>
-                                                <td width="10%">
-                                                    <div class="stock">
-                                                        <input type="number" v-on:blur="onChangeQty($event, index)" v-model="article.qty_disp"
-                                                        v-bind:disabled="article.condition == 1 || article.condition == 2" style="width: 100%;" min="0"
-                                                            class="form-control radius-0 input-qty-disp"/>
-                                                    </div>
-                                                </td>
-                                                <td width="10%">
-                                                    <div class="qty_request">
-                                                        <input type="number" v-model="article.qty_ask"  disabled="disabled"  style="width: 100%;" min="0" class="form-control radius-0 " />
-                                                    </div>
-                                                </td>
-                                                <td width="12%">
-                                                    <div class="statut">
-                                                        <select v-model="article.condition" class="form-control radius-0" v-on:change="onChangeCondition($event, index)" style="width: 100%;">
-                                                            <option :value="condition.key" :checked="condition.key == article.condition" v-for="condition in condition_product">
-                                                                {{ condition.value }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td width="15%">
-                                                    <div class="price">
-                                                        <input type="number" v-model="article.cost" step="1" style="width: 100%;" min="0" class="form-control radius-0" />
-                                                    </div>
-                                                </td>
-                                                <td width="10%">
-                                                    <div class="garentee">
-                                                        <select v-model="article.garentee" v-bind:disabled="article.garentee != 0" class="form-control radius-0" style="width: 100%;">
-                                                            <option value="0">Aucun</option>
-                                                            <option :value="item" v-for="item in _.range(1, 13)">{{ item }} mois</option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </th>
+                                            <td width="10%">
+                                                <div class="stock">
+                                                    <input type="number" v-on:blur="onChangeQty($event, index)" required
+                                                           v-model="article.qty_disp"
+                                                           v-bind:disabled="article.condition == 1 || article.condition == 2"
+                                                           style="width: 100%;" min="0"
+                                                           class="form-control radius-0 input-qty-disp"/>
+                                                </div>
+                                            </td>
+                                            <td width="10%">
+                                                <div class="qty_request">
+                                                    <input type="number" v-model="article.qty_ask" disabled="disabled"
+                                                           style="width: 100%;" min="0" class="form-control radius-0 "/>
+                                                </div>
+                                            </td>
+                                            <td width="12%">
+                                                <div class="statut">
+                                                    <select v-model="article.condition" class="form-control radius-0"
+                                                            v-on:change="onChangeCondition($event, index)"
+                                                            style="width: 100%;">
+                                                        <option :value="condition.key"
+                                                                :checked="condition.key == article.condition"
+                                                                v-for="condition in condition_product">
+                                                            {{ condition.value }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td width="15%">
+                                                <div class="price">
+                                                    <input type="number" v-model="article.cost" step="1"
+                                                           style="width: 100%;" min="0" class="form-control radius-0"
+                                                           required/>
+                                                </div>
+                                            </td>
+                                            <td width="10%">
+                                                <div class="garentee">
+                                                    <select v-model="article.garentee"
+                                                            v-bind:disabled="article.garentee != 0"
+                                                            class="form-control radius-0" style="width: 100%;">
+                                                        <option value="0">Aucun</option>
+                                                        <option :value="item" v-for="item in _.range(1, 13)">{{ item }}
+                                                            mois
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         </tbody>
-                                </table>
+                                    </table>
                                 </div>
-                                
+
                                 <div class="row" v-if="articles.length > 0" style="margin-left: 15px; margin-top: 15px">
-                                    <button class="btn btn-primary radius-0" type="submit" id="submit-update-form">Enregistrer</button>
+                                    <button class="btn btn-primary radius-0" type="submit" id="submit-update-form">
+                                        Enregistrer
+                                    </button>
                                 </div>
                                 <div class="row" v-if="articles.length == 0 && loading == false">
                                     Vous n'avez aucun articles en attente

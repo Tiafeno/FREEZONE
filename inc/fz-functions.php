@@ -157,15 +157,16 @@ add_action('admin_init', function () {
 }, 100);
 
 // https://developer.wordpress.org/block-editor/tutorials/metabox/meta-block-2-register-meta/
-$meta_args = array(
-    'type'         => 'integer',
-    'description'  => 'A meta key associated with a string meta value.',
-    'single'       => true,
+// Note: Marge meta is number or not integer because it is float
+$meta_args = [
+    'type' => 'number',
+    'description' => 'A meta key associated with a string meta value.',
+    'single' => true,
     'show_in_rest' => true,
-);
-register_post_meta( 'fz_product', '_fz_marge', $meta_args );
-register_post_meta( 'fz_product', '_fz_marge_dealer', $meta_args );
-register_post_meta( 'fz_product', '_fz_marge_particular', $meta_args );
+];
+register_post_meta('fz_product', '_fz_marge', $meta_args);
+register_post_meta('fz_product', '_fz_marge_dealer', $meta_args);
+register_post_meta('fz_product', '_fz_marge_particular', $meta_args);
 
 add_action('init', function () {
     function search_products ()
@@ -277,6 +278,7 @@ add_action('init', function () {
         //update_post_meta($object->get_id(), '_product_attributes', $attrs);
         return $object;
     }
+
     add_action('woocommerce_product_import_inserted_product_object', 'process_import', 10, 2);
 
     // Mise a jour d'adresse dans l'espace client
@@ -295,7 +297,7 @@ add_action('init', function () {
                     $acf_fields = ['nif', 'cif', 'stat', 'rc'];
                     foreach ( $acf_fields as $field ) {
                         if (!isset($_REQUEST[ $field ])) continue;
-                        update_field($field, $_REQUEST[ $field ], 'user_'.$customer_id);
+                        update_field($field, $_REQUEST[ $field ], 'user_' . $customer_id);
                     }
                     update_user_meta($customer_id, 'sector_activity', intval($_REQUEST['sector_activity']));
                     break;
@@ -303,7 +305,7 @@ add_action('init', function () {
                     $acf_fields = ['cin', 'date_cin'];
                     foreach ( $acf_fields as $field ) {
                         if (!isset($_REQUEST[ $field ])) continue;
-                        update_field($field, $_REQUEST[ $field ], 'user_'.$customer_id);
+                        update_field($field, $_REQUEST[ $field ], 'user_' . $customer_id);
                     }
                     break;
             }

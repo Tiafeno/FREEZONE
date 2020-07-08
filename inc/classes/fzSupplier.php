@@ -1,4 +1,5 @@
 <?php
+
 namespace classes;
 
 /**
@@ -8,7 +9,7 @@ namespace classes;
  *
  * This file is part of untitledModel.
  *
- * Automatically generated on 23.04.2019, 17:34:38 with ArgoUML PHP module 
+ * Automatically generated on 23.04.2019, 17:34:38 with ArgoUML PHP module
  * (last revised $Date: 2010-01-12 20:14:42 +0100 (Tue, 12 Jan 2010) $)
  *
  * @author firstname and lastname of author, <author@example.org>
@@ -37,7 +38,7 @@ if (0 > version_compare(PHP_VERSION, '5')) {
  * @property string $user_registered
  * @property string $user_activation_key
  * @property string $user_status
- * @property int    $user_level
+ * @property int $user_level
  * @property string $display_name
  * @property string $spam
  * @property string $deleted
@@ -79,34 +80,34 @@ class fzSupplier extends \WP_User
      * @param  Integer user_id
      * @return mixed
      */
-    public function __construct($user_id)
+    public function __construct ($user_id)
     {
         parent::__construct($user_id);
         if (in_array('fz-supplier', $this->roles)) {
-            $this->reference = get_field('reference', 'user_'.$this->ID);
+            $this->reference = get_field('reference', 'user_' . $this->ID);
 
             $mail_cc_fields = ['mail_commercial_cc', 'mail_logistics_cc'];
-            foreach ($mail_cc_fields as $field) {
-                $cc = get_field($field, 'user_'.$this->ID);
+            foreach ( $mail_cc_fields as $field ) {
+                $cc = get_field($field, 'user_' . $this->ID);
                 $this->$field = $cc ? \explode(',', $cc) : [];
             }
             /**
              * Récuperer la valeur des champs pour les informations du fournisseur
              */
             $infos = ['stat', 'nif', 'rc', 'cif'];
-            foreach ($infos as $info) {
-                $value = get_field($info, 'user_'.$this->ID);
-                $this->$info = $value ;
+            foreach ( $infos as $info ) {
+                $value = get_field($info, 'user_' . $this->ID);
+                $this->$info = $value;
             }
-            
-            $this->address = get_field('address', 'user_'.$this->ID);
-            $this->phone = get_field('phone', 'user_'.$this->ID);
+
+            $this->address = get_field('address', 'user_' . $this->ID);
+            $this->phone = get_field('phone', 'user_' . $this->ID);
 
             $User = wp_get_current_user();
             // Vérifier si l'utilisateur est un administrateur
             $admin = $User->ID === 0 ? null : (in_array('administrator', $User->roles) ? 'administrator' : null);
             // Afficher le nom de l'entreprise ou la société au administrateur seulement
-            $this->company_name = $admin === 'administrator' ? get_field('company_name', 'user_'.$this->ID) : $this->reference;
+            $this->company_name = $admin === 'administrator' ? get_field('company_name', 'user_' . $this->ID) : $this->reference;
             $this->firstname = $this->first_name;
             $this->lastname = $this->last_name;
             $register = $this->user_registered;

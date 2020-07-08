@@ -42,9 +42,7 @@ yozi_render_breadcrumbs();
     </style>
     <script type="text/javascript">
         (function ($) {
-            $(document).ready(() => {
-
-
+            $(document).ready(function() {
                 new Vue({
                     el: '#app-form-gd',
                     data: {
@@ -54,13 +52,13 @@ yozi_render_breadcrumbs();
                         photos: [], // [{ index: 1, file: ...}]
                         title: '',
                         categorie: '',
-                        price: null,
+                        price: 0,
                         description: ''
                     },
                     methods: {
                         handleFileChange: function (event, index) {
                             const files = event.target.files;
-                            let result = _.find(this.photos, photo => {
+                            let result = _.find(this.photos, function(photo) {
                                 if (_.isObject(photo)) {
                                     return photo.index === index;
                                 } else {
@@ -70,7 +68,7 @@ yozi_render_breadcrumbs();
                             if (_.isUndefined(result)) {
                                 this.photos.push({index: index, file: files[0]});
                             } else {
-                                this.photos = _.map(this.photos, photo => {
+                                this.photos = _.map(this.photos, function(photo) {
                                     if (photo.index === index) {
                                         photo.file = files[0];
                                     }
@@ -103,7 +101,7 @@ yozi_render_breadcrumbs();
                             });
                         },
                         submitForm: function (e) {
-                            const self = this;
+                            var self = this;
                             e.preventDefault();
                             this.errors = [];
                             if (_.isEmpty(this.title)) {
@@ -112,9 +110,6 @@ yozi_render_breadcrumbs();
                             if (_.isEmpty(this.description)) {
                                 this.errors.push('Veuillez decrire votre matériel pour plus de chance d\'être vendue');
                             }
-                            if (_.isEmpty(this.photos)) {
-                                this.errors.push("Veuillez ajouter une image pour votre annonce");
-                            }
                             if (this.errors.length) {
                                 window.scrollTo(0, 0);
                                 return true;
@@ -122,18 +117,18 @@ yozi_render_breadcrumbs();
 
                             this.loading = true;
                             $('button[type="submit"]').text('Chargement ...');
-                            let upload = {};
-                            for (let item of this.photos) {
-                                let form = new FormData();
+                            var upload = {};
+                            for (var item of this.photos) {
+                                var form = new FormData();
                                 form.append('file', item.file);
                                 form.append('title', this.title);
                                 upload['f' + item.index] = this.fnAjax(form);
                             }
-                            $.when(upload).done((results) => {
+                            $.when(upload).done(function(results) {
                                 async function createGd(responses) {
                                     var ids = [];
-                                    for (let key of Object.keys(responses)) {
-                                        let gDeal = await responses[key];
+                                    for (var key of Object.keys(responses)) {
+                                        var gDeal = await responses[key];
                                         ids.push(gDeal.id);
                                     }
                                     $.ajax({
@@ -142,12 +137,14 @@ yozi_render_breadcrumbs();
                                         data: {
                                             title: self.title,
                                             content: self.description,
-                                            status: 'publish',
-                                            featured_media: _.isEmpty(ids) ? null : ids[0].toString(),
+                                            status: 'pending', // Mettre l'annonce en attente par default
+                                            featured_media: _.isEmpty(ids) ? 0 : ids[0].toString(),
                                             categorie: self.categorie,
-                                            gd_gallery: ids,
-                                            gd_price: self.price,
-                                            gd_author: rest_api.user_id
+                                            meta: {
+                                                gd_gallery: JSON.stringify(ids),
+                                                gd_price: self.price,
+                                                gd_author: rest_api.user_id
+                                            }
                                         },
                                         beforeSend: function (xhr) {
                                             xhr.setRequestHeader('X-WP-Nonce', rest_api.nonce);
@@ -173,11 +170,12 @@ yozi_render_breadcrumbs();
                                         }
                                     });
                                 }
+
                                 createGd(results)
                             })
-                            .fail(resp => {
-                                Swal.fire("Error", "Une erreur c'est produit pendant l'envoie des images", 'warning');
-                            });
+                                .fail(resp => {
+                                    Swal.fire("Error", "Une erreur c'est produit pendant l'envoie des images", 'warning');
+                                });
 
 
                         }
@@ -206,7 +204,7 @@ yozi_render_breadcrumbs();
                         wc_get_template('woocommerce/myaccount/form-login.php');
                     } else {
                         ?>
-                        <div style="display: flex;" >
+                        <div style="display: flex;">
                             <div style="margin: auto; min-width: 650px">
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -228,9 +226,11 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="mark">Titre <span style="color:red">*</span></label>
-                                                        <input type="text" v-model="title" class="form-control" id="mark"
-                                                               placeholder="Titre de votre annonce" >
+                                                        <label for="title">Titre <span
+                                                                    style="color:red">*</span></label>
+                                                        <input type="text" autocomplete="off" :required="true"
+                                                               v-model="title" class="form-control" id="title"
+                                                               placeholder="Titre de votre annonce">
                                                     </div>
                                                 </div>
                                             </div>
@@ -238,23 +238,28 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="mark">Categorie</label>
-                                                        <select name="categorie" v-model="categorie" class="form-control radius-0" >
+                                                        <label for="categorie">Categorie <span
+                                                                    style="color:red">*</span></label>
+                                                        <select name="categorie" id="categorie" :required="true"
+                                                                v-model="categorie" class="form-control radius-0">
                                                             <option value="">Selectionner une categorie</option>
-                                                            <option :value="ctg.id" v-for="(ctg, index) in categories">{{ctg.name}}</option>
+                                                            <option :value="ctg.id" v-for="(ctg, index) in categories">
+                                                                {{ctg.name}}
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
 
-
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
-                                                        <label for="mark">Prix de vente (AR) </label>
-                                                        <input min="0" type="number" v-model="price" class="form-control" id="mark"
-                                                               placeholder="Prix" >
+                                                        <label for="price">Prix de vente (AR) <span
+                                                                    style="color:red">*</span></label>
+                                                        <input min="0" type="number" autocomplete="off" v-model="price"
+                                                               class="form-control" id="price"
+                                                               placeholder="Prix">
                                                     </div>
                                                 </div>
                                             </div>
@@ -269,8 +274,8 @@ yozi_render_breadcrumbs();
                                                     </div>
 
                                                     <div class="form-group">
-                                                        <input  type="file"
-                                                                @change="handleFileChange($event, 2)">
+                                                        <input type="file"
+                                                               @change="handleFileChange($event, 2)">
                                                     </div>
 
                                                     <div class="form-group">
@@ -284,7 +289,8 @@ yozi_render_breadcrumbs();
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <label for="description">Description <span style="color:red">*</span></label>
+                                                        <label for="description">Description <span
+                                                                    style="color:red">*</span></label>
                                                         <textarea v-model="description" class="form-control" rows="8"
                                                                   id="description"></textarea>
                                                     </div>

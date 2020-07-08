@@ -8,9 +8,10 @@
 
 class apiProduct
 {
-    public function __construct () {
+    public function __construct ()
+    {
         add_action('rest_api_init', function () {
-             register_rest_route('api', '/product/', [
+            register_rest_route('api', '/product/', [
                 [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [&$this, 'handler_post_products'],
@@ -27,10 +28,12 @@ class apiProduct
             ]);
         });
     }
-    public function handler_post_products (WP_REST_Request $rq) {
+
+    public function handler_post_products (WP_REST_Request $rq)
+    {
         $length = (int)$_REQUEST['length'];
         $start = (int)$_REQUEST['start'];
-        $search = empty($_REQUEST['search']) ? '' : esc_sql( $_REQUEST['search'] );
+        $search = empty($_REQUEST['search']) ? '' : esc_sql($_REQUEST['search']);
         $args = [
             'limit' => $length,
             'offset' => $start,
@@ -52,7 +55,7 @@ class apiProduct
             $pdt->categories = $product->get_categories();
             $pdt->status = $product->get_status();
             $pdt->date_created = $product->get_date_created();
-            $pdt->marge = (int) $product->get_meta('_fz_marge', true);
+            $pdt->marge = (int)$product->get_meta('_fz_marge', true);
             return $pdt;
         }, $the_query->posts);
 
@@ -73,13 +76,14 @@ class apiProduct
 
     }
 
-    public function handler_taxonomie_categories(WP_REST_Request $rq) {
+    public function handler_taxonomie_categories (WP_REST_Request $rq)
+    {
         $number = isset($_GET['number']) ? intval(sanitize_text_field($_GET['number'])) : 0;
-        $taxonomies = get_terms( array(
+        $taxonomies = get_terms([
             'taxonomy' => 'product_cat',
             'hide_empty' => false,
             'number' => $number
-        ) );
+        ]);
         wp_send_json($taxonomies);
     }
 }

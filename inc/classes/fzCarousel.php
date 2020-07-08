@@ -19,7 +19,7 @@ add_action('init', function () {
 }, 10);
 
 
-add_action('rest_api_init', function() {
+add_action('rest_api_init', function () {
     register_rest_route('api', '/carousel', [
         [
             'methods' => \WP_REST_Server::READABLE,
@@ -31,7 +31,7 @@ add_action('rest_api_init', function() {
         [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => function () {
-                $id = isset($_POST['id']) && !empty($_POST['id']) ? $_POST['id']: null;
+                $id = isset($_POST['id']) && !empty($_POST['id']) ? $_POST['id'] : null;
                 if (!is_null($id)) {
                     $attach_id = intval($id);
                     $attach_ids = get_option('medias_carousel');
@@ -39,7 +39,7 @@ add_action('rest_api_init', function() {
                         $attach_ids = [];
                     };
                     if (is_array($attach_ids)) {
-                        $attach_ids = array_map(function($id) { return intval($id); }, $attach_ids);
+                        $attach_ids = array_map(function ($id) { return intval($id); }, $attach_ids);
                         array_push($attach_ids, $attach_id);
                         $result = update_option('medias_carousel', $attach_ids);
 

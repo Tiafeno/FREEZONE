@@ -20,13 +20,13 @@ class fzMailing
         'sav_status',
     ];
 
-    public function __construct($post_id, $api = false)
+    public function __construct ($post_id, $api = false)
     {
         $post = \WP_Post::get_instance($post_id);
-        foreach (get_object_vars($post) as $key => $value)
+        foreach ( get_object_vars($post) as $key => $value )
             $this->$key = $value;
 
-        foreach ($this->fields as $field) {
+        foreach ( $this->fields as $field ) {
             $this->$field = get_field($field, $this->ID);
         }
     }
@@ -65,7 +65,7 @@ add_action('init', function () {
 
 
 add_action('rest_api_init', function () {
-    foreach (['attach_post', 'response_post', 'sender', 'sav_status'] as $field) {
+    foreach ( ['attach_post', 'response_post', 'sender', 'sav_status'] as $field ) {
         register_rest_field('fz_mailing', $field, [
             'update_callback' => function ($value, $object, $field_name) {
                 return update_field($field_name, $value, $object->ID);
@@ -82,7 +82,7 @@ add_action('rest_api_init', function () {
                     switch ($field_name):
                         case 'attach_post':
                         case 'response_post':
-                            return  $field_name === "attach_post" ? new fzSav(intval($value), true) : new fzMailing(intval($value), true);
+                            return $field_name === "attach_post" ? new fzSav(intval($value), true) : new fzMailing(intval($value), true);
                             break;
                         case 'sender':
                             $controller = new \WP_REST_Users_Controller();

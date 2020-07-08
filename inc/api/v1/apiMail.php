@@ -10,8 +10,11 @@ class apiMail
 {
     private $tva = 20;
     public $no_reply = "no-reply@freezone.click";
+
     public function __construct () { }
-    public function send_order_client(WP_REST_Request $rq) {
+
+    public function send_order_client (WP_REST_Request $rq)
+    {
         global $Engine;
 
         /**
@@ -19,7 +22,7 @@ class apiMail
          * Ajouter un texte pour le mail
          * L'Objet du mail est définie automatiquement
          */
-        $order_id = (int) $rq['order_id'];
+        $order_id = (int)$rq['order_id'];
         $message = isset($_REQUEST['message']) ? $_REQUEST['message'] : null;
         $subject = isset($_REQUEST['subject']) ? $_REQUEST['subject'] : "Demande de confirmation pour votre demande sur Freezone";
         $message = esc_html($message);
@@ -32,12 +35,12 @@ class apiMail
         $content = $Engine->render('@MAIL/ask-confirm-order.html', [
             'message' => stripslashes($message),
             'Phone' => freezone_phone_number,
-            'Year'  => date('Y'),
-            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' .$order_id
+            'Year' => date('Y'),
+            'demande_url' => wc_get_account_endpoint_url('demandes') . '?componnent=edit&id=' . $order_id
         ]);
 
         $to = $data['billing']['email'];
-        $headers   = [];
+        $headers = [];
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = "From: Freezone <{$this->no_reply}>";
 

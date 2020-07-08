@@ -12,8 +12,8 @@ jQuery(function ($) {
                     action: 'searchproducts' // AJAX action for admin-ajax.php
                 };
             },
-            beforeSend: function ( xhr ) {
-                xhr.setRequestHeader( 'X-WP-Nonce', fzOptions.nonce );
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-WP-Nonce', fzOptions.nonce);
             },
             processResults: function (data) {
                 var options = [];

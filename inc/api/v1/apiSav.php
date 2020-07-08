@@ -1,8 +1,10 @@
 <?php
+
 class apiSav
 {
-    public function __construct () { 
-        add_action('rest_api_init', function (){
+    public function __construct ()
+    {
+        add_action('rest_api_init', function () {
             register_rest_route('api', '/savs/', [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -27,8 +29,8 @@ class apiSav
             register_rest_route('api', '/mail/sav/(?P<sav_id>\d+)', [
                 [
                     'methods' => WP_REST_Server::CREATABLE,
-                    'callback' => function(WP_REST_Request $rq) {
-                        $params  = $_REQUEST;
+                    'callback' => function (WP_REST_Request $rq) {
+                        $params = $_REQUEST;
                         $subject = stripslashes($params['subject']);
                         $message = stripslashes($params['message']);
                         $sender = (int)$params['sender'];
@@ -50,7 +52,9 @@ class apiSav
             ], false);
         });
     }
-    public function collect_sav(WP_REST_Request $request) {
+
+    public function collect_sav (WP_REST_Request $request)
+    {
         $length = (int)$_REQUEST['length'];
         $start = (int)$_REQUEST['start'];
         $args = [
@@ -82,7 +86,8 @@ class apiSav
         }
     }
 
-    public function get_customers_responsible(WP_REST_Request $request) {
+    public function get_customers_responsible (WP_REST_Request $request)
+    {
         $commercial_id = $request['com_id'];
         $customer_ids = [];
         $args = [
