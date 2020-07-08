@@ -42,9 +42,7 @@ yozi_render_breadcrumbs();
     </style>
     <script type="text/javascript">
         (function ($) {
-            $(document).ready(() => {
-
-
+            $(document).ready(function() {
                 new Vue({
                     el: '#app-form-gd',
                     data: {
@@ -60,7 +58,7 @@ yozi_render_breadcrumbs();
                     methods: {
                         handleFileChange: function (event, index) {
                             const files = event.target.files;
-                            let result = _.find(this.photos, photo => {
+                            let result = _.find(this.photos, function(photo) {
                                 if (_.isObject(photo)) {
                                     return photo.index === index;
                                 } else {
@@ -70,7 +68,7 @@ yozi_render_breadcrumbs();
                             if (_.isUndefined(result)) {
                                 this.photos.push({index: index, file: files[0]});
                             } else {
-                                this.photos = _.map(this.photos, photo => {
+                                this.photos = _.map(this.photos, function(photo) {
                                     if (photo.index === index) {
                                         photo.file = files[0];
                                     }
@@ -103,7 +101,7 @@ yozi_render_breadcrumbs();
                             });
                         },
                         submitForm: function (e) {
-                            const self = this;
+                            var self = this;
                             e.preventDefault();
                             this.errors = [];
                             if (_.isEmpty(this.title)) {
@@ -119,18 +117,18 @@ yozi_render_breadcrumbs();
 
                             this.loading = true;
                             $('button[type="submit"]').text('Chargement ...');
-                            let upload = {};
-                            for (let item of this.photos) {
-                                let form = new FormData();
+                            var upload = {};
+                            for (var item of this.photos) {
+                                var form = new FormData();
                                 form.append('file', item.file);
                                 form.append('title', this.title);
                                 upload['f' + item.index] = this.fnAjax(form);
                             }
-                            $.when(upload).done((results) => {
+                            $.when(upload).done(function(results) {
                                 async function createGd(responses) {
                                     var ids = [];
-                                    for (let key of Object.keys(responses)) {
-                                        let gDeal = await responses[key];
+                                    for (var key of Object.keys(responses)) {
+                                        var gDeal = await responses[key];
                                         ids.push(gDeal.id);
                                     }
                                     $.ajax({
