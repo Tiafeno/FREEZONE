@@ -16,34 +16,25 @@ do_action('yozi_woo_template_main_before');
                         $categories = wp_get_post_terms(get_the_ID(), 'product_cat', []);
                         $categories = array_map(function ($categorie) { return $categorie->name; }, $categories);
                         ?>
-                        <div class="col-md-cl-5 col-md-3 col-sm-4 col-xs-6  product type-product status-publish first product_cat-computer
+                        <div class="col-md-cl-5 col-md-3 col-sm-4 col-xs-6 product type-product status-publish first product_cat-computer
              product_tag-accessories product_tag-computer product_tag-pc has-post-thumbnail  product-type-simple">
                             <div class="product-block grid" data-product-id="775">
                                 <div class="grid-inner">
-
-                                    <div class="block-title">
-                                        <div class="product-cats uppercase"><?= implode(', ', $categories) ?> </div>
-                                        <h3 class="name"><a
-                                                    href="<?= get_the_permalink() ?>"><?= the_title() ?></a></h3>
-                                    </div>
-
                                     <div class="block-inner">
                                         <figure class="image">
-
-
                                             <a title="Desktop Supply Charger 5V 2A US Sliver"
                                                href="<?= get_the_permalink() ?>"
                                                class="product-image image-loaded">
                                                 <?= $image ?>
                                             </a>
-
-
                                         </figure>
                                         <div class="quick-view">
-                                            <a href="<?= get_the_permalink() ?>"
-                                               class=" btn btn-dark btn-block radius-3x">
-                                                Voir l'annonce </a>
+                                            <a href="<?= get_the_permalink() ?>" class=" btn btn-dark btn-block radius-3x"> Voir l'annonce </a>
                                         </div>
+                                    </div>
+                                    <div class="block-title">
+                                        <div class="product-cats uppercase"><?= implode(', ', $categories) ?> </div>
+                                        <h3 class="name"><a href="<?= get_the_permalink() ?>"><?= the_title() ?></a></h3>
                                     </div>
                                     <div class="metas clearfix">
                                         <!-- Afficher ici les prix -->
