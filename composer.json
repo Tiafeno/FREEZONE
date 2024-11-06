@@ -3,7 +3,7 @@
   "description": "Une site pour commander des materiels informatique \u0000 Madagascar",
   "type": "library",
   "require": {
-    "twig/twig": "^2.7",
+    "twig/twig": "^2.7 || ^3.0",
     "automattic/woocommerce": "^3.0"
   },
   "license": "MTI",
